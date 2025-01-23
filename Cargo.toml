@@ -12,7 +12,6 @@ members = [
     "testing",
 ]
 
-exclude = ["admin-panel-tui"]
 
 # The resolver is a global setting for a workspace, and the setting is ignored
 # in dependencies. The setting is only honored for the top-level package of the

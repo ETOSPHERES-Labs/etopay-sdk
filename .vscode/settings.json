@@ -3,7 +3,6 @@
     "makefile.extensionOutputFolder": "./.vscode",
     "debug.internalConsoleOptions": "neverOpen",
     "yaml.schemas": {
-        "https://gitlab.com/gitlab-org/gitlab/-/raw/master/app/assets/javascripts/editor/schema/ci.json": "file:///workspace/.gitlab-ci.yml",
         "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
     },
     "rust-analyzer.cargo.loadOutDirsFromCheck": true,
@@ -13,48 +12,6 @@
         "typedefs.h": "c"
     },
     "java.configuration.updateBuildConfiguration": "automatic",
-    "rest-client.environmentVariables": {
-        "$shared": {
-            "version": "v1",
-        },
-        "local": {
-            "api_url": "http://localhost:7071/api",
-            "wh_url": "http://localhost:7071/webhook",
-            "wh_uuid": "cryptpay-local-webhook-uuid",
-            "kc_url": "http://keycloak:8888",
-            "kc_realm": "cryptpay-local",
-            "kc_client_id": "cryptpay",
-            "app_name": "cryptpay-local",
-            "sample": "{{$shared version}}",
-        },
-        "dev": {
-            "api_url": "https://api-cryptpay-dev.cawaena.com/requests-aggregator/api",
-            "wh_url": "https://api-cryptpay-dev.cawaena.com/requests-aggregator/webhook",
-            "wh_uuid": "standalone-webhook-uuid",
-            "kc_url": "https://sso-development.farmunited.com/auth",
-            "kc_realm": "cryptpay",
-            "kc_client_id": "cryptpay",
-            "app_name": "standalone",
-        },
-        "staging": {
-            "api_url": "https://api-cellpic-stg.cawaena.com/requests-aggregator/api",
-            "wh_url": "https://api-cellpic-stg.cawaena.com/requests-aggregator/webhook",
-            "wh_uuid": "standalone-webhook-uuid",
-            "kc_url": "https://sso-development.farmunited.com/auth",
-            "kc_realm": "cryptpay",
-            "kc_client_id": "cryptpay",
-            "app_name": "standalone",
-        },
-        "production": {
-            "api_url": "https://api-cellpic.cawaena.com/requests-aggregator/api",
-            "wh_url": "https://api-cellpic.cawaena.com/requests-aggregator/webhook",
-            "wh_uuid": "standalone-webhook-uuid",
-            "kc_url": "https://sso-development.farmunited.com/auth",
-            "kc_realm": "cryptpay",
-            "kc_client_id": "cryptpay",
-            "app_name": "standalone",
-        }
-    },
     "cSpell.customDictionaries": {
         "custom-dictionary-workspace": {
             "name": "custom-dictionary-workspace",
