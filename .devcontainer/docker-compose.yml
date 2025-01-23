@@ -1,0 +1,32 @@
+version: '3.7'
+
+networks:
+  default:
+    name: cryptpayrs_devcontainer_default
+    driver: bridge
+
+services:
+  devcontainer:
+    image: repo.farmunited.com/egdbz-docker/cryptpay/devcontainer:v1.5.3
+
+    platform: "linux/amd64"
+    volumes:
+      # Forwards the local Docker socket to the container.
+      #- /var/run/docker.sock:/var/run/docker-host.sock
+      # Update this to wherever you want VS Code to mount the folder of your project
+      - ../..:/workspaces:cached
+      - "../secrets.json:/dapr/secrets.json"
+    # Overrides default command so things don't shut down after the process ends.
+    #entrypoint: /usr/local/share/docker-init.sh
+    command: sleep infinity
+    # Runs app on the same network as the service container, allows "forwardPorts" in devcontainer.json function.
+    # network_mode: bridge
+    # Uncomment the next four lines if you will use a ptrace-based debuggers like C++, Go, and Rust.
+    cap_add:
+      - SYS_PTRACE
+    security_opt:
+      - seccomp:unconfined
+    # Use "forwardPorts" in **devcontainer.json** to forward an app port locally. 
+    # (Adding the "ports" property to this file will not forward from a Codespace.)
+    networks:
+      - default

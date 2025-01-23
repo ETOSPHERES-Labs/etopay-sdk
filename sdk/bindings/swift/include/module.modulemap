@@ -1,0 +1,4 @@
+module CryptpaySdkBin {
+    header "bridging-header.h"
+    export *
+}

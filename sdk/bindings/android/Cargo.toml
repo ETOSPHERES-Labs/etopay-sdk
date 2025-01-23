@@ -1,0 +1,48 @@
+[package]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+name = "cryptpay-sdk-jni"
+description = "The SDK java native bindings for use in java based applications and android"
+
+[lib]
+name = "walletsdk_jni"
+crate-type = ["cdylib"]
+
+[lints]
+workspace = true
+
+
+[features]
+default = ["postident", "viviswap-kyc", "viviswap-swap", "billing"]
+postident = ["sdk/postident"]
+viviswap-kyc = ["sdk/viviswap-kyc"]
+viviswap-swap = ["sdk/viviswap-swap"]
+billing = ["sdk/billing"]
+
+[dependencies]
+jni = { workspace = true }
+jnigen-macro = { path = "../../../tools/jnigen-macro" }
+once_cell = { workspace = true }
+sdk = { package = "sdk", path = "../../" }
+serde = { workspace = true }
+serde_json = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+
+[target.'cfg(target_os="android")'.dependencies]
+jni = { workspace = true }
+
+# this is needed to build and link openssl for the android targets
+openssl = { workspace = true }
+
+[build-dependencies]
+jnigen-build = { path = "../../../tools/jnigen-build" }
+xml = { version = "0.8.20", default-features = false }
+
+# cargo-machete thinks that `jni`, `jnigen-build` and `xml` dependencies are unused, but they are actually needed
+[package.metadata.cargo-machete]
+ignored = ["jni", "jnigen-build", "xml"]

@@ -1,0 +1,23 @@
+[package]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+name = "testing"
+
+[lints]
+workspace = true
+
+[features]
+default = []
+
+[dependencies]
+chrono = { workspace = true }
+fake = { version = "3.0", features = ["derive", "chrono"] }
+lazy_static = { version = "1.4.0", default-features = false }
+reqwest = { workspace = true }
+serde = { workspace = true }
+uuid = { workspace = true }

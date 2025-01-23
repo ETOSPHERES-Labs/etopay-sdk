@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_viviswap_kyc_amla_open_questions()
+    sdk->>+vvs_svc: get_kyc_amla_questions()
+    vvs_svc->>+vvs_api: get_open_amla_questions()
+    vvs_api-->>-vvs_svc: Vec[KycAmlaQuestion]
+    vvs_svc-->>-sdk: Vec[KycAmlaQuestion]
+    sdk-->>-user: Vec[KycAmlaQuestion]

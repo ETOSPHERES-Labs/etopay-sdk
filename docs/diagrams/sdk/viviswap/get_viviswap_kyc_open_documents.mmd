@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_viviswap_kyc_open_documents()
+    sdk->>+vvs_svc: get_kyc_documents()
+    vvs_svc->>+vvs_api: get_open_documents()
+    vvs_api-->>-vvs_svc: Vec[KycOpenDocument]
+    vvs_svc-->>-sdk: Vec[KycOpenDocument]
+    sdk-->>-user: Vec[KycOpenDocument]

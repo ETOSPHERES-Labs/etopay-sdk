@@ -1,0 +1,86 @@
+[workspace]
+members = [
+    "api_types",
+    "sdk",
+    "sdk/bindings/android",
+    "sdk/bindings/swift",
+    "sdk/bindings/wasm",
+    "tools/jnigen-common",
+    "tools/jnigen-macro",
+    "tools/jnigen-build",
+    "tools/jnigen-integration-test",
+    "testing",
+]
+
+exclude = ["admin-panel-tui"]
+
+# The resolver is a global setting for a workspace, and the setting is ignored
+# in dependencies. The setting is only honored for the top-level package of the
+# workspace. Given that we are using a workspace, we need to explicitly set the
+# resolver field if we want to opt-in to the new resolver.
+resolver = "2"
+
+[workspace.package]
+version = "0.14.0"
+edition = "2021"
+authors = ["Team Lobster 🦞"]
+license = "Copyright(C) 2024, ETO GRUPPE TECHNOLOGIES GmbH, All rights reserved."
+homepage = "https://www.etogruppe.com/en/information/legal-notice.html"
+repository = "https://gitlab.inovel.de/zd0006/cryptpay.rs.git"
+
+[workspace.lints.rust]
+# Since we are using the deprecation annotation to mark things to remove later, it causes a lot of noise in the problems reported in vscode.
+# Therefore we can allow this lint for now, and simply remove it whenever we need to actually see them.
+deprecated = "allow"
+
+[workspace.lints.clippy]
+# With these two, we avoid panicking behavior in our code.
+# In some places where panicking is desired, such as in tests or in the `main.rs` files,
+# these are allowed using #[allow(clippy::unwrap_used, clippy::expect_used] or configured
+# to be allowed in the `.clippy.toml` config file.
+unwrap_used = "deny"
+expect_used = "deny"
+
+
+# Ignore the following crates when running cargo machete
+[workspace.metadata.cargo-machete]
+ignored = ["serde", "openssl"]
+
+# Specify versions for shared dependencies
+[workspace.dependencies]
+api_types = { package = "api_types", path = "./api_types" }
+aquamarine = { version = "0.6", default-features = false }
+base64 = { version = "0.22", default-features = false }
+chrono = { version = "0.4.33", default-features = false }
+dotenvy = { version = "0.15", default-features = false }
+fluent-assertions = { version = "0.4", default-features = false }
+mockall = { version = "0.13", default-features = false }
+mockito = { version = "1.2.0", default-features = false }
+reqwest = { version = "0.12.4", features = ["json"] }
+rstest = { version = "0.23.0", default-features = false }
+rust_decimal = { version = "1.36.0", default-features = false, features = [
+    "serde-str",
+] }
+once_cell = { version = "^1.17.0", default-features = false }
+openssl = { version = "*", features = ["vendored"] }
+rust_decimal_macros = { version = "1.36", default-features = false }
+secrecy = { version = "0.10", default-features = false }
+serial_test = { version = "*", features = ["file_locks"] }
+serde = { version = "1.0.215", default-features = false, features = ["derive"] }
+serde_json = { version = "1.0.133", default-features = false }
+testing = { package = "testing", path = "./testing" }
+thiserror = { version = "1.0.38", default-features = false }
+tokio = { version = "1.24.1", default-features = false }
+fake = { version = "3.0", features = ["derive", "chrono"] }
+uuid = { version = "1.5", features = ["v4"] }
+log = { version = "0.4.17", default-features = false }
+quote = { version = "1.0", default-features = false }
+syn = { version = "2.0", features = ["full"] }
+proc-macro2 = { version = "1.0", default-features = false }
+jni = { version = "0.21.1", default-features = false }
+
+# scrypt is used for the main wallet functions in the iota-sdk. Since it does a lot of 
+# cryptography hashing, running in debug mode takes forever and therefore we tell Cargo to
+# always compile it with full optimizations in debug mode.
+[profile.dev.package.scrypt]
+opt-level = 3

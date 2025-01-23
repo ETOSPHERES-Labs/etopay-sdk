@@ -1,0 +1,25 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant vvs_service as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: ensure_detail()
+    sdk->>+vvs_service: get_viviswap_details(Sepa)
+    vvs_service->>+vvs_api: get_payment_details()
+    vvs_api-->>-vvs_service: Payment Details
+    vvs_service-->>-sdk: Payment Details
+    sdk-->>+vvs_service: set_viviswap_detail()
+    vvs_service->>+vvs_api: set_payment_detail()
+    vvs_api-->>-vvs_service: Payment Details
+    vvs_service-->>-sdk: Payment Details
+    opt If Replace
+        sdk-->>vvs_service: delete_viviswap_detail()
+        vvs_service->>+vvs_api: delete_payment_detail()
+    end
+    sdk-->>-user: Address Detail

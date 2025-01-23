@@ -1,0 +1,30 @@
+[package]
+name = "jnigen-integration-test"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+description = "Contains an example and tests (including java tests) for the jnigen crates"
+
+[lib]
+name = "jnigenit"
+crate-type = ["cdylib"]
+
+[dependencies]
+jnigen-macro = { path = "../jnigen-macro" }
+jni = { workspace = true }
+
+[build-dependencies]
+jnigen-build = { path = "../jnigen-build" }
+
+[lints]
+workspace = true
+
+# cargo-machete thinks that `jni` and `jnigen-build` dependencies are unused, but they are actually needed
+[package.metadata.cargo-machete]
+ignored = ["jni", "jnigen-build"]

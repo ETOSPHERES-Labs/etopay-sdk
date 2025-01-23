@@ -1,0 +1,19 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+        participant repo as User Repo
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_payment_method_id_viviswap()
+    sdk->>+vvs_svc: get_viviswap_payment_method()
+    vvs_svc->>+vvs_api: get_payment_methods()
+    vvs_api-->>-vvs_svc: Payment Methods
+    vvs_svc-->>-sdk: Payment Methods
+    sdk->>repo: update_user()
+    sdk-->>-user: Payment Method ID

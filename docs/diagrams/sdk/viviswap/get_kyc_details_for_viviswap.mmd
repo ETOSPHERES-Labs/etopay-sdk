@@ -1,0 +1,27 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_kyc_details_for_viviswap()
+    sdk->>+vvs_svc: get_and_update_kyc_details()
+    vvs_svc->>+vvs_api: get_kyc_status
+    vvs_api-->>-vvs_svc: KycStatus
+    opt IsPartiallyVerified
+        vvs_svc->>vvs_svc: pub_user_full_kyc_verified_event()
+        vvs_svc->>vvs_svc: send_webhook_if_kyc_state_changed()
+    end
+    opt IsVerified
+        vvs_svc->>+vvs_api: get_residences()
+        vvs_api-->>-vvs_svc: KycResidence
+        vvs_svc->>vvs_svc: pub_user_full_kyc_verified_event()
+        vvs_svc->>vvs_svc: send_webhook_if_kyc_state_changed()
+    end
+    vvs_svc-->>-sdk: KycDetails
+    sdk-->>-user: KycStatus

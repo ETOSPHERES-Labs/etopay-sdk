@@ -1,0 +1,50 @@
+plugins {
+	id 'java'
+}
+
+repositories {
+	mavenCentral()
+}
+
+// this task compiles the android bindings for the native platform so that we can
+// load the compiled library in the tests
+task compileNativeReleaseLibrary(type: Exec) {
+	commandLine 'cargo','build','--release','--locked'
+
+	// always rerun this task
+	outputs.upToDateWhen { false }
+
+	// declare that this is our output file (to rerun tests once it changes)
+	outputs.file(file('../../target/release/libjnigenit.so'))
+
+}
+
+// since we need java to compile the generated bindings, we need to depend on the build task
+compileJava.dependsOn "compileNativeReleaseLibrary"
+
+
+// for the tests to run locally, we need the java.library.path to be set to the location where the
+// native build of the library is placed, i.e. in the target/release folder.
+tasks.withType(Test) {
+	// depend on the task so that it will run and (possibly) generate a new native lib
+	dependsOn("compileNativeReleaseLibrary")	
+
+	// depend on the file so that the tests rerun if the native lib changed
+	inputs.file(file('../../target/release/libjnigenit.so'))
+
+	// then we can point the library path to the cargo output directory (relative to the project root)
+    systemProperty("java.library.path", file("../../target/release/"))
+}
+
+dependencies {
+	testImplementation(platform('org.junit:junit-bom:5.10.2'))
+	testImplementation('org.junit.jupiter:junit-jupiter')
+	testRuntimeOnly('org.junit.platform:junit-platform-launcher')
+}
+
+test {
+	useJUnitPlatform()
+	testLogging {
+		events "passed", "skipped", "failed"
+	}
+}

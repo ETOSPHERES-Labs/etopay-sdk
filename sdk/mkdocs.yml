@@ -1,0 +1,113 @@
+site_name: CryptPay SDK Docs
+plugins:
+  - privacy:
+      enabled: true
+      cache: true
+      cache_dir: .cache/plugins/privacy
+      assets: true
+      assets_fetch: true
+      assets_fetch_dir: assets/external
+  - git-revision-date-localized:
+      enable_creation_date: true
+  - git-authors
+  - search
+  - typedoc:
+      source: './bindings/wasm/pkg/cryptpay_sdk_wasm.d.ts'
+      output_dir: 'jstsdocs'
+      tsconfig: './bindings/wasm/tsconfig.json'
+      options: './bindings/wasm/typedoc.json'
+      name: 'CryptPay SDK Docs'
+      title_link: "/SDK%20Reference/SDK%20API%20Reference/"
+
+markdown_extensions:
+  - attr_list
+  - toc:
+      permalink: true
+      title: On this page
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - md_in_html
+  - admonition
+  - pymdownx.details
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - footnotes
+theme:
+  features:
+    - navigation.instant
+    - navigation.instant.progress
+    - navigation.tracking
+    - navigation.sections
+    - navigation.path
+    - navigation.prune
+    - toc.follow
+    - toc.integrate
+    - navigation.top
+    - navigation.footer
+    - content.code.copy
+    - content.code.select
+    - content.code.annotate
+    - content.footnote.tooltips
+    - search.suggest
+    - search.highlight
+    - search.share
+  name: material
+  font:
+    text: Montserrat
+  language: en
+  palette:
+    # Palette toggle for light mode
+    - scheme: default
+      accent: green
+      primary: light green
+      toggle:
+        icon: material/toggle-switch
+        name: Dark mode
+
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: teal
+      accent: green
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Light mode
+
+copyright: Copyright &copy; 2024 -  ETO GRUPPE TECHNOLOGIES GmbH
+extra:
+  social:
+    - icon: fontawesome/solid/stamp
+      link: https://cawaena.com/#/main/imprint
+      name: Imprint
+    - icon: fontawesome/solid/paper-plane
+      link: mailto:s.parnerkar@etogruppe.com
+      name: Contact Us
+    - icon: fontawesome/brands/discord
+      link: https://discord.gg/ppNGRFsV
+      name: Cawaena Discord channel
+
+  generator: false
+  version:
+    provider: mike
+    default: latest
+  consent:
+    title: Cookie consent
+    description: >-
+      We use cookies to recognize your repeated visits and preferences, as well
+      as to measure the effectiveness of our documentation and whether users
+      find what they're searching for. With your consent, you're helping us to
+      make our documentation better.
+    actions:
+      - accept
+      - manage

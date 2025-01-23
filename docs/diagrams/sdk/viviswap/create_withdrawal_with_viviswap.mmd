@@ -1,0 +1,24 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+        participant wallet as Wallet
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+        participant iota_svc as Dlt-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: create_withdrawal_with_viviswap()
+    sdk-->sdk: self.verify_pin()
+    sdk-->>sdk: self.get_user()
+    sdk-->>sdk: self.get_payment_method_id_viviswap()
+    sdk-->>sdk: self.get_payment_method_id_viviswap()
+    sdk->>+vvs_svc: set_viviswap_contract()
+    vvs_svc->>+vvs_api: create_contract()
+    vvs_api-->>-vvs_svc: Contract
+    vvs_svc-->>-sdk: Contract
+    sdk->>wallet: send_amount()
+    sdk-->>-user: Withdrawal

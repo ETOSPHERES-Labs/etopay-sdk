@@ -1,0 +1,25 @@
+#[net]
+#git-fetch-with-cli = true
+
+[build]
+rustc-wrapper = "sccache"
+
+# Use lld linker for all platforms except android and ios (does not find all libraries, but we let the NDK decide the linking stuff instead)
+# Make sure version is same as installed in the devcontainer!
+[target.'cfg(all(not(target_os="android"),not(target_os="ios"),not(target_os="macos"),not(target_arch="wasm32")))']
+rustflags = ["-C", "linker=clang-16", "-C", "link-arg=-fuse-ld=lld-16"]
+
+# Makes artifactory the default registry
+[registry]
+default = "artifactory"
+global-credential-providers = ["cargo:token"]
+
+[registries.artifactory]
+index = "sparse+https://repo.farmunited.com/artifactory/api/cargo/crates-remote/index/"
+
+# Makes cargo resolving dependencies from Artifactory
+[source.artifactory-remote]
+registry = "sparse+https://repo.farmunited.com/artifactory/api/cargo/crates-remote/index/"
+
+# [source.crates-io]
+# replace-with = "artifactory-remote"

@@ -1,0 +1,22 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+        participant wallet as Wallet
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+        participant iota_svc as Iota-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: create_detail_for_viviswap()
+    sdk->>sdk: self.get_user()
+    sdk-->>+wallet: generate_new_iota_receiver_address()
+    wallet-->>wallet: get_address()
+    wallet-->>iota_svc: put_user_address()
+    iota_svc-->iota_svc: Publish UserSetAddressEvent
+    wallet-->>-sdk: New address
+    sdk-->>sdk: sdk.ensure_detail()
+    sdk-->>-user: Address detail

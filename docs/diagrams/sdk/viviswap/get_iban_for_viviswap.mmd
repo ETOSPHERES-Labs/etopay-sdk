@@ -1,0 +1,20 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant req as Requests-Aggregator
+        participant vvs_service as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_iban_for_viviswap()
+    sdk->>+req: get_viviswap_details()
+    req->>+vvs_service: get_details()
+    vvs_service->>+vvs_api: get_payment_details()
+    vvs_api-->>-vvs_service: Payment Details
+    vvs_service-->>-req: Payment Details
+    req-->>-sdk: Payment Details
+    sdk-->>-user: Address Detail

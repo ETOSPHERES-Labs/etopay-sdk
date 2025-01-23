@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_exchange_rate()
+    sdk->>+vvs_svc: get_course()
+    vvs_svc->>+vvs_api: get_course()
+    vvs_api-->>-vvs_svc: Course
+    vvs_svc-->>-sdk: Course
+    sdk-->>-user: Exchange rate

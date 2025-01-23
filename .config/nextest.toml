@@ -1,0 +1,24 @@
+[profile.ci]
+# print out output for failing tests as soon as they fail,
+# and also at the end of the run (to make perusing easier)
+failure-output = "immediate-final"
+
+# do not bail out on the first failed test, run them all
+fail-fast = false
+
+[profile.ci.junit]
+path = "junit.xml"
+
+# Run tests in serial mode
+# This ensures that tests are executed sequentially
+[test-groups]
+serial-tests = { max-threads = 1 }
+
+# Assign the integration tests in some packages to the serial-tests group
+[[profile.default.overrides]]
+filter = 'kind(test) & binary_id(/::it_.*/)'
+test-group = 'serial-tests'
+
+[[profile.default.overrides]]
+filter = '(package(sdk) & kind(lib) & test(/\btest_serial_/))'
+test-group = 'serial-tests'

@@ -1,0 +1,17 @@
+sequenceDiagram
+    actor user as User
+    box Purple SDK
+        participant sdk as SDK
+    end
+    box Grey CryptPay
+        participant vvs_svc as Viviswap-Service
+    end
+    box Blue External
+        participant vvs_api as Viviswap-API
+    end
+    user->>+sdk: get_viviswap_orders()
+    sdk->>+vvs_svc: get_viviswap_orders()
+    vvs_svc->>+vvs_api: get_orders()
+    vvs_api-->>-vvs_svc: Order List
+    vvs_svc-->>-sdk: Order List
+    sdk-->>-user: Order List
