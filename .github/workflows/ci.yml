@@ -2,8 +2,6 @@ name: CI
 
 on:
   push:
-  pull_request:
-    branches: [main]
 
 permissions:
   contents: read # Only for private repositories
@@ -36,7 +34,7 @@ jobs:
         run: cargo clippy --all-targets --all-features --color always -- -D warnings
       # - name: Audit dependencies
       #   run: cargo audit --color always
-  
+
   unit-tests:
     runs-on: dell
     container:
@@ -165,5 +163,3 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.6
       - name: Run jnigen integration test
         run: cd tools/jnigen-integration-test && gradle test
-          
-          

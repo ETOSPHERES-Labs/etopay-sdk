@@ -35,7 +35,7 @@ deprecated = "allow"
 [workspace.lints.clippy]
 # With these two, we avoid panicking behavior in our code.
 # In some places where panicking is desired, such as in tests or in the `main.rs` files,
-# these are allowed using #[allow(clippy::unwrap_used, clippy::expect_used] or configured
+# these are allowed using #[allow(clippy::unwrap_used, clippy::expect_used]) or configured
 # to be allowed in the `.clippy.toml` config file.
 unwrap_used = "deny"
 expect_used = "deny"
