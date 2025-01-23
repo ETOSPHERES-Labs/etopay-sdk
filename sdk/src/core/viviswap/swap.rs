@@ -35,10 +35,6 @@ impl Sdk {
     /// - [`crate::Error::ViviswapApi`] - If there is an error in the viviswap API.
     /// - [`crate::Error::UserStatusUpdateError`] - If there is an error updating the user status.
     // MARK1:get_iban_for_viviswap
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_iban_for_viviswap.mmd")
     pub async fn get_iban_for_viviswap(&mut self) -> Result<ViviswapAddressDetail> {
         info!("Getting IBAN for viviswap");
         // load user entity
@@ -101,10 +97,6 @@ impl Sdk {
     ///
     /// - [`crate::Error::ViviswapApi`] - If there is an error loading payment details from the Viviswap API.
     // MARK2:ensure_detail
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/ensure_detail.mmd")
     async fn ensure_detail(
         &self,
         address: String,
@@ -188,10 +180,6 @@ impl Sdk {
     /// - [`crate::Error::ViviswapMissingUserError`] - If the viviswap user is missing.
     /// - [`crate::Error::UserStatusUpdateError`] - If there is an error updating the user status.
     // MARK3:update_iban_for_viviswap
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/update_iban_for_viviswap.mmd")
     pub async fn update_iban_for_viviswap(
         &mut self,
         pin: &EncryptionPin,
@@ -258,10 +246,6 @@ impl Sdk {
     /// - [`crate::Error::ViviswapInvalidState`] - If the viviswap state is invalid.
     /// - [`crate::Error::ViviswapApi`] - If there is an error with the Viviswap API.
     // MARK4:create_deposit_with_viviswap
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/create_deposit_with_viviswap.mmd")
     pub async fn create_deposit_with_viviswap(&mut self, pin: &EncryptionPin) -> Result<ViviswapDeposit> {
         info!("Creating deposit for viviswap");
         // load user entity
@@ -349,10 +333,6 @@ impl Sdk {
     /// - [`crate::Error::ConfigInitError`] - If there is an error initializing the configuration.
     /// - [`crate::Error::ViviswapMissingUserError`] - If the viviswap user is missing.
     // MARK5:create_detail_for_viviswap
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/create_detail_for_viviswap.mmd")
     pub async fn create_detail_for_viviswap(&mut self, pin: &EncryptionPin) -> Result<ViviswapAddressDetail> {
         let payment_method_key = self
             .currency
@@ -392,10 +372,6 @@ impl Sdk {
     /// - [`crate::Error::ViviswapMissingUserError`] - If the viviswap user is missing.
     /// - [`crate::Error::ViviswapApi`] - If the payment method is not found.
     // MARK6:get_payment_method_id_viviswap
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_payment_method_id_viviswap.mmd")
     async fn get_payment_method_id_viviswap(&mut self, payment_method_key: SwapPaymentDetailKey) -> Result<String> {
         let mut user = self.get_user().await?;
 
@@ -459,10 +435,6 @@ impl Sdk {
     /// - [`crate::Error::ViviswapInvalidState`] - If the viviswap state is invalid.
     /// - [`crate::Error::ViviswapApi`] - If there is an error with the Viviswap API.
     // MARK7:create_withdrawal_with_viviswap
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/create_withdrawal_with_viviswap.mmd")
     pub async fn create_withdrawal_with_viviswap(
         &mut self,
         amount: CryptoAmount,
@@ -561,10 +533,6 @@ impl Sdk {
     /// * Repository initialization error.
     /// * Viviswap API error.
     // MARK8:get_swap_list
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_swap_list.mmd")
     pub async fn get_swap_list(&self, start: u32, limit: u32) -> Result<OrderList> {
         let Some(user) = &self.active_user else {
             return Err(crate::Error::UserRepoNotInitialized);
@@ -590,10 +558,6 @@ impl Sdk {
     ///
     /// Returns a `Result` containing the swap order details or an error.
     // MARK9:get_swap_details
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_swap_details.mmd")
     pub async fn get_swap_details(&self, order_id: String) -> Result<Order> {
         let Some(user) = &self.active_user else {
             return Err(crate::Error::UserRepoNotInitialized);

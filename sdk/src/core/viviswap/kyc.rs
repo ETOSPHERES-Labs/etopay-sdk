@@ -39,10 +39,6 @@ impl Sdk {
     /// * User already exists.
     /// * Viviswap API error.
     /// * User status update error.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/start_kyc_verification_for_viviswap.mmd")
     pub async fn start_kyc_verification_for_viviswap(
         &mut self,
         mail: &str,
@@ -92,10 +88,6 @@ impl Sdk {
     ///
     /// * Repository initialization error.
     /// * Viviswap API error.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_kyc_details_for_viviswap.mmd")
     pub async fn get_kyc_details_for_viviswap(&mut self) -> Result<ViviswapKycStatus> {
         info!("Getting KYC details for viviswap user");
         // load user entity
@@ -492,10 +484,6 @@ impl Sdk {
     ///
     /// - [[`crate::Error::UserNotInitialized)`]] - If the user is not initialized.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/set_viviswap_kyc_identity_details.mmd")
     pub async fn set_viviswap_kyc_identity_details(
         &self,
         official_document: IdentityOfficialDocumentData,
@@ -539,10 +527,6 @@ impl Sdk {
     /// - [[`crate::Error::ViviswapValidation`]] - If the input values are not valid.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
     #[allow(clippy::too_many_arguments)]
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/set_viviswap_kyc_residence_details.mmd")
     pub async fn set_viviswap_kyc_residence_details(
         &self,
         country_code: String,
@@ -623,10 +607,6 @@ impl Sdk {
     ///
     /// - [[`crate::Error::UserNotInitialized)`]] - If the user is not initialized.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_viviswap_kyc_amla_open_questions.mmd")
     pub async fn get_viviswap_kyc_amla_open_questions(&self) -> Result<Vec<KycAmlaQuestion>> {
         let Some(user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
@@ -656,10 +636,6 @@ impl Sdk {
     ///
     /// - [[`crate::Error::UserNotInitialized)`]] - If the user is not initialized.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/set_viviswap_kyc_amla_answer.mmd")
     pub async fn set_viviswap_kyc_amla_answer(
         &self,
         question_id: String,
@@ -703,10 +679,6 @@ impl Sdk {
     ///
     /// - [`crate::Error::UserNotInitialized)`] - If the user is not initialized.
     /// - [`crate::Error::ViviswapApiError`] - If there is an error in the viviswap API.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_viviswap_kyc_open_documents.mmd")
     pub async fn get_viviswap_kyc_open_documents(&self) -> Result<Vec<KycOpenDocument>> {
         let Some(user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
@@ -739,10 +711,6 @@ impl Sdk {
     ///
     /// - [`crate::Error::ViviswapApiError`] - If there is an error in the viviswap API.
     /// - [`crate::Error::UserNotInitialized)`] - If the user is not initialized.
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/set_viviswap_kyc_document.mmd")
     pub async fn set_viviswap_kyc_document(
         &self,
         document_id: String,

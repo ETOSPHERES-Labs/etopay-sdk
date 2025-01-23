@@ -11,10 +11,6 @@ impl Sdk {
     ///
     /// Returns a `Result` containing the exchange rate as a `Decimal` type if successful, or a [`crate::Error`] if an error occurs.
     // MARK10:get_exchange_rate
-    #[cfg_attr(doc, aquamarine::aquamarine)]
-    ///
-    /// # Flow diagram
-    /// include_mmd!("../docs/diagrams/sdk/viviswap/get_exchange_rate.mmd")
     pub async fn get_exchange_rate(&self) -> Result<Decimal> {
         info!("Fetching exchange rate from viviswap");
         let user = self.get_user().await?;
