@@ -2,6 +2,7 @@ use super::error::{Result, WalletError};
 use crate::core::Config;
 use crate::types::currencies::{CryptoAmount, Currency};
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use alloy_consensus::TxEip1559;
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManager;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
@@ -91,9 +92,6 @@ pub trait WalletUser: Debug {
     /// * `amount` - The amount to send (Ether).
     /// * `tag` - The transactions tag. Optional.
     /// * `message` - The transactions message. Optional.
-    /// * `gas_limit` - The maximum amount of gas that the transaction can consume.
-    /// * `max_fee_per_gas` - The maximum fee the sender is willing to pay per unit of gas.
-    /// * `max_priority_fee_per_gas` - The maximum tip the sender is willing to pay to miners (in EIP-1559).
     /// * `chain_id` - The identifier of the chain to which the transaction belongs (e.g., 1 for Ethereum mainnet).
     ///
     ///
@@ -109,10 +107,6 @@ pub trait WalletUser: Debug {
         amount: CryptoAmount,
         tag: Option<TaggedDataPayload>,
         message: Option<String>,
-        // todo: extract parameters into interface and allow processing of other types of eip
-        gas_limit: u64,
-        max_fee_per_gas: u128,
-        max_priority_fee_per_gas: u128,
         chain_id: u64,
     ) -> Result<String>;
 
@@ -140,9 +134,6 @@ pub trait WalletUser: Debug {
     /// * `index` - The index of the transaction.
     /// * `address` - The address to send the amount.
     /// * `amount` - The amount to send (Ether)
-    /// * `gas_limit` - The maximum amount of gas that the transaction can consume.
-    /// * `max_fee_per_gas` - The maximum fee the sender is willing to pay per unit of gas.
-    /// * `max_priority_fee_per_gas` - The maximum tip the sender is willing to pay to miners (in EIP-1559).
     /// * `chain_id` - The identifier of the chain to which the transaction belongs (e.g., 1 for Ethereum mainnet).
     ///
     /// # Returns
@@ -158,10 +149,6 @@ pub trait WalletUser: Debug {
         index: &str,
         address: &str,
         amount: CryptoAmount,
-        // todo: extract parameters into interface and allow processing of other types of eip
-        gas_limit: u64,
-        max_fee_per_gas: u128,
-        max_priority_fee_per_gas: u128,
         chain_id: u64,
     ) -> Result<String>;
 
@@ -215,23 +202,16 @@ pub trait WalletUser: Debug {
     /// This function can return an error if it cannot retrieve the wallet transaction.
     async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo>;
 
-    /// Estimage gas cost for eip 1559 transaction
+    /// Estimate gas cost for eip 1559 transaction
     ///
     /// # Arguments
     ///
-    /// * `from` - Ethereum sender checksummed addresses (starts with the "0x" prefix)
-    /// * `to` - Ethereum sender checksummed addresses (starts with the "0x" prefix)
-    /// * `value` - The value (amount) for the transaction (Ether)
+    /// * `transaction` - A transaction with a priority fee ([EIP-1559](https://eips.ethereum.org/EIPS/eip-1559))
     ///
     /// # Returns the estimated gas cost for the underlying transaction to be executed (gas limit, max fee per gas and max priority fee per gas)
     ///
-    /// This function can return an error if it cannot parse input addresses or retrieve information from the node.
-    async fn estimate_gas_cost_eip1559(
-        &self,
-        from: String,
-        to: String,
-        value: CryptoAmount,
-    ) -> Result<GasCostEstimation>;
+    /// This function can return an error if it cannot parse input transaction or retrieve information from the node.
+    async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation>;
 }
 
 /// [`WalletUser`] implementation for IOTA and SMR using the stardust protocol
@@ -380,21 +360,12 @@ impl WalletUser for WalletImplStardust {
         _amount: CryptoAmount,
         _tag: Option<TaggedDataPayload>,
         _message: Option<String>,
-        // todo: extract parameters into interface and allow processing of other types of eip
-        _gas_limit: u64,
-        _max_fee_per_gas: u128,
-        _max_priority_fee_per_gas: u128,
         _chain_id: u64,
     ) -> Result<String> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn estimate_gas_cost_eip1559(
-        &self,
-        _from: String,
-        _to: String,
-        _value: CryptoAmount,
-    ) -> Result<GasCostEstimation> {
+    async fn estimate_gas_cost_eip1559(&self, _transaction: TxEip1559) -> Result<GasCostEstimation> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -413,9 +384,6 @@ impl WalletUser for WalletImplStardust {
         _index: &str,
         _address: &str,
         _amount: CryptoAmount,
-        _gas_limit: u64,
-        _max_fee_per_gas: u128,
-        _max_priority_fee_per_gas: u128,
         _chain_id: u64,
     ) -> Result<String> {
         Err(WalletError::WalletFeatureNotImplemented)

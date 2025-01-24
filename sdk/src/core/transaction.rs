@@ -193,21 +193,8 @@ impl Sdk {
             }
             api_types::api::generic::ApiCryptoCurrency::Eth => {
                 let chain_id = get_node_url_chain_id(config, currency).map_err(|_| crate::Error::ChainIdNotDefined)?;
-                let from = wallet.get_address().await?;
-                let gas_cost = wallet
-                    .estimate_gas_cost_eip1559(from, tx_details.system_address.clone(), amount)
-                    .await?;
-
                 let tx_id = wallet
-                    .send_transaction_eth(
-                        purchase_id,
-                        &tx_details.system_address,
-                        amount,
-                        gas_cost.gas_limit,
-                        gas_cost.max_fee_per_gas,
-                        gas_cost.max_priority_fee_per_gas,
-                        chain_id,
-                    )
+                    .send_transaction_eth(purchase_id, &tx_details.system_address, amount, chain_id)
                     .await?;
 
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -285,22 +272,8 @@ impl Sdk {
                 .to_string(),
             Currency::Eth => {
                 let chain_id = get_node_url_chain_id(config, currency).map_err(|_| crate::Error::ChainIdNotDefined)?;
-                let from = wallet.get_address().await?;
-                let gas_cost = wallet
-                    .estimate_gas_cost_eip1559(from, address.to_owned(), amount)
-                    .await?;
-
                 let tx_id = wallet
-                    .send_amount_eth(
-                        address,
-                        amount,
-                        tagged_data_payload,
-                        message,
-                        gas_cost.gas_limit,
-                        gas_cost.max_fee_per_gas,
-                        gas_cost.max_priority_fee_per_gas,
-                        chain_id,
-                    )
+                    .send_amount_eth(address, amount, tagged_data_payload, message, chain_id)
                     .await?;
 
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -373,7 +346,7 @@ mod tests {
         example_get_user, example_tx_details, example_tx_metadata, example_wallet_borrow, set_config, AUTH_PROVIDER,
         HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
     };
-    use crate::types::transactions::{GasCostEstimation, WalletTxInfo};
+    use crate::types::transactions::WalletTxInfo;
     use crate::types::users::KycType;
     use crate::{
         core::Sdk,
@@ -911,25 +884,9 @@ mod tests {
         mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
             let mut mock_wallet = MockWalletUser::new();
             mock_wallet
-                .expect_get_address()
-                .times(1)
-                .returning(move || Ok(String::from("0x34404")));
-
-            mock_wallet
-                .expect_estimate_gas_cost_eip1559()
-                .times(1)
-                .returning(move |_, _, _| {
-                    Ok(GasCostEstimation {
-                        max_fee_per_gas: 1,
-                        max_priority_fee_per_gas: 1,
-                        gas_limit: 1,
-                    })
-                });
-
-            mock_wallet
                 .expect_send_amount_eth()
                 .times(1)
-                .returning(move |_, _, _, _, _, _, _, _| Ok(String::from("tx_id")));
+                .returning(move |_, _, _, _, _| Ok(String::from("tx_id")));
 
             let value = wallet_transaction.clone();
             mock_wallet
