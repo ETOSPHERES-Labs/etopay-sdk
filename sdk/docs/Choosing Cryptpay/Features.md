@@ -1,8 +1,8 @@
 # Features
 
-Cryptpay allows end-users to perform in-app payments to other end-users for services and products offered through the application.
+Cawaena allows end-users to perform in-app payments to other end-users for services and products offered through the application.
 
-Cryptpay solves the problem of P2P payments between end-users, by not becoming a gate-keeper, but a path-finder between consumers for digital data, services and real-world commodities
+Cawaena solves the problem of P2P payments between end-users, by not becoming a gate-keeper, but a path-finder between consumers for digital data, services and real-world commodities
 
 - **Complete Wallet Management with MFA (Multi-factor approvals)**
 
@@ -42,7 +42,7 @@ Cryptpay solves the problem of P2P payments between end-users, by not becoming a
 
 ## Use-cases
 
-With CryptPay, you can do a lot more than the listed use-cases below. The use-cases just simply show the tip of the iceberg, how you can benefit from integrating cryptpay in your applications:
+With Cawaena, you can do a lot more than the listed use-cases below. The use-cases just simply show the tip of the iceberg, how you can benefit from integrating Cawaena in your applications:
 
 1. Data-Marketplace for buying and selling sensor data, digital content or even NFTs.
 2. A simple cart checkout with multiple payment and currency options

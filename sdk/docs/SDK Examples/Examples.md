@@ -2,7 +2,7 @@
 
 The Cawaena SDK is built in `rust`. It is primarily an implementation of the various interfaces for managing users, wallets, on-boarding of users through KYC (Know Your Customer) processes, payment methods and listing usage information. The flows discussed in this document show examples using the rust language. For examples related to the specific language, refer to the corresponding pages.
 
-The CryptpaySdk can be used only if the following pre-requisites have been fulfilled and the information resulting from these conditions is available:
+The Cawaena SDK can be used only if the following pre-requisites have been fulfilled and the information resulting from these conditions is available:
 
 - Oauth2.0 Identity and Access Management Provider is configured correctly,
 - The backend base URL of the Cawaena system is known,

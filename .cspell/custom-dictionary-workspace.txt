@@ -23,11 +23,8 @@ clippy
 containerapp
 codegen
 contractaccount
-cryptpay
-Cryptpay
-CryptPay
-CRYPTPAY
-cryptpaysdk
+Cawaena
+Cawaenasdk
 cstring
 dapr
 DAPRD
