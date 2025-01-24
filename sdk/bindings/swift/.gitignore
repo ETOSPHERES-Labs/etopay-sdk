@@ -1,0 +1,6 @@
+# ignore swift auto-generated code
+include/generated
+CryptpaySdk/.build
+CryptpaySdk/CryptpaySdkBin.xcframework
+CryptpaySdk/Sources/CryptpaySdk/*
+!CryptpaySdk/Sources/CryptpaySdk/vectorizable.swift

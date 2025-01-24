@@ -1,0 +1,6 @@
+{
+	"$schema": "https://typedoc.org/schema.json",
+	"plugin": ["typedoc-material-theme"],
+	"themeColor": "#cb9820",
+	"readme": "none",
+}

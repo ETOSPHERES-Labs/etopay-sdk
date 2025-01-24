@@ -1,0 +1,7 @@
+pkg/
+out/
+wasm-pack.log
+node_modules/
+.env
+bun.lockdb
+local-storage/

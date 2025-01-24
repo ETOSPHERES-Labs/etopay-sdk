@@ -1,0 +1,31 @@
+{
+    "editor.formatOnSave": true,
+    "makefile.extensionOutputFolder": "./.vscode",
+    "debug.internalConsoleOptions": "neverOpen",
+    "yaml.schemas": {
+        "https://squidfunk.github.io/mkdocs-material/schema.json": "mkdocs.yml"
+    },
+    "rust-analyzer.cargo.loadOutDirsFromCheck": true,
+    "files.associations": {
+        "sdk.h": "c",
+        "stdint.h": "c",
+        "typedefs.h": "c"
+    },
+    "java.configuration.updateBuildConfiguration": "automatic",
+    "cSpell.customDictionaries": {
+        "custom-dictionary-workspace": {
+            "name": "custom-dictionary-workspace",
+            "path": "${workspaceFolder:cryptpay.rs}/.cspell/custom-dictionary-workspace.txt",
+            "addWords": true,
+            "scope": "workspace"
+        }
+    },
+    "yaml.customTags": [
+        "!ENV scalar",
+        "!ENV sequence",
+        "!relative scalar",
+        "tag:yaml.org,2002:python/name:material.extensions.emoji.to_svg",
+        "tag:yaml.org,2002:python/name:material.extensions.emoji.twemoji",
+        "tag:yaml.org,2002:python/name:pymdownx.superfences.fence_code_format"
+    ]
+}

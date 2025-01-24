@@ -1,0 +1,59 @@
+[package]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+name = "cryptpay-sdk-wasm"
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[lints]
+workspace = true
+
+[lib]
+crate-type = ["cdylib", "rlib"]
+
+[features]
+default = [
+    "console_error_panic_hook",
+    "postident",
+    "viviswap-kyc",
+    "viviswap-swap",
+    "billing",
+]
+postident = ["sdk/postident"]
+viviswap-kyc = ["sdk/viviswap-kyc"]
+viviswap-swap = ["sdk/viviswap-swap"]
+billing = ["sdk/billing"]
+
+[dependencies]
+# The `console_error_panic_hook` crate provides better debugging of panics by
+# logging them with `console.error`. This is great for development, but requires
+# all the `std::fmt` and `std::panicking` infrastructure, so isn't great for
+# code size when deploying.
+console_error_panic_hook = { version = "0.1.7", optional = true }
+console_log = { version = "1.0.0", default-features = false }
+log = { workspace = true }
+# by depending on ring with the wasm32 feature, we get wasm32 support for the getrandom crate
+# Note: the version need to be synced with that of rusty_secrets
+# See: https://docs.rs/ring/latest/ring/index.html
+# See: https://docs.rs/getrandom/latest/getrandom/#webassembly-support
+ring = { version = "0.17", default-features = false, features = [
+    "wasm32_unknown_unknown_js",
+] }
+# depend on the sdk but without default features
+sdk = { path = "../../", default-features = false }
+tokio = { workspace = true, features = ["sync"] }
+wasm-bindgen = { version = "0.2", default-features = false }
+wasm-bindgen-futures = { version = "0.4", default-features = false }
+serde_json = { workspace = true }
+
+[dev-dependencies]
+wasm-bindgen-test = "0.3"
+
+# cargo-machete thinks that `wasm-bindgen-futures` and `ring` are unused, but they are actually needed after
+# the wasm_bindgen macro has been expanded.
+[package.metadata.cargo-machete]
+ignored = ["wasm-bindgen-futures", "ring"]

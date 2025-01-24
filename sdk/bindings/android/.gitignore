@@ -1,0 +1,6 @@
+target
+/jar
+jniLibs.zip
+lib/*.class
+lib/*.h
+javadoc/

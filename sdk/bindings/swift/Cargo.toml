@@ -1,0 +1,43 @@
+[package]
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+name = "cryptpay-sdk-swift"
+description = "Swift bindings for Cryptpay SDK"
+build = "build.rs"
+
+[lints.rust]
+deprecated = "allow"
+
+[lints.clippy]
+unnecessary_cast = "allow"
+unwrap_used = "deny"
+expect_used = "deny"
+
+[features]
+default = ["postident", "viviswap-kyc", "viviswap-swap", "billing"]
+postident = ["sdk/postident"]
+viviswap-kyc = ["sdk/viviswap-kyc"]
+viviswap-swap = ["sdk/viviswap-swap"]
+billing = ["sdk/billing"]
+
+[dependencies]
+sdk = { package = "sdk", path = "../../" }
+serde_json = { workspace = true }
+swift-bridge = { version = "0.1", features = ["async"] }
+tokio = { workspace = true, features = ["sync"] }
+
+[lib]
+name = "walletsdk_cabi"
+crate-type = ["staticlib"]
+
+[build-dependencies]
+swift-bridge-build = "0.1"
+
+# cargo-machete thinks that `swift-bridge-build` dependency is unused, but it is actually needed
+[package.metadata.cargo-machete]
+ignored = ["swift-bridge-build"]

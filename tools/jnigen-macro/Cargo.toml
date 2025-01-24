@@ -1,0 +1,20 @@
+[package]
+name = "jnigen-macro"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+homepage.workspace = true
+repository.workspace = true
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+description = "This is the proc macro entrypoint for the jnigen tool"
+
+[lib]
+proc-macro = true
+
+[dependencies]
+jnigen-common = { path = "../jnigen-common" }
+proc-macro2 = { workspace = true }
+quote = { workspace = true }
+syn = { workspace = true }

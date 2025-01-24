@@ -1,0 +1,58 @@
+// cSpell:disable
+{
+	"name": "DaprDevEnv",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "devcontainer",
+	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
+	"features": {
+		"ghcr.io/dapr/cli/dapr-cli:0": {},
+		// Enable Docker (via Docker-in-Docker)
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+	},
+	// Use this environment variable if you need to bind mount your local source code into a new container.
+	"mounts": [
+		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind",
+		"source=${localEnv:HOME}/.gitconfig,target=/home/vscode/.gitconfig,type=bind"
+	],
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "${localWorkspaceFolder}"
+	},
+	// Configure tool-specific properties.
+	"customizations": {
+		// Configure properties specific to VS Code.
+		"vscode": {
+			"settings": {
+				"lldb.executable": "/usr/bin/lldb",
+				// VS Code don't watch files under ./target
+				"files.watcherExclude": {
+					"**/target/**": true
+				},
+				"rust-analyzer.checkOnSave.command": "clippy"
+			},
+			// Add the IDs of extensions you want installed when the container is created.
+			"extensions": [
+				"rust-lang.rust-analyzer",
+				"vadimcn.vscode-lldb",
+				"fill-labs.dependi",
+				"bierner.markdown-mermaid",
+				"mutantdino.resourcemonitor",
+				"ms-vscode.vscode-typescript-next",
+				"ms-vscode.makefile-tools",
+				"ms-dotnettools.csharp",
+				"humao.rest-client",
+				"usernamehw.errorlens",
+				"redhat.vscode-yaml",
+				"gruntfuggly.todo-tree",
+				"ms-vscode.cpptools-extension-pack",
+				"vscjava.vscode-java-pack",
+				"vscjava.vscode-gradle",
+				"github.copilot",
+				"streetsidesoftware.code-spell-checker",
+				"JScearcy.rust-doc-viewer",
+				"sswg.swift-lang"
+			]
+		}
+	},
+	// Set `remoteUser` to `root` to connect as root instead. More info: https://aka.ms/vscode-remote/containers/non-root.
+	"remoteUser": "vscode"
+}
