@@ -1,0 +1,57 @@
+name: Publish Wiki to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - release/*
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+(-rc.+)?
+  pull_request:
+    paths:
+      - "sdk/docs/**/*"
+      - "sdk/examples/**/*"
+      - "sdk/bindings/**/*"
+
+jobs:
+  public-wiki:
+    runs-on: dell
+    container:
+      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+    env:
+      GIT_DEPTH: 1000
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+
+      - name: Setup Python environment
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install mkdocs-material mike mkdocs-git-revision-date-localized-plugin \
+                      mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc
+
+      - name: Install project dependencies with pnpm
+        run: pnpm install
+        working-directory: sdk
+
+      - name: Build wasm-bindings
+        run: wasm-pack build --dev --scope eto
+        working-directory: sdk/bindings/wasm
+
+      - name: Build the documentation
+        run: mkdocs build
+        working-directory: sdk
+
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: sdk/site
