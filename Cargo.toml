@@ -48,7 +48,6 @@ ignored = ["serde", "openssl"]
 # Specify versions for shared dependencies
 [workspace.dependencies]
 api_types = { package = "api_types", path = "./api_types" }
-aquamarine = { version = "0.6", default-features = false }
 base64 = { version = "0.22", default-features = false }
 chrono = { version = "0.4.33", default-features = false }
 dotenvy = { version = "0.15", default-features = false }

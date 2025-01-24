@@ -44,7 +44,6 @@ aes-gcm = { version = "0.10.3", default-features = false, features = [
     "getrandom",
 ] }
 api_types = { workspace = true }
-aquamarine = { workspace = true } # required for mermaid diagrams
 async-trait = { version = "0.1.68", default-features = false }
 base64 = { workspace = true }
 chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
