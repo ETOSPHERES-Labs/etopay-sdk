@@ -72,15 +72,6 @@ The `jniLibs` folder should be placed **as-is** under the `src/main` folder of t
 !!! warning
     Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the CryptpaySdk class `java.lang.UnsatisfiedLinkError: dlopen failed: library "libwalletsdk.so" not found`.
 
-The package can then be used within your application like so:
-
-```java
-import com.etogruppe.CryptpaySdk;
-
-CryptpaySdk sdk = new CryptpaySdk();
-sdk.setCurrency("Smr");
-```
-
 ## Future releases of SDK
 
 Future releases of the SDK will continue to be published to the private Maven repository. You will only need to update the dependency version in your pom.xml file to use the latest release and replace the jniLibs correspondingly.

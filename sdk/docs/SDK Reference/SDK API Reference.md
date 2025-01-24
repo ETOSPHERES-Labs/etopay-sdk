@@ -27,146 +27,231 @@
 
 The API reference for the JS/TS bindings are available [here](../jstsdocs/classes/CryptpaySdk.html). Please consult the tables below for the dependencies between each function.
 
-## Java
-
-The Javadoc API reference for the Java bindings is available [here](../../javadoc/). Please consult the tables below for the dependencies between each function.
-
-## Rust
-
-The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). Please consult the tables below for the dependencies between each function.
-
 ## SDK Initialization and Configuration
 
 ### Instantiating the SDK
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Constructor | | Returns an `Error` if there is an issue in loading the dynamically or statically linked binary shared library, otherwise the handle to the SDK | | Basic | Handle |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Constructor |  | Returns an `Error` if an error occurs, otherwise the handle to the SDK | Returns an `Error` if there is an issue in loading the dynamically or statically linked binary shared library | | Basic | Handle|
 
 === "Rust"
-    [constructor](../rust-docs/doc/sdk/core/struct.Sdk.html#method.new)
 
-=== "Java"
-    [constructor](../../javadoc/com/etogruppe/CryptpaySdk.html#<init>())
-
-=== "Typescript"
-    [constructor](../jstsdocs/classes/CryptpaySdk.html#constructor)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    import CryptpaySdk
-    let sdk = CryptpaySdk()
+    ```rust
+    use sdk::Sdk;
+    let mut sdk = Sdk::default();
     ```
 
-### Set configuration
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Set the SDK configuration parameters. | `config` - The JSON formatted string containing the configuration parameters. See [SDK Configuration](../SDK%20Configuration/Configuration.md) for more information of the available options. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
-
-=== "Rust"
-    [set_config](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_config)
-
 === "Java"
-    [setConfig](../../javadoc/com/etogruppe/CryptpaySdk.html#setConfig(java.lang.String))
 
-=== "Typescript"
-    [setConfig](../jstsdocs/classes/CryptpaySdk.html#setConfig)
-
+    ```java
+    import com.etogruppe.CryptpaySdk;
+    sdk = new CryptpaySdk();
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func setConfig(config: String) throws
+    import cryptpaysdk
+    let sdk = Sdk()
     ```
 
-### Get supported node urls
+### Set path prefix
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get the supported currencies and their corresponding node urls. | | Returns a serialized string of a hashmap with currencies as key (String) and node urls as value (vector of strings). | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration), [Refresh access token](./SDK%20API%20Reference.md#refreshing-access-token), [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Basic | Handle |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Sets the path prefix | `path_prefix` - The path to the storage where SDK has read/write file I/O access | | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle|
 
 === "Rust"
-    [get_node_urls_backend](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_node_urls_backend)
+
+    ```rust
+    fn set_path_prefix(&mut self, path_prefix: &str)
+    ```
 
 === "Java"
-    [getNodeUrls](../../javadoc/com/etogruppe/CryptpaySdk.html#getNodeUrls())
 
-=== "Typescript"
-    [get_node_urls](../jstsdocs/classes/CryptpaySdk.html#get_node_urls)
-
+    ```java
+    public void setStoragePath(String path_prefix) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func getNodeUrls() throws -> String
+    public func setPathPrefix(path_prefix: String)
+    ```
+
+### Set authentication provider
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Sets the auth provider | `auth_provider` - The string identifying the auth provider | | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle|
+
+=== "Rust"
+
+    ```rust
+    fn set_auth_provider(&mut self, auth_provider: &str)
+    ```
+=== "Java"
+
+    ```java
+    public void authProvider(String authProvider) throws Exception
+    ```
+=== "Swift"
+
+    ```swift
+    public func setAuthProvider(auth_provider: String)
+    ```
+
+### Set backend URL
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Sets the backend URL | `backend_url` - The string containing the backend URL | | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle|
+
+=== "Rust"
+
+    ```rust
+    fn set_backend_url(&mut self, backend_url: &str)
+    ```
+=== "Java"
+
+    ```java
+    public void backendUrl(String backendUrl) throws Exception 
+    ```
+=== "Swift"
+
+    ```swift
+    public func setBackendUrl(backend_url: String)
+    ```
+
+### Set log level
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Sets the log level | `log_level` - The log level as string. Allowed values are `info`, `error`, `warn` and `debug`  | | Error, if the matching log level string cannot be parsed | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle|
+
+=== "Rust"
+
+    ```rust
+    fn set_log_level(&mut self, log_level: &str)
+    ```
+=== "Java"
+
+    ```java
+    public void logLevel(String logLevel) throws Exception 
+    ```
+=== "Swift"
+
+    ```swift
+    public func setLogLevel(log_level: String)
+    ```
+
+### Set environment
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Sets the environment| `env` - The environment as string. Allowed values are `qa`, `development`, `staging` and `production`  | | Error, if the matching environment string cannot be parsed | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle|
+
+=== "Rust"
+
+    ```rust
+    fn set_env(&mut self, env: Environment)
+    ```
+=== "Java"
+
+    ```java
+    public void logLevel(String logLevel) throws Exception 
+    ```
+=== "Swift"
+
+    ```swift
+    public func setSdkEnv(sdk_env: String) throws
     ```
 
 ### Set currency
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Sets the currency | `currency` - The currency as string. Allowed values are `smr`, `iota` and `eth` | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Sets the currency| `currency` - The currency as string. Allowed values are `smr`and `iota` | | Error, if the matching currency string cannot be parsed | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle|
 
 === "Rust"
-    [set_currency](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_currency)
 
+    ```rust
+    fn set_currency(&mut self, currency: Currency)
+    ```
 === "Java"
-    [setCurrency](../../javadoc/com/etogruppe/CryptpaySdk.html#setCurrency(java.lang.String))
 
-=== "Typescript"
-    [setCurrency](../jstsdocs/classes/CryptpaySdk.html#setCurrency)
-
+    ```java
+    public void setCurrency(String currency) throws Exception 
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func setCurrency(currency: Currency) throws 
+    public func setCurrency(currency: String) throws 
     ```
 
-### Get build information 
+### Validate config
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get the SDK build information | | Returns a multi-line String containing: `Branch name` (e.g. main), `Commit hash` (e.g. 92cedead), `Build time` (e.g. 2024-10-29 12:10:09 +00:00), `Rust version` (e.g. 1.80.1 3f5fd8dd4 2024-08-06), `Toolchain channel` (e.g. stable-x86_64-unknown-linux-gnu) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Validates the SDK configuration |  | | Error, if the configuration is invalid | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic (optional) | Handle|
 
 === "Rust"
-    [get_build_info](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_build_info)
 
+    ```rust
+    fn validate_config(&self) -> Result<(), crate::error::Error>
+    ```
 === "Java"
-    [getBuildInfo](../../javadoc/com/etogruppe/CryptpaySdk.html#getBuildInfo())
 
-=== "Typescript"
-    [getBuildInfo](../jstsdocs/classes/CryptpaySdk.html#getBuildInfo)
-
+    ```java
+    public void checkConfig() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func getBuildInfo() throws -> String
+    public func validateConfig() throws
+    ```
+
+### Initialize logger
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Initializes the logger |  | | Error, if the logger cannot be initialized | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Path Prefix](./SDK%20API%20Reference.md#set-path-prefix), [Log Level](./SDK%20API%20Reference.md#set-log-level) | Basic | Handle|
+
+=== "Rust"
+
+    ```rust
+    fn init_logger(&self) -> Result<(), crate::error::Error> 
+    ```
+=== "Java"
+
+    ```java
+    public void initLogger() throws Exception
+    ```
+=== "Swift"
+
+    ```swift
+    public func initLogger() throws
     ```
 
 ## User functions
 
 ### Creating a new user
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a new user | `username` - The username of the new user. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration) | Basic | User |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create a new user | `username` - The username of the new user. | Returns an `Error` if an error occurs, otherwise void | Returns an `Error` if there is an issue validating the configuration, initializing the repository, or creating the user. | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Path Prefix](./SDK%20API%20Reference.md#set-path-prefix) | Basic | User|
 
 === "Rust"
-    [create_new_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_new_user)
+
+    ```rust
+    async fn create_new_user(&mut self, username: &str) -> Result<(), crate::error::Error>;
+    ```
 
 === "Java"
-    [createNewUser](../../javadoc/com/etogruppe/CryptpaySdk.html#createNewUser(java.lang.String))
 
-=== "Typescript"
-    [createNewUser](../jstsdocs/classes/CryptpaySdk.html#createNewUser)
-
+    ```java
+    public void createNewUser(String username) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func createNewUser(username: String) throws
@@ -174,21 +259,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Initializing a user
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Initialize a user | `username` - The username of the user to initialize. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration), [Refresh access token](./SDK%20API%20Reference.md#refreshing-access-token), [Create new user](./SDK%20API%20Reference.md#creating-a-new-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Initialize a user | `username` - The username of the user to initialize. | Returns, if the user is initialized successfully, or an `Error` if an error occurs. | Returns an `Error` if there is an issue validating the configuration, initializing the repository, or checking the KYC status. | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Path Prefix](./SDK%20API%20Reference.md#set-path-prefix), [Refresh access token](./SDK%20API%20Reference.md#refreshing-access-token), [Create new user](./SDK%20API%20Reference.md#creating-a-new-user) | Usage | Application|
 
 === "Rust"
-    [init_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.init_user)
+
+    ```rust
+    async fn init_user(&mut self, username: &str) -> Result<(), crate::error::Error>;
+    ```
 
 === "Java"
-    [initializeUser](../../javadoc/com/etogruppe/CryptpaySdk.html#initializeUser(java.lang.String))
 
-=== "Typescript"
-    [initializeUser](../jstsdocs/classes/CryptpaySdk.html#initializeUser)
-
+    ```java
+    public void initializeUser(String username) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func initUser(username: String) throws 
@@ -196,21 +282,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Refreshing access token
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Refresh access token | `access_token` - The new access token to be set. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration)| Basic | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Refresh access token | `access_token` - The new access token to be set. |Returns, if the access token is refreshed successfully, or an `Error` if an error occurs. | Returns an `Error` if there is an issue validating the configuration. |[Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Path Prefix](./SDK%20API%20Reference.md#set-path-prefix)| Basic | Application |
 
 === "Rust"
-    [refresh_access_token](../rust-docs/doc/sdk/core/struct.Sdk.html#method.refresh_access_token)
+
+    ```rust
+    async fn refresh_access_token(&mut self, access_token: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [refreshAccessToken](../../javadoc/com/etogruppe/CryptpaySdk.html#refreshAccessToken(java.lang.String))
 
-=== "Typescript"
-    [refreshAccessToken](../jstsdocs/classes/CryptpaySdk.html#refreshAccessToken)
-
+    ```java
+    public void refreshAccessToken(String access_token) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func refreshAccessToken(access_token: String) throws 
@@ -218,21 +305,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Checking KYC status
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Check if the user's KYC status is verified | `username` - The username of the user to check KYC status for. | Returns `true` if the KYC status is verified, or `false` if it is not verified. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Check if KYC status is verified |`username` - The username of the user to check KYC status for. | Returns `true` if the KYC status is verified, or `false` if it is not verified. | Returns an `Error` if there is an issue validating the configuration, initializing the repository, or checking the KYC status. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [is_kyc_status_verified](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_kyc_status_verified)
+
+    ```rust
+    async fn is_kyc_status_verified(&mut self, username: &str) -> Result<bool, crate::error::Error>
+    ```
 
 === "Java"
-    [isKycVerified](../../javadoc/com/etogruppe/CryptpaySdk.html#isKycVerified(java.lang.String))
 
-=== "Typescript"
-    [isKycVerified](../jstsdocs/classes/CryptpaySdk.html#isKycVerified)
-
+    ```java
+    public boolean isKycVerified(String username) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func isKycVerified(username: String) throws
@@ -241,21 +329,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Delete user
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Delete the currently active user and their wallet | `pin` - The PIN of the user to be deleted. Required only if the user has created a wallet. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Delete the currently active user and their wallet | `pin` - The PIN of the user to be deleted | Returns, if the user is deleted successfully, or an `Error` if an error occurs. | Returns an `Error` if there is an issue verifying the PIN, initializing the repository, deleting the user, or deleting the wallet. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [delete_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.delete_user)
+
+    ```rust
+    async fn delete_user(&mut self, pin: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [deleteUser](../../javadoc/com/etogruppe/CryptpaySdk.html#deleteUser(java.lang.String))
 
-=== "Typescript"
-    [deleteUser](../jstsdocs/classes/CryptpaySdk.html#deleteUser)
-
+    ```java
+    public void deleteUser(String pin) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func deleteUser(pin: String) throws
@@ -265,112 +354,153 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Create new wallet
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Creates a new wallet for the user with the specified PIN and password | `pin` - The PIN for the wallet | Returns the mnemonic phrase of the newly created wallet if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Creates a new wallet for the user with the specified PIN and password | `pin` - The PIN for the wallet, `password` - The password for the wallet | Returns the mnemonic phrase of the newly created wallet if successful, otherwise returns an `Error`. | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `WalletInitError` - If there is an error initializing the wallet | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [create_wallet_from_new_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_new_mnemonic)
+
+    ```rust
+    async fn create_new_wallet(&mut self, pin: &str, password: &str) -> Result<String, crate::error::Error>
+    ```
 
 === "Java"
-    [createNewWallet](../../javadoc/com/etogruppe/CryptpaySdk.html#createNewWallet(java.lang.String))
 
-=== "Typescript"
-    [createNewWallet](../jstsdocs/classes/CryptpaySdk.html#createNewWallet)
-
+    ```java
+    public String createNewWallet(String pin, String password) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func createNewWallet(pin: String) throws -> String
+    public func createNewWallet(pin: String, password: String) throws -> String
     ```
 
 ### Create new wallet from mnemonic
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a wallet from existing mnemonic | `pin` - The PIN for the wallet, `mnemonic` - The mnemonic to migrate from | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Migrate a wallet from existing mnemonic | `pin` - The PIN for the wallet, `password` - The password for the wallet, `mnemonic` - The mnemonic to migrate from | Returns, if the wallet is successfully created, otherwise returns an `Error`. | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `WalletInitError` - If there is an error initializing the wallet | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [create_wallet_from_existing_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_existing_mnemonic)
+
+    ```rust
+    async fn create_wallet_from_mnemonic(
+        &mut self,
+        pin: &str,
+        password: &str,
+        mnemonic: &str,
+    ) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [createWalletFromMnemonic](../../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [createWalletFromMnemonic](../jstsdocs/classes/CryptpaySdk.html#createWalletFromMnemonic)
-
+    ```java
+    public void createWalletFromMnemonic(String pin, String password, String mnemonic) throws Exception 
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func createWalletFromMnemonic(pin: String, mnemonic: String) throws
+    public func createWalletFromMnemonic(pin: String, password: String, mnemonic: String) throws
     ```
 
 ### Create new wallet from backup
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a wallet from existing backup | `pin` - The PIN for the wallet, `backup` - The bytes representing the backup file contents, `backup_password` - The password used when creating the backup | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Migrate a wallet from existing backup | `pin` - The PIN for the wallet, `password` - The password for the backup, `backup_path` - The path to the backup file | Returns, if the wallet is successfully created, otherwise returns an `Error`. | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `WalletInitError` - If there is an error initializing the wallet | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [create_wallet_from_backup](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_backup)
+
+    ```rust
+    async fn create_wallet_from_backup(
+        &mut self,
+        pin: &str,
+        password: &str,
+        backup_path: &str,
+    ) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [createWalletFromBackup](../../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
 
-=== "Typescript"
-    [createWalletFromBackup](../jstsdocs/classes/CryptpaySdk.html#createWalletFromBackup)
-
+    ```java
+    public void createWalletFromBackup(String pin, String password, String backup_path) throws Exception 
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func restoreWalletFromBackup(pin: String, backup: RustVec<UInt8>, backup_password: String) throws
+    public func createWalletFromBackup(pin: String, password: String, backup_path: String) throws
     ```
 
 ### Create a wallet backup
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a wallet backup | `backup_password` - The password for the backup | Returns the bytes of the created backup file if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create a wallet backup | `password` - The password for the backup | Returns the path to the created backup file as a `String` if successful, otherwise returns an `Error`. | `WalletInitError` - If there is an error initializing the wallet | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [create_wallet_backup](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_backup)
+
+    ```rust
+    async fn create_wallet_backup(
+        &mut self,
+        password: &str,
+    ) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [createWalletBackup](../../javadoc/com/etogruppe/CryptpaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [createWalletBackup](../jstsdocs/classes/CryptpaySdk.html#createWalletBackup)
-
+    ```java
+    public String createWalletBackup(String backup_password) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func createWalletBackup(backup_password: String) throws -> RustVec<UInt8>
+    public func createWalletBackup(password: String) throws -> String
+    ```
+
+### Initialize a wallet
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Initialize an existing wallet | `pin` - The PIN for the wallet. | Returns, if the wallet is successfully initialized, otherwise returns an `Error`. | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `MissingPassword` - If the encrypted password is missing, `WrongPinOrPassword` - If the PIN or password is incorrect | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+
+=== "Rust"
+
+    ```rust
+    async fn init_wallet(&mut self, pin: &str) -> Result<(), crate::error::Error>
+    ```
+
+=== "Java"
+
+    ```java
+    public void initializeWallet(String pin) throws Exception
+    ```
+=== "Swift"
+
+    ```swift    
+    public func initWallet(pin: String) throws
     ```
 
 ### Verify mnemonic
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Verifies the mnemonic by checking if it matches the stored mnemonic | `pin` - The PIN for the wallet, `mnemonic` - The mnemonic to verify | Returns `true` or `false` whether the mnemonic is successfully verified. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Verifies the mnemonic by deleting the current wallet and creating a new wallet from the provided mnemonic | `pin` - The PIN for the wallet, `password` - The password for the wallet, `mnemonic` - The mnemonic to verify | Returns, if the mnemonic is successfully verified, otherwise returns an `Error` | `WalletInitError` - If there is an error initializing the wallet, `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user,  `Error` - If there is an error deleting the wallet or creating a new wallet from the mnemonic. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [verify_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.verify_mnemonic)
+
+    ```rust
+    async fn verify_mnemonic(&mut self, pin: &str, password: &str, mnemonic: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [verifyMnemonic](../../javadoc/com/etogruppe/CryptpaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [verifyMnemonic](../jstsdocs/classes/CryptpaySdk.html#verifyMnemonic)
-
+    ```java
+    public void verifyMnemonic(String pin, String password, String mnemonic) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func verifyMnemonic(pin: String, mnemonic: String) throws -> Bool
+    public func verifyMnemonic(pin: String, password: String, mnemonic: String) throws
     ```
 
 ### Delete wallet
@@ -379,43 +509,45 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
     Deletes the currently active wallet, potentially resulting in loss of funds if the mnemonic or wallet is not backed up.
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Delete the currently active wallet | `pin` - The PIN for the wallet | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Delete the currently active wallet | | Returns, if the wallet is successfully deleted, otherwise returns an `Error`. | `WalletInitError` - If there is an error initializing the wallet,  `Error` - If there is an error closing or deleting the wallet | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [delete_wallet](../rust-docs/doc/sdk/core/struct.Sdk.html#method.delete_wallet)
+
+    ```rust
+    async fn delete_wallet(&mut self) -> Result<(), crate::error::Error> 
+    ```
 
 === "Java"
-    [deleteWallet](../../javadoc/com/etogruppe/CryptpaySdk.html#deleteWallet(java.lang.String))
 
-=== "Typescript"
-    [deleteWallet](../jstsdocs/classes/CryptpaySdk.html#deleteWallet)
-
+    ```java
+    public void deleteWallet() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func deleteWallet(pin: String) throws
+    public func deleteWallet() throws
     ```
 
 ### Verify pin
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Verifies the pin for the wallet | `pin` - The pin to verify | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Verifies the pin for the wallet | `pin` - The pin to verify | Returns, if the pin is verified successfully, otherwise returns an `Error`. | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `WalletInitError` - If there is an error initializing the wallet, `MissingPassword` - If the password is missing, `WrongPinOrPassword` - If the pin or password is incorrect| [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [verify_pin](../rust-docs/doc/sdk/core/struct.Sdk.html#method.verify_pin)
+
+    ```rust
+    async fn verify_pin(&self, pin: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [pinVerify](../../javadoc/com/etogruppe/CryptpaySdk.html#pinVerify(java.lang.String))
 
-=== "Typescript"
-    [verifyPin](../jstsdocs/classes/CryptpaySdk.html#verifyPin)
-
+    ```java
+    public void pinVerify(String pin) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
     public func verifyPin(pin: String) throws
@@ -423,134 +555,122 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Reset pin
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Resets the pin for the wallet with a new pin by using the existing pin | `pin` - The current pin for the wallet, `new_pin` - The new pin to set for the wallet | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Resets the pin for the wallet using the provided password and new pin | `password` - The current password for the wallet, `new_pin` - The new pin to set for the wallet | Returns, if the pin is reset successfully, otherwise returns an `Error` | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `MissingPassword` - If the password is missing, `WrongPinOrPassword` - If the pin or password is incorrect| [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [change_pin](../rust-docs/doc/sdk/core/struct.Sdk.html#method.change_pin)
+
+    ```rust
+    async fn reset_pin(&mut self, password: &str, new_pin: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [pinReset](../../javadoc/com/etogruppe/CryptpaySdk.html#pinReset(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [resetPin](../jstsdocs/classes/CryptpaySdk.html#resetPin)
-
+    ```java
+    public void pinReset(String password, String pin) throws Exception 
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func resetPin(pin: String, new_pin: String) throws 
+    public func resetPin(password: String, new_pin: String) throws 
     ```
 
-### Set password
+### Change password
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Set the password for the wallet using the provided pin and new password. If the password is already set, this changes it to the new password. Use [`is_password_set`](./SDK%20API%20Reference.md#is-password-set) to check if the password is already set. | `pin` - The new or existing PIN for the wallet, `new_password` - The new password to set for the wallet | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Changes the password for the wallet using the provided pin, current password, and new password | `pin` - The pin to verify, `current_password` - The current password for the wallet, `new_password` - The new password to set for the wallet | Returns, if the password is changed successfully, otherwise returns an `Error` | `RepositoryInitError` - If there is an error initializing the repository, `UserInitError` - If there is an error initializing the user, `WalletInitError` - If there is an error initializing the wallet | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [set_password](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_password)
 
-=== "Java"
-    [setPassword](../../javadoc/com/etogruppe/CryptpaySdk.html#setPassword(java.lang.String,java.lang.String))
-
-=== "Typescript"
-    [setPassword](../jstsdocs/classes/CryptpaySdk.html#setPassword)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func setPassword(pin: String, new_password: String) throws
+    ```rust
+    async fn change_password(
+        &mut self,
+        pin: &str,
+        current_password: &str,
+        new_password: &str,
+    ) -> Result<(), crate::error::Error> 
     ```
 
-### Is password set
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also [`set_password`](./SDK%20API%20Reference.md#set-password) for how to set a new password and change an existing password. | | Returns `true` or `false` whether or not the password is already set. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
-
-=== "Rust"
-    [is_password_set](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_password_set)
-
 === "Java"
-    [isPasswordSet](../../javadoc/com/etogruppe/CryptpaySdk.html#isPasswordSet())
 
-=== "Typescript"
-    [isPasswordSet](../jstsdocs/classes/CryptpaySdk.html#isPasswordSet)
-
+    ```java
+    public void passwordChange(String pin, String current_password, String new_password) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
-    ```swift
-    public func isPasswordSet() throws
+    ```swift    
+    public func changePassword(pin: String, current_password: String, new_password: String) throws 
     ```
 
 ### Generate a new address
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Generates a new receiver address for the wallet based on the currency selected in the config | `pin` - The PIN for the wallet | Returns the generated address as a `String` if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Set currency](./SDK%20API%20Reference.md#set-currency) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Generates a new receiver address for the wallet | | Returns the generated address as a `String` if successful, otherwise returns an `Error`| `UserInitError` - If there is an error initializing the user, `WalletInitError` - If there is an error initializing the wallet | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [generate_new_address](../rust-docs/doc/sdk/core/struct.Sdk.html#method.generate_new_address)
+
+    ```rust
+    async fn generate_new_iota_receiver_address(&self) -> Result<String, crate::error::Error>
+    ```
 
 === "Java"
-    [generateNewAddress](../../javadoc/com/etogruppe/CryptpaySdk.html#generateNewAddress(java.lang.String))
 
-=== "Typescript"
-    [generateNewAddress](../jstsdocs/classes/CryptpaySdk.html#generateNewAddress)
-
+    ```java
+    public String generateNewIotaReceiverAddress() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func generateNewAddress(pin: String) throws -> String
+    public func generateNewIotaReceiverAddress() throws -> String
     ```
 
 ### Get balance
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Fetches the balance of the user from the wallet | `pin` - The PIN for the wallet | Returns the balance as a `f64` if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Fetches the balance of the user from the wallet | | Returns the balance as a `f64` if successful, otherwise returns an `Error`| `WalletInitError` - If there is an error initializing the wallet | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [get_balance](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_balance)
+
+    ```rust
+    async fn get_balance(&self) -> Result<f64, crate::error::Error>
+    ```
 
 === "Java"
-    [getWalletBalance](../../javadoc/com/etogruppe/CryptpaySdk.html#getWalletBalance(java.lang.String))
 
-=== "Typescript"
-    [getWalletBalance](../jstsdocs/classes/CryptpaySdk.html#getWalletBalance)
-
+    ```java
+    public double getBalance() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func getBalance(pin: String) throws -> Float
+    public func getBalance() throws -> Double
     ```
 
 ### Get wallet transactions
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Wallet transaction list | `pin` - The PIN for the wallet, `start` - The starting page number for paginatation, `limit` - The page limit size for each page | Returns the list of transactions made on the wallet as an array of `WalletTxInfo` object or a serialized JSON of the same, if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Wallet transaction list | `page` - The page number for paginatation, `page_size` - The page size for each page | Returns the list of transactions made on the wallet as an array of `WalletTxInfo` object or a serialized JSON of the same, if successful, otherwise returns an `Error`| `WalletInitError` - If there is an error initializing the wallet | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [get_wallet_tx_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_wallet_tx_list)
+
+    ```rust
+    async fn get_wallet_tx_list(&self, page: usize, page_size: usize) -> Result<WalletTxInfoList, crate::error::Error>
+    ```
 
 === "Java"
-    [getWalletTransactionList](../../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransactionList(java.lang.String,long,long))
 
-=== "Typescript"
-    [getWalletTransactionList](../jstsdocs/classes/CryptpaySdk.html#getWalletTransactionList)
-
+    ```java
+    public String getWalletTransactionList(long page, long pageSize) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func getWalletTransactionList(pin: String, start: UInt64, limit: UInt64) throws -> Rustvec<WalletTxInfo>
+    public func getWalletTransactionList(page: UInt64, pageSize: UInt64) throws -> String
     ```
 
 #### WalletTxInfo
@@ -559,22 +679,25 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
     ```Rust
     pub struct WalletTxInfo {
-    /// Transaction creation date
+    /// Tx creation date, if available
     pub date: String,
     /// Contains block id
     pub block_id: Option<String>,
-    /// Transaction id for particular transaction
+    /// transaction id for particular transaction
     pub transaction_id: String,
     /// Describes type of transaction
     pub incoming: bool,
     /// Amount of transfer
     pub amount: f64,
-    /// Name of the network [convert network_id to string based on the value]
+    /// either SMR or IOTA [convert network_id to string based on the value]
     pub network: String,
     /// Status of the transfer
     pub status: String,
-    /// Url of network
+    /// Url of network SMR/IOTA
     pub explorer_url: Option<String>,
+    // change based on the network either shimmer or iota
+    // base explorer url for SMR = https://explorer.shimmer.network/shimmer/block/[block_id]
+    // base explorer url for IOTA = https://explorer.iota.org/mainnet/block/[block_id]
     }
     ```
 
@@ -587,7 +710,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
         "properties": {
             "date": {
                 "type": "string",
-                "description": "Transaction creation date"
+                "description": "Tx creation date, if available"
             },
             "block_id": {
                 "type": ["string", "null"],
@@ -595,7 +718,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
             },
             "transaction_id": {
                 "type": "string",
-                "description": "Transaction id for particular transaction"
+                "description": "transaction id for particular transaction"
             },
             "incoming": {
                 "type": "boolean",
@@ -607,7 +730,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
             },
             "network": {
                 "type": "string",
-                "description": "Name of the network [convert network_id to string based on the value]"
+                "description": "either SMR or IOTA [convert network_id to string based on the value]"
             },
             "status": {
                 "type": "string",
@@ -615,7 +738,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
             },
             "explorer_url": {
                 "type": ["string", "null"],
-                "description": "Url of network"
+                "description": "Url of network SMR/IOTA explorer"
             }
         },
         "required": ["date", "transaction_id", "incoming", "amount", "network", "status"]
@@ -625,89 +748,51 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get wallet transaction
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Single wallet transaction | `pin` - The PIN for the wallet, `tx_id` - The transaction id on the network | Returns the transactions made on the wallet with the given id as `WalletTxInfo` object or a serialized JSON of the same, if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Single wallet transaction | `tx_id` - The transaction id on the network | Returns the transactions made on the wallet with the given id as `WalletTxInfo` object or a serialized JSON of the same, if successful, otherwise returns an `Error`| `WalletInitError` - If there is an error initializing the wallet | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [get_wallet_tx](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_wallet_tx)
+
+    ```rust
+    async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo, crate::error::Error>
+    ```
 
 === "Java"
-    [getWalletTransaction](../../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [getWalletTransaction](../jstsdocs/classes/CryptpaySdk.html#getWalletTransaction)
-
+    ```java
+    public String getWalletTransaction(String transactionId) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
-    public func getWalletTransaction(pin: String, transactionId: String) throws -> WalletTxInfo
-    ```
-
-### Set recovery share 
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Sets the recovery share for the users wallet. | `share` - The recovery share to upload. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
-
-=== "Rust"
-    [set_recovery_share](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_recovery_share)
-
-=== "Java"
-    [setRecoveryShare](../../javadoc/com/etogruppe/CryptpaySdk.html#setRecoveryShare(java.lang.String))
-
-=== "Typescript"
-    [setRecoveryShare](../jstsdocs/classes/CryptpaySdk.html#setRecoveryShare)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func setRecoveryShare(share: String) throws
-    ```
-
-### Get recovery share 
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get the recovery share for the users wallet. | | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
-
-=== "Rust"
-    [get_recovery_share](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_recovery_share)
-
-=== "Java"
-    [getRecoveryShare](../../javadoc/com/etogruppe/CryptpaySdk.html#getRecoveryShare())
-
-=== "Typescript"
-    [getRecoveryShare](../jstsdocs/classes/CryptpaySdk.html#getRecoveryShare)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func getRecoveryShare() throws -> String
+    public func getWalletTransaction(transactionId: String) throws -> String
     ```
 
 ## Viviswap functions
 
 ### Start KYC Verification for viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a new viviswap user and initialize KYC verification | `mail` - The email address of the user, `terms_accepted` - A boolean indicating whether the terms have been accepted | Returns `NewViviswapUser` object if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create new viviswap user and initialize kyc verification | `mail` - The email address of the user, `terms_accepted` - A boolean indicating whether the terms have been accepted | Returns`NewViviswapUser` if successful, or an `Error`, if an error occurs| Repository initialization error, User already exists, Viviswap API error, User status update error  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [start_kyc_verification_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.start_kyc_verification_for_viviswap)
+
+    ```rust
+    async fn start_kyc_verification_for_viviswap(
+        &self,
+        mail: &str,
+        terms_accepted: bool,
+    ) -> Result<NewViviswapUser, crate::error::Error>
+    ```
 
 === "Java"
-    [startViviswapKyc](../../javadoc/com/etogruppe/CryptpaySdk.html#startViviswapKyc(java.lang.String,boolean))
 
-=== "Typescript"
-    [startKycVerificationForViviswap](../jstsdocs/classes/CryptpaySdk.html#startKycVerificationForViviswap)
-
+    ```java
+    public String startViviswapKyc(String mail, boolean terms_accepted) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
     public func startKycVerificationForViviswap(mail: String, termsAccepted: Bool) throws -> String
@@ -741,21 +826,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get KYC details for viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get current kyc status of viviswap | | Returns `ViviswapKycStatus` object if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get current kyc status of viviswap | | Returns `ViviswapKycStatus` if successful, or an `Error` if an error occurs| Repository initialization error, Viviswap API error | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_kyc_details_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_kyc_details_for_viviswap)
+
+    ```rust
+    async fn get_kyc_details_for_viviswap(&self) -> Result<ViviswapKycStatus, crate::error::Error>
+    ```
 
 === "Java"
-    [getViviswapKyc](../../javadoc/com/etogruppe/CryptpaySdk.html#getViviswapKyc())
 
-=== "Typescript"
-    [getKycDetailsForViviswap](../jstsdocs/classes/CryptpaySdk.html#getKycDetailsForViviswap)
-
+    ```java
+    public String getViviswapKyc() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift    
     public func getKycDetailsForViviswap() throws -> String
@@ -841,21 +927,34 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Update partial KYC for viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Update the kyc details for viviswap to be submitted | `is_individual` - Whether the user is an individual, `is_pep` - Whether the user is a politically exposed person, `is_us_citizen` - Whether the user is a US citizen, `is_regulatory_disclosure` - Whether the user has accepted the regulatory disclosure, `country_of_residence` - The country of residence of the user, `nationality` - The nationality of the user, `full_name` - The full name of the user, `date_of_birth` - The date of birth of the user | Returns `ViviswapPartiallyKycDetails` object containing the partially updated KYC details. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Update the kyc details for viviswap to be submitted | `is_individual` - Whether the user is an individual, `is_pep` - Whether the user is a politically exposed person, `is_us_citizen` - Whether the user is a US citizen, `is_regulatory_disclosure` - Whether the user has accepted the regulatory disclosure, `country_of_residence` - The country of residence of the user, `nationality` - The nationality of the user, `full_name` - The full name of the user, `date_of_birth` - The date of birth of the user | Returns `ViviswapPartiallyKycDetails` containing the partially updated KYC details or a vector of errors for each input field |  A vector of errors if any validation errors occur during the update process | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [update_kyc_partially_status_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_kyc_partially_status_for_viviswap)
+
+    ```rust
+    async fn update_kyc_partially_status_for_viviswap(
+        &self,
+        is_individual: Option<bool>,
+        is_pep: Option<bool>,
+        is_us_citizen: Option<bool>,
+        is_regulatory_disclosure: Option<bool>,
+        country_of_residence: Option<String>,
+        nationality: Option<String>,
+        full_name: Option<String>,
+        date_of_birth: Option<String>,
+    ) -> Result<ViviswapPartiallyKycDetails, Vec<crate::error::Error>>
+    ```
 
 === "Java"
-    [updateViviswapKycPartial](../../javadoc/com/etogruppe/CryptpaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [updateKycPartiallyStatusForViviswap](../jstsdocs/classes/CryptpaySdk.html#updateKycPartiallyStatusForViviswap)
-
+    ```java
+    public String updateViviswapKycPartial(boolean is_individual, boolean is_pep, boolean is_us_citizen,
+            boolean is_regulatory_disclosure, String country_of_residence, String nationality, String full_name,
+            String date_of_birth) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func updateKycPartiallyStatusForViviswap(
@@ -940,21 +1039,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Submit partial KYC for viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Submit the kyc details for viviswap | | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Submit the kyc details for viviswap  | | Returns,  if the submission is successful |  Returns a vector of `Error` if any or many of the following conditions occur: Repository initialization error, Viviswap missing user error, Viviswap invalid state error, Viviswap missing field error, Viviswap API error | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [submit_kyc_partially_status_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.submit_kyc_partially_status_for_viviswap)
+
+    ```rust
+    async fn submit_kyc_partially_status_for_viviswap(&self) -> Result<(), Vec<crate::error::Error>>
+    ```
 
 === "Java"
-    [submitViviswapKycPartial](../../javadoc/com/etogruppe/CryptpaySdk.html#submitViviswapKycPartial())
 
-=== "Typescript"
-    [submitKycPartiallyStatusForViviswap](../jstsdocs/classes/CryptpaySdk.html#submitKycPartiallyStatusForViviswap)
-
+    ```java
+    public void submitViviswapKycPartial() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func submitKycPartiallyStatusForViviswap() throws
@@ -962,21 +1062,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get IBAN for viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get current iban of viviswap user | | Returns `ViviswapAddressDetail` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get current iban of viviswap user  | | Returns `ViviswapAddressDetail`, if successful otherwise `Error` |  Returns `ViviswapInvalidStateError` - If the viviswap state is invalid, `RepositoryInitError` - If the repository initialization fails, `ViviswapApiError` - If there is an error in the viviswap API, `UserStatusUpdateError` - If there is an error updating the user status  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [get_iban_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_iban_for_viviswap)
+
+    ```rust
+    async fn get_iban_for_viviswap(&self) -> Result<ViviswapAddressDetail, crate::error::Error>
+    ```
 
 === "Java"
-    [getIbanViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#getIbanViviswap())
 
-=== "Typescript"
-    [getIbanViviswap](../jstsdocs/classes/CryptpaySdk.html#getIbanViviswap)
-
+    ```java
+    public String getIbanViviswap() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func getIbanViviswap() throws -> String
@@ -1023,21 +1124,26 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Update IBAN for viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Update IBAN of viviswap user | `pin` - The user's PIN, `address` - The new IBAN address | Returns `ViviswapAddressDetail` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Update IBAN of viviswap user | `pin` - The user's PIN, `address` - The new IBAN address | Returns `ViviswapAddressDetail`, if successful otherwise `Error` |  Returns `RepositoryInitError` - If the repository initialization fails, `ViviswapMissingUserError` - If the viviswap user is missing, `UserStatusUpdateError` - If there is an error updating the user status  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [update_iban_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_iban_for_viviswap)
+
+    ```rust
+    async fn update_iban_for_viviswap(
+        &self,
+        pin: String,
+        address: String,
+    ) -> Result<ViviswapAddressDetail, crate::error::Error>
+    ```
 
 === "Java"
-    [updateIbanViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [updateIbanViviswap](../jstsdocs/classes/CryptpaySdk.html#updateIbanViviswap)
-
+    ```java
+    public String updateIbanViviswap(String pin, String address) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func updateIbanViviswap(pin: String, address: String) throws -> String
@@ -1045,24 +1151,25 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Create deposit with viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create deposit for viviswap user | `pin` - The PIN for the wallet | Returns `ViviswapDeposit` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create deposit for viviswap user | | Returns `ViviswapDeposit`, if successful otherwise `Error` |  Returns `RepositoryInitError` - If the repository initialization fails, `ViviswapMissingUserError` - If the viviswap user is missing, `ViviswapInvalidStateError` - If the viviswap state is invalid, `ViviswapApiError` - If there is an error with the Viviswap API  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [create_deposit_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_deposit_with_viviswap)
+
+    ```rust
+    async fn create_deposit_with_viviswap(&self) -> Result<ViviswapDeposit, crate::error::Error>
+    ```
 
 === "Java"
-    [depositWithViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#depositWithViviswap(java.lang.String))
 
-=== "Typescript"
-    [createDepositWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createDepositWithViviswap)
-
+    ```java
+    public String depositWithViviswap() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func depositWithViviswap(pin: String) throws -> String
+    public func depositWithViviswap() throws -> String
     ```
 
 #### ViviswapDeposit
@@ -1147,46 +1254,52 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Create viviswap address detail
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create address detail for viviswap user | `pin` - The PIN for the wallet | Returns `ViviswapAddressDetail` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create address detail for viviswap user | | Returns `ViviswapAddressDetail`, if successful otherwise `Error` |  Returns `RepositoryInitError` - If the repository initialization fails, `ViviswapMissingUserError` - If the viviswap user is missing, `ViviswapInvalidStateError` - If the viviswap state is invalid, `ViviswapApiError` - If there is an error with the Viviswap API  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [create_detail_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_detail_for_viviswap)
+
+    ```rust
+    async fn create_detail_for_viviswap(&self) -> Result<ViviswapAddressDetail, crate::error::Error>
+    ```
 
 === "Java"
-    [createViviswapDetail](../../javadoc/com/etogruppe/CryptpaySdk.html#createViviswapDetail(java.lang.String))
 
-=== "Typescript"
-    [createDetailForViviswap](../jstsdocs/classes/CryptpaySdk.html#createDetailForViviswap)
-
+    ```java
+    public String createViviswapDetail() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func createViviswapDetail(pin: String) throws -> String
+    public func createViviswapDetail() throws -> String
     ```
 
 ### Create withdrawal with viviswap
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create address detail for viviswap user | `amount` - The amount of the withdrawal, `pin` - The optional PIN for verification, `tag` - Optional tag which can be assigned to the transaction, `data` - Optional data which can be assigned to the tag, `message` - Optional transaction message | Returns `ViviswapWithdrawal` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create address detail for viviswap user | `amount` - The amount of the withdrawal, `pin` - The optional PIN for verification | Returns `ViviswapWithdrawal`, if successful otherwise `Error` |  Returns `RepositoryInitError` - If the repository initialization fails, `ViviswapMissingUserError` - If the viviswap user is missing, `ViviswapInvalidStateError` - If the viviswap state is invalid, `ViviswapApiError` - If there is an error with the Viviswap API  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [create_withdrawal_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_withdrawal_with_viviswap)
+
+    ```rust
+    async fn create_withdrawal_with_viviswap(
+        &self,
+        amount: f32,
+        pin: Option<String>,
+    ) -> Result<ViviswapWithdrawal, crate::error::Error>
+    ```
 
 === "Java"
-    [withdrawWithViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D,byte%5B%5D,java.lang.String))
 
-=== "Typescript"
-    [createWithdrawalWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createWithdrawalWithViviswap)
-
+    ```java
+    public String withdrawWithViviswap(float amount, String pin) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func withdrawWithViviswap(amount: Float, pin: String, tag: [UInt8], data: [UInt8], message: String) throws -> ViviswapWithdrawal 
+    public func withdrawWithViviswap(amount: Float, pin: String) throws -> String 
     ```
 
 #### ViviswapWithdrawal
@@ -1253,21 +1366,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get swap details
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get swap details | `order_id` - The ID of the swap order. | Returns `Order` object containing the swap order details. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get swap details | `order_id` - The ID of the swap order. | Returns `Order` containing the swap order details or an error. |  Returns `RepositoryInitError` - If the repository initialization fails, `ViviswapMissingUserError` - If the viviswap user is missing, `ViviswapApiError` - If there is an error with the Viviswap API  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [get_swap_details](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_swap_details)
+
+    ```rust
+    async fn get_swap_details(&self, order_id: String) -> Result<Order, crate::error::Error>
+    ```
 
 === "Java"
-    [getSwapDetails](../../javadoc/com/etogruppe/CryptpaySdk.html#getSwapDetails(java.lang.String))
 
-=== "Typescript"
-    [getSwapDetails](../jstsdocs/classes/CryptpaySdk.html#getSwapDetails)
-
+    ```java
+    public String getSwapDetails(String order_id) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func getSwapDetails(order_id: String) throws -> String
@@ -1450,21 +1564,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get swap lists
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get swap list | `start` - The start page parameter, `limit` - The pagination limit parameter | Returns an array of `Order` object containing the swap order details for each swap. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get swap list | `start` - The start page parameter, `limit` - The pagination limit parameter | Returns an array of `Order` containing the swap order details for each swap or an error. |  Returns `RepositoryInitError` - If the repository initialization fails, `ViviswapMissingUserError` - If the viviswap user is missing, `ViviswapApiError` - If there is an error with the Viviswap API  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [get_swap_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_swap_list)
+
+    ```rust
+    async fn get_swap_list(&self, start: u32, limit: u32) -> Result<OrderList, crate::error::Error>
+    ```
 
 === "Java"
-    [getSwapList](../../javadoc/com/etogruppe/CryptpaySdk.html#getSwapList(long,long))
 
-=== "Typescript"
-    [getSwapList](../jstsdocs/classes/CryptpaySdk.html#getSwapList)
-
+    ```java
+    public String getSwapList(long page, long limit) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func getSwapList(page: UInt64, limit: UInt64) throws -> String
@@ -1472,21 +1587,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get exchange rate
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get the exchange rate for the selected currency | | Returns the latest exchange rate | | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| The exchange rate for the selected currency | | Returns the exchange rate |  Returns `ViviswapApiError` - If there is an error with the Viviswap API  | | Usage | Application |
 
 === "Rust"
-    [get_exchange_rate](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_exchange_rate)
+
+    ```rust
+    async fn get_exchange_rate(&self) -> Result<f32, crate::error::Error>
+    ```
 
 === "Java"
-    [getExchangeRate](../../javadoc/com/etogruppe/CryptpaySdk.html#getExchangeRate())
 
-=== "Typescript"
-    [getExchangeRate](../jstsdocs/classes/CryptpaySdk.html#getExchangeRate)
-
+    ```java
+    public float getExchangeRate() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func getExchangeRate() throws -> Float
@@ -1496,21 +1612,30 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Create purchase request
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create purchase request | `receiver` - The receiver's username, `amount` - The amount of the purchase, `product_hash` - The hash of the product, `app_data` - The application data, `purchase_type` - The type of the purchase | Returns the purchase ID. This is an internal index used to reference the transaction in cryptpay | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create purchase request| `receiver` - The receiver's username, `amount` - The amount of the purchase, `product_hash` - The hash of the product, `app_data` - The application data, `purchase_type` - The type of the purchase | The purchase ID. This is an internal index used to reference the transaction in Cawaena |  Returns an error if the user or wallet is not initialized, or if there is an error creating the transaction  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [create_purchase_request](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_purchase_request)
+
+    ```rust
+    async fn create_purchase_request(
+        &self,
+        receiver: &str,
+        amount: f64,
+        product_hash: &str,
+        app_data: &str,
+        purchase_type: &str,
+    ) -> Result<String, crate::error::Error>
+    ```
 
 === "Java"
-    [purchaseRequestCreate](../../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [createPurchaseRequest](../jstsdocs/classes/CryptpaySdk.html#createPurchaseRequest)
-
+    ```java
+    public String purchaseRequestCreate(String receiver, double amount, String product_hash, String app_data,
+            String purchase_type) throws Exception 
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func createPurchaseRequest(
@@ -1518,23 +1643,75 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     ) throws -> String
     ```
 
-### Get purchase details
+### Get purchase status
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get purchase details | `purchase_id` - The ID of the purchase. | Returns the purchase details as `PurchaseDetails` object | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get purchase status |`purchase_id` - The ID of the purchase. | The purchase status as `TxStatus` object |  Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction status  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [get_purchase_details](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_purchase_details)
+
+    ```rust
+    async fn get_purchase_status(&self, purchase_id: &str) -> Result<TxStatus, crate::error::Error>
+    ```
 
 === "Java"
-    [purchaseDetails](../../javadoc/com/etogruppe/CryptpaySdk.html#purchaseDetails(java.lang.String))
 
-=== "Typescript"
-    [getPurchaseDetails](../jstsdocs/classes/CryptpaySdk.html#getPurchaseDetails)
-
+    ```java
+    public String purchaseStatus(String purchase_id) throws Exception
+    ```
 === "Swift"
-    Not available yet!
+
+    ```swift
+    public func getPurchaseStatus(purchase_id: String) throws -> String
+    ```
+
+#### TxStatus
+
+=== "Rust"
+
+    ```Rust
+    pub enum TxStatus {
+        #[default]
+        Pending,
+        Valid,
+        Invalid,
+        ProcessingMain,
+        ProcessingAux,
+        Completed,
+        Failed,
+    }
+    ```
+
+=== "JSON"
+
+    ```json
+    {
+        "$schema": "http://json-schema.org/draft-07/schema#",
+        "type": "string",
+        "description": "The status of the transaction",
+        "enum": ["Pending", "Valid", "Invalid", "ProcessingMain", "ProcessingAux", "Completed", "Failed"]
+    }
+    ```
+
+### Get purchase details
+
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get purchase details |`purchase_id` - The ID of the purchase. | The purchase status as `PurchaseDetails` object |  Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction status  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
+
+=== "Rust"
+
+    ```rust
+    async fn get_purchase_details(&self, purchase_id: &str) -> Result<PurchaseDetails, crate::error::Error>
+    ```
+
+=== "Java"
+
+    ```java
+    public String purchaseDetails(String purchase_id) throws Exception
+    ```
+=== "Swift"
 
     ```swift
     public func getPurchaseDetails(purchase_id: String) throws -> String
@@ -1544,15 +1721,17 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 === "Rust"
 
-    ```rust
-        pub struct PurchaseDetails {
-            /// The sender address where the fees goes to.
-            pub system_address: String,
-            /// The amount to be paid.
-            pub amount: Decimal,
-            /// The status of transaction
-            pub status: ApiTxStatus,
-        }
+    ```Rust
+    pub struct PurchaseDetails {
+        /// The main address where the fees goes to.
+        pub main_address: String,
+        /// The auxiliary address where the amount minus fees goes.
+        pub aux_address: String,
+        /// The amount to be paid.
+        pub amount: f64,
+        /// The fees to be paid.
+        pub fees: f64,
+    }
     ```
 
 === "JSON"
@@ -1562,41 +1741,45 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
         "$schema": "http://json-schema.org/draft-07/schema#",
         "type": "object",
         "properties": {
-            "system_address": {
+            "main_address": {
                 "type": "string",
-                "description": "The sender address where the fees goes to."
+                "description": "The main address where the fees goes to"
+            },
+            "aux_address": {
+                "type": "string",
+                "description": "The auxiliary address where the amount minus fees goes"
             },
             "amount": {
                 "type": "number",
                 "description": "The amount to be paid"
             },
-            "status": {
-                "type": "object",
-                "description": "Status of the transfer",
-                "enum": ["Pending", "WaitingForVerification", "Valid", "Invalid", "ProcessingIncoming", "ProcessingOutgoing", "Completed", "Failed"]
-            },
+            "fees": {
+                "type": "number",
+                "description": "The fees to be paid"
+            }
         },
-        "required": ["system_address", "amount", "status"]
+        "required": ["main_address", "aux_address", "amount", "fees"]
     }
     ```
 
 ### Confirm purchase request
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Confirm purchase request | `pin` - The PIN of the user, `purchase_id` - The ID of the purchase. | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Confirm purchase request |`pin` - The PIN of the user, `purchase_id` - The ID of the purchase. | Returns, if the purchase request is confirmed successfully. |  Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN, if there is an error getting the transaction details, or if there is an error committing the transaction.  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [confirm_purchase_request](../rust-docs/doc/sdk/core/struct.Sdk.html#method.confirm_purchase_request)
+
+    ```rust
+    async fn confirm_purchase_request(&self, pin: &str, purchase_id: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [purchaseRequestConfirm](../../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
 
-=== "Typescript"
-    [confirmPurchaseRequest](../jstsdocs/classes/CryptpaySdk.html#confirmPurchaseRequest)
-
+    ```java
+    public void purchaseRequestConfirm(String pin, String purchase_id) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func confirmPurchaseRequest(pin: String, purchase_id: String) throws
@@ -1604,46 +1787,48 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Send amount
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Send amount to the receiver address. | `pin` - The PIN of the user, `address` - The receiver's address, `amount` - The amount to send, `tag` - Optional tag which can be assigned to the transaction, `data` - Optional data which can be assigned to the tag, `message` - Optional transaction message | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Confirm purchase request |`pin` - The PIN of the user, `address` - The receiver's address, `amount` - The amount to send | Returns, if the amount is sent successfully. |  Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN, or if there is an error sending the amount  | [Wallet initialization](./SDK%20API%20Reference.md#initialize-a-wallet) | Usage | Application |
 
 === "Rust"
-    [send_amount](../rust-docs/doc/sdk/core/struct.Sdk.html#method.send_amount)
+
+    ```rust
+    async fn send_amount(&self, pin: &str, address: &str, amount: f64) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [sendAmount](../../javadoc/com/etogruppe/CryptpaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D,byte%5B%5D,java.lang.String))
 
-=== "Typescript"
-    [sendAmount](../jstsdocs/classes/CryptpaySdk.html#sendAmount)
-
+    ```java
+    public void transferAmount(String pin, String address, double amount) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func sendAmount(pin: String, address: String, amount: Double, tag: [UInt8], data: [UInt8], message: String) throws
+    public func sendAmount(pin: String, address: String, amount: Double) throws
     ```
 
 ### Get Purchase list
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get purchase list | `start` - The starting page number, `limit` - The maximum number of transactions per page | Returns a list of purchases as `TxInfo` object, if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get purchase list | `page` - The page number, `limit` - The maximum number of transactions per page | Returns a list of purchases as `TxInfo` object, if successful |  Returns an error if there is a problem getting the list of purchases.  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_tx_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_tx_list)
+
+    ```rust
+    async fn get_tx_list(&self, page: u32, limit: u32) -> Result<TxList, crate::error::Error>
+    ```
 
 === "Java"
-    [txList](../../javadoc/com/etogruppe/CryptpaySdk.html#txList(long,long))
 
-=== "Typescript"
-    [getTransactionList](../jstsdocs/classes/CryptpaySdk.html#getTransactionList)
-
+    ```java
+    public String txList(long page, long limit) throws Exception 
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func getTxList(start: UInt64, limit: UInt64) throws -> String
+    public func getTxList(page: UInt64, limit: UInt64) throws -> String
     ```
 
 #### TxInfo
@@ -1656,7 +1841,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
         pub date: Option<String>,
         /// receiver of the transaction
         pub receiver: String,
-        /// cryptpay reference id for the transaction
+        /// Cawaena reference id for the transaction
         pub reference_id: String,
         /// Application specific metadata attached to the tx
         pub application_metadata: Option<ApplicationMetadata>,
@@ -1697,7 +1882,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
             },
             "reference_id": {
                 "type": "string",
-                "description": "cryptpay reference id for the transaction"
+                "description": "Cawaena reference id for the transaction"
             },
             "application_metadata": {
                 "type": ["object", "null"],
@@ -1752,21 +1937,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Start kyc verification for postident
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Start kyc verification for postident | | Returns an object `NewCaseIdResponse` if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Start kyc verification for postident | | Returns an object `NewCaseIdResponse` if successful, or an `Error` if an error occurs. |  `RepositoryInitError` if the repository fails to initialize, `UserInitError` if the user fails to initialize, `UserAlreadyKycVerifiedError` if the user is already KYC verified.  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [start_kyc_verification_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.start_kyc_verification_for_postident)
+
+    ```rust
+    async fn start_kyc_verification_for_postident(&mut self) -> Result<NewCaseIdResponse, crate::error::Error>
+    ```
 
 === "Java"
-    [startKycVerificationForPostident](../../javadoc/com/etogruppe/CryptpaySdk.html#startKycVerificationForPostident())
 
-=== "Typescript"
-    [startKycVerificationForPostident](../jstsdocs/classes/CryptpaySdk.html#startKycVerificationForPostident)
-
+    ```java
+    public String startKycVerificationForPostident() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func startKycVerificationForPostident() throws -> String
@@ -1806,21 +1992,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get case details for postident
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Get case details for postident| | Returns an object `CaseDetailsResponse` if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Get case details for postident| | Returns an object `CaseDetailsResponse` if successful, or an `Error` if an error occurs. |   UserInitError` if the user fails to initialize  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_kyc_details_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_kyc_details_for_postident)
+
+    ```rust
+    async fn get_kyc_details_for_postident(&self) -> Result<CaseDetailsResponse, crate::error::Error>
+    ```
 
 === "Java"
-    [getKycDetailsForPostident](../../javadoc/com/etogruppe/CryptpaySdk.html#getKycDetailsForPostident())
 
-=== "Typescript"
-    [getKycDetailsForPostident](../jstsdocs/classes/CryptpaySdk.html#getKycDetailsForPostident)
-
+    ```java
+    public String getKycDetailsForPostident() throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func getKycDetailsForPostident() throws -> String
@@ -1863,21 +2050,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Update case status for postident
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Update case status for postident | `case_id`: The ID of the case to update. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Update case status for postident| `case_id`: The ID of the case to update. | Returns,` if successful, or an `Error` if an error occurs. | UserInitError` if the user fails to initialize  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [update_kyc_status_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_kyc_status_for_postident)
+
+    ```rust
+    async fn update_kyc_status_for_postident(&self, case_id: &str) -> Result<(), crate::error::Error>
+    ```
 
 === "Java"
-    [updateKycStatusForPostident](../../javadoc/com/etogruppe/CryptpaySdk.html#updateKycStatusForPostident(java.lang.String))
 
-=== "Typescript"
-    [updateKycStatusForPostident](../jstsdocs/classes/CryptpaySdk.html#updateKycStatusForPostident)
-
+    ```java
+    public void updateKycStatusForPostident(String case_id) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func updateKycStatusForPostident(case_id: String) throws
@@ -1887,21 +2075,22 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Create a new billing customer account
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a new account | `country_code` - The country code for the customer. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Create a new account| `country_code` - The country code for the customer. | Returns,` if successful, or an `Error` if an error occurs. | UserInitError` if the user fails to initialize  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [create_customer](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_customer)
+
+    ```rust
+    async fn create_customer(&self, country_code: &str) -> Result<(), crate::error::Error> 
+    ```
 
 === "Java"
-    [customerCreate](../../javadoc/com/etogruppe/CryptpaySdk.html#customerCreate(java.lang.String))
 
-=== "Typescript"
-    [createCustomer](../jstsdocs/classes/CryptpaySdk.html#createCustomer)
-
+    ```java
+    public void customerCreate(String country_code) throws Exception
+    ```
 === "Swift"
-    Not available yet!
 
     ```swift
     public func createCustomer(country_code: String) throws
@@ -1909,66 +2098,23 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 ### Get account status
 
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Fetches the customer account and updates it internally | | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Method | Arguments | Returns | Errors | Dependencies | Level | Repeat|
+|--------|-----------|---------|--------|--------------|-------|-------|
+| Fetches the customer account and updates it internally | | Returns,` if successful, or an `Error` if an error occurs. | UserInitError` if the user fails to initialize, or if there is an issue retrieving the customer account details.  | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_customer](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_customer)
 
-=== "Java"
-    [customerGet](../../javadoc/com/etogruppe/CryptpaySdk.html#customerGet())
-
-=== "Typescript"
-    [getCustomer](../jstsdocs/classes/CryptpaySdk.html#getCustomer)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func getCustomer() throws
+    ```rust
+    async fn get_customer(&mut self) -> Result<(), crate::error::Error> 
     ```
 
-### Get user preferred currency
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Fetches the users preferred currency | | Returns the currency if successful or an empty value if no preferred currency has been set. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
-
-=== "Rust"
-    [get_preferred_currency](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_preferred_currency)
-
 === "Java"
-    [getPreferredCurrency](../../javadoc/com/etogruppe/CryptpaySdk.html#getPreferredCurrency())
 
-=== "Typescript"
-    [getPreferredCurrency](../jstsdocs/classes/CryptpaySdk.html#getPreferredCurrency)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func getPreferredCurrency() throws -> PreferredCurrency
+    ```java
+    public void customerGet() throws Exception
     ```
-
-### Set user preferred currency
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Sets the users preferred currency, or resets it if an empty value is provided. | `currency` - The preferred user currency. Optional value. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
-
-=== "Rust"
-    [set_preferred_currency](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_preferred_currency)
-
-=== "Java"
-    [setPreferredCurrency](../../javadoc/com/etogruppe/CryptpaySdk.html#setPreferredCurrency(java.lang.String))
-
-=== "Typescript"
-    [setPreferredCurrency](../jstsdocs/classes/CryptpaySdk.html#setPreferredCurrency)
-
 === "Swift"
-    Not available yet!
 
     ```swift
-    public func setPreferredCurrency(currency: PreferredCurrency) throws
+    public func getCustomer() throws 
     ```

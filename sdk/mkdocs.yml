@@ -1,4 +1,4 @@
-site_name: CryptPay SDK Docs
+site_name: Cawaena Docs
 plugins:
   - privacy:
       enabled: true
@@ -12,11 +12,11 @@ plugins:
   - git-authors
   - search
   - typedoc:
-      source: './bindings/wasm/pkg/cryptpay_sdk_wasm.d.ts'
-      output_dir: 'jstsdocs'
-      tsconfig: './bindings/wasm/tsconfig.json'
-      options: './bindings/wasm/typedoc.json'
-      name: 'CryptPay SDK Docs'
+      source: "./bindings/wasm/pkg/cryptpay_sdk_wasm.d.ts"
+      output_dir: "jstsdocs"
+      tsconfig: "./bindings/wasm/tsconfig.json"
+      options: "./bindings/wasm/typedoc.json"
+      name: "Cawaena Docs"
       title_link: "/SDK%20Reference/SDK%20API%20Reference/"
 
 markdown_extensions:
@@ -44,7 +44,10 @@ markdown_extensions:
   - pymdownx.tabbed:
       alternate_style: true
   - footnotes
+extra_css:
+  - stylesheets/extra.css
 theme:
+  custom_dir: overrides
   features:
     - navigation.instant
     - navigation.instant.progress
@@ -65,26 +68,26 @@ theme:
     - search.share
   name: material
   font:
-    text: Montserrat
+    text: Exo 2
   language: en
   palette:
     # Palette toggle for light mode
     - scheme: default
-      accent: green
-      primary: light green
+      accent: custom
+      primary: custom
       toggle:
         icon: material/toggle-switch
         name: Dark mode
 
     # Palette toggle for dark mode
     - scheme: slate
-      primary: teal
-      accent: green
+      primary: custom
+      accent: custom
       toggle:
         icon: material/toggle-switch-off-outline
         name: Light mode
 
-copyright: Copyright &copy; 2024 -  ETO GRUPPE TECHNOLOGIES GmbH
+copyright: Copyright &copy; 2025 -  ETO GRUPPE TECHNOLOGIES GmbH
 extra:
   social:
     - icon: fontawesome/solid/stamp
@@ -96,8 +99,6 @@ extra:
     - icon: fontawesome/brands/discord
       link: https://discord.gg/ppNGRFsV
       name: Cawaena Discord channel
-
-  generator: false
   version:
     provider: mike
     default: latest
