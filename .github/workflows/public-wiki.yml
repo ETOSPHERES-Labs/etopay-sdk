@@ -56,6 +56,8 @@ jobs:
           source .venv/bin/activate
           pip install mkdocs-material mike mkdocs-git-revision-date-localized-plugin \
                       mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc azure-cli
+          echo "VIRTUAL_ENV=$PWD/.venv" >> $GITHUB_ENV
+          echo "$PWD/.venv/bin" >> $GITHUB_PATH  # Ensure mkdocs is available globally
 
       - name: Install project dependencies with pnpm
         shell: bash
@@ -69,9 +71,7 @@ jobs:
 
       - name: Build the documentation
         shell: bash
-        run: |
-          source .venv/bin/activate
-          mkdocs build
+        run: mkdocs build
         working-directory: sdk
 
       - name: Azure login
