@@ -35,6 +35,7 @@ jobs:
           fetch-depth: ${{ env.GIT_DEPTH }}
 
       - name: Set STORAGE_ACC environment variable
+        shell: bash
         run: |
           if [[ "${{ github.ref_name }}" == "main" ]]; then
             echo "STORAGE_ACC=${{ env.STORAGE_ACC_MAIN }}" >> $GITHUB_ENV
@@ -49,6 +50,7 @@ jobs:
           fi
 
       - name: Setup Python environment
+        shell: bash
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
@@ -56,21 +58,26 @@ jobs:
                       mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc azure-cli
 
       - name: Install project dependencies with pnpm
+        shell: bash
         run: pnpm install
         working-directory: sdk
 
       - name: Build wasm-bindings
+        shell: bash
         run: wasm-pack build --dev --scope eto
         working-directory: sdk/bindings/wasm
 
       - name: Build the documentation
+        shell: bash
         run: mkdocs build
         working-directory: sdk
 
       - name: Azure login
+        shell: bash
         run: az login -u ${{ secrets.AZURE_USER }} -p ${{ secrets.AZURE_PASS }}
 
       - name: Set Azure subscription
+        shell: bash
         run: az account set --subscription "B-SE-1_dev"
 
       - name: Upload docs to Azure Storage

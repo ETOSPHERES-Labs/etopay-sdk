@@ -32,6 +32,7 @@ jobs:
           fetch-depth: ${{ env.GIT_DEPTH }}
 
       - name: Setup Python environment
+        shell: bash
         run: |
           python3 -m venv .venv
           source .venv/bin/activate
@@ -39,14 +40,17 @@ jobs:
                       mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc
 
       - name: Install project dependencies with pnpm
+        shell: bash
         run: pnpm install
         working-directory: sdk
 
       - name: Build wasm-bindings
+        shell: bash
         run: wasm-pack build --dev --scope eto
         working-directory: sdk/bindings/wasm
 
       - name: Build the documentation
+        shell: bash
         run: mkdocs build
         working-directory: sdk
 
