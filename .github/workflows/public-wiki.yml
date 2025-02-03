@@ -69,6 +69,10 @@ jobs:
         run: wasm-pack build --dev --scope eto
         working-directory: sdk/bindings/wasm
 
+      - name: Mark repository as safe for Git
+        shell: bash
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Build the documentation
         shell: bash
         run: mkdocs build
