@@ -6,7 +6,7 @@ use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoLi
 use crate::wallet::error::WalletError;
 use alloy::eips::BlockNumberOrTag;
 use alloy::hex::encode;
-use alloy::rpc::types::TransactionRequest;
+use alloy::rpc::types::{TransactionInput, TransactionRequest};
 use alloy::transports::http::Http;
 use alloy::{
     consensus::{SignableTransaction, Signed, TxEip1559, TxEnvelope},
@@ -307,10 +307,18 @@ impl WalletImplEth {
     ) -> Result<TxEip1559> {
         let nonce = self.get_next_nonce(from_addr).await?;
 
-        let unified_transaction_metadata = UnifiedTransactionMetadata::from_iota_tag_and_metadata(tag, metadata);
-        let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata)
-            .map_err(WalletError::UnifiedTransactionMetadataSerializationError)?;
-        let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
+        let input: TransactionInput = match tag.clone() {
+            Some(_) => {
+                let unified_transaction_metadata =
+                    UnifiedTransactionMetadata::from_iota_tag_and_metadata(tag, metadata);
+                let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata)
+                    .map_err(WalletError::UnifiedTransactionMetadataSerializationError)?;
+                let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
+                let bytes = encoded_unified_transaction_metadata.into();
+                TransactionInput::new(bytes)
+            }
+            None => TransactionInput::default(),
+        };
 
         let tx = TxEip1559 {
             chain_id,
@@ -321,7 +329,7 @@ impl WalletImplEth {
             to: alloy_primitives::TxKind::Call(to_addr),
             value,
             access_list: Default::default(),
-            input: encoded_unified_transaction_metadata.into(),
+            input: input.into_input().unwrap_or_default(),
         };
 
         Ok(tx)
@@ -502,10 +510,6 @@ impl WalletUser for WalletImplEth {
         amount: CryptoAmount,
         tag: Option<TaggedDataPayload>,
         message: Option<String>,
-        // todo: extract parameters into interface and allow processing of other types of eip
-        gas_limit: u64,
-        max_fee_per_gas: u128,
-        max_priority_fee_per_gas: u128,
         chain_id: u64,
     ) -> Result<String> {
         let addr_from = self.get_wallet_addr().await?;
@@ -515,19 +519,15 @@ impl WalletUser for WalletImplEth {
         let amount_wei = Self::convert_eth_to_wei(amount);
         let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
 
-        let transaction = self
-            .build_transaction(
-                addr_from,
-                addr_to,
-                amount_wei_u256,
-                gas_limit,
-                max_fee_per_gas,
-                max_priority_fee_per_gas,
-                chain_id,
-                tag,
-                message,
-            )
+        let mut transaction = self
+            .build_transaction(addr_from, addr_to, amount_wei_u256, 0, 0, 0, chain_id, tag, message)
             .await?;
+
+        // Estimate gas cost
+        let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
+        transaction.gas_limit = gas_cost.gas_limit;
+        transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
+        transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
 
         // Sign transaction
         let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
@@ -548,9 +548,6 @@ impl WalletUser for WalletImplEth {
         index: &str,
         address: &str,
         amount: CryptoAmount,
-        gas_limit: u64,
-        max_fee_per_gas: u128,
-        max_priority_fee_per_gas: u128,
         chain_id: u64,
     ) -> Result<String> {
         let addr_from = self.get_wallet_addr().await?;
@@ -560,19 +557,15 @@ impl WalletUser for WalletImplEth {
         let amount_wei = Self::convert_eth_to_wei(amount);
         let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
 
-        let transaction = self
-            .build_transaction(
-                addr_from,
-                addr_to,
-                amount_wei_u256,
-                gas_limit,
-                max_fee_per_gas,
-                max_priority_fee_per_gas,
-                chain_id,
-                None,
-                None,
-            )
+        let mut transaction = self
+            .build_transaction(addr_from, addr_to, amount_wei_u256, 0, 0, 0, chain_id, None, None)
             .await?;
+
+        // Estimate gas cost
+        let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
+        transaction.gas_limit = gas_cost.gas_limit;
+        transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
+        transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
 
         // Sign transaction
         let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
@@ -657,22 +650,20 @@ impl WalletUser for WalletImplEth {
         }
     }
 
-    async fn estimate_gas_cost_eip1559(
-        &self,
-        from: String,
-        to: String,
-        value: CryptoAmount,
-    ) -> Result<GasCostEstimation> {
-        let from_address = Address::from_str(&from)?;
-        let to_address = Address::from_str(&to)?;
+    async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
+        let from = self.get_address().await?;
 
-        let value_wei = Self::convert_eth_to_wei(value);
-        let value_wei_u256 = Self::convert_crypto_amount_to_u256(value_wei)?;
+        let to = transaction
+            .to
+            .to()
+            .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
 
         let tx = TransactionRequest::default()
-            .from(from_address)
-            .to(to_address)
-            .value(value_wei_u256);
+            .from(Address::from_str(&from)?)
+            .to(*to)
+            .input(TransactionInput::new(transaction.input))
+            .access_list(transaction.access_list)
+            .value(transaction.value);
 
         // Returns the estimated gas cost for the underlying transaction to be executed
         let gas_limit = self.http_provider.estimate_gas(&tx).await?;
@@ -749,8 +740,6 @@ mod tests {
     #[tokio::test]
     async fn test_convert_wei_to_decimal() {
         //Arrange
-        //let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
         let value_wei: i128 = 10000000000000000000000; // 22 zeros
         let value_wei_decimal = Decimal::from_i128(value_wei).unwrap();
         // SAFETY: the value is non-negative
@@ -773,8 +762,6 @@ mod tests {
     #[tokio::test]
     async fn test_convert_alloy_256_to_decimal() {
         //Arrange
-        //let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
         let expected_value_decimal: i128 = 10000000000000000000000;
         let expected_value_decimal = Decimal::from_i128(expected_value_decimal).unwrap();
         // SAFETY: the value is non-negative
@@ -793,7 +780,6 @@ mod tests {
     #[tokio::test]
     async fn test_convert_crypto_amount_to_alloy_256() {
         //Arrange
-        //let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
         let expected_value_u256 = U256::from(1);
         let value_crypto_amount = CryptoAmount::from(1);
 
@@ -1054,11 +1040,6 @@ mod tests {
     #[tokio::test]
     async fn test_send_transaction_eth() {
         //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-        let wallet_addr_raw = wallet_user.get_wallet_addr_raw().await.unwrap();
-        let index = "1";
-        let amount_to_send = CryptoAmount::from(100);
-
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
@@ -1067,8 +1048,11 @@ mod tests {
         let (wallet_user, _cleanup) =
             get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).await;
 
-        let wallet_addr = wallet_user.get_wallet_addr().await.unwrap();
         let mocked_transaction_count = 5;
+        let index = "1";
+        let amount_to_send = CryptoAmount::from(100);
+        let from = wallet_user.get_address().await.unwrap();
+        let to = String::from("0xb0b0000000000000000000000000000000000000");
 
         let mocked_rpc_get_transaction_count = server
             .mock("POST", "/")
@@ -1077,7 +1061,7 @@ mod tests {
                 "jsonrpc": "2.0",
                 "method": "eth_getTransactionCount",
                 "params": [
-                    wallet_addr,
+                    from,
                     "latest"
                 ],
             })))
@@ -1092,6 +1076,46 @@ mod tests {
             ))
             .create();
 
+        let mocked_rpc_estimate_gas = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "eth_estimateGas",
+                "params": [{"from":format!("{}", from),"to":format!("{}", to),"value":format!("{}", "0x56bc75e2d63100000"),"input":"0x","accessList":[]},"pending"],
+            })))
+            .with_status(200)
+            .with_body(
+                r#"{
+                    "jsonrpc": "2.0",
+                    "result": 24009
+                }"#,
+            )
+            .create();
+
+        let mocked_rpc_eth_fee_history = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "method": "eth_feeHistory",
+            })))
+            .with_status(200)
+            .with_body(
+                r#"{
+                "jsonrpc": "2.0",
+                "result": {
+                    "baseFeePerGas": [1000000000, 875000000],
+                    "gasUsedRatio": [0.0],
+                    "oldestBlock": 0,
+                    "reward": [[0]]
+                }
+            }
+            "#,
+            )
+            .create();
+
         let mocked_transaction_hash = "0x969dc1d6a97464e62fb1dab451b03d24111c278bf6f4d2e2b3910205a8682ed2";
         let mocked_rpc_send_raw_transaction = server
             .mock("POST", "/")
@@ -1099,8 +1123,9 @@ mod tests {
             .match_body(mockito::Matcher::PartialJson(json!({
                 "jsonrpc": "2.0",
                 "method": "eth_sendRawTransaction",
+                "id": 3,
                 "params": [
-                    "0x02f8c0827a69058203e8824e2082520894f39fd6e51aad88f6f4ce6ab8827279cfffb9226689056bc75e2d63100000b84e376232323734363136373232336136653735366336633263323236343631373436313232336136653735366336633263323236643635373337333631363736353232336136653735366336633764c001a059570d022e15fa1dd35d2f2ffebfadafac79cf02ddd3abbcb50d516c883be5b8a05d9d7ba61e1801529e10a7d7e28c8c118d638d8d61aef4d81327c69ec9ea9fa3"
+                    "0x02f871827a6905018477359401825dc994b0b000000000000000000000000000000000000089056bc75e2d6310000080c001a0b97a8495837eb1ade4b01d5e1789e66927aacaaa2e62ba3d8ab844d575187573a07cca5b3851847758c1bbf70d7682ce2ab82e53f9b1b56202c57f71c50971e5ee"
                 ],
             })))
             .with_status(200)
@@ -1114,26 +1139,135 @@ mod tests {
             ))
             .create();
 
-        let gas_limit: u64 = 21_000;
-        let max_fee_per_gas: u128 = 20_000;
-        let max_priority_fee_per_gas: u128 = 1_000;
         let chain_id: u64 = 31337;
 
         // Act
         let transaction_id = wallet_user
-            .send_transaction_eth(
-                index,
-                &wallet_addr_raw,
-                amount_to_send,
-                gas_limit,
-                max_fee_per_gas,
-                max_priority_fee_per_gas,
-                chain_id,
-            )
+            .send_transaction_eth(index, &to, amount_to_send, chain_id)
             .await;
 
         // Assert
         mocked_rpc_get_transaction_count.assert();
+        mocked_rpc_estimate_gas.assert();
+        mocked_rpc_eth_fee_history.assert();
+        mocked_rpc_send_raw_transaction.assert();
+        transaction_id.unwrap();
+    }
+
+    #[tokio::test]
+    async fn test_send_amount_eth() {
+        //Arrange
+        let mut server = mockito::Server::new_async().await;
+        let url = server.url();
+        let node_url = Url::parse(&url).unwrap();
+        let mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+
+        let (wallet_user, _cleanup) =
+            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).await;
+
+        let mocked_transaction_count = 5;
+        let amount_to_send = CryptoAmount::from(100);
+        let from = wallet_user.get_address().await.unwrap();
+        let to = String::from("0xb0b0000000000000000000000000000000000000");
+
+        let mocked_rpc_get_transaction_count = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "method": "eth_getTransactionCount",
+                "params": [
+                    from,
+                    "latest"
+                ],
+            })))
+            .with_status(200)
+            .with_body(format!(
+                r#"{{
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "result": "{}"
+                }}"#,
+                mocked_transaction_count
+            ))
+            .create();
+
+        let mocked_rpc_estimate_gas = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "id": 1,
+                "method": "eth_estimateGas",
+                "params": [{"from":format!("{}", from),"to":format!("{}", to),"value":format!("{}", "0x56bc75e2d63100000"),"input":"0x37623232373436313637323233613562333832633331333635643263323236343631373436313232336135623338326333313336356432633232366436353733373336313637363532323361323237343635373337343230366436353733373336313637363532323764","accessList":[]},"pending"],
+            })))
+            .with_status(200)
+            .with_body(
+                r#"{
+                    "jsonrpc": "2.0",
+                    "result": 24009
+                }"#,
+            )
+            .create();
+
+        let mocked_rpc_eth_fee_history = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "method": "eth_feeHistory",
+            })))
+            .with_status(200)
+            .with_body(
+                r#"{
+                "jsonrpc": "2.0",
+                "result": {
+                    "baseFeePerGas": [1000000000, 875000000],
+                    "gasUsedRatio": [0.0],
+                    "oldestBlock": 0,
+                    "reward": [[0]]
+                }
+            }
+            "#,
+            )
+            .create();
+
+        let mocked_transaction_hash = "0x969dc1d6a97464e62fb1dab451b03d24111c278bf6f4d2e2b3910205a8682ed2";
+        let mocked_rpc_send_raw_transaction = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "method": "eth_sendRawTransaction",
+                "id": 3,
+                "params": [
+                    "0x02f8dc827a6905018477359401825dc994b0b000000000000000000000000000000000000089056bc75e2d63100000b86a37623232373436313637323233613562333832633331333635643263323236343631373436313232336135623338326333313336356432633232366436353733373336313637363532323361323237343635373337343230366436353733373336313637363532323764c080a014837e78ab7f4b04f358ecca39638934afd707e85f038d3d1333e556936215aea04b8bb1b31609fd14e56ea73df3fcdd695bd6122f8c60ab8412b2418613ee92db"
+                ],
+            })))
+            .with_status(200)
+            .with_body(format!(
+                r#"{{
+                    "jsonrpc": "2.0",
+                    "id": 1,
+                    "result": "{}"
+                }}"#,
+                mocked_transaction_hash
+            ))
+            .create();
+
+        let chain_id: u64 = 31337;
+        let tagged_data_payload = TaggedDataPayload::new(Vec::from([8, 16]), Vec::from([8, 16])).unwrap();
+        let metadata = String::from("test message");
+
+        // Act
+        let transaction_id = wallet_user
+            .send_amount_eth(&to, amount_to_send, Some(tagged_data_payload), Some(metadata), chain_id)
+            .await;
+
+        // Assert
+        mocked_rpc_get_transaction_count.assert();
+        mocked_rpc_estimate_gas.assert();
+        mocked_rpc_eth_fee_history.assert();
         mocked_rpc_send_raw_transaction.assert();
         transaction_id.unwrap();
     }
@@ -1261,7 +1395,6 @@ mod tests {
             }
         });
 
-        //get_block_by_number(block_number, false)
         let mocked_rpc_get_block_by_number = server
             .mock("POST", "/")
             .match_header("content-type", "application/json")
@@ -1546,12 +1679,6 @@ mod tests {
     #[tokio::test]
     async fn should_estimate_gas_cost_eip1559() {
         // Arrange
-        let expected_estimation = GasCostEstimation {
-            gas_limit: 21001,
-            max_fee_per_gas: 2000000001,
-            max_priority_fee_per_gas: 1,
-        };
-
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
@@ -1560,12 +1687,42 @@ mod tests {
         let (wallet_user, _cleanup) =
             get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).await;
 
-        let from = String::from("0x66f9664f97f2b50f62d13ea064982f936de76657");
         let to = String::from("0xb0b0000000000000000000000000000000000000");
+        let value = U256::from(1);
+        let chain_id = 31337;
 
-        let value_wei = CryptoAmount::from(1);
-        let value_eth = WalletImplEth::convert_wei_to_eth(value_wei);
+        let readable_tag = "temperature";
+        let readable_data = "20";
+        let readable_metadata = "still too warm".to_string();
 
+        let unified_transaction_metadata = UnifiedTransactionMetadata {
+            tag: Some(readable_tag.as_bytes().to_vec()),
+            data: Some(readable_data.as_bytes().to_vec()),
+            message: Some(readable_metadata),
+        };
+
+        let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata).unwrap();
+        let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
+
+        let tx = TxEip1559 {
+            chain_id,
+            nonce: 0,
+            gas_limit: 0,
+            max_fee_per_gas: 0,
+            max_priority_fee_per_gas: 0,
+            to: alloy_primitives::TxKind::Call(Address::from_str(&to).unwrap()),
+            value,
+            access_list: Default::default(),
+            input: encoded_unified_transaction_metadata.into(),
+        };
+
+        let expected_estimation = GasCostEstimation {
+            gas_limit: 24009,
+            max_fee_per_gas: 2000000001,
+            max_priority_fee_per_gas: 1,
+        };
+
+        let from = wallet_user.get_address().await.unwrap();
         let mocked_rpc_estimate_gas = server
             .mock("POST", "/")
             .match_header("content-type", "application/json")
@@ -1578,9 +1735,9 @@ mod tests {
             .with_status(200)
             .with_body(
                 r#"{
-                        "jsonrpc": "2.0",
-                        "result": 21001
-                    }"#,
+                    "jsonrpc": "2.0",
+                    "result": 24009
+                }"#,
             )
             .create();
 
@@ -1594,25 +1751,24 @@ mod tests {
             .with_status(200)
             .with_body(
                 r#"{
-                    "jsonrpc": "2.0",
-                    "result": {
-                        "baseFeePerGas": [1000000000, 875000000],
-                        "gasUsedRatio": [0.0],
-                        "oldestBlock": 0,
-                        "reward": [[0]]
-                    }
+                "jsonrpc": "2.0",
+                "result": {
+                    "baseFeePerGas": [1000000000, 875000000],
+                    "gasUsedRatio": [0.0],
+                    "oldestBlock": 0,
+                    "reward": [[0]]
                 }
-                "#,
+            }
+            "#,
             )
             .create();
 
         // Act
-        let result = wallet_user.estimate_gas_cost_eip1559(from, to, value_eth).await;
+        let result = wallet_user.estimate_gas_cost_eip1559(tx).await;
 
         // Assert
         mocked_rpc_estimate_gas.assert();
         mocked_rpc_eth_fee_history.assert();
-
         let response = result.unwrap();
 
         assert_eq!(expected_estimation, response)
