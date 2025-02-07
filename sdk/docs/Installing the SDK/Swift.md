@@ -5,6 +5,8 @@ The swift SDK is now available through a private gitlab repository with binaries
 We provide binaries for the following platforms:
 
 - `aarch64-apple-ios`: targets 64-bit ARM processors for iOS devices like iPhones and iPads.
+- `x86_64-apple-ios`: for 64-bit Intel processors for iOS simulators.
+- `aarch64-apple-ios-sim`: for 64-bit ARM processors running iOS simulators, typically used on Apple Silicon Macs.
 - `aarch64-apple-darwin`: for 64-bit ARM processors on macOS systems (eg. M1).
 - `x86_64-apple-darwin`: for 64-bit Intel processors on macOS systems.
 
@@ -20,13 +22,13 @@ import PackageDescription
 let package = Package(
     name: "program",
     dependencies: [
-        .package(url: "https://gitlab.inovel.de/zd0006/Cawaena-swift", from: "0.0.1")
+        .package(url: "https://gitlab.inovel.de/zd0006/cryptpay-swift", from: "0.0.1")
     ],
     targets: [
         .executableTarget(
             name: "main",
             dependencies: [
-                .product(name: "CryptpaySdk", package: "Cawaena-swift")
+                .product(name: "CryptpaySdk", package: "cryptpay-swift")
             ]),
     ]
 )
@@ -36,7 +38,7 @@ The `CryptpaySdk` module will then be available for import in your project.
 
 ## Using Cawaena with XCode
 
-In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/Cawaena-swift`) and select the Cawaena Sdk when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
+In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/cryptpay-swift`) and select the Cawaena SDK when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
 
 ### Access to the binaries on JFrog
 

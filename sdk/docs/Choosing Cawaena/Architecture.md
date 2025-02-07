@@ -1,6 +1,6 @@
 # Architecture
 
-![ Integration Architecture](Cryptpay_Integration.svg)
+![ Integration Architecture](Cawaena_Integration.svg)
 
 ## Overview
 

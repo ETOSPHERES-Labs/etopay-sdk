@@ -140,30 +140,30 @@ The environment configuration to `Development` attaches the SDK to the developme
 
     N/A
 
-## 6. Generate Iota Receiver Address
+## 6. Generate New Receiver Address
 
 === "Rust"
 
     ```rust
-    --8<-- "examples/06_generate_new_iota_address.rs"
+    --8<-- "examples/06_generate_new_address.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GenerateNewIotaAddress06.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GenerateNewAddress06.java"
     ```
 
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/06_generate_new_iota_address.swift"
+    --8<-- "bindings/swift_new/examples/Sources/06_generate_new_address/main.swift"
     ```
 
 === "JS/TS"
 
     ```typescript
-    --8<-- "bindings/wasm/examples/06-generate_new_iota_address.ts"
+    --8<-- "bindings/wasm/examples/06-generate_new_address.ts"
     ```
 
 ## 7. Get Balance
