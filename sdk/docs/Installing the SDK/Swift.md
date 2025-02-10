@@ -1,18 +1,18 @@
 # Swift Installation
 
-The Swift SDK is now available through a private gitlab repository with binaries hosted on [JFrog](https://jfrog.com/). You can add the repository as a `dependency` in your `Package.swift`. Before starting, make sure you have access to the Gitlab repository as it will be needed for the instructions below.
+The swift SDK is now available through a private gitlab repository with binaries hosted on JFrog. You can add the repository as a `dependency` in your `Package.swift`. Before starting, make sure you have access to the Gitlab repository as it will be needed for the instructions below.
 
 We provide binaries for the following platforms:
 
 - `aarch64-apple-ios`: targets 64-bit ARM processors for iOS devices like iPhones and iPads.
 - `x86_64-apple-ios`: for 64-bit Intel processors for iOS simulators.
 - `aarch64-apple-ios-sim`: for 64-bit ARM processors running iOS simulators, typically used on Apple Silicon Macs.
-- `aarch64-apple-darwin`: for 64-bit ARM processors on macOS systems (e.g. M1).
+- `aarch64-apple-darwin`: for 64-bit ARM processors on macOS systems (eg. M1).
 - `x86_64-apple-darwin`: for 64-bit Intel processors on macOS systems.
 
-## Using CryptPay with Swift Package Manager
+## Using Cawaena with Swift Package Manager
 
-The CryptPay SDK can also be used as a Swift package. Follow these steps to integrate it into your project:
+The Cawaena SDK can also be used as a Swift package. Follow these steps to integrate it into your project:
 
 Add the repository as a `dependency` in your `Package.swift` file:
 
@@ -36,15 +36,15 @@ let package = Package(
 
 The `CryptpaySdk` module will then be available for import in your project.
 
-## Using CryptPay with XCode
+## Using Cawaena with XCode
 
-In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/cryptpay-swift`) and select the Cryptpay Sdk when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
+In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/cryptpay-swift`) and select the Cawaena SDK when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
 
 ### Access to the binaries on JFrog
 
 To allow the Swift Package Manager and XCode to download the binaries stored in JFrog, you need to set up an access token in your `~/.netrc` file.
 
-1. Visit [JFrog](https://jfrog.com/) and log in. In the top right corner, click your name and then "Edit Profile." Under "Identity Tokens," click "Generate an Identity Token" and optionally give the token a name.
+1. Visit `JFrog` and log in. In the top right corner, click your name and then "Edit Profile." Under "Identity Tokens," click "Generate an Identity Token" and optionally give the token a name.
 2. If not already existing, create the file `.netrc` in your home folder and add the following lines (e.g., using `nano ~/.netrc`)
 
 ```zsh
@@ -56,16 +56,6 @@ machine repo.farmunited.com
 3. You should now be able to access and use the package in your Swift projects!
 
 > Note: you might need to restart XCode for the changes to take effect.
-
-The package can then be used within your application like so:
-
-```swift
-import CryptpaySdk
-import Foundation
-
-let sdk = CryptpaySdk()
-try await sdk.setCurrency(Currency.Smr)
-```
 
 ## Future releases of SDK
 

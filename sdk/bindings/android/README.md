@@ -1,6 +1,6 @@
 # Dynamic library for Android
 
-This library provides a set of bindings for integrating the CryptPay SDK with Android applications. It allows developers to easily use the CryptPay functionality in their Android projects. The library supports multiple architectures including `armeabi-v7a`, `arm64-v8a`, `x86`, and `x86_64`. To generate the necessary library files, you can use the provided commands such as `cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 build --release` or `make build_sdk`. Additionally, there are commands available for bundling the jniLibs and packaging them for export. 
+This library provides a set of bindings for integrating the Cawaena SDK with Android applications. It allows developers to easily use the Cawaena functionality in their Android projects. The library supports multiple architectures including `armeabi-v7a`, `arm64-v8a`, `x86`, and `x86_64`. To generate the necessary library files, you can use the provided commands such as `cargo ndk -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 build --release` or `make build_sdk`. Additionally, there are commands available for bundling the jniLibs and packaging them for export.
 
 This library is a dynamic library and can also be used with standalone java projects.
 
@@ -50,6 +50,7 @@ System.load("absolute/path/to/lib/with/library_name.so");
 To support integration in java via a wrapper class, it is important to create the native methods in java and wrap them through a public method inside the class.
 
 The convention followed by JNI is crucial here. The convention followed for declaring function names which are JNI compatible is: `Java_{TLD}_{Org_Name}_{Class_name}_{function_Name}` where:
+
 - ***TLD*** = Top Level Domain
 - ***Org_Name*** = Organization name
 - ***Class_Name*** = Name of the class, whose method is private static and native.
@@ -87,6 +88,7 @@ pub extern "system" fn Java_com_etogruppe_CryptpaySdk_setCurrencyJni(mut env: JN
       // implementation
     }
 ```
+
 The two variables are passed by the JNI call to rust, namely the JNIEnv and the java class. The JClass is an empty place holders to satisfy the Java interface. The JNI environment is a constant pointer the JNI environment and can be used to call methods for checking and raising exceptions as shown below.
 
 ```Rust
@@ -129,13 +131,13 @@ macro_rules! set_jni_string {
 
 ## Futures across the ABI boundary
 
-As noticed in the previous example of the rust function, the prefix `extern "system"` is used  to tell compiler some information on how the function is going to be called. The `extern` helps the compiler to know that the function will be called from outside of rust. The `system` describes the application binary interface (ABI) to use to define the function in binary code. With `system` the systems ABI is to be used. This ABI is defined by each system according to the target-triplet configured during the cargo build command. 
+As noticed in the previous example of the rust function, the prefix `extern "system"` is used  to tell compiler some information on how the function is going to be called. The `extern` helps the compiler to know that the function will be called from outside of rust. The `system` describes the application binary interface (ABI) to use to define the function in binary code. With `system` the systems ABI is to be used. This ABI is defined by each system according to the target-triplet configured during the cargo build command.
 
 As we will see later, we could also use `C` ABI to expose our functions using the `C` calling conventions in the binary interface. Based on the ABI selected, different applications running on the same host machine and using the same operating system can interact with each other through the binary layer for exchanging information or calling functions.
 
 Unfortunately, on the binary layer there is no easy concept of futures, since there is no scheduler, which can periodically check if a result of a certain function call is available. Calling an external application function from another application is generally synchronous and the result is returned immediately. This means that for asynchronous function calls like HTTP requests, a blocking [sync] call has to be used by the external application and the calling application has to treat the function call as synchronous.
 
-For the cryptpay SDK, there is a runtime thread started and used for calling the SDK functions, in this case, are all asynchronous. Using `OnceCell` this runtime thread is created on the first call to any SDK function and reused by all others.
+For the Cawaena SDK, there is a runtime thread started and used for calling the SDK functions, in this case, are all asynchronous. Using `OnceCell` this runtime thread is created on the first call to any SDK function and reused by all others.
 
 ```Rust
 // lib.rs
@@ -174,6 +176,7 @@ pub extern "system" fn Java_com_etogruppe_CryptpaySdk_setPathPrefix<'local>(
     });
 }
 ```
+
 A nice way to solve this on the other side would be to wrap the native ABI calls in an interface which uses the futures framework of the used programming language (if available). So, the java class would now look something like this:
 
 ```Java
@@ -206,7 +209,7 @@ cd sdk/bindings/android/tests
 gradle test
 ```
 
-This will compile the bindings for the native platform of your computer (i.e. _not_ for android)
+This will compile the bindings for the native platform of your computer (i.e. *not* for android)
 and execute the tests.
 
 ## Running Examples
@@ -218,7 +221,7 @@ To execute them on you local machine use:
 2. `gradle runAllExamples` - will run all of them.
 3. `gradle {example task name}` - will run only one. Example: `gradle runCreateNewUser01`.
 
-This will compile the bindings for the native platform of your computer (i.e. _not_ for android)
+This will compile the bindings for the native platform of your computer (i.e. *not* for android)
 and run the examples.
 
 **Note**: These examples need environmental variables in order to run successfully. Make sure to add a `.env` in the root directory: `sdk/bindings/android/tests` with the corresponding values.

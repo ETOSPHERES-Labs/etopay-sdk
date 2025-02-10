@@ -1,0 +1,69 @@
+name: Publish Wiki to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main
+      - release/*
+    tags:
+      - v[0-9]+.[0-9]+.[0-9]+(-rc.+)?
+  pull_request:
+    paths:
+      - "sdk/docs/**/*"
+      - "sdk/examples/**/*"
+      - "sdk/bindings/**/*"
+
+jobs:
+  public-wiki:
+    runs-on: dell
+    container:
+      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
+      credentials:
+        username: ${{ secrets.ARTIFACTORY_USERNAME }}
+        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+
+    env:
+      GIT_DEPTH: 1000
+      DEPLOY_ONLY: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: ${{ env.GIT_DEPTH }}
+
+      - name: Setup Python environment
+        shell: bash
+        run: |
+          python3 -m venv .venv
+          source .venv/bin/activate
+          pip install mkdocs-material mike mkdocs-git-revision-date-localized-plugin \
+                      mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc
+          echo "VIRTUAL_ENV=$PWD/.venv" >> $GITHUB_ENV
+          echo "$PWD/.venv/bin" >> $GITHUB_PATH  # Ensure mkdocs is available globally
+
+      - name: Install project dependencies with pnpm
+        shell: bash
+        run: pnpm install
+        working-directory: sdk
+
+      - name: Build wasm-bindings
+        shell: bash
+        run: wasm-pack build --dev --scope eto
+        working-directory: sdk/bindings/wasm
+
+      - name: Mark repository as safe for Git
+        shell: bash
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
+        
+      - name: Build the documentation
+        shell: bash
+        run: mkdocs build
+        working-directory: sdk
+
+      - name: Deploy to GitHub Pages
+        if: env.DEPLOY_ONLY == 'true' 
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: sdk/site

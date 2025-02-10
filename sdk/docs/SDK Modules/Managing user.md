@@ -14,7 +14,7 @@ User creation in the SDK is compulsory. This user is only a local user which mig
 
 ???+ note
 
-    The user might already exist in the OAuth system, as well as every where else, including cryptpay backend. However, the SDK associates the local user to the system user only when an access token is provided.
+    The user might already exist in the OAuth system, as well as every where else, including Cawaena backend. However, the SDK associates the local user to the system user only when an access token is provided.
 
 The SDK supports multi-user environments and switching between users is fairly simple. Creating a user in the SDK informs the SDK about the user and allows the SDK to manage the user's state locally, whilst syncing it with the backend periodically.
 
@@ -28,66 +28,102 @@ The `username` should always match the `preferred_username` claim on the JWT `ac
 
     The application can extract the `preferred_username` information automatically from the JWT claim and set the username directly, instead of asking the user to enter the input. A user might mistype or misunderstand and enter a username which might later not work. This would lead to a bad end-user experience and should be avoided.
 
-!!! Note
-
-    The code snippets provided are intended as pseudo-code to demonstrate logic and workflows. They are not guaranteed to compile, execute, or function as-is. Users should adapt and validate them according to their specific requirements and development environment.
-
 === "Rust"
 
     ```rust linenums="1"
     async fn main() {
-        let mut sdk = Sdk::default();
-        sdk.set_config(...).unwrap();
+        dotenvy::dotenv().ok();
+        let path = "/tmp/Cawaena";
 
-        sdk.create_new_user("username").await.unwrap();
+        // ensure a clean start
+        tokio::fs::create_dir_all(path).await.unwrap();
+
+        let username = std::env::var("SATOSHI_USERNAME").unwrap();
+
+        sdk.set_path_prefix(path);
+        sdk.validate_config().unwrap();
+
+        sdk.create_new_user(&username).await.unwrap();
+
+        // other SDK functions
+
     }
     ```
 
 === "Java"
 
     ```java linenums="1"
+
     package org.example.app;
+
     import com.etogruppe.CryptpaySdk;
+    import java.nio.file.Files;
+    import java.nio.file.Paths;
+    import java.io.IOException;
+    import java.util.Map;
 
     public class app {
+        private CryptpaySdk sdk;
         public static void main(){
-            CryptpaySdk sdk = new CryptpaySdk();
+            sdk = new CryptpaySdk();
+            String path = "/tmp/Cawaena"; 
+
+            // ensure a clean start
+            try {
+                Files.createDirectories(Paths.get(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Map<String, String> env = System.getenv();
+            String username = env.get("SATOSHI_USERNAME");
 
             try {
-                sdk.setConfig("...");
-                sdk.createNewUser("username");
+                sdk.setStoragePath(path);
+                sdk.logLevel("info");
+                sdk.initLogger();
+                sdk.checkConfig();
+                sdk.createNewUser(username);
+                // other SDK functions
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+
     ```
 
 === "Swift"
 
     ```swift linenums="1"
+    
     import Foundation
-    import CryptpaySdk
 
-    let sdk = CryptpaySdk()
-    try await sdk.setConfig(config: "...")
+    let path = "/tmp/Cawaena"
 
+    // ensure a clean start
     do {
-        try await sdk.createNewUser(username: "username")
+        try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
     } catch {
         print(error.localizedDescription)
     }
-    ```
 
-=== "Typescript"
+    let username = ProcessInfo.processInfo.environment["SATOSHI_USERNAME"] ?? ""
 
-    ```typescript linenums="1"
-    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+    let sdk = Sdk()
+    sdk.setPathPrefix(path_prefix: path)
+    sdk.setLogLevel(log_level: "info")
+    do {
+        try sdk.initLogger()
+        try sdk.checkConfig()
+        try sdk.createNewUser(username: username)
+        // other SDK functions
+    } catch {
+        print(error.localizedDescription)
+    }
 
-    const sdk = await new CryptpaySdk();
-    await sdk.setConfig("...")
-
-    await sdk.createNewUser("username");
     ```
 
 ## Initializing a user and access token refresh
@@ -108,72 +144,264 @@ The access token brings the following safe operations for the SDK:
 
     ```rust linenums="1"
     async fn main() {
-        let mut sdk = Sdk::default();
-        sdk.set_config(...).unwrap();
-        
-        sdk.create_new_user("username").await.unwrap();
+        dotenvy::dotenv().ok();
+        let path = "/tmp/Cawaena";
 
-        sdk.refresh_access_token("access_token").await.unwrap();
-        sdk.init_user("username").await.unwrap();
+        // ensure a clean start
+        tokio::fs::create_dir_all(path).await.unwrap();
+
+        let username = std::env::var("SATOSHI_USERNAME").unwrap();
+        let access_token = std::env::var("ACCESS_TOKEN").unwrap();
+
+        sdk.set_path_prefix(path);
+        sdk.validate_config().unwrap();
+
+        sdk.create_new_user(&username).await.unwrap();
+
+        sdk.refresh_access_token(&access_token).await.unwrap();
+        sdk.init_user(&username).await.unwrap();
 
         // other SDK functions now use the initialized user
+
     }
     ```
 
 === "Java"
 
     ```java linenums="1"
+
     package org.example.app;
+
     import com.etogruppe.CryptpaySdk;
+    import java.nio.file.Files;
+    import java.nio.file.Paths;
+    import java.io.IOException;
+    import java.util.Map;
 
     public class app {
+        private CryptpaySdk sdk;
         public static void main(){
-            CryptpaySdk sdk = new CryptpaySdk();
+            sdk = new CryptpaySdk();
+            String path = "/tmp/Cawaena"; 
+
+            // ensure a clean start
+            try {
+                Files.createDirectories(Paths.get(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Map<String, String> env = System.getenv();
+            String username = env.get("SATOSHI_USERNAME");
+            String accessToken = env.get("ACCESS_TOKEN");
 
             try {
-                sdk.setConfig("...");
-                sdk.createNewUser("username");
-                sdk.refreshAccessToken("accessToken");
-                sdk.initializeUser("username");
+                sdk.setStoragePath(path);
+                sdk.logLevel("info");
+                sdk.initLogger();
+                sdk.checkConfig();
+                sdk.createNewUser(username);
+
+                sdk.refreshAccessToken(accessToken);
+                sdk.initializeUser(username);
                 // other SDK functions now use the initialized user
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+
     ```
 
 === "Swift"
 
     ```swift linenums="1"
+    
     import Foundation
-    import CryptpaySdk
 
-    let sdk = CryptpaySdk()
-    try await sdk.setConfig(config: "...")
+    let path = "/tmp/Cawaena"
 
+    // ensure a clean start
     do {
-        try await sdk.createNewUser(username: "username")
-        try await sdk.refreshAccessToken(access_token: "access_token")
-        try await sdk.initUser(username: "username")
-        // other SDK functions now use the initialized user
+        try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
     } catch {
         print(error.localizedDescription)
     }
+
+    let username = ProcessInfo.processInfo.environment["SATOSHI_USERNAME"] ?? ""
+    let access_token = ProcessInfo.processInfo.environment["ACCESS_TOKEN"] ?? ""
+
+    let sdk = Sdk()
+    sdk.setPathPrefix(path_prefix: path)
+    sdk.setLogLevel(log_level: "info")
+    do {
+        try sdk.initLogger()
+        try sdk.checkConfig()
+        try sdk.createNewUser(username: username)
+
+        try sdk.refreshAccessToken(access_token: access_token)
+        try sdk.initUser(username: username)
+        // other SDK functions
+    } catch {
+        print(error.localizedDescription)
+    }
+
     ```
 
-=== "Typescript"
+???+ example
 
-    ```typescript linenums="1"
-    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+    Handling multiple users
 
-    const sdk = await new CryptpaySdk();
-    await sdk.setConfig("...")
+=== "Rust"
 
-    await sdk.createNewUser("username");
-    await sdk.refreshAccessToken("access_token");
-    await sdk.initializeUser("username");
-    // other SDK functions now use the initialized user
+    ```rust linenums="1"
+    async fn main() {
+        dotenvy::dotenv().ok();
+        let path = "/tmp/Cawaena";
+
+        // ensure a clean start
+        tokio::fs::create_dir_all(path).await.unwrap();
+
+        let username = std::env::var("SATOSHI_USERNAME").unwrap();
+        let username2 = std::env::var("ANOTHER_USERNAME").unwrap(); // Second user
+
+        let access_token = std::env::var("ACCESS_TOKEN").unwrap();
+        let access_token2 = std::env::var("ACCESS_TOKEN2").unwrap(); // Second user token
+
+        sdk.set_path_prefix(path);
+        sdk.validate_config().unwrap();
+
+        // Create both the users
+        sdk.create_new_user(&username).await.unwrap();
+        sdk.create_new_user(&username2).await.unwrap();
+
+        // Initialize the first user
+
+        sdk.refresh_access_token(&access_token).await.unwrap();
+        sdk.init_user(&username).await.unwrap();
+
+        // other SDK functions now use the initialized user
+        // do some stuff for first user
+
+        // Now initialize the second user to activate the user.
+        // First user will be inactive automatically
+
+        sdk.refresh_access_token(&access_token2).await.unwrap();
+        sdk.init_user(&username2).await.unwrap();
+
+        // Now the SDK uses the second user
+
+    }
+    ```
+
+=== "Java"
+
+    ```java linenums="1"
+
+    package org.example.app;
+
+    import com.etogruppe.CryptpaySdk;
+    import java.nio.file.Files;
+    import java.nio.file.Paths;
+    import java.io.IOException;
+    import java.util.Map;
+
+    public class app {
+        private CryptpaySdk sdk;
+        public static void main(){
+            sdk = new CryptpaySdk();
+            String path = "/tmp/Cawaena"; 
+
+            // ensure a clean start
+            try {
+                Files.createDirectories(Paths.get(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Map<String, String> env = System.getenv();
+            String username = env.get("SATOSHI_USERNAME");
+            String username2 = env.get("ANOTHER_USERNAME"); // Second user
+
+
+            String accessToken = env.get("ACCESS_TOKEN");
+            String accessToken2 = env.get("ACCESS_TOKEN2"); // Second user token
+
+            try {
+                sdk.setStoragePath(path);
+                sdk.logLevel("info");
+                sdk.initLogger();
+                sdk.checkConfig();
+                sdk.createNewUser(username);
+
+                sdk.refreshAccessToken(accessToken);
+                sdk.initializeUser(username);
+                // other SDK functions now use the initialized user
+                // do some stuff for first user
+
+                // Now initialize the second user to activate the user.
+                // First user will be inactive automatically
+
+                sdk.refreshAccessToken(accessToken2);
+                sdk.initializeUser(username2);
+
+                // Now the SDK uses the second user
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    ```
+
+=== "Swift"
+
+    ```swift linenums="1"
+    
+    import Foundation
+
+    let path = "/tmp/Cawaena"
+
+    // ensure a clean start
+    do {
+        try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
+    } catch {
+        print(error.localizedDescription)
+    }
+
+    let username = ProcessInfo.processInfo.environment["SATOSHI_USERNAME"] ?? ""
+    let username2 = ProcessInfo.processInfo.environment["ANOTHER_USERNAME"] ?? ""
+
+    let access_token = ProcessInfo.processInfo.environment["ACCESS_TOKEN"] ?? ""
+    let access_token2 = ProcessInfo.processInfo.environment["ACCESS_TOKEN2"] ?? ""
+
+    let sdk = Sdk()
+    sdk.setPathPrefix(path_prefix: path)
+    sdk.setLogLevel(log_level: "info")
+    do {
+        try sdk.initLogger()
+        try sdk.checkConfig()
+        try sdk.createNewUser(username: username)
+
+        try sdk.refreshAccessToken(access_token: access_token)
+        try sdk.initUser(username: username)
+        // other SDK functions
+        // do some stuff for first user
+
+        // Now initialize the second user to activate the user.
+        // First user will be inactive automatically
+
+        try sdk.refreshAccessToken(access_token: access_token2)
+        try sdk.initUser(username: username2)
+
+        // Now the SDK uses the second user
+    } catch {
+        print(error.localizedDescription)
+    }
+
     ```
 
 ## Deleting a user
@@ -188,89 +416,122 @@ Deleting the user is simply deleting the user entity from the local database, wh
 
     ```rust linenums="1"
     async fn main() {
-        let mut sdk = Sdk::default();
-        sdk.set_config(...).unwrap();
+        dotenvy::dotenv().ok();
+        let path = "/tmp/Cawaena";
 
-        sdk.create_new_user("username").await.unwrap();
-        sdk.refresh_access_token("access_token").await.unwrap();
-        sdk.init_user("username").await.unwrap();
+        // ensure a clean start
+        tokio::fs::create_dir_all(path).await.unwrap();
 
-        let pin = "1234"; 
-        // only if wallet was created by the user, a pin value is required.
-        // otherwise, it is None.
-        sdk.delete_user(Some(pin)).await.unwrap();
+        let username = std::env::var("SATOSHI_USERNAME").unwrap();
+        let access_token = std::env::var("ACCESS_TOKEN").unwrap();
+        
+
+        sdk.set_path_prefix(path);
+        sdk.validate_config().unwrap();
+
+        sdk.create_new_user(&username).await.unwrap();
+
+        sdk.refresh_access_token(&access_token).await.unwrap();
+        sdk.init_user(&username).await.unwrap();
+
+        // other SDK functions now use the initialized user
+        let pin = "1234"; // only if wallet was created by the user, a pin value is required
+        sdk.delete_user(pin).await.unwrap();
+
     }
     ```
 
 === "Java"
 
     ```java linenums="1"
+
     package org.example.app;
+
     import com.etogruppe.CryptpaySdk;
+    import java.nio.file.Files;
+    import java.nio.file.Paths;
+    import java.io.IOException;
+    import java.util.Map;
 
     public class app {
+        private CryptpaySdk sdk;
         public static void main(){
-            CryptpaySdk sdk = new CryptpaySdk();
+            sdk = new CryptpaySdk();
+            String path = "/tmp/Cawaena"; 
+
+            // ensure a clean start
+            try {
+                Files.createDirectories(Paths.get(path));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+            Map<String, String> env = System.getenv();
+            String username = env.get("SATOSHI_USERNAME");
+            String accessToken = env.get("ACCESS_TOKEN");
 
             try {
-                sdk.setConfig("...");
-                sdk.createNewUser("username");
+                sdk.setStoragePath(path);
+                sdk.logLevel("info");
+                sdk.initLogger();
+                sdk.checkConfig();
+                sdk.createNewUser(username);
 
-                sdk.refreshAccessToken("accessToken");
-                sdk.initializeUser("username");
-                
-                String pin = "1234"; 
-                // only if wallet was created by the user, a pin value is required.
-                // otherwise, it is null.
+                sdk.refreshAccessToken(accessToken);
+                sdk.initializeUser(username);
+                // other SDK functions now use the initialized user
+                String pin = "1234"; // only if wallet was created by the user, a pin value is required
                 sdk.deleteUser(pin)
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
+
+
     ```
 
 === "Swift"
 
     ```swift linenums="1"
-    import Foundation
-    import CryptpaySdk
-
-    let sdk = CryptpaySdk()
-    try await sdk.setConfig(config: "...")
     
-    do {
-        try await sdk.createNewUser(username: "username")
+    import Foundation
 
-        try await sdk.refreshAccessToken(access_token: "access_token")
-        try await sdk.initUser(username: "username")
-        
-        let pin = "1234"; 
-        // only if wallet was created by the user, a pin value is required.
-        // otherwise, it is nil.
-        try await sdk.deleteUser(pin: pin)
+    let path = "/tmp/Cawaena"
+
+    // ensure a clean start
+    do {
+        try FileManager.default.createDirectory(atPath: path, withIntermediateDirectories: true, attributes: nil)
     } catch {
         print(error.localizedDescription)
     }
+
+    let username = ProcessInfo.processInfo.environment["SATOSHI_USERNAME"] ?? ""
+    let access_token = ProcessInfo.processInfo.environment["ACCESS_TOKEN"] ?? ""
+
+    let sdk = Sdk()
+    sdk.setPathPrefix(path_prefix: path)
+    sdk.setLogLevel(log_level: "info")
+    do {
+        try sdk.initLogger()
+        try sdk.checkConfig()
+        try sdk.createNewUser(username: username)
+
+        try sdk.refreshAccessToken(access_token: access_token)
+        try sdk.initUser(username: username)
+        // other SDK function
+        let pin = "1234"; // only if wallet was created by the user, a pin value is required
+        try sdk.deleteUser(pin: pin)
+    } catch {
+        print(error.localizedDescription)
+    }
+
     ```
 
-=== "Typescript"
+??? Bug
 
-    ```typescript linenums="1"
-    import * as wasm from "../pkg/cryptpay_sdk_wasm";
-
-    const sdk = await new CryptpaySdk();
-    await sdk.setConfig("...")
-
-    await sdk.createNewUser("username");
-    await sdk.refreshAccessToken("access_token");
-    await sdk.initializeUser("username");
-
-    let pin = "1234"; 
-    // only if wallet was created by the user, a pin value is required.
-    // otherwise, it is null.
-    await sdk.deleteUser(pin);
-    ```
+    Currently, the delete user does require a pin and it is not optional. For this, the wallet should be initialized using the appropriate method for the delete user function to successfully execute.
 
 ## User lifecycle overview
 

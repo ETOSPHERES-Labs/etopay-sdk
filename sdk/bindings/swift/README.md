@@ -1,16 +1,16 @@
-# Static cryptpay SDK library for iOS using swift-bridge crate
+# Static Cawaena SDK library for iOS using swift-bridge crate
 
-This library provides a set of bindings for integrating the CryptPay SDK with Swift applications. It allows developers to easily use the CryptPay functionality in their Swift projects. To generate the necessary library files, you can use the provided commands such as `cargo build --lib --release --target={architecture}`. Additionally, there are commands available for bundling the libraries and packaging them for export.
+This library provides a set of bindings for integrating the Cawaena SDK with Swift applications. It allows developers to easily use the Cawaena functionality in their Swift projects. To generate the necessary library files, you can use the provided commands such as `cargo build --lib --release --target={architecture}`. Additionally, there are commands available for bundling the libraries and packaging them for export.
 
 ## Supported architectures
 
 The library currently supports these architectures:
 
- - `aarch64-apple-ios`: This architecture targets 64-bit ARM processors for iOS devices like iPhones and iPads.
- - `aarch64-apple-darwin`: This architecture targets 64-bit ARM processors on macOS systems, enabling compatibility with Apple's hardware and software ecosystem.
- - `x86_64-apple-darwin`: This architecture targets 64-bit Intel processors on macOS, facilitating development and execution of software on Apple's Intel-based Mac computers.
- - `aarch64-apple-ios-sim`: This architecture targets 64-bit ARM processors running iOS simulators, typically used on Apple Silicon Macs.
- - `x86_64-apple-ios`: This architecture targets 64-bit Intel processors for iOS simulators.
+- `aarch64-apple-ios`: This architecture targets 64-bit ARM processors for iOS devices like iPhones and iPads.
+- `aarch64-apple-darwin`: This architecture targets 64-bit ARM processors on macOS systems, enabling compatibility with Apple's hardware and software ecosystem.
+- `x86_64-apple-darwin`: This architecture targets 64-bit Intel processors on macOS, facilitating development and execution of software on Apple's Intel-based Mac computers.
+- `aarch64-apple-ios-sim`: This architecture targets 64-bit ARM processors running iOS simulators, typically used on Apple Silicon Macs.
+- `x86_64-apple-ios`: This architecture targets 64-bit Intel processors for iOS simulators.
 
 ## Library generation
 
@@ -29,6 +29,7 @@ To build a xcframework bundle for testing in iOS, use the following command:
 ```bash
 make xcframework
 ```
+
 This command needs to be executed on a Mac with xcode tools enabled and the xcode command line tools installed. This is because this needs lipo and xcode build commands.
 
 ## Generating iOS xcframeworks
@@ -59,6 +60,7 @@ module CryptpaySdkBin {
     export *
 }
 ```
+
 The module name is important here. It needs to have the name of the package binary which in our case is `CryptpaySdkBin`.
 
 The `bridging-header.h` file includes the auto-generated files from the `swift-bridge` crate which we explain in more details on the `header files` section below.

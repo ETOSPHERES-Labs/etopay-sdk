@@ -32,7 +32,7 @@ Hence, it does not come to us as a surprise that, all which we are building fits
 
 ## The Cawaena story
 
-Cawaena began exactly with the simplest of problems: How is it possible for a person to pay another person for goods and services offered on a platform in a way where the platform is not a gate-keeper?
+ began exactly with the simplest of problems: How is it possible for a person to pay another person for goods and services offered on a platform in a way where the platform is not a gate-keeper?
 
 With this started our search for solutions and we concluded that there is no platform as such which respects their end-users and their rights like data protection, but rather tries to exploit as much as they can from their users.
 

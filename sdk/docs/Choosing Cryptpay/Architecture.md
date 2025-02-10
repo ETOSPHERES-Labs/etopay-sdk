@@ -1,10 +1,10 @@
 # Architecture
 
-![Cawaena Integration Architecture](Cryptpay_Integration.svg)
+![Cawaena Integration Architecture](Cawaena_Integration.svg)
 
 ## Overview
 
-The architecture shows the involved participants and explains how the integration of a client application works with Cawaena. 
+The architecture shows the involved participants and explains how the integration of a client application works with Cawaena.
 
 ### Cawaena Services
 

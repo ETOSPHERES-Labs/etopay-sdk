@@ -1,6 +1,6 @@
-# Cryptpay SDK
+# Cawaena SDK
 
-The cryptpay SDK provides the logic for interacting with the cryptpay backend correctly. The SDK was planned to help developers with a quicker, safer and easier on-boarding in the web3 world, while using the cryptpay infrastructure to support various use-cases.
+The Cawaena SDK provides the logic for interacting with the Cawaena backend correctly. The SDK was planned to help developers with a quicker, safer and easier on-boarding in the web3 world, while using the Cawaena infrastructure to support various use-cases.
 
 The SDK is divided in various modules which come together to ensure an easy and safe way to incorporate the SDK in the application.
 
@@ -8,19 +8,19 @@ For ease of integration, the SDK also generates bindings in various languages fo
 
 ## Introduction
 
-The cryptpay SDK is built in `rust`. It is primarily an implementation of the various functionalities for managing users, wallets, on-boarding of users through KYC (Know Your Customer) processes, payment methods and listing usage information.
+The Cawaena SDK is built in `rust`. It is primarily an implementation of the various functionalities for managing users, wallets, on-boarding of users through KYC (Know Your Customer) processes, payment methods and listing usage information.
 
-The SDK was designed to support the `Cawaena` application. It is a social media application, which allows monetization of user-generated content. However, in the same principle, any digital data, given that it is authentic and its origin can be verified, can be monetized using the cryptpay ecosystem, which includes the cryptpay infrastructure and the sdk.
+The SDK was designed to support the `Cawaena` application. It is a social media application, which allows monetization of user-generated content. However, in the same principle, any digital data, given that it is authentic and its origin can be verified, can be monetized using the Cawaena ecosystem, which includes the Cawaena infrastructure and the sdk.
 
-The big picture behind cryptpay is a data marketplace. Data processing, silo management and search engine features have been excluded by design from cryptpay to make it a minimal ecosystem for monetization.
+The big picture behind Cawaena is a data marketplace. Data processing, silo management and search engine features have been excluded by design from Cawaena to make it a minimal ecosystem for monetization.
 
 ### Overview of the SDK functional components
 
-The figure below shows the functional component diagram of the SDK. The core of the SDK is a web3 hot-wallet. This wallet is used to store assets on the local machine running the application built with the SDK. The supporting components like the backend API, user state management and access control logic work for improving ease of use for the end user as well as ensuring correct process flow and state transitions between the cryptpay infrastructure and application.
+The figure below shows the functional component diagram of the SDK. The core of the SDK is a web3 hot-wallet. This wallet is used to store assets on the local machine running the application built with the SDK. The supporting components like the backend API, user state management and access control logic work for improving ease of use for the end user as well as ensuring correct process flow and state transitions between the Cawaena infrastructure and application.
 
 The binding layer is just a simple 1-to-1 wrapper around the SDK functionalities. This just exports the existing business logic implemented in the SDK in rust to other programming stacks to avoid re-implementation as well as guarantee memory safety natively in code.
 
-The access control section at the bottom shows the input parameters needed from the user/application to authenticate itself against the SDK. For the one-time on-boarding in addition to the `pin` and `access_token` the `username` and `password` is also needed. For regular usage, the `pin`, whenever required and `access_token` is required to ensure smooth handling of operations, including internal function calls to the cryptpay infrastructure and the wallet.
+The access control section at the bottom shows the input parameters needed from the user/application to authenticate itself against the SDK. For the one-time on-boarding in addition to the `pin` and `access_token` the `username` and `password` is also needed. For regular usage, the `pin`, whenever required and `access_token` is required to ensure smooth handling of operations, including internal function calls to the Cawaena infrastructure and the wallet.
 
 ```
 +-------------------------------------------------------------------------------+
@@ -65,7 +65,7 @@ The access control section at the bottom shows the input parameters needed from 
    Username  Password  Pin    Access token            Pin      Access token      
 ```
 
-## Modules of cryptpay SDK
+## Modules of Cawaena SDK
 
 ### User management
 
@@ -246,11 +246,11 @@ The password stays with the SDK in an encrypted form and only the pin can be use
 
 The issue of password management is also solved, since now the SDK internally manages the password, while still relying completely on the user to unblock it using the pin. The SDK cannot act in its own interest even if there was a malicious code trying to unblock the wallet! The probability distribution of the pin, being relatively weak, (4 to 6 digit), is improved through the addition of a pseudo random salt, which in combination with a hash function results in an encryption password of significant strength and quasi-random probability distribution. This is used then to encrypt the password for the secret manager.
 
-Thus an attacker would need information on the salt, the encrypted password, pin and the stronghold file to be able to gain access to the wallet functions. This is tough and would need somehow physical access to the end device, and to the end user. Security of end-user and their devices is out of the scope for cryptpay ecosystem.
+Thus an attacker would need information on the salt, the encrypted password, pin and the stronghold file to be able to gain access to the wallet functions. This is tough and would need somehow physical access to the end device, and to the end user. Security of end-user and their devices is out of the scope for Cawaena ecosystem.
 
 ### Onboarding for various KYC processes
 
-The SDK supports KYC onboarding for users with  `Postident` and  `Viviswap`. The individual processes behind the KYC on-boarding are described in the cryptpay infrastructure in their individual service descriptions.
+The SDK supports KYC onboarding for users with  `Postident` and  `Viviswap`. The individual processes behind the KYC on-boarding are described in the Cawaena infrastructure in their individual service descriptions.
 
 The SDK only maintains the state for the user on the local device. Once, the user wishes to submit the information after modifying and verifying it, the state gets transferred to the infrastructure, where further processing at the corresponding KYC provider can take place. Also information from the infrastructure is relayed back to the SDK based on internal and external state changes, however, only on request (polling-based).
 
@@ -398,7 +398,7 @@ Action      |            |     Ref.   |            |            |
 
 #### Purchase transactions flow
 
-The purchase transaction is a process different than a swap or a wallet transaction. The purchase is a process of exchanging funds for underlying artefact. An artefact can be something promised between two parties like a photo, video, or a compliment on a photo, sensor data, services, licenses, etc... The SDK is only interested in creation, querying and confirmation of these purchase requests. The rest of the business logic flow is handled by the corresponding service in cryptpay infrastructure. The transfer of artefact can happen only after a successful execution of the purchase request. This information can be verified at all times by querying the status of the purchase request and the details of the purchase request.
+The purchase transaction is a process different than a swap or a wallet transaction. The purchase is a process of exchanging funds for underlying artefact. An artefact can be something promised between two parties like a photo, video, or a compliment on a photo, sensor data, services, licenses, etc... The SDK is only interested in creation, querying and confirmation of these purchase requests. The rest of the business logic flow is handled by the corresponding service in Cawaena infrastructure. The transfer of artefact can happen only after a successful execution of the purchase request. This information can be verified at all times by querying the status of the purchase request and the details of the purchase request.
 
 A purchase request can be created at any time and is unique per purchase. A purchase id is returned by the infrastructure to track this particular request.
 Currently, polling is used to wait for the purchase request to be valid. It can be invalid for multiple reasons, as defined in the infrastructure. In case the request turns out to be valid, then the details (supplemented by the infrastructure) are fetched and a confirmation is done through the sdk.
@@ -441,6 +441,7 @@ The confirmation of a purchase request means that funds are required to be relea
 ## Building the public docs
 
 To build the public docs, you need to do some preparation. First, setup a new python virtual environment and install the required python and nodejs packages:
+
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
@@ -449,13 +450,16 @@ pnpm install
 ```
 
 Next you need to build the `wasm` bindings, since the generated typescript definitions are used to publish its API reference: (you can skip this step if you have already built the bindings once)
+
 ```bash
 cd bindings/wasm
 wasm-pack build --dev --scope eto
 ```
 
 Finally you can build and serve the docs:
+
 ```bash
 mkdocs serve
 ```
+
 where `$version` should be replace

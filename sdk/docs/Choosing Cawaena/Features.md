@@ -1,8 +1,8 @@
 # Features
 
-Cawaena allows end-users to perform in-app payments to other end-users for services and products offered through the application.
+ allows end-users to perform in-app payments to other end-users for services and products offered through the application.
 
-Cawaena solves the problem of P2P payments between end-users, by not becoming a gate-keeper, but a path-finder between consumers for digital data, services and real-world commodities
+ solves the problem of P2P payments between end-users, by not becoming a gate-keeper, but a path-finder between consumers for digital data, services and real-world commodities
 
 - **Complete Wallet Management with MFA (Multi-factor approvals)**
 

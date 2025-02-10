@@ -6,7 +6,7 @@ These instructions assume that you already have a project setup using one of the
 
 ## Installing the JS/TS SDK
 
-To install the WASM SDK, simply place the compressed file next to your project and use `npm` / `pnpm` to install it from your project directory (the one containing your `project.json` file):
+To install the WASM SDK, simply place the compressed file next to your project and use `npm`/`pnpm` to install it from your project directory (the one containing your `project.json` file):
 
 ```bash
 npm install <path-to-the-tgz-file>
@@ -15,21 +15,25 @@ npm install <path-to-the-tgz-file>
 The package can then be used within your application like so (example using `webpack`):
 
 ```typescript
-import { CryptpaySdk, Currency, Level } from "@eto/cryptpay-sdk-wasm";
+import { CryptpaySdk, Environment, Level } from "@eto/Cawaena-sdk-wasm";
 
 const sdk = await new CryptpaySdk();
 sdk.initLogger(Level.Info);
-await sdk.setCurrency(Currency.Smr);
+await sdk.setEnvironment(Environment.Development);
+await sdk.validateConfig();
 ```
 
 or using a named import:
 
 ```typescript
-import * as cryptpay from "@eto/cryptpay-sdk-wasm";
 
-const sdk = new cryptpay.CryptpaySdk();
-sdk.initLogger(cryptpay.Level.Info);
-await sdk.setCurrency(cryptpay.Currency.Smr);
+import * as Cawaena from "@eto/Cawaena-sdk-wasm";
+
+const sdk = new Cawaena.CryptpaySdk();
+sdk.initLogger(Cawaena.Level.Info);
+await sdk.setEnvironment(Cawaena.Environment.Development);
+await sdk.validateConfig();
+
 ```
 
 See the API reference for more information about the available functions.

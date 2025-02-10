@@ -1,8 +1,8 @@
-//! This file contains the Rust implementation of the Android SDK bindings for the Cryptpay library.
+//! This file contains the Rust implementation of the Android SDK bindings for the Cawaena library.
 //!
-//! It provides functions that interface with the Java code and handle the communication with the Cryptpay SDK.
+//! It provides functions that interface with the Java code and handle the communication with the Cawaena SDK.
 //! The functions in this file are called from the Java code using JNI (Java Native Interface).
-//! The Rust code uses the `jni` crate to interact with the Java code and the `sdk` crate to access the Cryptpay SDK functionality.
+//! The Rust code uses the `jni` crate to interact with the Java code and the `sdk` crate to access the Cawaena SDK functionality.
 //! The Rust code also uses other crates such as `once_cell`, `tokio`, and `serde_json` for various purposes.
 //! The functions in this file handle tasks such as setting up the SDK, initializing users, performing transactions, and managing wallets.
 //!
@@ -12,7 +12,7 @@
 //! This allows for concurrent access to the SDK from multiple threads.
 //! The Rust code also defines various helper macros for string conversion and error handling.
 //!
-//! Overall, this file serves as the bridge between the Java code and the Cryptpay SDK, enabling seamless integration of the SDK into Android applications.
+//! Overall, this file serves as the bridge between the Java code and the Cawaena SDK, enabling seamless integration of the SDK into Android applications.
 
 mod type_conversions;
 
@@ -63,7 +63,7 @@ fn get_or_init_sdk() -> &'static SdkWrapper {
     sdk
 }
 
-/// Main object that contains all the functionality for interfacing with the CryptpaySdk.
+/// Main object that contains all the functionality for interfacing with the CawaenaSdk.
 #[jnigen_macro::generate("com.etogruppe.CryptpaySdk")]
 mod ffi {
     use super::*;
@@ -121,7 +121,7 @@ mod ffi {
         }
     }
 
-    /// Selects the currency for the Cryptpay SDK.
+    /// Selects the currency for the Cawaena SDK.
     ///
     /// @param currency The input string representing the currency. Currently supports only SMR and IOTA.
     pub fn setCurrency(currency: String) -> Result<(), String> {
@@ -1049,7 +1049,7 @@ mod ffi {
         result.map_err(|e| format!("{e:#?}"))
     }
 
-    /// Deletes the user in cryptpay. Hazmat!
+    /// Deletes the user in Cawaena. Hazmat!
     ///
     /// @param pin The wallet pin for confirmation. Optional in case there is an active wallet.
     pub fn deleteUser(pin: Option<String>) -> Result<(), String> {
