@@ -32,6 +32,9 @@ repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
 # Therefore we can allow this lint for now, and simply remove it whenever we need to actually see them.
 deprecated = "allow"
 
+# used for the wasm bindings tests
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(wasm_bindgen_unstable_test_coverage)'] }
+
 [workspace.lints.clippy]
 # With these two, we avoid panicking behavior in our code.
 # In some places where panicking is desired, such as in tests or in the `main.rs` files,

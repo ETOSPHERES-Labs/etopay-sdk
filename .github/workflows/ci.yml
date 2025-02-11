@@ -11,8 +11,6 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
-  SCCACHE_GHA_ENABLED: "true"
-  RUSTC_WRAPPER: "sccache"
 
 # cancel the job if a newer pipeline starts for the same MR or branch
 concurrency:
@@ -21,45 +19,64 @@ concurrency:
 
 jobs:
   lint:
-    runs-on: dell
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+
       - name: Check format
         run: cargo fmt --check
+
+      - name: Install cargo-machete, cargo-audit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-machete,cargo-audit
+
       - name: Check for unused dependencies
         run: cargo machete
+
       - name: Check for clippy warnings
         run: cargo clippy --all-targets --all-features --color always -- -D warnings
-      # - name: Audit dependencies
-      #   run: cargo audit --color always
+
+      - name: Audit dependencies
+        run: cargo audit --color always
 
   unit-tests:
-    runs-on: dell
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
     env:
       VIVISWAP_ENV: testing
     steps:
       - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+
+      - name: Install cargo-llvm-cov
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
+
+      - name: Install nextest
+        run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
+
       - name: Run unit tests
         run: cargo llvm-cov nextest --profile ci --locked --lib --workspace --no-fail-fast --all-features --cobertura --output-path cobertura.xml --exclude cryptpay-sdk-jni --exclude cryptpay-sdk-swift --exclude cryptpay-sdk-wasm --ignore-filename-regex "sdk/bindings/|api_types/|.*/error\.rs"
+
       - name: Publish Test Results
         uses: EnricoMi/publish-unit-test-result-action@v2
         if: always()
         with:
           files: ${{ github.workspace }}/target/nextest/ci/junit.xml
+
       - name: Publish Coverage
         uses: 5monkeys/cobertura-action@master
         with:
@@ -67,16 +84,31 @@ jobs:
           minimum_coverage: 75
 
   build-sdk-wasm:
-    runs-on: dell
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          # cache: 'pnpm'
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
+
       - name: Build wasm sdk
         run: |
           cd sdk/bindings/wasm
@@ -87,6 +119,7 @@ jobs:
           wasm-pack build --release --scope eto
           pnpm install
           pnpm build
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -105,10 +138,11 @@ jobs:
         password: ${{ secrets.ARTIFACTORY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+      - uses: Swatinem/rust-cache@v2
+
       - name: Build android sdk
         run: cd sdk/bindings/android && make bundle
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -141,30 +175,29 @@ jobs:
           overwrite: true
 
   android-bindings-tests:
-    runs-on: dell
-    needs: build-sdk-android
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+
       - name: Run android bindings tests
         run: cd sdk/bindings/android/tests && gradle test
 
   jnigen-integration-tests:
-    runs-on: dell
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+
       - name: Run jnigen integration test
         run: cd tools/jnigen-integration-test && gradle test
