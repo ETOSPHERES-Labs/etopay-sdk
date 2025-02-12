@@ -23,7 +23,8 @@ resolver = "2"
 version = "0.14.0"
 edition = "2021"
 authors = ["Team Lobster 🦞"]
-license = "Copyright(C) 2025, ETOSPHERES Labs GmbH, All rights reserved."
+license = "AGPL-3.0-only"
+license-file = "LICENSE"
 homepage = "https://www.etogruppe.com/en/information/legal-notice.html"
 repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
 

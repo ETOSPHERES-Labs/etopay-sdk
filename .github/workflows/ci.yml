@@ -55,6 +55,20 @@ jobs:
       - name: Audit dependencies
         run: cargo audit --color always
 
+  cargo-deny:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-deny
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-deny
+
+      - name: Audit dependencies
+        run: cargo deny --all-features check
+
   lint-clippy:
     runs-on: ubuntu-latest
     steps:
