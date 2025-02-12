@@ -5,6 +5,7 @@ authors.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
+publish = false
 
 name = "cryptpay-sdk-jni"
 description = "The SDK java native bindings for use in java based applications and android"
