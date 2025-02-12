@@ -37,9 +37,6 @@ tokio = { workspace = true, features = ["rt-multi-thread"] }
 [target.'cfg(target_os="android")'.dependencies]
 jni = { workspace = true }
 
-# this is needed to build and link openssl for the android targets
-openssl = { workspace = true }
-
 [build-dependencies]
 jnigen-build = { path = "../../../tools/jnigen-build" }
 xml = { version = "0.8.20", default-features = false }
