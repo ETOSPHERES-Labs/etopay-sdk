@@ -18,7 +18,44 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  lint:
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Check format
+        run: cargo fmt --check
+
+  unused-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-machete
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-machete
+
+      - name: Check for unused dependencies
+        run: cargo machete
+
+  audit-dependencies:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+
+      - name: Install cargo-audit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+
+      - name: Audit dependencies
+        run: cargo audit --color always
+
+  lint-clippy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -30,22 +67,8 @@ jobs:
         with:
           version: "21.12"
 
-      - name: Check format
-        run: cargo fmt --check
-
-      - name: Install cargo-machete, cargo-audit
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-machete,cargo-audit
-
-      - name: Check for unused dependencies
-        run: cargo machete
-
       - name: Check for clippy warnings
         run: cargo clippy --all-targets --all-features --color always -- -D warnings
-
-      - name: Audit dependencies
-        run: cargo audit --color always
 
   unit-tests:
     runs-on: ubuntu-latest
