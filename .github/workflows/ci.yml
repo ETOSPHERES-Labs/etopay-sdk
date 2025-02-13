@@ -11,6 +11,8 @@ permissions:
 
 env:
   CARGO_TERM_COLOR: always
+  # Disable incremental compilation for faster from-scratch builds
+  CARGO_INCREMENTAL: 0
 
 # cancel the job if a newer pipeline starts for the same MR or branch
 concurrency:
