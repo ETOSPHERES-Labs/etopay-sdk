@@ -1,53 +1,54 @@
-import CryptpaySdk
+import CawaenaSdk
 import Foundation
 
 // Struct to hold environment variables for examples
 public struct Environment {
-    public let username: String
-    public let password: String
-    public let pin: String
-    public let mnemonic: String
+  public let username: String
+  public let password: String
+  public let pin: String
+  public let mnemonic: String
 
-    public init() {
-        guard 
-          let username = ProcessInfo.processInfo.environment["USERNAME"],
-          let password = ProcessInfo.processInfo.environment["PASSWORD"],
-          let mnemonic = ProcessInfo.processInfo.environment["MNEMONIC"]
-        else {
-          fatalError("Missing environment variables")
-        }
-
-        self.username = username
-        self.password = password
-        self.pin = "1234"
-        self.mnemonic = mnemonic
+  public init() {
+    guard
+      let username = ProcessInfo.processInfo.environment["USERNAME"],
+      let password = ProcessInfo.processInfo.environment["PASSWORD"],
+      let mnemonic = ProcessInfo.processInfo.environment["MNEMONIC"]
+    else {
+      fatalError("Missing environment variables")
     }
+
+    self.username = username
+    self.password = password
+    self.pin = "1234"
+    self.mnemonic = mnemonic
+  }
 }
 
 // Helper function to access env variables
 public func getEnvironment() -> Environment {
-    return Environment()
+  return Environment()
 }
 
 //  Create sdk instance and set env
-public func initSdk(username: String, password: String) async throws -> CryptpaySdk {
+public func initSdk(username: String, password: String) async throws -> CawaenaSdk {
   // remove user and wallet generated files
   cleanup(atPaths: ["sdk-user.db", "wallets"])
 
   let url = ProcessInfo.processInfo.environment["EXAMPLES_BACKEND_URL"]!
 
-  // initialize the cryptpay sdk
-  let sdk = CryptpaySdk()
+  // initialize the cawaena sdk
+  let sdk = CawaenaSdk()
 
   // set the sdk config and validate it
-  try await sdk.setConfig("""
-  {
-    "backend_url": "\(url)",
-    "storage_path": ".",
-    "log_level": "info",
-    "auth_provider": "standalone"
-  }
-  """)
+  try await sdk.setConfig(
+    """
+    {
+      "backend_url": "\(url)",
+      "storage_path": ".",
+      "log_level": "info",
+      "auth_provider": "standalone"
+    }
+    """)
 
   // get the access token
   let access_token = try await generateAccessToken(username: username, password: password)

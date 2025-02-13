@@ -1061,6 +1061,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "cawaena-sdk-swift"
+version = "0.14.0"
+dependencies = [
+ "sdk",
+ "serde_json",
+ "swift-bridge",
+ "swift-bridge-build",
+ "tokio",
+]
+
+[[package]]
 name = "cbc"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1334,17 +1345,6 @@ dependencies = [
  "serde_json",
  "tokio",
  "xml",
-]
-
-[[package]]
-name = "cryptpay-sdk-swift"
-version = "0.14.0"
-dependencies = [
- "sdk",
- "serde_json",
- "swift-bridge",
- "swift-bridge-build",
- "tokio",
 ]
 
 [[package]]

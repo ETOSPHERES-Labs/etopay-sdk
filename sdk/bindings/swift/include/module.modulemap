@@ -1,4 +1,4 @@
-module CryptpaySdkBin {
+module CawaenaSdkBin {
     header "bridging-header.h"
     export *
 }

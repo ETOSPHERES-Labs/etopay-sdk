@@ -247,10 +247,10 @@ pub mod ffi {
 
     // Export Rust functions with the above shared types for Swift.
     extern "Rust" {
-        type CryptpaySdk;
+        type CawaenaSdk;
 
         #[swift_bridge(init)]
-        fn new() -> CryptpaySdk;
+        fn new() -> CawaenaSdk;
 
         #[swift_bridge(swift_name = "setConfig")]
         async fn set_config(&self, config: String) -> Result<(), String>;
