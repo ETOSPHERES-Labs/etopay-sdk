@@ -155,7 +155,7 @@ jobs:
           wasm-pack pack out/web
           cd examples/webapp
           echo -e "RUST_LOG=info\nTRACING_ENV=dev" > ../.env
-          wasm-pack build --release --scope eto
+          wasm-pack build --release --scope eto --no-opt
           pnpm install
           pnpm build
 
