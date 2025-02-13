@@ -169,15 +169,32 @@ jobs:
           overwrite: true
 
   build-sdk-android:
-    runs-on: dell
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
+    # runs-on: dell
+    # container:
+    #   image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
+    #   credentials:
+    #     username: ${{ secrets.ARTIFACTORY_USERNAME }}
+    #     password: ${{ secrets.ARTIFACTORY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
       - uses: Swatinem/rust-cache@v2
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26d
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+
+      - name: Install cargo-ndk
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-ndk
 
       - name: Build android sdk
         run: cd sdk/bindings/android && make bundle
