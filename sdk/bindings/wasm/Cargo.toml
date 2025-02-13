@@ -47,6 +47,7 @@ ring = { version = "0.17", default-features = false, features = [
 # depend on the sdk but without default features
 sdk = { path = "../../", default-features = false }
 tokio = { workspace = true, features = ["sync"] }
+uuid = { workspace = true, features = ["js"] }
 wasm-bindgen = { version = "0.2", default-features = false }
 wasm-bindgen-futures = { version = "0.4", default-features = false }
 serde_json = { workspace = true }
@@ -57,4 +58,4 @@ wasm-bindgen-test = "0.3"
 # cargo-machete thinks that `wasm-bindgen-futures` and `ring` are unused, but they are actually needed after
 # the wasm_bindgen macro has been expanded.
 [package.metadata.cargo-machete]
-ignored = ["wasm-bindgen-futures", "ring"]
+ignored = ["wasm-bindgen-futures", "ring", "uuid"]
