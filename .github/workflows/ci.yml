@@ -170,12 +170,6 @@ jobs:
 
   build-sdk-android:
     runs-on: ubuntu-latest
-    # runs-on: dell
-    # container:
-    #   image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-    #   credentials:
-    #     username: ${{ secrets.ARTIFACTORY_USERNAME }}
-    #     password: ${{ secrets.ARTIFACTORY_PASSWORD }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
