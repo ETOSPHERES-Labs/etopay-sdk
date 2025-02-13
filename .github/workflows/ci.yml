@@ -205,11 +205,41 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cryptpay-sdk-swift
-          path: sdk/bindings/swift/CryptpaySdk
+          name: cawaena-sdk-swift
+          path: sdk/bindings/swift/CawaenaSdk
           if-no-files-found: error
           retention-days: 7
           overwrite: true
+
+  deploy-sdk-swift:
+    runs-on: macOS
+    needs: build-sdk-swift
+    steps:
+      - name: Checkout target repository
+        uses: actions/checkout@v4
+        with:
+          repository: ETOSPHERES-Labs/cawaena-sdk-swift
+          token: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
+          path: target-repo
+
+      - name: Copy built artifacts to target repository
+        run: |
+          cp -R sdk/bindings/swift/CawaenaSdk/Package.swift target-repo/
+          cp -R sdk/bindings/swift/CawaenaSdk/README.md target-repo/
+          cp -R sdk/bindings/swift/CawaenaSdk/Sources target-repo/
+
+      - name: Configure Git for commit
+        run: |
+          cd target-repo
+          git config user.email "bot@cawaena.com"
+          git config user.name "bot"
+
+      - name: Commit and push changes
+        run: |
+          cd target-repo
+          git add .
+          git commit -m "Update Swift SDK package files from commit ${{ github.sha }}" || echo "No changes to commit"
+          git push
 
   android-bindings-tests:
     runs-on: ubuntu-latest

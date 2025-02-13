@@ -44,8 +44,8 @@ lipo_bundle:
 	../../../target/universal-macos/release/libwalletsdk_cabi.a
 
 move_swift_files:
-	find include/generated -name '*.swift' -exec sed -i '' '1s/^/import CryptpaySdkBin\n/' {} \; 
-	find include/generated -name '*.swift' -exec mv {} CryptpaySdk/Sources/CryptpaySdk/ \;
+	find include/generated -name '*.swift' -exec sed -i '' '1s/^/import CawaenaSdkBin\n/' {} \; 
+	find include/generated -name '*.swift' -exec mv {} CawaenaSdk/Sources/CawaenaSdk/ \;
 
 xcframework:
 	$(MAKE) build_sdk
@@ -58,8 +58,8 @@ xcframework:
 	-headers ./include/ \
 	-library ../../../target/universal-macos/release/libwalletsdk_cabi.a \
 	-headers ./include/ \
-	-output ../../../target/CryptpaySdkBin.xcframework
-	cp -r ../../../target/CryptpaySdkBin.xcframework CryptpaySdk/
+	-output ../../../target/CawaenaSdkBin.xcframework
+	cp -r ../../../target/CawaenaSdkBin.xcframework CawaenaSdk/
 
 compile_swift_main:
 	cargo build --release
@@ -67,5 +67,5 @@ compile_swift_main:
   		-lwalletsdk_cabi\
   		-import-objc-header ./include/bridging-header.h \
 		-framework CoreFoundation -framework SystemConfiguration \
-  		main.swift ./include/generated/SwiftBridgeCore.swift ./include/generated/cryptpay-sdk-swift/cryptpay-sdk-swift.swift 
+  		main.swift ./include/generated/SwiftBridgeCore.swift ./include/generated/cawaena-sdk-swift/cawaena-sdk-swift.swift 
 	./main

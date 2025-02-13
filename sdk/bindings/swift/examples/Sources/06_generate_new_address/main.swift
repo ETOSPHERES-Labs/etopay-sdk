@@ -2,7 +2,7 @@
 // https://docs.swift.org/swift-book
 
 import Foundation
-import CryptpaySdk
+import CawaenaSdk
 import utils
 
 // We use a DispatchGroup to make the program wait until async functions finish before exiting.

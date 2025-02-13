@@ -10,43 +10,51 @@ extension RustString: Error {}
 extension KycOpenDocument: Vectorizable {
     public typealias SelfRef = KycOpenDocument
     public typealias SelfRefMut = KycOpenDocument
-    
+
     public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
-        return UnsafeMutableRawPointer.allocate(byteCount: MemoryLayout<KycOpenDocument>.stride, alignment: MemoryLayout<KycOpenDocument>.alignment)
+        return UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout<KycOpenDocument>.stride,
+            alignment: MemoryLayout<KycOpenDocument>.alignment)
     }
-    
+
     public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
         vecPtr.deallocate()
     }
-    
+
     public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: KycOpenDocument) {
         let valuePtr = vecPtr.bindMemory(to: KycOpenDocument.self, capacity: 1)
         valuePtr.initialize(to: value)
     }
-    
-    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Optional<KycOpenDocument> {
+
+    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> KycOpenDocument? {
         let valuePtr = vecPtr.bindMemory(to: KycOpenDocument.self, capacity: 1)
         defer { valuePtr.deinitialize(count: 1) }
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<KycOpenDocument.SelfRef> {
+
+    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> KycOpenDocument
+        .SelfRef?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: KycOpenDocument.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<KycOpenDocument.SelfRefMut> {
+
+    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+        -> KycOpenDocument.SelfRefMut?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: KycOpenDocument.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<KycOpenDocument.SelfRef> {
+
+    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+        KycOpenDocument.SelfRef
+    > {
         let valuePtr = vecPtr.bindMemory(to: KycOpenDocument.self, capacity: 1)
         return UnsafePointer(valuePtr)
     }
-    
+
     public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
         return 1
     }
@@ -56,9 +64,11 @@ extension KycOpenDocument: Vectorizable {
 extension KycAmlaQuestion: Vectorizable {
     public typealias SelfRef = KycAmlaQuestion
     public typealias SelfRefMut = KycAmlaQuestion
-    
+
     public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
-        return UnsafeMutableRawPointer.allocate(byteCount: MemoryLayout<KycAmlaQuestion>.stride, alignment: MemoryLayout<KycAmlaQuestion>.alignment)
+        return UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout<KycAmlaQuestion>.stride,
+            alignment: MemoryLayout<KycAmlaQuestion>.alignment)
     }
     public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
         vecPtr.deallocate()
@@ -67,22 +77,28 @@ extension KycAmlaQuestion: Vectorizable {
         let valuePtr = vecPtr.bindMemory(to: KycAmlaQuestion.self, capacity: 1)
         valuePtr.initialize(to: value)
     }
-    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Optional<KycAmlaQuestion> {
+    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> KycAmlaQuestion? {
         let valuePtr = vecPtr.bindMemory(to: KycAmlaQuestion.self, capacity: 1)
         defer { valuePtr.deinitialize(count: 1) }
         return valuePtr.pointee
     }
-    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<KycAmlaQuestion.SelfRef> {
+    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> KycAmlaQuestion
+        .SelfRef?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: KycAmlaQuestion.self, capacity: 1)
         return valuePtr.pointee
     }
-    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<KycAmlaQuestion.SelfRefMut> {
+    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt)
+        -> KycAmlaQuestion.SelfRefMut?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: KycAmlaQuestion.self, capacity: 1)
         return valuePtr.pointee
     }
-    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<KycAmlaQuestion.SelfRef> {
+    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+        KycAmlaQuestion.SelfRef
+    > {
         let valuePtr = vecPtr.bindMemory(to: KycAmlaQuestion.self, capacity: 1)
         return UnsafePointer(valuePtr)
     }
@@ -95,43 +111,49 @@ extension KycAmlaQuestion: Vectorizable {
 extension Order: Vectorizable {
     public typealias SelfRef = Order
     public typealias SelfRefMut = Order
-    
+
     public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
-        return UnsafeMutableRawPointer.allocate(byteCount: MemoryLayout<Order>.stride, alignment: MemoryLayout<Order>.alignment)
+        return UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout<Order>.stride, alignment: MemoryLayout<Order>.alignment)
     }
-    
+
     public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
         vecPtr.deallocate()
     }
-    
+
     public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: Order) {
         let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
         valuePtr.initialize(to: value)
     }
-    
-    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Optional<Order> {
+
+    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Order? {
         let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
         defer { valuePtr.deinitialize(count: 1) }
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<Order.SelfRef> {
+
+    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Order.SelfRef?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<Order.SelfRefMut> {
+
+    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Order
+        .SelfRefMut?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<Order.SelfRef> {
+
+    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+        Order.SelfRef
+    > {
         let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
         return UnsafePointer(valuePtr)
     }
-    
+
     public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
         return 1
     }
@@ -141,43 +163,49 @@ extension Order: Vectorizable {
 extension TxInfo: Vectorizable {
     public typealias SelfRef = TxInfo
     public typealias SelfRefMut = TxInfo
-    
+
     public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
-        return UnsafeMutableRawPointer.allocate(byteCount: MemoryLayout<TxInfo>.stride, alignment: MemoryLayout<TxInfo>.alignment)
+        return UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout<TxInfo>.stride, alignment: MemoryLayout<TxInfo>.alignment)
     }
-    
+
     public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
         vecPtr.deallocate()
     }
-    
+
     public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: TxInfo) {
         let valuePtr = vecPtr.bindMemory(to: TxInfo.self, capacity: 1)
         valuePtr.initialize(to: value)
     }
-    
-    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Optional<TxInfo> {
+
+    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> TxInfo? {
         let valuePtr = vecPtr.bindMemory(to: TxInfo.self, capacity: 1)
         defer { valuePtr.deinitialize(count: 1) }
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<TxInfo.SelfRef> {
+
+    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> TxInfo.SelfRef?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: TxInfo.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<TxInfo.SelfRefMut> {
+
+    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> TxInfo
+        .SelfRefMut?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: TxInfo.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<TxInfo.SelfRef> {
+
+    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+        TxInfo.SelfRef
+    > {
         let valuePtr = vecPtr.bindMemory(to: TxInfo.self, capacity: 1)
         return UnsafePointer(valuePtr)
     }
-    
+
     public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
         return 1
     }
@@ -187,43 +215,51 @@ extension TxInfo: Vectorizable {
 extension WalletTxInfo: Vectorizable {
     public typealias SelfRef = WalletTxInfo
     public typealias SelfRefMut = WalletTxInfo
-    
+
     public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
-        return UnsafeMutableRawPointer.allocate(byteCount: MemoryLayout<WalletTxInfo>.stride, alignment: MemoryLayout<WalletTxInfo>.alignment)
+        return UnsafeMutableRawPointer.allocate(
+            byteCount: MemoryLayout<WalletTxInfo>.stride,
+            alignment: MemoryLayout<WalletTxInfo>.alignment)
     }
-    
+
     public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
         vecPtr.deallocate()
     }
-    
+
     public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: WalletTxInfo) {
         let valuePtr = vecPtr.bindMemory(to: WalletTxInfo.self, capacity: 1)
         valuePtr.initialize(to: value)
     }
-    
-    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Optional<WalletTxInfo> {
+
+    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> WalletTxInfo? {
         let valuePtr = vecPtr.bindMemory(to: WalletTxInfo.self, capacity: 1)
         defer { valuePtr.deinitialize(count: 1) }
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<WalletTxInfo.SelfRef> {
+
+    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> WalletTxInfo
+        .SelfRef?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: WalletTxInfo.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Optional<WalletTxInfo.SelfRefMut> {
+
+    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> WalletTxInfo
+        .SelfRefMut?
+    {
         guard index == 0 else { return nil }
         let valuePtr = vecPtr.bindMemory(to: WalletTxInfo.self, capacity: 1)
         return valuePtr.pointee
     }
-    
-    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<WalletTxInfo.SelfRef> {
+
+    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
+        WalletTxInfo.SelfRef
+    > {
         let valuePtr = vecPtr.bindMemory(to: WalletTxInfo.self, capacity: 1)
         return UnsafePointer(valuePtr)
     }
-    
+
     public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
         return 1
     }
@@ -237,30 +273,30 @@ group.enter()
 print("We're in Swift about to call our async Rust functions.")
 Task {
     do {
-        let sdk = CryptpaySdk()
+        let sdk = CawaenaSdk()
 
-        try await sdk.setConfig("""
-        {
-            "backend_url": "http://test.url.com/api",
-            "storage_path": ".",
-            "log_level": "info",
-            "auth_provider": "standalone",
-            "node_urls": {
-                "smr": ["https://api.testnet.shimmer.network"]
+        try await sdk.setConfig(
+            """
+            {
+                "backend_url": "http://test.url.com/api",
+                "storage_path": ".",
+                "log_level": "info",
+                "auth_provider": "standalone",
+                "node_urls": {
+                    "smr": ["https://api.testnet.shimmer.network"]
+                }
             }
-        }
-        """)
+            """)
         print("sdk configured")
 
-
-    } catch let error as RustString  { // catch string errors that we return from Rust
+    } catch let error as RustString {  // catch string errors that we return from Rust
         print(error.toString())
 
-    }  catch { // catch other unexpected error types
+    } catch {  // catch other unexpected error types
         print("unexpected error: \(error)")
     }
-   
+
     group.leave()
 }
 
-group.wait() 
+group.wait()
