@@ -12,19 +12,19 @@ import PackageDescription
 let package = Package(
     name: "program",
     dependencies: [
-        .package(url: "https://gitlab.inovel.de/zd0006/cryptpay-swift", from: "0.0.1")
+        .package(url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift.git", from: "0.0.1")
     ],
     targets: [
         .executableTarget(
             name: "main",
             dependencies: [
-                .product(name: "CryptpaySdk", package: "cryptpay-swift")
+                .product(name: "CawaenaSdk", package: "cawaena-swift")
             ]),
     ]
 )
 ```
 
-The `CryptpaySdk` module is then available for import in your project.
+The `CawaenaSdk` module is then available for import in your project.
 
 ## Access
 

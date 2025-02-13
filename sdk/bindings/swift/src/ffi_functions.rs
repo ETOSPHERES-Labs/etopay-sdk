@@ -26,19 +26,19 @@ use sdk::types::newtypes::{AccessToken, EncryptionPin, PlainPassword};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-/// Struct representing the Cryptpay SDK with an inner data structure wrapped in an atomic reference count and read-write lock.
+/// Struct representing the Cawaena SDK with an inner data structure wrapped in an atomic reference count and read-write lock.
 /// Utilizes atomic reference counting (`Arc`) and a read-write lock (`RwLock`) to provide thread-safe access to the inner data structure,
-/// allowing multiple threads to concurrently read from or write to the Cryptpay SDK while ensuring data integrity and preventing data races.
-pub struct CryptpaySdk {
+/// allowing multiple threads to concurrently read from or write to the Cawaena SDK while ensuring data integrity and preventing data races.
+pub struct CawaenaSdk {
     inner: Arc<RwLock<sdk::core::Sdk>>,
 }
 
-impl CryptpaySdk {
-    /// Create a new instance of the Cryptpay Sdk.
+impl CawaenaSdk {
+    /// Create a new instance of the Cawaena Sdk.
     ///
     /// # Returns
     ///
-    /// New `CryptpaySdk` instance with atomic reference count and read write lock
+    /// New `CawaenaSdk` instance with atomic reference count and read write lock
     #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
@@ -90,7 +90,7 @@ impl CryptpaySdk {
             .map(|v| serde_json::to_string(&v).map_err(|e| format!("{e:#?}")))?
     }
 
-    /// Selects the currency for the Cryptpay SDK.
+    /// Selects the currency for the Cawaena SDK.
     ///
     /// # Arguments
     ///
@@ -437,7 +437,7 @@ impl CryptpaySdk {
     ///
     /// # Returns
     ///
-    /// * Ok - the purchase ID. This is an internal index used to reference the transaction in cryptpay
+    /// * Ok - the purchase ID. This is an internal index used to reference the transaction in cawaena
     /// * Err - if the user or wallet is not initialized, or if there is an error creating the transaction.
     pub async fn create_purchase_request(
         &self,
