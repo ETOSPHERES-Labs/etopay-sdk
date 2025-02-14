@@ -514,6 +514,8 @@ mod tests {
 
         let address = wallet_user.get_address().await.unwrap(); // tst1qzlzd9q4aygcnuteefaekd2kvatpt3xp673sspr2hcw27zuewxpmugyavz9
         let index = String::from("TestMessageFromStandalone");
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(dec!(10.0)).unwrap();
         // Act
         let transaction = prepare_and_send_transaction(&wallet_user, &index, &address, amount).await;
@@ -573,9 +575,10 @@ mod tests {
         let mnemonic = "champion legend palm hollow describe timber coast lonely future holiday head torch race orange ranch gun broccoli average margin glue age awake nurse erase";
         let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
         let address = wallet_user.get_address().await.unwrap();
-        println!("address: {address}");
         let index = String::from("TestMessageFromStandalone");
-        let amount = wallet_user.get_balance().await.unwrap() + CryptoAmount::try_from(dec!(10.0)).unwrap();
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
+        let amount = balance + CryptoAmount::try_from(dec!(10.0)).unwrap();
 
         // Act
         let transaction = wallet_user.send_transaction(&index, &address, amount).await;
@@ -592,9 +595,10 @@ mod tests {
         let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
 
         let address = wallet_user.get_address().await.unwrap(); // st1qz46hgjrtjkgxvmqn6q42l832w3mjerdjxfv756hc4fnrlfeh9g07ge7m2w
-        println!("address: {address}");
         let index = String::from("TestMessageFromStandalone");
-        let amount = CryptoAmount::try_from(wallet_user.get_balance().await.unwrap().inner() - dec!(1.0)).unwrap();
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
+        let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
         // Act
         let transaction = wallet_user.send_transaction(&index, &address, amount).await;
@@ -612,10 +616,11 @@ mod tests {
 
         let address = wallet_user.get_address().await.unwrap(); // tst1qpaha27ytq8ay3ahqlfl6rn5xndnwxwahunf20h59cadpt9q2gx0crqekxk
 
-        // println!("address: {address}");
-        let index = String::from("TestMessageFromStandalone");
-        let amount = CryptoAmount::try_from(wallet_user.get_balance().await.unwrap().inner() - dec!(1.0)).unwrap();
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
+        let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
+        let index = String::from("TestMessageFromStandalone");
         let transaction = prepare_and_send_transaction(&wallet_user, &index, &address, amount)
             .await
             .unwrap();
@@ -642,11 +647,11 @@ mod tests {
         let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
 
         let address = wallet_user.get_address().await.unwrap(); //tst1qq68c239vacsq3gnksqss5glh9e3w0wc9mra9d6cs39e8hs3xrmgjscdpac
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
+        let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
-        // println!("address: {address}");
         let index = String::from("TestMessageFromStandalone");
-        let amount = CryptoAmount::try_from(wallet_user.get_balance().await.unwrap().inner() - dec!(1.0)).unwrap();
-
         let transaction = prepare_and_send_transaction(&wallet_user, &index, &address, amount)
             .await
             .unwrap();
@@ -681,7 +686,10 @@ mod tests {
         let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
 
         let address = wallet_user.get_address().await.unwrap();
-        let amount = CryptoAmount::try_from(wallet_user.get_balance().await.unwrap().inner() - dec!(1.0)).unwrap();
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
+
+        let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
         let tag: Box<[u8]> = "test tag".to_string().into_bytes().into_boxed_slice();
         let data: Box<[u8]> = (amount.inner() * dec!(1_000_000))
             .round()
@@ -717,7 +725,9 @@ mod tests {
         let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
 
         let address = wallet_user.get_address().await.unwrap();
-        let amount = CryptoAmount::try_from(wallet_user.get_balance().await.unwrap().inner() - dec!(1.0)).unwrap();
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
+        let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
         // Act
         let result = wallet_user.send_amount(&address, amount, None, None).await;
@@ -735,6 +745,8 @@ mod tests {
         let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
 
         let address = wallet_user.get_address().await.unwrap();
+        let balance = wallet_user.get_balance().await.unwrap();
+        println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(dec!(96854.0)).unwrap();
 
         // Act
