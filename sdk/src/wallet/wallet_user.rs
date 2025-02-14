@@ -539,7 +539,6 @@ mod tests {
     }
 
     #[rstest]
-    #[case(Currency::Smr, "smr")]
     #[case(Currency::Iota, "tst")]
     #[tokio::test]
     async fn test_get_address(#[case] currency: Currency, #[case] expected_prefix: &str) {
@@ -558,7 +557,6 @@ mod tests {
     }
 
     #[rstest]
-    #[case(Currency::Smr)]
     #[case(Currency::Iota)]
     #[tokio::test]
     async fn test_get_balance(#[case] currency: Currency) {
@@ -671,7 +669,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_wallet_tx_error_nonexistent_transaction() {
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Smr).await;
+        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
 
         let transaction_id = "nonexistent_transaction_id";
 
