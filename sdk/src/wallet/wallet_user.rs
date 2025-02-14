@@ -392,7 +392,10 @@ impl WalletUser for WalletImplStardust {
     async fn sync_wallet(&self) -> Result<()> {
         let account = self.account_manager.get_account(APP_NAME).await?;
 
-        let options = SyncOptions { ..Default::default() };
+        let options = SyncOptions {
+            force_syncing: true,
+            ..Default::default()
+        };
         account.sync(Some(options)).await?;
 
         Ok(())
