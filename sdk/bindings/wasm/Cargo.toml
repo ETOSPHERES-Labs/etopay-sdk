@@ -52,10 +52,14 @@ wasm-bindgen = { version = "0.2", default-features = false }
 wasm-bindgen-futures = { version = "0.4", default-features = false }
 serde_json = { workspace = true }
 
+# Versions >= 0.3.35 causes issues accessing the Crypto API (for rand crate), so pin to working version for now
+web-sys = "=0.3.74"
+js-sys = "=0.3.74"
+
 [dev-dependencies]
 wasm-bindgen-test = "0.3"
 
 # cargo-machete thinks that `wasm-bindgen-futures` and `ring` are unused, but they are actually needed after
 # the wasm_bindgen macro has been expanded.
 [package.metadata.cargo-machete]
-ignored = ["wasm-bindgen-futures", "ring", "uuid"]
+ignored = ["wasm-bindgen-futures", "ring", "uuid", "web-sys", "js-sys"]
