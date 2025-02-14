@@ -214,7 +214,7 @@ impl Sdk {
 impl Config {
     fn default_test_node_urls() -> HashMap<Currency, Vec<String>> {
         HashMap::from([
-            (Currency::Smr, vec!["https://api.testnet.shimmer.network".to_string()]),
+            (Currency::Smr, vec!["https://api.shimmer.network".to_string()]), // not test network
             (Currency::Iota, vec!["https://api.testnet.iotaledger.net".to_string()]),
             (
                 Currency::Eth,

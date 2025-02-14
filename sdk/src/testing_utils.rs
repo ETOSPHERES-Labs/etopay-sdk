@@ -75,6 +75,9 @@ pub const SALT: [u8; 12] = [241, 167, 131, 245, 166, 203, 63, 247, 211, 157, 138
 pub const PURCHASE_ID: &str = "123";
 pub const ORDER_ID: &str = "497f6eca-6276-4993-bfeb-53cbbbba6f08";
 pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("1234").unwrap());
+
+/// Mnemonic for testing.
+/// Iota: tst1qz7m7xtfppy9xd73xvsnpvlnx5rcewjz2k2gqh6w67tdleks83rh768k6rc
 pub const MNEMONIC:&str = "aware mirror sadness razor hurdle bus scout crisp close life science spy shell fine loop govern country strategy city soldier select diet brain return";
 
 // util function to set the config
