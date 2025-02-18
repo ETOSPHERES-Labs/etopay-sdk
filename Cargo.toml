@@ -68,7 +68,7 @@ serde_json = { version = "1.0.133", default-features = false }
 testing = { package = "testing", path = "./testing" }
 thiserror = { version = "1.0.38", default-features = false }
 tokio = { version = "1.24.1", default-features = false }
-fake = { version = "3.0", features = ["derive", "chrono"] }
+fake = { version = "4.0", features = ["derive", "chrono"] }
 uuid = { version = "1.13", features = ["v4"] }
 log = { version = "0.4.17", default-features = false }
 quote = { version = "1.0", default-features = false }
