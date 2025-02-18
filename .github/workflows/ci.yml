@@ -16,7 +16,7 @@ env:
 
 # cancel the job if a newer pipeline starts for the same MR or branch
 concurrency:
-  group: ${{ github.ref }}
+  group: ci-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
