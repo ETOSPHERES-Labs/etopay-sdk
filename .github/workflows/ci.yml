@@ -82,6 +82,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check for clippy warnings
         run: cargo clippy --all-targets --all-features --color always -- -D warnings
@@ -98,6 +99,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@v2
@@ -128,6 +130,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@v2
@@ -158,6 +161,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
@@ -192,53 +196,30 @@ jobs:
           retention-days: 7
           overwrite: true
 
-  build-sdk-android:
-    runs-on: ubuntu-latest
+  build-sdk-swift:
+    runs-on: macos-latest
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
-      - uses: Swatinem/rust-cache@v2
-      - uses: nttld/setup-ndk@v1
-        with:
-          ndk-version: r26d
+          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios,aarch64-apple-darwin,x86_64-apple-darwin
 
+      - uses: Swatinem/rust-cache@v2
       - name: Install Protoc
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install cargo-ndk
-        uses: taiki-e/install-action@v2
+      - uses: swift-actions/setup-swift@v2
         with:
-          tool: cargo-ndk
+          swift-version: "6.0.1"
 
-      - name: Build android sdk
-        run: cd sdk/bindings/android && make bundle
-
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cryptpay-sdk-android
-          path: sdk/bindings/android/jar/
-          if-no-files-found: error
-          retention-days: 7
-          overwrite: true
-
-  build-sdk-swift:
-    runs-on: macOS
-    steps:
-      - uses: actions/checkout@v4
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.6
       - name: Build swift sdk
         run: |
           cd sdk/bindings/swift
-          which cargo
-          which sccache
           make compile_swift_main
-          make xcframework
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
@@ -247,36 +228,6 @@ jobs:
           if-no-files-found: error
           retention-days: 7
           overwrite: true
-
-  deploy-sdk-swift:
-    runs-on: macOS
-    needs: build-sdk-swift
-    steps:
-      - name: Checkout target repository
-        uses: actions/checkout@v4
-        with:
-          repository: ETOSPHERES-Labs/cawaena-sdk-swift
-          token: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
-          path: target-repo
-
-      - name: Copy built artifacts to target repository
-        run: |
-          cp -R sdk/bindings/swift/CawaenaSdk/Package.swift target-repo/
-          cp -R sdk/bindings/swift/CawaenaSdk/README.md target-repo/
-          cp -R sdk/bindings/swift/CawaenaSdk/Sources target-repo/
-
-      - name: Configure Git for commit
-        run: |
-          cd target-repo
-          git config user.email "bot@cawaena.com"
-          git config user.name "bot"
-
-      - name: Commit and push changes
-        run: |
-          cd target-repo
-          git add .
-          git commit -m "Update Swift SDK package files from commit ${{ github.sha }}" || echo "No changes to commit"
-          git push
 
   android-bindings-tests:
     runs-on: ubuntu-latest
@@ -288,6 +239,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run android bindings tests
         run: cd sdk/bindings/android/tests && gradle test
@@ -302,6 +254,7 @@ jobs:
         uses: arduino/setup-protoc@v3
         with:
           version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run jnigen integration test
         run: cd tools/jnigen-integration-test && gradle test

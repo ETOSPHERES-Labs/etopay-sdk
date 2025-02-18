@@ -63,7 +63,7 @@ xcframework:
 
 compile_swift_main:
 	cargo build --release
-	swiftc -L ../../../target/release \
+	xcrun swiftc -L ../../../target/release \
   		-lwalletsdk_cabi\
   		-import-objc-header ./include/bridging-header.h \
 		-framework CoreFoundation -framework SystemConfiguration \
