@@ -47,11 +47,11 @@ The `username` should always match the `preferred_username` claim on the JWT `ac
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
 
             try {
                 sdk.setConfig("...");
@@ -124,11 +124,11 @@ The access token brings the following safe operations for the SDK:
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
 
             try {
                 sdk.setConfig("...");
@@ -206,11 +206,11 @@ Deleting the user is simply deleting the user entity from the local database, wh
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
 
             try {
                 sdk.setConfig("...");
