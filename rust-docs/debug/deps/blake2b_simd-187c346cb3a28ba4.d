@@ -1,0 +1,11 @@
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/libblake2b_simd-187c346cb3a28ba4.rmeta: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/avx2.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/portable.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/sse41.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/blake2bp.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/guts.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/many.rs
+
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/blake2b_simd-187c346cb3a28ba4.d: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/avx2.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/portable.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/sse41.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/blake2bp.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/guts.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/many.rs
+
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/lib.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/avx2.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/portable.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/sse41.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/blake2bp.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/guts.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/blake2b_simd-1.0.2/src/many.rs:

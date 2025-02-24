@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ViviswapDetailUpdateStrategy","ViviswapVerificationStatus","ViviswapVerificationStep"],"struct":["NewViviswapUser","ViviswapAddressDetail","ViviswapDeposit","ViviswapDepositDetails","ViviswapKycStatus","ViviswapPartiallyKycDetails","ViviswapState","ViviswapWithdrawal","ViviswapWithdrawalDetails"]};
