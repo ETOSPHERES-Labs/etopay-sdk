@@ -19,7 +19,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/utils.rs"
+    --8<-- "examples/utils.rs::53"
     ```
 
 === "Java"
@@ -31,7 +31,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/utils.swift"
+    --8<-- "bindings/swift/examples/Sources/utils/utils.swift"
     ```
 
 === "JS/TS"
@@ -57,7 +57,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/01_create_new_user.swift"
+    --8<-- "bindings/swift/examples/Sources/01_create_new_user/main.swift"
     ```
 
 === "JS/TS"
@@ -83,7 +83,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/02_onboard_user_postident.swift"
+    --8<-- "bindings/swift/examples/Sources/02_onboard_user_postident/main.swift"
     ```
 
 === "JS/TS"
@@ -109,12 +109,14 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/04_migrate_wallet_from_mnemonic.swift"
+    --8<-- "bindings/swift/examples/Sources/04_migrate_wallet_from_mnemonic/main.swift"
     ```
 
 === "JS/TS"
 
-    N/A
+    ```typescript
+    --8<-- "bindings/wasm/examples/04-migrate_wallet_from_mnemonic.ts"
+    ```
 
 ## 5. Migrate Wallet From Backup
 
@@ -133,12 +135,14 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/05_migrate_wallet_from_backup.swift"
+    --8<-- "bindings/swift/examples/Sources/05_migrate_wallet_from_backup/main.swift"
     ```
 
 === "JS/TS"
 
-    N/A
+    ```typescript
+    --8<-- "bindings/wasm/examples/05-migrate_wallet_from_backup.ts"
+    ```
 
 ## 6. Generate New Receiver Address
 
@@ -157,7 +161,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/06_generate_new_address/main.swift"
+    --8<-- "bindings/swift/examples/Sources/06_generate_new_address/main.swift"
     ```
 
 === "JS/TS"
@@ -183,7 +187,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/07_get_balance.swift"
+    --8<-- "bindings/swift/examples/Sources/07_get_balance/main.swift"
     ```
 
 === "JS/TS"
@@ -209,7 +213,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/08_create_purchase_request.swift"
+    --8<-- "bindings/swift/examples/Sources/08_create_purchase_request/main.swift"
     ```
 
 === "JS/TS"
@@ -235,7 +239,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/09_onboard_user_viviswap.swift"
+    --8<-- "bindings/swift/examples/Sources/09_onboard_user_viviswap/main.swift"
     ```
 
 === "JS/TS"
@@ -261,7 +265,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/10_verify_pin.swift"
+    --8<-- "bindings/swift/examples/Sources/10_verify_pin/main.swift"
     ```
 
 === "JS/TS"
@@ -287,7 +291,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/11_reset_pin.swift"
+    --8<-- "bindings/swift/examples/Sources/11_reset_pin/main.swift"
     ```
 
 === "JS/TS"
@@ -313,12 +317,14 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/12_change_password.swift"
+    --8<-- "bindings/swift/examples/Sources/12_change_password/main.swift"
     ```
 
 === "JS/TS"
 
-    N/A
+    ```typescript
+    --8<-- "bindings/wasm/examples/12-change_password.ts"
+    ```
 
 ## 13. Send Amount
 
@@ -337,7 +343,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/13_send_amount.swift"
+    --8<-- "bindings/swift/examples/Sources/13_send_amount/main.swift"
     ```
 
 === "JS/TS"
@@ -363,7 +369,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/14_get_exchange_rate.swift"
+    --8<-- "bindings/swift/examples/Sources/14_get_exchange_rate/main.swift"
     ```
 
 === "JS/TS"
@@ -389,7 +395,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/15_claim_output.swift"
+    --8<-- "bindings/swift/examples/Sources/15_claim_output/main.swift"
     ```
 
 === "JS/TS"
@@ -415,7 +421,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/16_get_tx_list.swift"
+    --8<-- "bindings/swift/examples/Sources/16_get_tx_list/main.swift"
     ```
 
 === "JS/TS"
@@ -441,7 +447,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/17_create_customer.swift"
+    --8<-- "bindings/swift/examples/Sources/17_create_customer/main.swift"
     ```
 
 === "JS/TS"
@@ -467,7 +473,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/18_delete_user.swift"
+    --8<-- "bindings/swift/examples/Sources/18_delete_user/main.swift"
     ```
 
 === "JS/TS"
@@ -493,7 +499,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/19_get_wallet_tx_list.swift"
+    --8<-- "bindings/swift/examples/Sources/19_get_wallet_tx_list/main.swift"
     ```
 
 === "JS/TS"
@@ -519,7 +525,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Swift"
 
     ```swift
-    --8<-- "bindings/swift_new/examples/Sources/20_send_compliment.swift"
+    --8<-- "bindings/swift/examples/Sources/20_send_compliment/main.swift"
     ```
 
 === "JS/TS"
@@ -528,24 +534,11 @@ The environment configuration to `Development` attaches the SDK to the developme
     --8<-- "bindings/wasm/examples/20-send_compliment.ts"
     ```
 
-## 21. Initialize Wallet from Mnemonic
-
+## 22. Initialize Wallet from Shares
+ 
 === "Rust"
 
     ```rust
-    --8<-- "examples/21_init_wallet_from_mnemonic.rs"
-    ```
+    --8<-- "examples/22_init_wallet_from_shares.rs"
 
-=== "Java"
-
-    Not available.
-
-=== "Swift"
-
-    Not available.
-
-=== "JS/TS"
-
-    ```typescript
-    --8<-- "bindings/wasm/examples/21-init_wallet_from_mnemonic.ts"
     ```

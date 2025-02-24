@@ -2,6 +2,38 @@
 
 The SDK provides users with the opportunity to host their own wallets on their personal end-devices in a safe and easy manner. Before discussing wallet management, some information on wallets and what they are is needed to understand how to manage non-custodial hot wallets.
 
+## The IOTA wallet
+
+The wallet used within the SDK is the official wallet developed by the IOTA Foundation and maintained in its own SDK found [here](https://github.com/iotaledger/iota-sdk). The wallet internally uses the stronghold secret management engine also developed by the IOTA Foundation found [here](https://github.com/iotaledger/stronghold.rs). The secret management engine not only stores sensitive data in files but also uses obfuscation and mechanisms against memory dumps to protect the secrets while they are being operated upon in the memory. Stronghold also provides functions for BIP-0032 derivation using the BIP-0044 derivation path mechanism described [here](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki). The word list used by the wallet is the word list described in BIP-0039 [here](https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/english.txt).
+
+The various coin types supported by BIP-0044 can be found in the list [here](https://github.com/satoshilabs/slips/blob/master/slip-0044.md). Both `IOTA` and `SMR` are supported and have the coin types `4218` and `4219` respectively.
+
+Currently, in its base implementation the IOTA SDK also needs an in-memory key-value store to manage some metadata related to the stronghold engine and other wallet settings. The IOTA SDK uses a rocksdb implementation in rust for this purpose. There are a few noteworthy problems with rocksdb:
+
+- rocksdb is not light-weight for mobile end devices and the resulting binaries of the sdk take long to build and are bigger in storage requirements.
+- rocksdb does not support all mobile platforms
+- rocksdb is not maintained on the latest sdks of the android and iOS mobile platforms
+
+After investigation, it was found that the in-memory key-value store was used only for storing some metadata keys and not necessarily need high-performance query execution. Luckily, the IOTA SDK implemented the rocksdb connection as a `Storage` trait. Since, the SDK already used jammdb for its internal key-value store, a fork was created and the trait was implemented using `jammdb`. A pull request was created to the upstream, but the dev team at IOTA Foundation recommended to maintain the fork for now, as there would be some new breaking changes coming and the pull request can be created at a later point. The fork is updated regularly and maintained [here](https://github.com/mighty840/iota-sdk).
+
+## Hot Wallets: The Swift Side of Crypto
+
+Picture a hot wallet as the bustling city centre of your digital finances. Hot wallets are online, connected to the internet, and readily available for transactions. They provide users with quick access to their cryptocurrencies, making them ideal for active trading and daily transactions. Think of them as your go-to pocket wallet for everyday spending in the digital realm.
+
+However, convenience comes at a cost. The very connectivity that makes hot wallets user-friendly also renders them more vulnerable to cyber threats. Hacking attempts and online attacks pose a constant risk, making it crucial for users to exercise caution and implement additional security measures when relying on hot wallets.
+
+### Pin and password in the SDK
+
+Generally, the password requirements for any application need to meet today's standards. This might become difficult for the user to remember their wallet stronghold password and also an irritating experience to enter it every time even for the smallest of transactions. On the other side, for a secure wallet application, the SDK should not rely on the interfacing application to do password management for a secret manager used internally. This has a lot of side effects, such as, the application might bypass the SDK logic for protecting access to the secret by simply using the password against the file, with no knowledge of the SDK. This is a security risk and cannot be accepted.
+
+The end devices today support pin entry mostly protected by biometric authentication for ease but secure user experience, when it comes to accessing a restricted OS functionality. Taking all this in account, the SDK was designed to provide the end users possibilities to set up their wallet using a `password` and a `pin`.
+
+- The password stays with the SDK in an encrypted form and only the pin can be used to decrypt it. Thus, for every operation with the secret manager, where a password is needed, the user must only enter the pin. This solves the problem of user experience.
+
+- The issue of password management is also solved, since now the SDK internally manages the password, while still relying completely on the user to unblock it using the pin. The SDK cannot act in its own interest even if there was a malicious code trying to unblock the wallet! The probability distribution of the pin, being relatively weak, (4 to 6 digit), is improved through the addition of a pseudo random salt, which in combination with a hash function results in an encryption password of significant strength and quasi-random probability distribution. This is used then to encrypt the password for the secret manager.
+
+Thus an attacker would need information on the salt, the encrypted password, pin and the stronghold file to be able to gain access to the wallet functions. This is tough and would need somehow physical access to the end device, and to the end user. Security of end-user and their devices is out of the scope for Cawaena ecosystem.
+
 ## Creating the wallet
 
 The stronghold secret manager requires a file path for the wallet and a password to unlock this file. This password disables other applications from interpreting the files created by the stronghold engine and needs to come from the user.
@@ -16,89 +48,83 @@ This does not require any user input except `username`,  `password` and `pin`. B
 
     A fresh wallet can be created by a random seed, using the stronghold secret manager. It needs the password and username. The username is part of the file path and helps distinguish across different user wallets on the same end device. It returns the mnemonic, and this needs to be securely stored by the user, otherwise access to the funds on the wallet addresses would get limited. A node url for the DLT network can also be selected. Currently, the PoW is set to local, however it might change based on the used node url and its support for PoW.
 
+!!! Note
+
+    The code snippets provided are intended as pseudo-code to demonstrate logic and workflows. They are not guaranteed to compile, execute, or function as-is. Users should adapt and validate them according to their specific requirements and development environment.
+
 === "Rust"
 
     ```rust linenums="1"
     async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
+        let mut sdk = Sdk::default();
+        sdk.set_config(...).unwrap();
 
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        let password = std::env::var("SATOSHI_PASSWORD").unwrap();
-        let pin = std::env::var("SATOSHI_PIN").unwrap();
-
+        // Generate access token
         // Create and initialize the user
-        //...
 
-        let mnemonic = sdk.create_new_wallet(&pin, &password).await.unwrap();
-        sdk.verify_mnemonic(&pin, &password, &mnemonic).await.unwrap();
-
-        // If no exception is thrown, the mnemonic was verified...
-        // now the wallet can be initialized and used...
-
+        let mnemonic = sdk.create_new_wallet("pin", "password").await.unwrap();
+        sdk.verify_mnemonic("pin", "password", &mnemonic).await.unwrap();
     }
     ```
 
 === "Java"
 
     ```java linenums="1"
-
     package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
+    import com.etogruppe.CawaenaSdk;
 
     public class app {
-        private CryptpaySdk sdk;
         public static void main(){
+            CawaenaSdk sdk = new CawaenaSdk();
+            sdk.setConfig("...");
+            
+            // Generate access token
             // Create and initialize the user
-            //...
 
             try {
-                String password = env.get("SATOSHI_PASSWORD");
-                String pin = env.get("SATOSHI_PIN");
-                
-                String mnemonic = "";
-                mnemonic = sdk.createNewWallet(pin, password);
-                // return the mnemonic to the user to verify it
-
-                sdk.verMnemonic(pin, password, mnemonic); 
-                // If no exception is thrown, the mnemonic was verified...
-                // now the wallet can be initialized and used...
-
+                String mnemonic = sdk.createNewWallet("pin", "password");
+                sdk.verifyMnemonic("pin", "password", mnemonic); 
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
-
     ```
 
 === "Swift"
 
     ```swift linenums="1"
+    import CawaenaSdk
+    import Foundation
+
+    let sdk = CawaenaSdk()
+    try await sdk.setConfig(config: "...")
+    
+    // Generate access token
     // Create and initialize the user
-    //...
+
     do {
-        let password = ProcessInfo.processInfo.environment["SATOSHI_PASSWORD"] ?? ""
-        let pin = ProcessInfo.processInfo.environment["SATOSHI_PIN"] ?? ""
-
-        var mnemonic = ""
-        mnemonic = try sdk.createNewWallet(pin: pin, password: password)
-        try sdk.verifyMnemonic(pin: pin, password: password, mnemonic: mnemonic)
-        // If no exception is thrown, the mnemonic was verified...
-        // now the wallet can be initialized and used..
-
+        mnemonic = try await sdk.createNewWallet(pin: "pin", password: "password")
+        try await sdk.verifyMnemonic(pin: "pin", password: "password", mnemonic: mnemonic)
     } catch {
         print(error.localizedDescription)
     }
+    ```
 
+=== "Typescript"
+
+    ```typescript linenums="1"
+    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+
+    const sdk = await new CawaenaSdk();
+    await sdk.setConfig("...")
+    
+    // Generate access token
+    // Create and initialize the user
+
+    await sdk.setPassword("pin", "password");
+    let mnemonic = await sdk.createNewWallet("pin");
+    await sdk.verifyMnemonic("pin", mnemonic)
     ```
 
 ### Migrate an existing wallet
@@ -109,398 +135,160 @@ This just performs the second step of the create fresh wallet process and needs 
 
     ```rust linenums="1"
     async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        let password = std::env::var("SATOSHI_PASSWORD").unwrap();
-        let pin = std::env::var("SATOSHI_PIN").unwrap();
-        let mnemonic = ""; // User should enter their mnemonic
-
-        // Create and initialize the user
-        //...
-
-        sdk.create_wallet_from_mnemonic(&pin, &password,&mnemonic).await.unwrap();
-
-        // If no exception is thrown, the mnemonic was verified...
-        // now the wallet can be initialized and used...
-
-    }
-    ```
-
-=== "Java"
-
-    ```java linenums="1"
-
-    package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
-
-    public class app {
-        private CryptpaySdk sdk;
-        public static void main(){
-            // Create and initialize the user
-            //...
-
-            try {
-                String password = env.get("SATOSHI_PASSWORD");
-                String pin = env.get("SATOSHI_PIN");
-                
-                String mnemonic = ""; // User should enter their mnemonic
-                sdk.createWalletFromMnemonic(pin, password, mnemonic);
-                
-                // If no exception is thrown, the mnemonic was verified...
-                // now the wallet can be initialized and used...
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    ```
-
-=== "Swift"
-
-    ```swift linenums="1"
-    // Create and initialize the user
-    //...
-    do {
-        let password = ProcessInfo.processInfo.environment["SATOSHI_PASSWORD"] ?? ""
-        let pin = ProcessInfo.processInfo.environment["SATOSHI_PIN"] ?? ""
-
-        let mnemonic = "" // User should enter their mnemonic
-        try sdk.createWalletFromMnemonic(pin: pin, password: password, mnemonic: mnemonic)
-        // If no exception is thrown, the mnemonic was verified...
-        // now the wallet can be initialized and used..
-
-    } catch {
-        print(error.localizedDescription)
-    }
-
-    ```
-
-### From a wallet backup file
-
-If the user has created a backup from any other devices or wallet applications using the stronghold file format, this file can be used to restore the wallet by creating a new wallet from the backup file. All existing accounts as well as mnemonic information are restored.
-
-=== "Rust"
-
-    ```rust linenums="1"
-    async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        let password = std::env::var("SATOSHI_PASSWORD").unwrap(); // This is the password used while creating backup!
-        let pin = std::env::var("SATOSHI_PIN").unwrap();
-        let backup_path = ""; // The path to the backup file
-
-        // Create and initialize the user
-        //...
-
-        sdk.create_wallet_from_backup(&pin, &password,&backup_path).await.unwrap();
-
-        // If no exception is thrown, the backup was successfully restored...
-        // now the wallet can be initialized and used...
-
-    }
-    ```
-
-=== "Java"
-
-    ```java linenums="1"
-
-    package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
-
-    public class app {
-        private CryptpaySdk sdk;
-        public static void main(){
-            // Create and initialize the user
-            //...
-
-            try {
-                String password = env.get("SATOSHI_PASSWORD"); // This is the password used while creating backup!
-                String pin = env.get("SATOSHI_PIN");
-                
-                String backup_path = ""; // The path to the backup file
-                sdk.createWalletFromBackup(pin, password, backup_path);
-                
-                // If no exception is thrown, the backup was successfully restored...
-                // now the wallet can be initialized and used...
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    ```
-
-=== "Swift"
-
-    ```swift linenums="1"
-    // Create and initialize the user
-    //...
-    do {
-        let password = ProcessInfo.processInfo.environment["SATOSHI_PASSWORD"] ?? "" // This is the password used while creating backup!
-        let pin = ProcessInfo.processInfo.environment["SATOSHI_PIN"] ?? ""
-
-        let backup_path = "" // The path to the backup file
-        try sdk.createWalletFromBackup(pin: pin, password: password, backup_path: backup_path)
-        // If no exception is thrown, the backup was successfully restored...
-        // now the wallet can be initialized and used...
-
-    } catch {
-        print(error.localizedDescription)
-    }
-
-    ```
-
-This restores an existing wallet from a backup file. It requires the `backup path` of the file as well the `backup password` in addition to the `password` of the backup and the new `pin` to be used.
-
-## Creating a wallet backup
-
-The SDK also provides function to create a stronghold backup file. This file is generated and stored in the path defined as `{path_prefix}/backups/{coin_type}/{username}/{Unix date time in seconds}.stronghold`. This file can be given to the user to download the backup and securely store it outside the application. The same backup file can be used to restore the wallet on other devices as well as in other application supporting stronghold files.
-
-A `password` is also required to create the backup and the same `password` is required for restoring the backup. The backup can be created only if a wallet exists an it is successfully initialized for use. Uninitialized wallets need to be initialized before creating their backups.
-
-=== "Rust"
-
-    ```rust linenums="1"
-    async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        let backup_password = std::env::var("SATOSHI_BACKUP_PASSWORD").unwrap(); // This is the password used while creating backup!
-        // Create and initialize the user
-        // Create the wallet
-        // Initialize the wallet
-        let path = sdk.create_wallet_backup(&backup_password).await.unwrap();
-
-        // the function also returns the path to the backup file
-
-    }
-    ```
-
-=== "Java"
-
-    ```java linenums="1"
-
-    package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
-
-    public class app {
-        private CryptpaySdk sdk;
-        public static void main(){
-            // Create and initialize the user
-            // Create the wallet
-            // Initialize the wallet
-
-            try {
-                String backup_password = env.get("BACKUP_PASSWORD"); // This is the password used while creating backup!
-                
-                String backup_path = sdk.createWalletBackup(backup_password);
-                
-                // the function also returns the path to the backup file
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    ```
-
-=== "Swift"
-
-    ```swift linenums="1"
-    // Create and initialize the user
-    // Create the wallet
-    // Initialize the wallet
-    do {
-        let backup_password = ProcessInfo.processInfo.environment["SATOSHI_BACKUP_PASSWORD"] ?? "" // This is the password used while creating backup!
-
-        let backup_path = try sdk.createWalletBackup(password: backup_password)
-        // the function also returns the path to the backup file
-
-    } catch {
-        print(error.localizedDescription)
-    }
-
-    ```
-
-=== "Rust"
-
-    ```rust linenums="1"
-    async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        let backup_password = std::env::var("SATOSHI_BACKUP_PASSWORD").unwrap(); // This is the password used while creating backup!
-        // Create and initialize the user
-        // Create the wallet
-        // Initialize the wallet
-        let path = sdk.create_wallet_backup(&backup_password).await.unwrap();
-
-        // the function also returns the path to the backup file
-
-    }
-    ```
-
-=== "Java"
-
-    ```java linenums="1"
-
-    package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
-
-    public class app {
-        private CryptpaySdk sdk;
-        public static void main(){
-            // Create and initialize the user
-            // Create the wallet
-            // Initialize the wallet
-
-            try {
-                String backup_password = env.get("BACKUP_PASSWORD"); // This is the password used while creating backup!
-                
-                String backup_path = sdk.createWalletBackup(backup_password);
-                
-                // the function also returns the path to the backup file
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    ```
-
-=== "Swift"
-
-    ```swift linenums="1"
-    // Create and initialize the user
-    // Create the wallet
-    // Initialize the wallet
-    do {
-        let backup_password = ProcessInfo.processInfo.environment["SATOSHI_BACKUP_PASSWORD"] ?? "" // This is the password used while creating backup!
-
-        let backup_path = try sdk.createWalletBackup(password: backup_password)
-        // the function also returns the path to the backup file
-
-    } catch {
-        print(error.localizedDescription)
-    }
-
-    ```
-
-## Initializing the wallet
-
-For performing any operations involving the wallet, like fetching wallet balance, or send a transfer or generating a new address, the wallet needs to be initialized. The initialization also requires a `pin` entry from the application user, guaranteeing that the wallet cannot be misused.
-
-=== "Rust"
-
-    ```rust linenums="1"
-    async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        // Initialize the wallet
-        let pin = "1234"; // User enters the pin
-        sdk.init_wallet(&pin).await.unwrap();
-
-        // Now all wallet functions can be called
-
-    }
-    ```
-
-=== "Java"
-
-    ```java linenums="1"
-
-    package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
-
-    public class app {
-        private CryptpaySdk sdk;
-        public static void main(){
-            // Initialize the wallet
-
-            try {
-                String pin = "1234"; // User enters the pin
-                
-                sdk.initializeWallet(pin);
-                
-                // Now all wallet functions can be called
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    ```
-
-=== "Swift"
-
-    ```swift linenums="1"
-    // Initialize the wallet
-    do {
+        let mut sdk = Sdk::default();
+        sdk.set_config(...).unwrap();
         
-        let pin = "1234"; // User enters the pin
-        try sdk.initWallet(pin: pin)
+        // Generate access token
+        // Create and initialize the user
 
-        // Now all wallet functions can be called
+        sdk.create_wallet_from_mnemonic("pin", "password", "mnemonic").await.unwrap();
+    }
+    ```
 
+=== "Java"
 
+    ```java linenums="1"
+    package org.example.app;
+    import com.etogruppe.CawaenaSdk;
+
+    public class app {
+        public static void main(){
+            CawaenaSdk sdk = new CawaenaSdk();
+            sdk.setConfig("...");
+            
+            // Generate access token
+            // Create and initialize the user
+
+            try {
+                sdk.createWalletFromMnemonic("pin", "password", "mnemonic");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    ```
+
+=== "Swift"
+
+    ```swift linenums="1"
+    import CawaenaSdk
+    import Foundation
+
+    let sdk = CawaenaSdk()
+    try await sdk.setConfig(config: "...")
+    
+    // Generate access token
+    // Create and initialize the user
+    
+    do {
+        try await sdk.createWalletFromMnemonic(pin: "pin", password: "password", mnemonic: "mnemonic")
     } catch {
         print(error.localizedDescription)
     }
+    ```
 
+=== "Typescript"
+
+    ```typescript linenums="1"
+    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+
+    const sdk = await new CawaenaSdk();
+    await sdk.setConfig("...")
+    
+    // Generate access token
+    // Create and initialize the user
+
+    await sdk.setPassword("pin", "password");
+    await sdk.createWalletFromMnemonic("pin", "mnemonic");
+    ```
+
+### Create wallet from a backup file
+
+The SDK provides functionality to create a backup file in `kdbx` format as a byte array. Backups can only be created if a wallet exists.
+
+To create the backup, the following are required:
+
+* `pin`: This is the same PIN that was set for the wallet.
+* `backup_password`: A new, separate password set specifically for securing the backup file. This is not the same password used for the wallet.
+
+To restore the backup, the following are required:
+
+* The kdbx `backup bytes`.
+* A `new pin` used to create the new wallet.
+* The `backup_password` used during the backup process.
+
+=== "Rust"
+
+    ```rust linenums="1"
+    async fn main() {
+        let mut sdk = Sdk::default();
+        sdk.set_config(...).unwrap();
+        
+        // Generate access token
+        // Create and initialize the user
+        
+        let backup_bytes: Vec<u8> = sdk.create_wallet_backup("pin", "backup_password").await.unwrap();
+        sdk.create_wallet_from_backup("new pin", &backup_bytes, "backup_password").await.unwrap();
+    }
+    ```
+
+=== "Java"
+
+    ```java linenums="1"
+    package org.example.app;
+    import com.etogruppe.CawaenaSdk;
+
+    public class app {
+        public static void main(){
+            CawaenaSdk sdk = new CawaenaSdk();
+            sdk.setConfig("...");
+            
+            // Generate access token
+            // Create and initialize the user
+
+            try {
+                byte[] backup_bytes = sdk.createWalletBackup("pin", "backup_password");
+                sdk.createWalletFromBackup("new pin", backup_bytes, "backup_password");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+    ```
+
+=== "Swift"
+
+    ```swift linenums="1"
+    import CawaenaSdk
+    import Foundation
+
+    let sdk = CawaenaSdk()
+    try await sdk.setConfig(config: "...")
+    
+    // Generate access token
+    // Create and initialize the user
+    
+    do {
+        let backup_bytes = try await sdk.createWalletBackup(pin: "pin", password: "backup_path")
+        try await sdk.restoreWalletFromBackup(pin: "new pin", backup: backup_bytes, backup_password: "backup_password")
+    } catch {
+        print(error.localizedDescription)
+    }
+    ```
+
+=== "Typescript"
+
+    ```typescript linenums="1"
+    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+
+    const sdk = await new CawaenaSdk();
+    await sdk.setConfig("...")
+    
+    // Generate access token
+    // Create and initialize the user
+
+    let backup_bytes = await sdk.createWalletBackup("pin", "backup_password");
+    await sdk.createWalletFromBackup("new pin", backup_bytes, "backup_password");
     ```
 
 ## Deleting the wallet
@@ -511,73 +299,74 @@ This function just deletes the wallet files and is a one-way function, to be use
 
     ```rust linenums="1"
     async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        // Initialize the wallet
-        let pin = "1234"; // User enters the pin
-        sdk.init_wallet(&pin).await.unwrap();
-
-        // Only initialized wallets can be deleted
+        let mut sdk = Sdk::default();
+        sdk.set_config(...).unwrap();
+        
+        // Generate access token
+        // Create and initialize new user
+        // Create a new wallet
+        
         sdk.delete_wallet();
-
     }
     ```
 
 === "Java"
 
     ```java linenums="1"
-
     package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
+    import com.etogruppe.CawaenaSdk;
 
     public class app {
-        private CryptpaySdk sdk;
         public static void main(){
-            // Initialize the wallet
+            CawaenaSdk sdk = new CawaenaSdk();
+            sdk.setConfig("...");
+            
+            // Generate access token
+            // Create and initialize new user
+            // Create a new wallet
 
             try {
-                String pin = "1234"; // User enters the pin
-                
-                sdk.initializeWallet(pin);
-                
-                // Only initialized wallets can be deleted
                 sdk.deleteWallet();
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
-
     ```
 
 === "Swift"
 
     ```swift linenums="1"
-    // Initialize the wallet
+    import CawaenaSdk
+    import Foundation
+
+    let sdk = CawaenaSdk()
+    try await sdk.setConfig(config: "...")
+    
+    // Generate access token
+    // Create and initialize new user
+    // Create a new wallet
+    
     do {
-        
-        let pin = "1234"; // User enters the pin
-        try sdk.initWallet(pin: pin)
-
-        // Only initialized wallets can be deleted
-        try sdk.deleteWallet()
-
-
+        try await sdk.deleteWallet()
     } catch {
         print(error.localizedDescription)
     }
+    ```
 
+=== "Typescript"
+
+    ```typescript linenums="1"
+    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+
+    const sdk = await new CawaenaSdk();
+    await sdk.setConfig("...")
+    
+    // Generate access token
+    // Create and initialize the user
+    // Create a new wallet
+
+    await sdk.deleteWallet("pin")
     ```
 
 ## Password and pin utilities
@@ -588,92 +377,94 @@ In addition to creating, migrating, backups and initialization, the wallet modul
 
     ```rust linenums="1"
     async fn main() {
-        dotenvy::dotenv().ok();
-        let path = "/tmp/Cawaena";
-
-        // ensure a clean start
-        tokio::fs::create_dir_all(path).await.unwrap();
-
-        // Initialize the wallet
-        let pin = "1234"; // User enters the pin
-        sdk.init_wallet(&pin).await.unwrap();
+        let mut sdk = Sdk::default();
+        sdk.set_config(...).unwrap();
+        
+        // Generate access token
+        // Create and initialize new user
+        // Create a new wallet
 
         // Try to verify the pin
-        sdk.verify_pin(&pin);
-        let new_pin = "1235";
-        let password = "StrongP@55w0rd";
+        sdk.verify_pin("pin");
         // or reset the pin to a new one
-        sdk.reset_pin(&password,&new_pin)
+        sdk.reset_pin("password", "new_pin")
         // or change the password
-        let new_password = "StrongP@55W0rd";
-        sdk.change_password(&pin,&password,&new_password);
+        sdk.change_password("pin", "password", "new_password");
     }
     ```
 
 === "Java"
 
     ```java linenums="1"
-
     package org.example.app;
-
-    import com.etogruppe.CryptpaySdk;
-    import java.nio.file.Files;
-    import java.nio.file.Paths;
-    import java.io.IOException;
-    import java.util.Map;
+    import com.etogruppe.CawaenaSdk;
 
     public class app {
-        private CryptpaySdk sdk;
         public static void main(){
-            // Initialize the wallet
+            CawaenaSdk sdk = new CawaenaSdk();
+            sdk.setConfig("...");
+            
+            // Generate access token
+            // Create and initialize new user
+            // Create a new wallet
 
             try {
-                String pin = "1234"; // User enters the pin
-                
-                sdk.initializeWallet(pin);
-                
                 // Try to verify the pin
-                sdk.pinVerify(pin);
-                String new_pin = "1235";
-                String password = "StrongP@55w0rd";
+                sdk.pinVerify("pin");
                 // or reset the pin to a new one
-                sdk.pinReset(password, new_pin);
+                sdk.pinReset("password", "new_pin");
                 // or change the password
-                String new_password = "StrongP@55W0rd";
-                sdk.passwordChange(pin, password, new_password);
-
+                sdk.passwordChange("pin", "password", "new_password");
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
     }
-
-
     ```
 
 === "Swift"
 
     ```swift linenums="1"
-    // Initialize the wallet
+    import CawaenaSdk
+    import Foundation
+
+    let sdk = CawaenaSdk()
+    try await sdk.setConfig(config: "...")
+    
+    // Generate access token
+    // Create and initialize new user
+    // Create a new wallet
+
     do {
-        
-        let pin = "1234"; // User enters the pin
-        try sdk.initWallet(pin: pin)
-
         // Try to verify the pin
-        try sdk.verifyPin(pin: pin)
-        let new_pin = "1235";
-        let password = "StrongP@55w0rd";
+        try await sdk.verifyPin(pin: "pin")
         // or reset the pin to a new one
-        try sdk.resetPin(password: password, new_pin: new_pin)
+        try await sdk.resetPin(password: "password", new_pin: "new_pin")
         // or change the password
-        let new_password = "StrongP@55W0rd";
-        try sdk.changePassword(pin: pin, current_password: password, new_password: new_password)
-
+        try await sdk.changePassword(pin: "pin", current_password: "password", new_password: "new_password")
     } catch {
         print(error.localizedDescription)
     }
+    ```
 
+=== "Typescript"
+
+    ```typescript linenums="1"
+    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+
+    const sdk = await new CawaenaSdk();
+    await sdk.setConfig("...")
+    
+    // Generate access token
+    // Create and initialize the user
+    // Create a new wallet
+
+    // Try to verify the pin
+    await sdk.verifyPin("pin");
+    // or reset the pin to a new one
+    await sdk.resetPin("pin", "new_pin");
+    // or change the password
+    await sdk.setPassword("pin", "new_password");
     ```
 
 ## Wallet flows

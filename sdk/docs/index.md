@@ -14,13 +14,13 @@ The documentation is divided into following sections. Simply choose one and get 
 
 <div class="grid cards" markdown>
 
-- [:fontawesome-solid-feather:{ .lg .middle } __Features__](./Choosing%20Cryptpay/Features.md){ .md-button}
+- [:fontawesome-solid-feather:{ .lg .middle } __Features__](./Choosing%20Cawaena/Features.md){ .md-button}
 
     ---
 
     Know the features before using Cawaena in your applications for a better product-market fit.
 
-    [:octicons-arrow-right-24: Architecture](./Choosing%20Cryptpay/Architecture.md)
+    [:octicons-arrow-right-24: Architecture](./Choosing%20Cawaena/Architecture.md)
 
 - [:material-download-box:{ .lg .middle } __Set up the SDK__](./Installing%20the%20SDK/Installation.md){ .md-button}
 
@@ -64,13 +64,6 @@ The documentation is divided into following sections. Simply choose one and get 
     This section provides a basic overview of the SDK internal structure and explains the different modules and their functions intrinsically.
 
     [:octicons-arrow-right-24: Examples](./SDK%20Examples/Examples.md)
-
-- [:fontawesome-solid-user-secret:{ .lg .middle } __SDK Internals__](./Under%20the%20Hood/SDK%20Internals.md){ .md-button}
-
-    ---
-    This section provides a basic overview of the SDK internal structure and explains the different modules and their functions intrinsically.
-
-    [:octicons-arrow-right-24: Internals](./Under%20the%20Hood/SDK%20Internals.md)
 
 </div>
 
