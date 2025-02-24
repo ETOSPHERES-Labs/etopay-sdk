@@ -29,7 +29,7 @@ The API reference for the JS/TS bindings are available [here](../jstsdocs/classe
 
 ## Java
 
-The Javadoc API reference for the Java bindings is available [here](../../javadoc/). Please consult the tables below for the dependencies between each function.
+The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etogruppe/CryptpaySdk.html). Please consult the tables below for the dependencies between each function.
 
 ## Rust
 
@@ -47,7 +47,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [constructor](../rust-docs/doc/sdk/core/struct.Sdk.html#method.new)
 
 === "Java"
-    [constructor](../../javadoc/com/etogruppe/CryptpaySdk.html#<init>())
+    [constructor](../javadoc/com/etogruppe/CryptpaySdk.html#<init>())
 
 === "Typescript"
     [constructor](../jstsdocs/classes/CryptpaySdk.html#constructor)
@@ -70,7 +70,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [set_config](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_config)
 
 === "Java"
-    [setConfig](../../javadoc/com/etogruppe/CryptpaySdk.html#setConfig(java.lang.String))
+    [setConfig](../javadoc/com/etogruppe/CryptpaySdk.html#setConfig(java.lang.String))
 
 === "Typescript"
     [setConfig](../jstsdocs/classes/CryptpaySdk.html#setConfig)
@@ -92,7 +92,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_node_urls_backend](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_node_urls_backend)
 
 === "Java"
-    [getNodeUrls](../../javadoc/com/etogruppe/CryptpaySdk.html#getNodeUrls())
+    [getNodeUrls](../javadoc/com/etogruppe/CryptpaySdk.html#getNodeUrls())
 
 === "Typescript"
     [get_node_urls](../jstsdocs/classes/CryptpaySdk.html#get_node_urls)
@@ -114,7 +114,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [set_currency](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_currency)
 
 === "Java"
-    [setCurrency](../../javadoc/com/etogruppe/CryptpaySdk.html#setCurrency(java.lang.String))
+    [setCurrency](../javadoc/com/etogruppe/CryptpaySdk.html#setCurrency(java.lang.String))
 
 === "Typescript"
     [setCurrency](../jstsdocs/classes/CryptpaySdk.html#setCurrency)
@@ -136,7 +136,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_build_info](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_build_info)
 
 === "Java"
-    [getBuildInfo](../../javadoc/com/etogruppe/CryptpaySdk.html#getBuildInfo())
+    [getBuildInfo](../javadoc/com/etogruppe/CryptpaySdk.html#getBuildInfo())
 
 === "Typescript"
     [getBuildInfo](../jstsdocs/classes/CryptpaySdk.html#getBuildInfo)
@@ -160,7 +160,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_new_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_new_user)
 
 === "Java"
-    [createNewUser](../../javadoc/com/etogruppe/CryptpaySdk.html#createNewUser(java.lang.String))
+    [createNewUser](../javadoc/com/etogruppe/CryptpaySdk.html#createNewUser(java.lang.String))
 
 === "Typescript"
     [createNewUser](../jstsdocs/classes/CryptpaySdk.html#createNewUser)
@@ -182,7 +182,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [init_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.init_user)
 
 === "Java"
-    [initializeUser](../../javadoc/com/etogruppe/CryptpaySdk.html#initializeUser(java.lang.String))
+    [initializeUser](../javadoc/com/etogruppe/CryptpaySdk.html#initializeUser(java.lang.String))
 
 === "Typescript"
     [initializeUser](../jstsdocs/classes/CryptpaySdk.html#initializeUser)
@@ -204,7 +204,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [refresh_access_token](../rust-docs/doc/sdk/core/struct.Sdk.html#method.refresh_access_token)
 
 === "Java"
-    [refreshAccessToken](../../javadoc/com/etogruppe/CryptpaySdk.html#refreshAccessToken(java.lang.String))
+    [refreshAccessToken](../javadoc/com/etogruppe/CryptpaySdk.html#refreshAccessToken(java.lang.String))
 
 === "Typescript"
     [refreshAccessToken](../jstsdocs/classes/CryptpaySdk.html#refreshAccessToken)
@@ -226,7 +226,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [is_kyc_status_verified](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_kyc_status_verified)
 
 === "Java"
-    [isKycVerified](../../javadoc/com/etogruppe/CryptpaySdk.html#isKycVerified(java.lang.String))
+    [isKycVerified](../javadoc/com/etogruppe/CryptpaySdk.html#isKycVerified(java.lang.String))
 
 === "Typescript"
     [isKycVerified](../jstsdocs/classes/CryptpaySdk.html#isKycVerified)
@@ -249,7 +249,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [delete_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.delete_user)
 
 === "Java"
-    [deleteUser](../../javadoc/com/etogruppe/CryptpaySdk.html#deleteUser(java.lang.String))
+    [deleteUser](../javadoc/com/etogruppe/CryptpaySdk.html#deleteUser(java.lang.String))
 
 === "Typescript"
     [deleteUser](../jstsdocs/classes/CryptpaySdk.html#deleteUser)
@@ -273,7 +273,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_wallet_from_new_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_new_mnemonic)
 
 === "Java"
-    [createNewWallet](../../javadoc/com/etogruppe/CryptpaySdk.html#createNewWallet(java.lang.String))
+    [createNewWallet](../javadoc/com/etogruppe/CryptpaySdk.html#createNewWallet(java.lang.String))
 
 === "Typescript"
     [createNewWallet](../jstsdocs/classes/CryptpaySdk.html#createNewWallet)
@@ -295,7 +295,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_wallet_from_existing_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_existing_mnemonic)
 
 === "Java"
-    [createWalletFromMnemonic](../../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
+    [createWalletFromMnemonic](../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
 
 === "Typescript"
     [createWalletFromMnemonic](../jstsdocs/classes/CryptpaySdk.html#createWalletFromMnemonic)
@@ -317,7 +317,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_wallet_from_backup](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_backup)
 
 === "Java"
-    [createWalletFromBackup](../../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
+    [createWalletFromBackup](../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
 
 === "Typescript"
     [createWalletFromBackup](../jstsdocs/classes/CryptpaySdk.html#createWalletFromBackup)
@@ -339,7 +339,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_wallet_backup](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_backup)
 
 === "Java"
-    [createWalletBackup](../../javadoc/com/etogruppe/CryptpaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
+    [createWalletBackup](../javadoc/com/etogruppe/CryptpaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
 
 === "Typescript"
     [createWalletBackup](../jstsdocs/classes/CryptpaySdk.html#createWalletBackup)
@@ -361,7 +361,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [verify_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.verify_mnemonic)
 
 === "Java"
-    [verifyMnemonic](../../javadoc/com/etogruppe/CryptpaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
+    [verifyMnemonic](../javadoc/com/etogruppe/CryptpaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
 
 === "Typescript"
     [verifyMnemonic](../jstsdocs/classes/CryptpaySdk.html#verifyMnemonic)
@@ -387,7 +387,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [delete_wallet](../rust-docs/doc/sdk/core/struct.Sdk.html#method.delete_wallet)
 
 === "Java"
-    [deleteWallet](../../javadoc/com/etogruppe/CryptpaySdk.html#deleteWallet(java.lang.String))
+    [deleteWallet](../javadoc/com/etogruppe/CryptpaySdk.html#deleteWallet(java.lang.String))
 
 === "Typescript"
     [deleteWallet](../jstsdocs/classes/CryptpaySdk.html#deleteWallet)
@@ -409,7 +409,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [verify_pin](../rust-docs/doc/sdk/core/struct.Sdk.html#method.verify_pin)
 
 === "Java"
-    [pinVerify](../../javadoc/com/etogruppe/CryptpaySdk.html#pinVerify(java.lang.String))
+    [pinVerify](../javadoc/com/etogruppe/CryptpaySdk.html#pinVerify(java.lang.String))
 
 === "Typescript"
     [verifyPin](../jstsdocs/classes/CryptpaySdk.html#verifyPin)
@@ -431,7 +431,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [change_pin](../rust-docs/doc/sdk/core/struct.Sdk.html#method.change_pin)
 
 === "Java"
-    [pinReset](../../javadoc/com/etogruppe/CryptpaySdk.html#pinReset(java.lang.String,java.lang.String))
+    [pinReset](../javadoc/com/etogruppe/CryptpaySdk.html#pinReset(java.lang.String,java.lang.String))
 
 === "Typescript"
     [resetPin](../jstsdocs/classes/CryptpaySdk.html#resetPin)
@@ -453,7 +453,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [set_password](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_password)
 
 === "Java"
-    [setPassword](../../javadoc/com/etogruppe/CryptpaySdk.html#setPassword(java.lang.String,java.lang.String))
+    [setPassword](../javadoc/com/etogruppe/CryptpaySdk.html#setPassword(java.lang.String,java.lang.String))
 
 === "Typescript"
     [setPassword](../jstsdocs/classes/CryptpaySdk.html#setPassword)
@@ -475,7 +475,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [is_password_set](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_password_set)
 
 === "Java"
-    [isPasswordSet](../../javadoc/com/etogruppe/CryptpaySdk.html#isPasswordSet())
+    [isPasswordSet](../javadoc/com/etogruppe/CryptpaySdk.html#isPasswordSet())
 
 === "Typescript"
     [isPasswordSet](../jstsdocs/classes/CryptpaySdk.html#isPasswordSet)
@@ -497,7 +497,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [generate_new_address](../rust-docs/doc/sdk/core/struct.Sdk.html#method.generate_new_address)
 
 === "Java"
-    [generateNewAddress](../../javadoc/com/etogruppe/CryptpaySdk.html#generateNewAddress(java.lang.String))
+    [generateNewAddress](../javadoc/com/etogruppe/CryptpaySdk.html#generateNewAddress(java.lang.String))
 
 === "Typescript"
     [generateNewAddress](../jstsdocs/classes/CryptpaySdk.html#generateNewAddress)
@@ -519,7 +519,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_balance](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_balance)
 
 === "Java"
-    [getWalletBalance](../../javadoc/com/etogruppe/CryptpaySdk.html#getWalletBalance(java.lang.String))
+    [getWalletBalance](../javadoc/com/etogruppe/CryptpaySdk.html#getWalletBalance(java.lang.String))
 
 === "Typescript"
     [getWalletBalance](../jstsdocs/classes/CryptpaySdk.html#getWalletBalance)
@@ -541,7 +541,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_wallet_tx_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_wallet_tx_list)
 
 === "Java"
-    [getWalletTransactionList](../../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransactionList(java.lang.String,long,long))
+    [getWalletTransactionList](../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransactionList(java.lang.String,long,long))
 
 === "Typescript"
     [getWalletTransactionList](../jstsdocs/classes/CryptpaySdk.html#getWalletTransactionList)
@@ -633,7 +633,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_wallet_tx](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_wallet_tx)
 
 === "Java"
-    [getWalletTransaction](../../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
+    [getWalletTransaction](../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
 
 === "Typescript"
     [getWalletTransaction](../jstsdocs/classes/CryptpaySdk.html#getWalletTransaction)
@@ -655,7 +655,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [set_recovery_share](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_recovery_share)
 
 === "Java"
-    [setRecoveryShare](../../javadoc/com/etogruppe/CryptpaySdk.html#setRecoveryShare(java.lang.String))
+    [setRecoveryShare](../javadoc/com/etogruppe/CryptpaySdk.html#setRecoveryShare(java.lang.String))
 
 === "Typescript"
     [setRecoveryShare](../jstsdocs/classes/CryptpaySdk.html#setRecoveryShare)
@@ -677,7 +677,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_recovery_share](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_recovery_share)
 
 === "Java"
-    [getRecoveryShare](../../javadoc/com/etogruppe/CryptpaySdk.html#getRecoveryShare())
+    [getRecoveryShare](../javadoc/com/etogruppe/CryptpaySdk.html#getRecoveryShare())
 
 === "Typescript"
     [getRecoveryShare](../jstsdocs/classes/CryptpaySdk.html#getRecoveryShare)
@@ -701,7 +701,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [start_kyc_verification_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.start_kyc_verification_for_viviswap)
 
 === "Java"
-    [startViviswapKyc](../../javadoc/com/etogruppe/CryptpaySdk.html#startViviswapKyc(java.lang.String,boolean))
+    [startViviswapKyc](../javadoc/com/etogruppe/CryptpaySdk.html#startViviswapKyc(java.lang.String,boolean))
 
 === "Typescript"
     [startKycVerificationForViviswap](../jstsdocs/classes/CryptpaySdk.html#startKycVerificationForViviswap)
@@ -749,7 +749,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_kyc_details_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_kyc_details_for_viviswap)
 
 === "Java"
-    [getViviswapKyc](../../javadoc/com/etogruppe/CryptpaySdk.html#getViviswapKyc())
+    [getViviswapKyc](../javadoc/com/etogruppe/CryptpaySdk.html#getViviswapKyc())
 
 === "Typescript"
     [getKycDetailsForViviswap](../jstsdocs/classes/CryptpaySdk.html#getKycDetailsForViviswap)
@@ -849,7 +849,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [update_kyc_partially_status_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_kyc_partially_status_for_viviswap)
 
 === "Java"
-    [updateViviswapKycPartial](../../javadoc/com/etogruppe/CryptpaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
+    [updateViviswapKycPartial](../javadoc/com/etogruppe/CryptpaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
 
 === "Typescript"
     [updateKycPartiallyStatusForViviswap](../jstsdocs/classes/CryptpaySdk.html#updateKycPartiallyStatusForViviswap)
@@ -948,7 +948,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [submit_kyc_partially_status_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.submit_kyc_partially_status_for_viviswap)
 
 === "Java"
-    [submitViviswapKycPartial](../../javadoc/com/etogruppe/CryptpaySdk.html#submitViviswapKycPartial())
+    [submitViviswapKycPartial](../javadoc/com/etogruppe/CryptpaySdk.html#submitViviswapKycPartial())
 
 === "Typescript"
     [submitKycPartiallyStatusForViviswap](../jstsdocs/classes/CryptpaySdk.html#submitKycPartiallyStatusForViviswap)
@@ -970,7 +970,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_iban_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_iban_for_viviswap)
 
 === "Java"
-    [getIbanViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#getIbanViviswap())
+    [getIbanViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#getIbanViviswap())
 
 === "Typescript"
     [getIbanViviswap](../jstsdocs/classes/CryptpaySdk.html#getIbanViviswap)
@@ -1031,7 +1031,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [update_iban_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_iban_for_viviswap)
 
 === "Java"
-    [updateIbanViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
+    [updateIbanViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
 
 === "Typescript"
     [updateIbanViviswap](../jstsdocs/classes/CryptpaySdk.html#updateIbanViviswap)
@@ -1053,7 +1053,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_deposit_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_deposit_with_viviswap)
 
 === "Java"
-    [depositWithViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#depositWithViviswap(java.lang.String))
+    [depositWithViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#depositWithViviswap(java.lang.String))
 
 === "Typescript"
     [createDepositWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createDepositWithViviswap)
@@ -1155,7 +1155,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_detail_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_detail_for_viviswap)
 
 === "Java"
-    [createViviswapDetail](../../javadoc/com/etogruppe/CryptpaySdk.html#createViviswapDetail(java.lang.String))
+    [createViviswapDetail](../javadoc/com/etogruppe/CryptpaySdk.html#createViviswapDetail(java.lang.String))
 
 === "Typescript"
     [createDetailForViviswap](../jstsdocs/classes/CryptpaySdk.html#createDetailForViviswap)
@@ -1177,7 +1177,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_withdrawal_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_withdrawal_with_viviswap)
 
 === "Java"
-    [withdrawWithViviswap](../../javadoc/com/etogruppe/CryptpaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D,byte%5B%5D,java.lang.String))
+    [withdrawWithViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D,byte%5B%5D,java.lang.String))
 
 === "Typescript"
     [createWithdrawalWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createWithdrawalWithViviswap)
@@ -1261,7 +1261,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_swap_details](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_swap_details)
 
 === "Java"
-    [getSwapDetails](../../javadoc/com/etogruppe/CryptpaySdk.html#getSwapDetails(java.lang.String))
+    [getSwapDetails](../javadoc/com/etogruppe/CryptpaySdk.html#getSwapDetails(java.lang.String))
 
 === "Typescript"
     [getSwapDetails](../jstsdocs/classes/CryptpaySdk.html#getSwapDetails)
@@ -1458,7 +1458,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_swap_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_swap_list)
 
 === "Java"
-    [getSwapList](../../javadoc/com/etogruppe/CryptpaySdk.html#getSwapList(long,long))
+    [getSwapList](../javadoc/com/etogruppe/CryptpaySdk.html#getSwapList(long,long))
 
 === "Typescript"
     [getSwapList](../jstsdocs/classes/CryptpaySdk.html#getSwapList)
@@ -1480,7 +1480,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_exchange_rate](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_exchange_rate)
 
 === "Java"
-    [getExchangeRate](../../javadoc/com/etogruppe/CryptpaySdk.html#getExchangeRate())
+    [getExchangeRate](../javadoc/com/etogruppe/CryptpaySdk.html#getExchangeRate())
 
 === "Typescript"
     [getExchangeRate](../jstsdocs/classes/CryptpaySdk.html#getExchangeRate)
@@ -1504,7 +1504,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_purchase_request](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_purchase_request)
 
 === "Java"
-    [purchaseRequestCreate](../../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
+    [purchaseRequestCreate](../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
 
 === "Typescript"
     [createPurchaseRequest](../jstsdocs/classes/CryptpaySdk.html#createPurchaseRequest)
@@ -1528,7 +1528,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_purchase_details](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_purchase_details)
 
 === "Java"
-    [purchaseDetails](../../javadoc/com/etogruppe/CryptpaySdk.html#purchaseDetails(java.lang.String))
+    [purchaseDetails](../javadoc/com/etogruppe/CryptpaySdk.html#purchaseDetails(java.lang.String))
 
 === "Typescript"
     [getPurchaseDetails](../jstsdocs/classes/CryptpaySdk.html#getPurchaseDetails)
@@ -1590,7 +1590,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [confirm_purchase_request](../rust-docs/doc/sdk/core/struct.Sdk.html#method.confirm_purchase_request)
 
 === "Java"
-    [purchaseRequestConfirm](../../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
+    [purchaseRequestConfirm](../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
 
 === "Typescript"
     [confirmPurchaseRequest](../jstsdocs/classes/CryptpaySdk.html#confirmPurchaseRequest)
@@ -1612,7 +1612,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [send_amount](../rust-docs/doc/sdk/core/struct.Sdk.html#method.send_amount)
 
 === "Java"
-    [sendAmount](../../javadoc/com/etogruppe/CryptpaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D,byte%5B%5D,java.lang.String))
+    [sendAmount](../javadoc/com/etogruppe/CryptpaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D,byte%5B%5D,java.lang.String))
 
 === "Typescript"
     [sendAmount](../jstsdocs/classes/CryptpaySdk.html#sendAmount)
@@ -1634,7 +1634,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_tx_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_tx_list)
 
 === "Java"
-    [txList](../../javadoc/com/etogruppe/CryptpaySdk.html#txList(long,long))
+    [txList](../javadoc/com/etogruppe/CryptpaySdk.html#txList(long,long))
 
 === "Typescript"
     [getTransactionList](../jstsdocs/classes/CryptpaySdk.html#getTransactionList)
@@ -1760,7 +1760,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [start_kyc_verification_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.start_kyc_verification_for_postident)
 
 === "Java"
-    [startKycVerificationForPostident](../../javadoc/com/etogruppe/CryptpaySdk.html#startKycVerificationForPostident())
+    [startKycVerificationForPostident](../javadoc/com/etogruppe/CryptpaySdk.html#startKycVerificationForPostident())
 
 === "Typescript"
     [startKycVerificationForPostident](../jstsdocs/classes/CryptpaySdk.html#startKycVerificationForPostident)
@@ -1814,7 +1814,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_kyc_details_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_kyc_details_for_postident)
 
 === "Java"
-    [getKycDetailsForPostident](../../javadoc/com/etogruppe/CryptpaySdk.html#getKycDetailsForPostident())
+    [getKycDetailsForPostident](../javadoc/com/etogruppe/CryptpaySdk.html#getKycDetailsForPostident())
 
 === "Typescript"
     [getKycDetailsForPostident](../jstsdocs/classes/CryptpaySdk.html#getKycDetailsForPostident)
@@ -1871,7 +1871,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [update_kyc_status_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_kyc_status_for_postident)
 
 === "Java"
-    [updateKycStatusForPostident](../../javadoc/com/etogruppe/CryptpaySdk.html#updateKycStatusForPostident(java.lang.String))
+    [updateKycStatusForPostident](../javadoc/com/etogruppe/CryptpaySdk.html#updateKycStatusForPostident(java.lang.String))
 
 === "Typescript"
     [updateKycStatusForPostident](../jstsdocs/classes/CryptpaySdk.html#updateKycStatusForPostident)
@@ -1895,7 +1895,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [create_customer](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_customer)
 
 === "Java"
-    [customerCreate](../../javadoc/com/etogruppe/CryptpaySdk.html#customerCreate(java.lang.String))
+    [customerCreate](../javadoc/com/etogruppe/CryptpaySdk.html#customerCreate(java.lang.String))
 
 === "Typescript"
     [createCustomer](../jstsdocs/classes/CryptpaySdk.html#createCustomer)
@@ -1917,7 +1917,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_customer](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_customer)
 
 === "Java"
-    [customerGet](../../javadoc/com/etogruppe/CryptpaySdk.html#customerGet())
+    [customerGet](../javadoc/com/etogruppe/CryptpaySdk.html#customerGet())
 
 === "Typescript"
     [getCustomer](../jstsdocs/classes/CryptpaySdk.html#getCustomer)
@@ -1939,7 +1939,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [get_preferred_currency](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_preferred_currency)
 
 === "Java"
-    [getPreferredCurrency](../../javadoc/com/etogruppe/CryptpaySdk.html#getPreferredCurrency())
+    [getPreferredCurrency](../javadoc/com/etogruppe/CryptpaySdk.html#getPreferredCurrency())
 
 === "Typescript"
     [getPreferredCurrency](../jstsdocs/classes/CryptpaySdk.html#getPreferredCurrency)
@@ -1961,7 +1961,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     [set_preferred_currency](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_preferred_currency)
 
 === "Java"
-    [setPreferredCurrency](../../javadoc/com/etogruppe/CryptpaySdk.html#setPreferredCurrency(java.lang.String))
+    [setPreferredCurrency](../javadoc/com/etogruppe/CryptpaySdk.html#setPreferredCurrency(java.lang.String))
 
 === "Typescript"
     [setPreferredCurrency](../jstsdocs/classes/CryptpaySdk.html#setPreferredCurrency)
