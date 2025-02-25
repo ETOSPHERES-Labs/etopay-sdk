@@ -1819,7 +1819,7 @@ dependencies = [
  "fern",
  "log",
  "serde",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "time-helper",
 ]
 
@@ -2725,7 +2725,7 @@ dependencies = [
  "serde",
  "serde_json",
  "serde_repr",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "time",
  "tokio",
  "url",
@@ -2747,7 +2747,7 @@ dependencies = [
  "stronghold-derive",
  "stronghold-utils",
  "stronghold_engine",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "zeroize",
 ]
 
@@ -2852,7 +2852,7 @@ dependencies = [
  "combine",
  "jni-sys",
  "log",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "walkdir",
  "windows-sys 0.45.0",
 ]
@@ -2944,7 +2944,7 @@ dependencies = [
  "rust-argon2 2.1.0",
  "salsa20",
  "sha2",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "twofish",
  "uuid",
  "xml-rs",
@@ -3495,7 +3495,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "879952a81a83930934cbf1786752d6dedc3b1f29e8f8fb2ad1d0a36f377cf442"
 dependencies = [
  "memchr",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "ucd-trie",
 ]
 
@@ -3936,7 +3936,7 @@ checksum = "ba009ff324d1fc1b900bd1fdb31564febe58a8ccc8a6fdbb93b543d33b13ca43"
 dependencies = [
  "getrandom 0.2.15",
  "libredox",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
 ]
 
 [[package]]
@@ -4204,7 +4204,7 @@ dependencies = [
  "rustls-native-certs",
  "rustls-pemfile 1.0.4",
  "rustls-webpki 0.101.7",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "tokio",
  "tokio-rustls 0.24.1",
  "ws_stream_tungstenite",
@@ -4539,7 +4539,7 @@ dependencies = [
  "serde_json",
  "shadow-rs",
  "testing",
- "thiserror 1.0.68",
+ "thiserror 2.0.11",
  "tokio",
  "walkdir",
  "web-sys",
@@ -4847,7 +4847,7 @@ dependencies = [
  "nix",
  "rand 0.8.5",
  "serde",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "windows",
  "zeroize",
 ]
@@ -4876,7 +4876,7 @@ dependencies = [
  "paste",
  "serde",
  "stronghold-runtime",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "zeroize",
 ]
 
@@ -5086,11 +5086,11 @@ dependencies = [
 
 [[package]]
 name = "thiserror"
-version = "1.0.68"
+version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "02dd99dc800bbb97186339685293e1cc5d9df1f8fae2d0aecd9ff1c77efea892"
+checksum = "b6aaf5339b578ea85b50e080feb250a3e8ae8cfcdff9a461c9ec2904bc923f52"
 dependencies = [
- "thiserror-impl 1.0.68",
+ "thiserror-impl 1.0.69",
 ]
 
 [[package]]
@@ -5104,9 +5104,9 @@ dependencies = [
 
 [[package]]
 name = "thiserror-impl"
-version = "1.0.68"
+version = "1.0.69"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a7c61ec9a6f64d2793d8a45faba21efbe3ced62a886d44c36a009b2b519b4c7e"
+checksum = "4fee6c4efc90059e10f81e6d42c60a18f76588c3d74cb83a0b242a2b6c7504c1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -5390,7 +5390,7 @@ dependencies = [
  "rand 0.8.5",
  "rustls 0.21.12",
  "sha1",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "url",
  "utf-8",
 ]
@@ -6353,7 +6353,7 @@ dependencies = [
  "flate2",
  "indexmap",
  "memchr",
- "thiserror 1.0.68",
+ "thiserror 1.0.69",
  "zopfli",
 ]
 
