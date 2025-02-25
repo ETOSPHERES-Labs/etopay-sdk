@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ApiTxStatus","OfficialDocumentType"],"mod":["currencies","error","newtypes","transactions","users","viviswap"],"struct":["ApiApplicationMetadata","CaseDetailsResponse","File","IdentityOfficialDocumentData","IdentityPersonalDocumentData","KycAmlaQuestion","KycOpenDocument","NewCaseIdResponse","Order","OrderList","PaymentDetail"]};

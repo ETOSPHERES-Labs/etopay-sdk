@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["KycType"],"struct":["ActiveUser","UserEntity"]};
