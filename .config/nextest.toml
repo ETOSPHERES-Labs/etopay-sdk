@@ -14,11 +14,7 @@ path = "junit.xml"
 [test-groups]
 serial-tests = { max-threads = 1 }
 
-# Assign the integration tests in some packages to the serial-tests group
-[[profile.default.overrides]]
-filter = 'kind(test) & binary_id(/::it_.*/)'
-test-group = 'serial-tests'
-
+# Assign the tests in some packages to the serial-tests group
 [[profile.default.overrides]]
 filter = '(package(sdk) & kind(lib) & test(/\btest_serial_/))'
 test-group = 'serial-tests'
