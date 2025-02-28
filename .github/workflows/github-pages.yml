@@ -56,7 +56,7 @@ jobs:
         shell: bash
         run: |
           cargo doc --no-deps --all-features --lib
-          mkdir ./docs/rust-docs/docs/
+          mkdir -p ./docs/rust-docs/docs/
           mv ../target/doc/* ./docs/rust-docs/docs/
         working-directory: sdk
 
