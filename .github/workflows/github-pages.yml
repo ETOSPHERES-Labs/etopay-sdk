@@ -52,17 +52,33 @@ jobs:
         run: wasm-pack build --dev --scope eto
         working-directory: sdk/bindings/wasm
 
+      - name: Build Rust docs
+        shell: bash
+        run: |
+          cargo doc --no-deps --all-features --lib
+          mkdir -p ./docs/rust-docs/doc/
+          mv ../target/doc/* ./docs/rust-docs/doc/
+        working-directory: sdk
+
+      - name: Build Java docs
+        shell: bash
+        run: |
+          cargo build
+          make build_javadoc
+          mv javadoc ../../docs/
+        working-directory: sdk/bindings/android
+
       - name: Mark repository as safe for Git
         shell: bash
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
-        
+
       - name: Build the documentation
         shell: bash
         run: mkdocs build
         working-directory: sdk
 
       - name: Deploy to GitHub Pages
-        if: env.DEPLOY_ONLY == 'true' 
+        if: env.DEPLOY_ONLY == 'true'
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
