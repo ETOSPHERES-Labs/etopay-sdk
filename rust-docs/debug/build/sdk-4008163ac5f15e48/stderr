@@ -1,0 +1,8 @@
+fatal: detected dubious ownership in repository at '/__w/cawaena-sdk/cawaena-sdk'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /__w/cawaena-sdk/cawaena-sdk
+fatal: detected dubious ownership in repository at '/__w/cawaena-sdk/cawaena-sdk'
+To add an exception for this directory, call:
+
+	git config --global --add safe.directory /__w/cawaena-sdk/cawaena-sdk

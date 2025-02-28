@@ -1,0 +1,12 @@
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/libshadow_rs-d00dc4feb1d3a68f.rmeta: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/build.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/ci.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/date_time.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/env.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/err.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/gen_const.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/git.rs
+
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/shadow_rs-d00dc4feb1d3a68f.d: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/build.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/ci.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/date_time.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/env.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/err.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/gen_const.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/git.rs
+
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/lib.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/build.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/ci.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/date_time.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/env.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/err.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/gen_const.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/shadow-rs-0.35.2/src/git.rs:

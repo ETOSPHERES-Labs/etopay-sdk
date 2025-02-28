@@ -1,0 +1,11 @@
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/libderive_more-d88b076b72bfe8c0.rmeta: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/add.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/ops.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/as.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/str.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/convert.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/../README.md
+
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/derive_more-d88b076b72bfe8c0.d: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/add.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/ops.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/as.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/str.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/convert.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/../README.md
+
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/lib.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/add.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/ops.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/as.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/str.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/convert.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/derive_more-1.0.0/src/../README.md:

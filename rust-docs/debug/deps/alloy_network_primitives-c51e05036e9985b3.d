@@ -1,0 +1,9 @@
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/liballoy_network_primitives-c51e05036e9985b3.rmeta: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/traits.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/block.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/tx_builders.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/../README.md
+
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/alloy_network_primitives-c51e05036e9985b3.d: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/traits.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/block.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/tx_builders.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/../README.md
+
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/lib.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/traits.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/block.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/tx_builders.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/alloy-network-primitives-0.8.3/src/../README.md:

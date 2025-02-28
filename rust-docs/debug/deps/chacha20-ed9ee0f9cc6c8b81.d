@@ -1,0 +1,11 @@
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/libchacha20-ed9ee0f9cc6c8b81.rmeta: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/legacy.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/xchacha.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/soft.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/avx2.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/sse2.rs
+
+/__w/cawaena-sdk/cawaena-sdk/sdk/rust-docs/debug/deps/chacha20-ed9ee0f9cc6c8b81.d: /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/lib.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/legacy.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/xchacha.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/soft.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/avx2.rs /home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/sse2.rs
+
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/lib.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/legacy.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/xchacha.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/soft.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/avx2.rs:
+/home/vscode/.cargo/registry/src/index.crates.io-6f17d22bba15001f/chacha20-0.9.1/src/backends/sse2.rs:
