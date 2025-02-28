@@ -56,8 +56,8 @@ jobs:
         shell: bash
         run: |
           cargo doc --no-deps --all-features --lib
-          mkdir -p ./docs/rust-docs/docs/
-          mv ../target/doc/* ./docs/rust-docs/docs/
+          mkdir -p ./docs/rust-docs/doc/
+          mv ../target/doc/* ./docs/rust-docs/doc/
         working-directory: sdk
 
       - name: Build Java docs
