@@ -55,8 +55,9 @@ jobs:
       - name: Build Rust docs
         shell: bash
         run: |
-          cargo doc --no-deps --all-features --lib --target-dir rust-docs
-          mv rust-docs/ ./docs/
+          cargo doc --no-deps --all-features --lib
+          mkdir ./docs/rust-docs/docs/
+          mv ../target/doc/* ./docs/rust-docs/docs/
         working-directory: sdk
 
       - name: Build Java docs
