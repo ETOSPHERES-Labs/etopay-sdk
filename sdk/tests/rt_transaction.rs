@@ -80,7 +80,7 @@ async fn it_should_get_tx_list() {
 #[tokio::test]
 async fn it_should_create_purchase_request_and_confirm_it() {
     // Arrange
-    dotenvy::dotenv().ok();
+    dotenvy::dotenv().ok(); // only for this test since we load the mnemonic from .env
     let user: utils::TestUser = (*USER_HANS34).clone().into();
     let (mut sdk, _cleanup) = init_sdk(&user.username).await;
 
