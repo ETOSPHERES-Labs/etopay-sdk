@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"struct":["GasCostEstimation","PurchaseDetails","TxInfo","TxList","WalletTxInfo","WalletTxInfoList"]};
