@@ -27,7 +27,10 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
         auth_provider: "standalone".to_string(),
         log_level: log::LevelFilter::Debug,
         node_urls: HashMap::from([
-            (Currency::Iota, vec!["https://api.testnet.iotaledger.net".to_string()]),
+            (
+                Currency::Iota,
+                vec!["https://api.stardust-mainnet.iotaledger.net".to_string()],
+            ),
             (
                 Currency::Eth,
                 vec!["https://ethereum-sepolia-rpc.publicnode.com".to_string()],
