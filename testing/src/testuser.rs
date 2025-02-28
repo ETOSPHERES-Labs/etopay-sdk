@@ -14,7 +14,6 @@ const PIN: &str = "12345";
 const PASSWORD: &str = "StrongP@55w0rd";
 pub const MNEMONIC_DEFAULT: &str = "aware mirror sadness razor hurdle bus scout crisp close life science spy shell fine loop govern country strategy city soldier select diet brain return";
 pub const MNEMONIC_ALICE: &str = "gas way upon large hollow reason smart visual crazy boring rack deputy culture faith urge faint pulse smoke zebra broccoli same tail capable catch";
-pub const MNEMONIC_HANS34: &str = "direct minute suggest salt fade grid drink brother genuine regular pen desert renew cliff lumber simple element army goose trouble machine begin humor measure";
 pub const MNEMONIC_HANS48: &str = "enemy attend neither digital dizzy soap lecture note novel unusual swamp nuclear favorite license state perfect rebel guilt excess absorb twenty various hollow drum";
 
 lazy_static! {
@@ -23,7 +22,7 @@ lazy_static! {
 
     /// Verified users via Postident KYC
     pub static ref USER_ALICE: TestUser = create_test_user("alice", "Alice", "Wonderland", "alice@eto.viviswap.com", MNEMONIC_ALICE);
-    pub static ref USER_HANS34: TestUser = create_test_user("hans34", "Hans34", "Sama", "hans34.maier34@gmx.com", MNEMONIC_HANS34);
+    pub static ref USER_HANS34: TestUser = create_test_user("hans34", "Hans34", "Sama", "hans34.maier34@gmx.com",  &std::env::var("MNEMONIC_HANS34").unwrap());
     pub static ref USER_HANS48: TestUser = create_test_user("hans48", "Hans48", "Sama", "hans48.maier34@gmx.com", MNEMONIC_HANS48);
 
     // user BOB not KYC verified!
