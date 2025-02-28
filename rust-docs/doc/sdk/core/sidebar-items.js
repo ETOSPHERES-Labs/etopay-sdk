@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"mod":["account","config","exchange","postident","share","transaction","user","viviswap","wallet"],"struct":["Sdk"]};
