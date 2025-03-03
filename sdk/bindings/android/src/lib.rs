@@ -790,11 +790,11 @@ mod ffi {
     /// Use {@link #setWalletPassword} to set a new or change an existing password.
     ///
     /// @return whether the password is already set or not.
-    #[public_name = "isPasswordSet"]
-    pub fn is_password_set() -> Result<bool, String> {
+    #[public_name = "isWalletPasswordSet"]
+    pub fn is_wallet_password_set() -> Result<bool, String> {
         let result = runtime().block_on(async move {
             let sdk = get_or_init_sdk().read().await;
-            sdk.is_password_set().await
+            sdk.is_wallet_password_set().await
         });
         result.map_err(|e| format!("{e:#?}"))
     }

@@ -867,9 +867,9 @@ impl CawaenaSdk {
     /// # Returns
     ///
     /// Whether the password is already set or not.
-    pub async fn is_password_set(&self) -> Result<bool, String> {
+    pub async fn is_wallet_password_set(&self) -> Result<bool, String> {
         let sdk = self.inner.read().await;
-        sdk.is_password_set().await.map_err(|err| format!("{:#?}", err))
+        sdk.is_wallet_password_set().await.map_err(|err| format!("{:#?}", err))
     }
 
     /// Sends amount from wallet

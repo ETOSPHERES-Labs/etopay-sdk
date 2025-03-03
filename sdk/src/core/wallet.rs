@@ -394,7 +394,7 @@ impl Sdk {
     ///
     /// * [`crate::Error::UserRepoNotInitialized`] - If there is an error initializing the repository.
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
-    pub async fn is_password_set(&self) -> Result<bool> {
+    pub async fn is_wallet_password_set(&self) -> Result<bool> {
         info!("Checking if password is set");
 
         let Some(repo) = &self.repo else {

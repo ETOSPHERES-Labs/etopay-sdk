@@ -21,7 +21,7 @@ async fn it_should_change_password_with_wallet() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Act
-    assert!(!sdk.is_password_set().await.unwrap());
+    assert!(!sdk.is_wallet_password_set().await.unwrap());
     sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
 
     sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
@@ -41,7 +41,7 @@ async fn it_should_change_password_without_wallet() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Act
-    assert!(!sdk.is_password_set().await.unwrap());
+    assert!(!sdk.is_wallet_password_set().await.unwrap());
     sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
 
     let new_password = PlainPassword::try_from_string("new_password!").unwrap();
