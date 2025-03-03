@@ -18,12 +18,12 @@ public class ChangePassword12 {
             System.out.println("Created and initialized new user.");
 
             // create new wallet
-            sdk.setPassword(utils.PIN, password);
+            sdk.setWalletPassword(utils.PIN, password);
             sdk.createNewWallet(utils.PIN);
             System.out.println("Created and initialized new wallet.");
 
             // change password
-            sdk.setPassword(utils.PIN, "StrongP@ssw0rd");
+            sdk.setWalletPassword(utils.PIN, "StrongP@ssw0rd");
             System.out.println("Password changed");
 
         } catch (Exception e) {

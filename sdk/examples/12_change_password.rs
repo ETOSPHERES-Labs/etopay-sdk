@@ -15,12 +15,12 @@ async fn main() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Create new wallet
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
     sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Change password
     let new_password = PlainPassword::try_from_string("StrongP@ssw0rd").unwrap();
-    sdk.set_password(&user.pin, &new_password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &new_password).await.unwrap();
 
     // use wallet
     let _address = sdk.generate_new_address(&user.pin).await.unwrap();

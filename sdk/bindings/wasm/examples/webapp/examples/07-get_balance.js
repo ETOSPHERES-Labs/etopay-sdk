@@ -11,7 +11,7 @@ async function main() {
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setPassword(pin, password);
+    await sdk.setWalletPassword(pin, password);
     await sdk.createWalletFromMnemonic(pin, mnemonic);
 
     let address = await sdk.generateNewAddress(pin);

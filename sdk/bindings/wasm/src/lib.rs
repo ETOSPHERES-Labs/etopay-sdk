@@ -424,20 +424,20 @@ impl CryptpaySdk {
     /// @param {string} pin - The pin used to encrypt the password
     /// @param {string} new_password - The password to set for the wallet
     /// @returns {Promise<void>}
-    #[wasm_bindgen(skip_jsdoc, js_name = "setPassword")]
-    pub async fn set_password(&self, pin: String, new_password: String) -> Result<(), String> {
+    #[wasm_bindgen(skip_jsdoc, js_name = "setWalletPassword")]
+    pub async fn set_wallet_password(&self, pin: String, new_password: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
         async move {
             let pin = EncryptionPin::try_from_string(pin)?;
             let new_password = PlainPassword::try_from_string(new_password)?;
-            sdk.set_password(&pin, &new_password).await
+            sdk.set_wallet_password(&pin, &new_password).await
         }
         .await
         .map_err(|e| format!("{e:#?}"))
     }
 
     /// Check if the password to use for wallet operations is set.
-    /// Use {@link setPassword} to set a new or change an existing password.
+    /// Use {@link setWalletPassword} to set a new or change an existing password.
     ///
     /// @returns {Promise<bool>}
     #[wasm_bindgen(skip_jsdoc, js_name = "isPasswordSet")]

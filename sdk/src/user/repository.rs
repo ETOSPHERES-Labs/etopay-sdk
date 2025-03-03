@@ -59,7 +59,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
         self.inner.get(username)
     }
 
-    fn set_password(&mut self, username: &str, password: EncryptedPassword) -> Result<()> {
+    fn set_wallet_password(&mut self, username: &str, password: EncryptedPassword) -> Result<()> {
         info!("Setting password in user DB");
 
         let mut user = self.inner.get(username)?;
@@ -204,7 +204,7 @@ mod tests {
     }
 
     #[test]
-    fn it_should_set_password() {
+    fn it_should_set_wallet_password() {
         // Arrange
         let username = "hauju";
         let pin = EncryptionPin::try_from_string("1234").unwrap();
@@ -221,7 +221,7 @@ mod tests {
 
         user_repo.create(&user).unwrap();
         // Act
-        let result = user_repo.set_password(username, encrypted_password.clone());
+        let result = user_repo.set_wallet_password(username, encrypted_password.clone());
         // Assert
         assert!(result.is_ok());
         let user = user_repo.get(username).unwrap();

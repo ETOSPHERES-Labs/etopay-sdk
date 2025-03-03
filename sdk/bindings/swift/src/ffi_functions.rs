@@ -850,19 +850,19 @@ impl CawaenaSdk {
     ///
     /// * Ok - empty if the password is changed successfully.
     /// * Err - if there is an error for initializing the repository, initializing the user, initializing the wallet.
-    pub async fn set_password(&self, pin: String, new_password: String) -> Result<(), String> {
+    pub async fn set_wallet_password(&self, pin: String, new_password: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
         async move {
             let pin = EncryptionPin::try_from_string(pin)?;
             let new_password = PlainPassword::try_from_string(new_password)?;
-            sdk.set_password(&pin, &new_password).await
+            sdk.set_wallet_password(&pin, &new_password).await
         }
         .await
         .map_err(|err| format!("{:#?}", err))
     }
 
     /// Check if the password to use for wallet operations is set.
-    /// Use [`set_password`] to set a new or change an existing password.
+    /// Use [`set_wallet_password`] to set a new or change an existing password.
     ///
     /// # Returns
     ///

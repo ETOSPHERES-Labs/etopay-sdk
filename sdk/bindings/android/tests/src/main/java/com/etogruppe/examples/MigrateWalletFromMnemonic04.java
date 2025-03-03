@@ -19,7 +19,7 @@ public class MigrateWalletFromMnemonic04 {
             System.out.println("Created and initialized new user.");
 
             // create new wallet
-            sdk.setPassword(utils.PIN, password);
+            sdk.setWalletPassword(utils.PIN, password);
             sdk.createWalletFromMnemonic(utils.PIN, mnemonic);
             System.out.println("Created new wallet from mnemonic.");
 

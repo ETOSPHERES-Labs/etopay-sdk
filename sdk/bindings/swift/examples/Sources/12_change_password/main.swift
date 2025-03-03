@@ -26,12 +26,12 @@ Task {
         print("initialized new user: \(env.username)")
 
         // Create new wallet
-        try await sdk.setPassword(env.pin, env.password)
+        try await sdk.setWalletPassword(env.pin, env.password)
         let _ = try await sdk.createNewWallet(env.pin)
         print("created new wallet")
 
         // Change password
-        try await sdk.setPassword(env.pin, new_password)
+        try await sdk.setWalletPassword(env.pin, new_password)
         print("password changed")
 
     } catch let error as RustString {

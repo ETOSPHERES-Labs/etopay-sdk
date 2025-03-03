@@ -18,7 +18,7 @@ public class DeleteUser18 {
             System.out.println("Created and initialized new user.");
 
             // create and init new wallet
-            sdk.setPassword(utils.PIN, password);
+            sdk.setWalletPassword(utils.PIN, password);
             sdk.createNewWallet(utils.PIN);
             System.out.println("Created and initialized new wallet.");
 

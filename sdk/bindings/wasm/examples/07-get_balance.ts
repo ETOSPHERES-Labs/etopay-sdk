@@ -10,7 +10,7 @@ async function main() {
     let mnemonic: string = (process.env.MNEMONIC as string);
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setPassword(pin, password);
+    await sdk.setWalletPassword(pin, password);
 
     await sdk.createWalletFromMnemonic(pin, mnemonic);
 

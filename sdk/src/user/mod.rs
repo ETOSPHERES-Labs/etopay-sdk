@@ -101,7 +101,7 @@ pub trait UserRepo {
     /// Returns an `Error::KVError` if there is an error retrieving the user from the database.
     fn get(&self, username: &str) -> Result<UserEntity>;
 
-    /// Set the password for a user.
+    /// Set the wallet password for a user.
     ///
     /// # Arguments
     ///
@@ -115,7 +115,7 @@ pub trait UserRepo {
     /// # Errors
     ///
     /// Returns an `Error::KVError` if there is an error retrieving the user from the database.
-    fn set_password(&mut self, username: &str, password: EncryptedPassword) -> Result<()>;
+    fn set_wallet_password(&mut self, username: &str, password: EncryptedPassword) -> Result<()>;
 
     /// Set user kyc state.
     ///

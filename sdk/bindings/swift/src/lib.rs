@@ -374,8 +374,8 @@ pub mod ffi {
         async fn verify_pin(&self, pin: String) -> Result<(), String>;
         #[swift_bridge(swift_name = "resetPin")]
         async fn reset_pin(&self, pin: String, new_pin: String) -> Result<(), String>;
-        #[swift_bridge(swift_name = "setPassword")]
-        async fn set_password(&self, pin: String, new_password: String) -> Result<(), String>;
+        #[swift_bridge(swift_name = "setWalletPassword")]
+        async fn set_wallet_password(&self, pin: String, new_password: String) -> Result<(), String>;
         #[swift_bridge(swift_name = "isPasswordSet")]
         pub async fn is_password_set(&self) -> Result<bool, String>;
         #[swift_bridge(swift_name = "sendAmount")]
