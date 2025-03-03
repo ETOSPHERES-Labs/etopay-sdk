@@ -469,7 +469,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also [`set_wallet_password`](./SDK%20API%20Reference.md#set-password) for how to set a new password and change an existing password. | | Returns `true` or `false` whether or not the password is already set. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also [`set_wallet_password`](./SDK%20API%20Reference.md#set-wallet-password) for how to set a new password and change an existing password. | | Returns `true` or `false` whether or not the password is already set. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
     [is_password_set](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_password_set)
