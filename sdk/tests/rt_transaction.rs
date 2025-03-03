@@ -92,13 +92,14 @@ async fn it_should_create_purchase_request_and_confirm_it() {
     /*
     configure sdk manually to run only this test on the iota mainnet
     */
+    let existing_cleanup = CleanUp::default();
     let password = std::env::var("SATOSHI_PASSWORD").unwrap();
     let backend_url =
         std::env::var("RT_API_URL").expect("RT_API_URL should be set with the backend url for the tests to use");
 
     let config = Config {
         backend_url: backend_url.parse().expect("RT_API_URL must be a valid URL"),
-        path_prefix: Path::new(&CleanUp::default().path_prefix).into(),
+        path_prefix: Path::new(&existing_cleanup.path_prefix).into(),
         auth_provider: "standalone".to_string(),
         log_level: log::LevelFilter::Debug,
         node_urls: HashMap::from([
