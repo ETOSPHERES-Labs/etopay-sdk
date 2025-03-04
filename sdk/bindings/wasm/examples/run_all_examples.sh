@@ -24,7 +24,7 @@ examples=(
     "17-create_customer.ts"
     "18-delete_user.ts"
     "19-get_wallet_tx_list.ts"
-    "20-send_compliment.ts"
+    # "20-send_compliment.ts"
 )
 
 # Iterate through each example and run it
