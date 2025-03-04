@@ -19,7 +19,6 @@ use crate::ffi::{
     ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal,
     WalletTxInfo,
 };
-use sdk::core::config::DeserializedConfig;
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
 use sdk::types::newtypes::{AccessToken, EncryptionPin, PlainPassword};
@@ -68,9 +67,7 @@ impl CawaenaSdk {
     /// * Err - if the configuration is invalid.
     pub async fn set_config(&self, config: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
-        config
-            .parse::<DeserializedConfig>()
-            .and_then(Config::try_from)
+        Config::from_json(&config)
             .and_then(|r| sdk.set_config(r))
             .map_err(|err| format!("{:#?}", err))
     }

@@ -68,7 +68,7 @@ fn get_or_init_sdk() -> &'static SdkWrapper {
 mod ffi {
     use super::*;
     use sdk::{
-        core::{config::DeserializedConfig, Config},
+        core::Config,
         share::Share,
         types::{
             currencies::CryptoAmount,
@@ -99,8 +99,7 @@ mod ffi {
     pub fn setConfig(config: String) -> Result<(), String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
-            let config = config.parse::<DeserializedConfig>()?;
-            sdk.set_config(Config::try_from(config)?)
+            sdk.set_config(Config::from_json(&config)?)
         });
         result.map_err(|e| format!("{e:#?}"))
     }

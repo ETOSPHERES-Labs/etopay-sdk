@@ -10,7 +10,7 @@ use crate::utils::set_panic_hook;
 use sdk::types::File;
 
 use sdk::{
-    core::{config::DeserializedConfig, Config, Sdk},
+    core::{Config, Sdk},
     types::{
         currencies::CryptoAmount,
         newtypes::{AccessToken, EncryptionPin, PlainPassword},
@@ -64,9 +64,7 @@ impl CryptpaySdk {
     #[wasm_bindgen(skip_jsdoc, js_name = "setConfig")]
     pub async fn set_config(&self, config: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
-        config
-            .parse::<DeserializedConfig>()
-            .and_then(Config::try_from)
+        Config::from_json(&config)
             .and_then(|r| sdk.set_config(r))
             .map_err(|err| format!("{:#?}", err))
     }

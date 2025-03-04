@@ -39,7 +39,7 @@ pub struct Config {
 /// Struct representing the  deserialized version of the config in JSON format.
 #[derive(Debug, serde::Deserialize)]
 #[cfg_attr(test, derive(PartialEq))]
-pub struct DeserializedConfig {
+struct DeserializedConfig {
     backend_url: String,
 
     #[serde(default = "default_log_level")]
@@ -131,6 +131,15 @@ impl TryFrom<DeserializedConfig> for Config {
     }
 }
 
+impl Config {
+    /// Load the [`Config`] directly from a JSON-formatted [`String`] or [`str`].
+    pub fn from_json(json: impl AsRef<str>) -> Result<Self> {
+        let json = json.as_ref();
+        let deserialized_config: DeserializedConfig = json.parse()?;
+        Self::try_from(deserialized_config)
+    }
+}
+
 impl Sdk {
     /// Set the [`Config`] needed by the SDK
     pub fn set_config(&mut self, config: Config) -> Result<()> {
@@ -171,8 +180,7 @@ impl Sdk {
 
         Ok(backend_node_urls)
     }
-}
-impl Sdk {
+
     /// Set path prefix
     fn initialize_user_repository(&mut self) -> Result<()> {
         // initialize jammdb
