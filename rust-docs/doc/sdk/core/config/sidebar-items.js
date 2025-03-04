@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["Config","DeserializedConfig"]};
+window.SIDEBAR_ITEMS = {"struct":["Config"]};

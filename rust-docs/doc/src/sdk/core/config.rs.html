@@ -419,7 +419,15 @@
 <a href="#418" id="418">418</a>
 <a href="#419" id="419">419</a>
 <a href="#420" id="420">420</a>
-<a href="#421" id="421">421</a></pre></div><pre class="rust"><code><span class="doccomment">//! Configuration for SDK
+<a href="#421" id="421">421</a>
+<a href="#422" id="422">422</a>
+<a href="#423" id="423">423</a>
+<a href="#424" id="424">424</a>
+<a href="#425" id="425">425</a>
+<a href="#426" id="426">426</a>
+<a href="#427" id="427">427</a>
+<a href="#428" id="428">428</a>
+<a href="#429" id="429">429</a></pre></div><pre class="rust"><code><span class="doccomment">//! Configuration for SDK
 //!
 //!
 
@@ -460,7 +468,7 @@
 <span class="doccomment">/// Struct representing the  deserialized version of the config in JSON format.
 </span><span class="attr">#[derive(Debug, serde::Deserialize)]
 #[cfg_attr(test, derive(PartialEq))]
-</span><span class="kw">pub struct </span>DeserializedConfig {
+</span><span class="kw">struct </span>DeserializedConfig {
     backend_url: String,
 
     <span class="attr">#[serde(default = <span class="string">"default_log_level"</span>)]
@@ -552,6 +560,15 @@
     }
 }
 
+<span class="kw">impl </span>Config {
+    <span class="doccomment">/// Load the [`Config`] directly from a JSON-formatted [`String`] or [`str`].
+    </span><span class="kw">pub fn </span>from_json(json: <span class="kw">impl </span>AsRef&lt;str&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>json = json.as_ref();
+        <span class="kw">let </span>deserialized_config: DeserializedConfig = json.parse()<span class="question-mark">?</span>;
+        <span class="self">Self</span>::try_from(deserialized_config)
+    }
+}
+
 <span class="kw">impl </span>Sdk {
     <span class="doccomment">/// Set the [`Config`] needed by the SDK
     </span><span class="kw">pub fn </span>set_config(<span class="kw-2">&amp;mut </span><span class="self">self</span>, config: Config) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
@@ -592,8 +609,7 @@
 
         <span class="prelude-val">Ok</span>(backend_node_urls)
     }
-}
-<span class="kw">impl </span>Sdk {
+
     <span class="doccomment">/// Set path prefix
     </span><span class="kw">fn </span>initialize_user_repository(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// initialize jammdb
