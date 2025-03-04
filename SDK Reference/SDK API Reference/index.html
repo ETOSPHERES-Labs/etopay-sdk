@@ -1166,18 +1166,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#set-password" class="md-nav__link">
+  <a href="#set-wallet-password" class="md-nav__link">
     <span class="md-ellipsis">
-      Set password
+      Set wallet password
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#is-password-set" class="md-nav__link">
+  <a href="#is-wallet-password-set" class="md-nav__link">
     <span class="md-ellipsis">
-      Is password set
+      Is wallet password set
     </span>
   </a>
   
@@ -2801,7 +2801,7 @@
 </div>
 </div>
 </div>
-<h3 id="set-password">Set password<a class="headerlink" href="#set-password" title="Permanent link">&para;</a></h3>
+<h3 id="set-wallet-password">Set wallet password<a class="headerlink" href="#set-wallet-password" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2815,7 +2815,7 @@
 </thead>
 <tbody>
 <tr>
-<td>Set the password for the wallet using the provided pin and new password. If the password is already set, this changes it to the new password. Use <a href="./#is-password-set"><code>is_password_set</code></a> to check if the password is already set.</td>
+<td>Set the password for the wallet using the provided pin and new password. If the password is already set, this changes it to the new password. Use <a href="./#is-wallet-password-set"><code>is_wallet_password_set</code></a> to check if the password is already set.</td>
 <td><code>pin</code> - The new or existing PIN for the wallet, <code>new_password</code> - The new password to set for the wallet</td>
 <td><a href="./#create-new-wallet">Wallet initialization</a></td>
 <td>Usage</td>
@@ -2827,22 +2827,22 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="19:4"><input checked="checked" id="__tabbed_19_1" name="__tabbed_19" type="radio" /><input id="__tabbed_19_2" name="__tabbed_19" type="radio" /><input id="__tabbed_19_3" name="__tabbed_19" type="radio" /><input id="__tabbed_19_4" name="__tabbed_19" type="radio" /><div class="tabbed-labels"><label for="__tabbed_19_1">Rust</label><label for="__tabbed_19_2">Java</label><label for="__tabbed_19_3">Typescript</label><label for="__tabbed_19_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_password">set_password</a></p>
+<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_wallet_password">set_wallet_password</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#setPassword(java.lang.String,java.lang.String)">setPassword</a></p>
+<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#setWalletPassword(java.lang.String,java.lang.String)">setWalletPassword</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../jstsdocs/classes/CryptpaySdk.html#setPassword">setPassword</a></p>
+<p><a href="../../jstsdocs/classes/CryptpaySdk.html#setWalletPassword">setWalletPassword</a></p>
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPassword</span><span class="p">(</span><span class="n">pin</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">new_password</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setWalletPassword</span><span class="p">(</span><span class="n">pin</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">new_password</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
-<h3 id="is-password-set">Is password set<a class="headerlink" href="#is-password-set" title="Permanent link">&para;</a></h3>
+<h3 id="is-wallet-password-set">Is wallet password set<a class="headerlink" href="#is-wallet-password-set" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2856,7 +2856,7 @@
 </thead>
 <tbody>
 <tr>
-<td>Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also <a href="./#set-password"><code>set_password</code></a> for how to set a new password and change an existing password.</td>
+<td>Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also <a href="./#set-wallet-password"><code>set_wallet_password</code></a> for how to set a new password and change an existing password.</td>
 <td></td>
 <td>Returns <code>true</code> or <code>false</code> whether or not the password is already set.</td>
 <td><a href="./#create-new-wallet">Wallet initialization</a></td>
@@ -2868,17 +2868,17 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="20:4"><input checked="checked" id="__tabbed_20_1" name="__tabbed_20" type="radio" /><input id="__tabbed_20_2" name="__tabbed_20" type="radio" /><input id="__tabbed_20_3" name="__tabbed_20" type="radio" /><input id="__tabbed_20_4" name="__tabbed_20" type="radio" /><div class="tabbed-labels"><label for="__tabbed_20_1">Rust</label><label for="__tabbed_20_2">Java</label><label for="__tabbed_20_3">Typescript</label><label for="__tabbed_20_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_password_set">is_password_set</a></p>
+<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_wallet_password_set">is_wallet_password_set</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#isPasswordSet()">isPasswordSet</a></p>
+<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#isWalletPasswordSet()">isWalletPasswordSet</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../jstsdocs/classes/CryptpaySdk.html#isPasswordSet">isPasswordSet</a></p>
+<p><a href="../../jstsdocs/classes/CryptpaySdk.html#isWalletPasswordSet">isWalletPasswordSet</a></p>
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">isPasswordSet</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-19-1"><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">isWalletPasswordSet</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -4947,7 +4947,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">February 28, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">March 4, 2025</span>
   </span>
 
     

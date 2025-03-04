@@ -621,7 +621,7 @@
         <span class="self">self</span>.inner.get(username)
     }
 
-    <span class="kw">fn </span>set_password(<span class="kw-2">&amp;mut </span><span class="self">self</span>, username: <span class="kw-2">&amp;</span>str, password: EncryptedPassword) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="kw">fn </span>set_wallet_password(<span class="kw-2">&amp;mut </span><span class="self">self</span>, username: <span class="kw-2">&amp;</span>str, password: EncryptedPassword) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">info!</span>(<span class="string">"Setting password in user DB"</span>);
 
         <span class="kw">let </span><span class="kw-2">mut </span>user = <span class="self">self</span>.inner.get(username)<span class="question-mark">?</span>;
@@ -766,7 +766,7 @@
     }
 
     <span class="attr">#[test]
-    </span><span class="kw">fn </span>it_should_set_password() {
+    </span><span class="kw">fn </span>it_should_set_wallet_password() {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>username = <span class="string">"hauju"</span>;
         <span class="kw">let </span>pin = EncryptionPin::try_from_string(<span class="string">"1234"</span>).unwrap();
@@ -783,7 +783,7 @@
 
         user_repo.create(<span class="kw-2">&amp;</span>user).unwrap();
         <span class="comment">// Act
-        </span><span class="kw">let </span>result = user_repo.set_password(username, encrypted_password.clone());
+        </span><span class="kw">let </span>result = user_repo.set_wallet_password(username, encrypted_password.clone());
         <span class="comment">// Assert
         </span><span class="macro">assert!</span>(result.is_ok());
         <span class="kw">let </span>user = user_repo.get(username).unwrap();

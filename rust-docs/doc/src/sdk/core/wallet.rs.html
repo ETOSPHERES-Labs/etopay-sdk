@@ -1602,7 +1602,7 @@
     ///
     /// * [`crate::Error::UserRepoNotInitialized`] - If there is an error initializing the repository.
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
-    </span><span class="kw">pub async fn </span>set_password(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pin: <span class="kw-2">&amp;</span>EncryptionPin, new_password: <span class="kw-2">&amp;</span>PlainPassword) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    </span><span class="kw">pub async fn </span>set_wallet_password(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pin: <span class="kw-2">&amp;</span>EncryptionPin, new_password: <span class="kw-2">&amp;</span>PlainPassword) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">info!</span>(<span class="string">"Setting password"</span>);
 
         <span class="kw">let </span><span class="prelude-val">Some</span>(repo) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.repo <span class="kw">else </span>{
@@ -1644,7 +1644,7 @@
     }
 
     <span class="doccomment">/// Check if the password to use for wallet operations is set. If this returns `false`,
-    /// the password should be set with [`set_password`], otherwise you need to use
+    /// the password should be set with [`set_wallet_password`], otherwise you need to use
     /// [`change_password`] to change it.
     ///
     /// # Returns
@@ -1655,7 +1655,7 @@
     ///
     /// * [`crate::Error::UserRepoNotInitialized`] - If there is an error initializing the repository.
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
-    </span><span class="kw">pub async fn </span>is_password_set(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
+    </span><span class="kw">pub async fn </span>is_wallet_password_set(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;bool&gt; {
         <span class="macro">info!</span>(<span class="string">"Checking if password is set"</span>);
 
         <span class="kw">let </span><span class="prelude-val">Some</span>(repo) = <span class="kw-2">&amp;</span><span class="self">self</span>.repo <span class="kw">else </span>{
@@ -2200,7 +2200,7 @@
     #[case::repo_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized))]
     #[case::user_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized))]
     #[tokio::test]
-    </span><span class="kw">async fn </span>test_set_password(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;()&gt;) {
+    </span><span class="kw">async fn </span>test_set_wallet_password(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;()&gt;) {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(_srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
@@ -2237,7 +2237,7 @@
         }
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = sdk.set_password(<span class="kw-2">&amp;</span>PIN, <span class="kw-2">&amp;</span>BACKUP_PASSWORD.clone()).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = sdk.set_wallet_password(<span class="kw-2">&amp;</span>PIN, <span class="kw-2">&amp;</span>BACKUP_PASSWORD.clone()).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
