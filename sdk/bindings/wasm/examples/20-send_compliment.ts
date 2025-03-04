@@ -26,7 +26,7 @@ async function main() {
 
 
     // Create new wallet and initialize it
-    await sdk.setPassword(pin, password);
+    await sdk.setWalletPassword(pin, password);
     await sdk.createWalletFromMnemonic(pin, mnemonic);
 
     // Generate new receiver address and fetch current balance

@@ -10,7 +10,7 @@ use crate::utils::set_panic_hook;
 use sdk::types::File;
 
 use sdk::{
-    core::{config::DeserializedConfig, Config, Sdk},
+    core::{Config, Sdk},
     types::{
         currencies::CryptoAmount,
         newtypes::{AccessToken, EncryptionPin, PlainPassword},
@@ -64,9 +64,7 @@ impl CryptpaySdk {
     #[wasm_bindgen(skip_jsdoc, js_name = "setConfig")]
     pub async fn set_config(&self, config: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
-        config
-            .parse::<DeserializedConfig>()
-            .and_then(Config::try_from)
+        Config::from_json(&config)
             .and_then(|r| sdk.set_config(r))
             .map_err(|err| format!("{:#?}", err))
     }
@@ -424,26 +422,26 @@ impl CryptpaySdk {
     /// @param {string} pin - The pin used to encrypt the password
     /// @param {string} new_password - The password to set for the wallet
     /// @returns {Promise<void>}
-    #[wasm_bindgen(skip_jsdoc, js_name = "setPassword")]
-    pub async fn set_password(&self, pin: String, new_password: String) -> Result<(), String> {
+    #[wasm_bindgen(skip_jsdoc, js_name = "setWalletPassword")]
+    pub async fn set_wallet_password(&self, pin: String, new_password: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
         async move {
             let pin = EncryptionPin::try_from_string(pin)?;
             let new_password = PlainPassword::try_from_string(new_password)?;
-            sdk.set_password(&pin, &new_password).await
+            sdk.set_wallet_password(&pin, &new_password).await
         }
         .await
         .map_err(|e| format!("{e:#?}"))
     }
 
     /// Check if the password to use for wallet operations is set.
-    /// Use {@link setPassword} to set a new or change an existing password.
+    /// Use {@link setWalletPassword} to set a new or change an existing password.
     ///
     /// @returns {Promise<bool>}
-    #[wasm_bindgen(skip_jsdoc, js_name = "isPasswordSet")]
-    pub async fn is_password_set(&self) -> Result<bool, String> {
+    #[wasm_bindgen(skip_jsdoc, js_name = "isWalletPasswordSet")]
+    pub async fn is_wallet_password_set(&self) -> Result<bool, String> {
         let sdk = self.inner.write().await;
-        sdk.is_password_set().await.map_err(|e| format!("{e:#?}"))
+        sdk.is_wallet_password_set().await.map_err(|e| format!("{e:#?}"))
     }
 
     /// Verifies the pin for the wallet

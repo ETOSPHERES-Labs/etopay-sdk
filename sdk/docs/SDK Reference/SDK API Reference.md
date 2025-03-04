@@ -443,48 +443,48 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     public func resetPin(pin: String, new_pin: String) throws 
     ```
 
-### Set password
+### Set wallet password
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Set the password for the wallet using the provided pin and new password. If the password is already set, this changes it to the new password. Use [`is_password_set`](./SDK%20API%20Reference.md#is-password-set) to check if the password is already set. | `pin` - The new or existing PIN for the wallet, `new_password` - The new password to set for the wallet | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Set the password for the wallet using the provided pin and new password. If the password is already set, this changes it to the new password. Use [`is_wallet_password_set`](./SDK%20API%20Reference.md#is-wallet-password-set) to check if the password is already set. | `pin` - The new or existing PIN for the wallet, `new_password` - The new password to set for the wallet | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [set_password](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_password)
+    [set_wallet_password](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_wallet_password)
 
 === "Java"
-    [setPassword](../javadoc/com/etogruppe/CryptpaySdk.html#setPassword(java.lang.String,java.lang.String))
+    [setWalletPassword](../javadoc/com/etogruppe/CryptpaySdk.html#setWalletPassword(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [setPassword](../jstsdocs/classes/CryptpaySdk.html#setPassword)
+    [setWalletPassword](../jstsdocs/classes/CryptpaySdk.html#setWalletPassword)
 
 === "Swift"
     Not available yet!
 
     ```swift
-    public func setPassword(pin: String, new_password: String) throws
+    public func setWalletPassword(pin: String, new_password: String) throws
     ```
 
-### Is password set
+### Is wallet password set
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also [`set_password`](./SDK%20API%20Reference.md#set-password) for how to set a new password and change an existing password. | | Returns `true` or `false` whether or not the password is already set. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also [`set_wallet_password`](./SDK%20API%20Reference.md#set-wallet-password) for how to set a new password and change an existing password. | | Returns `true` or `false` whether or not the password is already set. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [is_password_set](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_password_set)
+    [is_wallet_password_set](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_wallet_password_set)
 
 === "Java"
-    [isPasswordSet](../javadoc/com/etogruppe/CryptpaySdk.html#isPasswordSet())
+    [isWalletPasswordSet](../javadoc/com/etogruppe/CryptpaySdk.html#isWalletPasswordSet())
 
 === "Typescript"
-    [isPasswordSet](../jstsdocs/classes/CryptpaySdk.html#isPasswordSet)
+    [isWalletPasswordSet](../jstsdocs/classes/CryptpaySdk.html#isWalletPasswordSet)
 
 === "Swift"
     Not available yet!
 
     ```swift
-    public func isPasswordSet() throws
+    public func isWalletPasswordSet() throws
     ```
 
 ### Generate a new address

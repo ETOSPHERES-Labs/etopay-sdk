@@ -68,7 +68,7 @@ fn get_or_init_sdk() -> &'static SdkWrapper {
 mod ffi {
     use super::*;
     use sdk::{
-        core::{config::DeserializedConfig, Config},
+        core::Config,
         share::Share,
         types::{
             currencies::CryptoAmount,
@@ -99,8 +99,7 @@ mod ffi {
     pub fn setConfig(config: String) -> Result<(), String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
-            let config = config.parse::<DeserializedConfig>()?;
-            sdk.set_config(Config::try_from(config)?)
+            sdk.set_config(Config::from_json(&config)?)
         });
         result.map_err(|e| format!("{e:#?}"))
     }
@@ -775,26 +774,26 @@ mod ffi {
     ///
     /// @param pin The pin for verification
     /// @param new_password The new password to be set
-    #[public_name = "setPassword"]
-    pub fn setPassword(pin: String, new_password: String) -> Result<(), String> {
+    #[public_name = "setWalletPassword"]
+    pub fn setWalletPassword(pin: String, new_password: String) -> Result<(), String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
             let pin = EncryptionPin::try_from_string(pin)?;
             let new_password = PlainPassword::try_from_string(new_password)?;
-            sdk.set_password(&pin, &new_password).await
+            sdk.set_wallet_password(&pin, &new_password).await
         });
         result.map_err(|e| format!("{e:#?}"))
     }
 
     /// Check if the password to use for wallet operations is set.
-    /// Use {@link #setPassword} to set a new or change an existing password.
+    /// Use {@link #setWalletPassword} to set a new or change an existing password.
     ///
     /// @return whether the password is already set or not.
-    #[public_name = "isPasswordSet"]
-    pub fn is_password_set() -> Result<bool, String> {
+    #[public_name = "isWalletPasswordSet"]
+    pub fn is_wallet_password_set() -> Result<bool, String> {
         let result = runtime().block_on(async move {
             let sdk = get_or_init_sdk().read().await;
-            sdk.is_password_set().await
+            sdk.is_wallet_password_set().await
         });
         result.map_err(|e| format!("{e:#?}"))
     }

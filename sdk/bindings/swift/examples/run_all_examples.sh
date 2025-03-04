@@ -24,7 +24,7 @@ examples=(
     "17_create_customer"
     "18_delete_user"
     "19_get_wallet_tx_list"
-    "20_send_compliment"
+    # "20_send_compliment"
 )
 
 # Loop through and run each example

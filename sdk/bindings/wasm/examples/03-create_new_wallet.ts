@@ -8,7 +8,7 @@ async function main() {
     let password: string = (process.env.PASSWORD as string);
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setPassword(pin, password);
+    await sdk.setWalletPassword(pin, password);
 
     let mnemonic = await sdk.createNewWallet(pin);
     console.log("Mnemonic: ", mnemonic);

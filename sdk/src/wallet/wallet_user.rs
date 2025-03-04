@@ -274,8 +274,8 @@ impl WalletImplStardust {
     }
 }
 
-/// The minimum amount of SMR to consider an output as non-dust output. Everything below this is dust.
-const MIN_DUST_OUTPUT: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1.0)) }; // SAFETY: the value is non-negative
+/// The minimum amount of IOTA to consider an output as non-dust output. Everything below this is dust.
+const MIN_DUST_OUTPUT: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(0.1)) }; // SAFETY: the value is non-negative
 
 /// The value to divide an amount in GLOW with to get IOTA
 const GLOW_TO_IOTA_DIVISOR: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000_000)) }; // SAFETY: the value is non-negative
