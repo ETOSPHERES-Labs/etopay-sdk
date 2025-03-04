@@ -122,7 +122,7 @@ This does not require any user input except `username`,  `password` and `pin`. B
     // Generate access token
     // Create and initialize the user
 
-    await sdk.setPassword("pin", "password");
+    await sdk.setWalletPassword("pin", "password");
     let mnemonic = await sdk.createNewWallet("pin");
     await sdk.verifyMnemonic("pin", mnemonic)
     ```
@@ -198,7 +198,7 @@ This just performs the second step of the create fresh wallet process and needs 
     // Generate access token
     // Create and initialize the user
 
-    await sdk.setPassword("pin", "password");
+    await sdk.setWalletPassword("pin", "password");
     await sdk.createWalletFromMnemonic("pin", "mnemonic");
     ```
 
@@ -464,7 +464,7 @@ In addition to creating, migrating, backups and initialization, the wallet modul
     // or reset the pin to a new one
     await sdk.resetPin("pin", "new_pin");
     // or change the password
-    await sdk.setPassword("pin", "new_password");
+    await sdk.setWalletPassword("pin", "new_password");
     ```
 
 ## Wallet flows

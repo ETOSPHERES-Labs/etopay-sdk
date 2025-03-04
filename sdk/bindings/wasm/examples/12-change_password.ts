@@ -11,11 +11,11 @@ async function main() {
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setPassword(pin, password);
+    await sdk.setWalletPassword(pin, password);
     await sdk.createWalletFromMnemonic(pin, mnemonic);
 
     let new_password = "new password"
-    await sdk.setPassword(pin, new_password);
+    await sdk.setWalletPassword(pin, new_password);
     console.log("change password successful");
 
     // use wallet

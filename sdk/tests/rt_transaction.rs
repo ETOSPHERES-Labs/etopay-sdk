@@ -16,7 +16,7 @@ async fn it_should_get_tx_details() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
@@ -39,7 +39,7 @@ async fn it_should_send_amount() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
@@ -64,7 +64,7 @@ async fn it_should_get_tx_list() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
@@ -86,7 +86,7 @@ async fn it_should_create_purchase_request_and_confirm_it() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
@@ -165,7 +165,7 @@ async fn it_should_create_invalid_purchase_request_and_fail_to_confirm_it() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();

@@ -12,7 +12,7 @@ async fn main() {
     // Create new user
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
 
     // Create new wallet
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)

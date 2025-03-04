@@ -138,7 +138,7 @@ public class SdkUnitTest {
                 .willReturn(aResponse()
                         .withStatus(200)));
 
-        sdk.setPassword(PIN, PASSWORD);
+        sdk.setWalletPassword(PIN, PASSWORD);
 
         this.mnemonic = sdk.createNewWallet(PIN);
         logger.debug(String.format("Wallet created. Mnemonic: %s", this.mnemonic));
@@ -345,7 +345,7 @@ public class SdkUnitTest {
                 .willReturn(aResponse()
                         .withStatus(200)));
 
-        sdk.setPassword(PIN, PASSWORD);
+        sdk.setWalletPassword(PIN, PASSWORD);
         logger.info("Password changed");
     }
 

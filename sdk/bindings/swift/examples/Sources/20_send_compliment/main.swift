@@ -27,7 +27,7 @@ Task {
         print("initialized new user: \(username_alice)")
 
         // Migrate wallet
-        try await sdk.setPassword(env.pin, env.password)
+        try await sdk.setWalletPassword(env.pin, env.password)
         let _ = try await sdk.createWalletFromMnemonic(env.pin, mnemonic_alice)
         print("migrated wallet from mnemonic")
 

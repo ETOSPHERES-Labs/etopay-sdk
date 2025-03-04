@@ -341,7 +341,7 @@ impl Sdk {
     ///
     /// * [`crate::Error::UserRepoNotInitialized`] - If there is an error initializing the repository.
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
-    pub async fn set_password(&mut self, pin: &EncryptionPin, new_password: &PlainPassword) -> Result<()> {
+    pub async fn set_wallet_password(&mut self, pin: &EncryptionPin, new_password: &PlainPassword) -> Result<()> {
         info!("Setting password");
 
         let Some(repo) = &mut self.repo else {
@@ -383,7 +383,7 @@ impl Sdk {
     }
 
     /// Check if the password to use for wallet operations is set. If this returns `false`,
-    /// the password should be set with [`set_password`], otherwise you need to use
+    /// the password should be set with [`set_wallet_password`], otherwise you need to use
     /// [`change_password`] to change it.
     ///
     /// # Returns
@@ -394,7 +394,7 @@ impl Sdk {
     ///
     /// * [`crate::Error::UserRepoNotInitialized`] - If there is an error initializing the repository.
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
-    pub async fn is_password_set(&self) -> Result<bool> {
+    pub async fn is_wallet_password_set(&self) -> Result<bool> {
         info!("Checking if password is set");
 
         let Some(repo) = &self.repo else {
@@ -939,7 +939,7 @@ mod tests {
     #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[tokio::test]
-    async fn test_set_password(#[case] expected: Result<()>) {
+    async fn test_set_wallet_password(#[case] expected: Result<()>) {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
@@ -976,7 +976,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.set_password(&PIN, &BACKUP_PASSWORD.clone()).await;
+        let response = sdk.set_wallet_password(&PIN, &BACKUP_PASSWORD.clone()).await;
 
         // Assert
         match expected {
