@@ -1041,8 +1041,8 @@
     }
 }
 
-<span class="doccomment">/// The minimum amount of SMR to consider an output as non-dust output. Everything below this is dust.
-</span><span class="kw">const </span>MIN_DUST_OUTPUT: CryptoAmount = <span class="kw">unsafe </span>{ CryptoAmount::new_unchecked(<span class="macro">dec!</span>(<span class="number">1.0</span>)) }; <span class="comment">// SAFETY: the value is non-negative
+<span class="doccomment">/// The minimum amount of IOTA to consider an output as non-dust output. Everything below this is dust.
+</span><span class="kw">const </span>MIN_DUST_OUTPUT: CryptoAmount = <span class="kw">unsafe </span>{ CryptoAmount::new_unchecked(<span class="macro">dec!</span>(<span class="number">0.1</span>)) }; <span class="comment">// SAFETY: the value is non-negative
 
 </span><span class="doccomment">/// The value to divide an amount in GLOW with to get IOTA
 </span><span class="kw">const </span>GLOW_TO_IOTA_DIVISOR: CryptoAmount = <span class="kw">unsafe </span>{ CryptoAmount::new_unchecked(<span class="macro">dec!</span>(<span class="number">1_000_000</span>)) }; <span class="comment">// SAFETY: the value is non-negative
