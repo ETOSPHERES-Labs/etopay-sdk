@@ -3,9 +3,15 @@ use crate::utils::init_sdk;
 
 use api_types::api::transactions::ApiTxStatus;
 use rust_decimal_macros::dec;
-use sdk::types::currencies::CryptoAmount;
-use std::time::Duration;
-use testing::{USER_HANS34, USER_HANS48, USER_SATOSHI};
+use sdk::{
+    core::{Config, Sdk},
+    types::{
+        currencies::{CryptoAmount, Currency},
+        newtypes::AccessToken,
+    },
+};
+use std::{collections::HashMap, path::Path, time::Duration};
+use testing::{CleanUp, USER_HANS34, USER_HANS48, USER_SATOSHI};
 use tokio::time;
 
 #[tokio::test]
@@ -82,7 +88,44 @@ async fn it_should_create_purchase_request_and_confirm_it() {
     // Arrange
     dotenvy::dotenv().ok(); // only for this test since we load the mnemonic from .env
     let user: utils::TestUser = (*USER_HANS34).clone().into();
-    let (mut sdk, _cleanup) = init_sdk(&user.username).await;
+
+    /*
+    configure sdk manually to run only this test on the iota mainnet
+    */
+    let existing_cleanup = CleanUp::default();
+    let password = std::env::var("SATOSHI_PASSWORD").unwrap();
+    let backend_url =
+        std::env::var("RT_API_URL").expect("RT_API_URL should be set with the backend url for the tests to use");
+
+    let config = Config {
+        backend_url: backend_url.parse().expect("RT_API_URL must be a valid URL"),
+        path_prefix: Path::new(&existing_cleanup.path_prefix).into(),
+        auth_provider: "standalone".to_string(),
+        log_level: log::LevelFilter::Debug,
+        node_urls: HashMap::from([
+            (
+                Currency::Iota,
+                vec!["https://api.stardust-mainnet.iotaledger.net".to_string()],
+            ),
+            (
+                Currency::Eth,
+                vec!["https://ethereum-sepolia-rpc.publicnode.com".to_string()],
+            ),
+        ]),
+    };
+
+    let mut sdk = Sdk::new(config).expect("should not fail to initialize sdk"); // set the backend url if the environment variable is set
+
+    // generate access token
+    let access_token = testing::get_access_token(&user.username, &password).await.access_token;
+    let access_token = AccessToken::try_from(access_token).unwrap();
+    sdk.refresh_access_token(Some(access_token)).await.unwrap();
+
+    sdk.set_currency(Currency::Iota);
+
+    /*
+    rest of the test
+    */
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
@@ -100,7 +143,7 @@ async fn it_should_create_purchase_request_and_confirm_it() {
     let purchase_type = "CLIK";
 
     // Act
-    let amount = CryptoAmount::try_from(dec!(2.0)).unwrap();
+    let amount = CryptoAmount::try_from(dec!(0.1)).unwrap();
     let purchase_id = sdk
         .create_purchase_request("alice", amount, product_hash, app_data, purchase_type)
         .await
