@@ -84,6 +84,7 @@ async fn it_should_get_tx_list() {
 }
 
 #[tokio::test]
+#[ignore = "There are some blockers around this and IOTA is also changing. We disable this test until we decide what to do"]
 async fn it_should_create_purchase_request_and_confirm_it() {
     // Arrange
     dotenvy::dotenv().ok(); // only for this test since we load the mnemonic from .env
@@ -201,6 +202,7 @@ async fn it_should_create_purchase_request_and_confirm_it() {
 }
 
 #[tokio::test]
+#[ignore = "There are some blockers around this and IOTA is also changing. We disable this test until we decide what to do"]
 async fn it_should_create_invalid_purchase_request_and_fail_to_confirm_it() {
     // Arrange
     let user: utils::TestUser = (*USER_HANS48).clone().into();

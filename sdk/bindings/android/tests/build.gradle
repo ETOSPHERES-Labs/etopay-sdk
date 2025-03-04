@@ -262,7 +262,7 @@ task runAllExamples(dependsOn: [
     'runCreateCustomer17',
     'runDeleteUser18',
     'runGetWalletTxList19',
-    'runSendCompliment20',
+    // 'runSendCompliment20',
 ]) {
     group = 'application'
     description = 'Runs all main classes (examples) sequentially'
