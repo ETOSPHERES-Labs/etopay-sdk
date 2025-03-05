@@ -370,7 +370,7 @@ Currently, polling is used to wait for the purchase request to be valid. It can 
 <p>To build the public docs, you need to do some preparation. First, setup a new python virtual environment and install the required python and nodejs packages:</p>
 <div class="example-wrap"><pre class="language-bash"><code>python3 -m venv .venv
 source .venv/bin/activate
-pip install mkdocs-material mike  mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc azure-cli
+pip install mkdocs-material mike mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc
 pnpm install</code></pre></div>
 <p>Next you need to build the <code>wasm</code> bindings, since the generated typescript definitions are used to publish its API reference: (you can skip this step if you have already built the bindings once)</p>
 <div class="example-wrap"><pre class="language-bash"><code>cd bindings/wasm
