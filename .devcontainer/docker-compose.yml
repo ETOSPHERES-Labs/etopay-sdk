@@ -7,7 +7,7 @@ networks:
 
 services:
   devcontainer:
-    image: repo.farmunited.com/egdbz-docker/cryptpay/devcontainer:v1.5.3
+    image: repo.farmunited.com/egdbz-docker/cryptpay/devcontainer:v1.6.0
 
     platform: "linux/amd64"
     volumes:
