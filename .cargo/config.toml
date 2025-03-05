@@ -7,7 +7,7 @@
 # Use lld linker for all platforms except android and ios (does not find all libraries, but we let the NDK decide the linking stuff instead)
 # Make sure version is same as installed in the devcontainer!
 [target.'cfg(all(not(target_os="android"),not(target_os="ios"),not(target_os="macos"),not(target_arch="wasm32")))']
-rustflags = ["-C", "linker=clang-16", "-C", "link-arg=-fuse-ld=lld-16"]
+rustflags = ["-C", "linker=clang", "-C", "link-arg=-fuse-ld=lld"]
 
 # Makes artifactory the default registry
 [registry]
