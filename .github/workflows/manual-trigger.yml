@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-sdk-wasm:
+  publish-sdk-wasm:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -28,6 +28,10 @@ jobs:
           node-version: 20
           # cache: 'pnpm'
 
+      - name: Set up .npmrc
+        run: |
+          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
+
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
@@ -35,43 +39,22 @@ jobs:
         run: |
           cd sdk/bindings/wasm
           wasm-pack build --release --scope cawaena --target web --out-dir out/web/pkg --out-name cawaena-sdk-web
+
+      - name: Publish to npm
+        run: |
+          cd sdk/bindings/wasm
+          wasm-pack publish out/web --access public
+
+      - name: Pack artifact
+        run: |
+          cd sdk/bindings/wasm
           wasm-pack pack out/web
-        
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cryptpay-sdk-wasm
+          name: cawaena-sdk-wasm
           path: sdk/bindings/wasm/out/**/*.tgz
           if-no-files-found: error
           retention-days: 7
           overwrite: true
-
-  deploy-sdk-wasm:
-    runs-on: ubuntu-latest
-    needs: build-sdk-wasm
-    steps:
-      - name: Install pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Use Node.js v20
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Set up .npmrc
-        run: |
-          echo "//registry.npmjs.org/:_authToken=${{ secrets.NPM_TOKEN }}" > ~/.npmrc
-
-      - name: Download artifact
-        uses: actions/download-artifact@v4
-        with:
-          name: cawaena-sdk-wasm
-
-      - name: Check downloaded files
-        run: ls -R ./ 
-
-      - name: Publish to npm
-        run: |
-          cd web/pkg
-          pnpm publish --access public

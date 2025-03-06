@@ -1072,6 +1072,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "cawaena-sdk-wasm"
+version = "0.14.0"
+dependencies = [
+ "console_error_panic_hook",
+ "console_log",
+ "js-sys",
+ "log",
+ "ring",
+ "sdk",
+ "serde_json",
+ "tokio",
+ "uuid",
+ "wasm-bindgen",
+ "wasm-bindgen-futures",
+ "wasm-bindgen-test",
+ "web-sys",
+]
+
+[[package]]
 name = "cbc"
 version = "0.1.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1345,25 +1364,6 @@ dependencies = [
  "serde_json",
  "tokio",
  "xml",
-]
-
-[[package]]
-name = "cryptpay-sdk-wasm"
-version = "0.14.0"
-dependencies = [
- "console_error_panic_hook",
- "console_log",
- "js-sys",
- "log",
- "ring",
- "sdk",
- "serde_json",
- "tokio",
- "uuid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]

@@ -1,4 +1,4 @@
-import * as wasm from "cryptpay-sdk-wasm";
+import * as wasm from "cawaena-sdk-wasm";
 import { sleep, initSdk } from "./util";
 
 async function main() {
