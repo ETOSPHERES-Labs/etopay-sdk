@@ -42,10 +42,13 @@ jobs:
 
       - name: Publish to npm
         run: |
+          cd sdk/bindings/wasm
           wasm-pack publish out/web
 
       - name: Pack artifact
-        run: wasm-pack pack out/web
+        run: |
+          cd sdk/bindings/wasm
+          wasm-pack pack out/web
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
