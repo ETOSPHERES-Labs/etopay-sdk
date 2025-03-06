@@ -1,6 +1,6 @@
 # @file Makefile
 # @author Team Lobster 🦞
-# @copyright ETO GRUPPE TECHNOLOGIES GmbH
+# @copyright ETOSPHERES Labs GmbH
 
 .PHONY = ensure_rustup_targets build_sdk lipo_bundle move_swift_files xcframework compile_swift_main
 

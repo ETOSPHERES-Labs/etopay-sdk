@@ -7,7 +7,7 @@ homepage.workspace = true
 repository.workspace = true
 publish = false
 
-name = "cryptpay-sdk-wasm"
+name = "cawaena-sdk-wasm"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [lints]

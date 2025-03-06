@@ -1,7 +1,7 @@
 # @file Makefile
 # @author Sharang Parnerkar
 #
-# @copyright ETO GRUPPE TECHNOLOGIES GmbH
+# @copyright ETOSPHERES Labs GmbH
 #
 
 .PHONY = clean build_sdk bundle lib_example run_example build_javadoc

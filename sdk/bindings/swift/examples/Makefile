@@ -1,6 +1,6 @@
 # @file Makefile
 # @author Team Lobster 🦞
-# @copyright ETO GRUPPE TECHNOLOGIES GmbH
+# @copyright ETOSPHERES Labs GmbH
 
 .PHONY = build run
 
