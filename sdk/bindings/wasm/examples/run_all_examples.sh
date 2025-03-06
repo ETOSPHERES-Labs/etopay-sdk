@@ -9,7 +9,7 @@ examples=(
     # "02-onboard_user_via_postident.ts"
     "03-create_new_wallet.ts"
     "04-migrate_wallet_from_mnemonic.ts"
-    "05-migrate_wallet_from_backup"
+    "05-migrate_wallet_from_backup.ts"
     "06-generate_new_address.ts"
     "07-get_balance.ts"
     "08-create_purchase_request.ts"
