@@ -380,65 +380,17 @@
 <a href="#379" id="379">379</a>
 <a href="#380" id="380">380</a>
 <a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-<a href="#386" id="386">386</a>
-<a href="#387" id="387">387</a>
-<a href="#388" id="388">388</a>
-<a href="#389" id="389">389</a>
-<a href="#390" id="390">390</a>
-<a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a>
-<a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
-<a href="#395" id="395">395</a>
-<a href="#396" id="396">396</a>
-<a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
-<a href="#399" id="399">399</a>
-<a href="#400" id="400">400</a>
-<a href="#401" id="401">401</a>
-<a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
-<a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
-<a href="#406" id="406">406</a>
-<a href="#407" id="407">407</a>
-<a href="#408" id="408">408</a>
-<a href="#409" id="409">409</a>
-<a href="#410" id="410">410</a>
-<a href="#411" id="411">411</a>
-<a href="#412" id="412">412</a>
-<a href="#413" id="413">413</a>
-<a href="#414" id="414">414</a>
-<a href="#415" id="415">415</a>
-<a href="#416" id="416">416</a>
-<a href="#417" id="417">417</a>
-<a href="#418" id="418">418</a>
-<a href="#419" id="419">419</a>
-<a href="#420" id="420">420</a>
-<a href="#421" id="421">421</a>
-<a href="#422" id="422">422</a>
-<a href="#423" id="423">423</a>
-<a href="#424" id="424">424</a>
-<a href="#425" id="425">425</a>
-<a href="#426" id="426">426</a>
-<a href="#427" id="427">427</a>
-<a href="#428" id="428">428</a>
-<a href="#429" id="429">429</a></pre></div><pre class="rust"><code><span class="doccomment">//! Configuration for SDK
+<a href="#382" id="382">382</a></pre></div><pre class="rust"><code><span class="doccomment">//! Configuration for SDK
 //!
 //!
 
 </span><span class="kw">use </span><span class="kw">super</span>::Sdk;
-<span class="kw">use </span><span class="kw">crate</span>::backend::dlt::get_node_urls;
+<span class="kw">use </span><span class="kw">crate</span>::backend::dlt::get_networks;
 <span class="kw">use </span><span class="kw">crate</span>::error::{Error, <span class="prelude-ty">Result</span>};
-<span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
+<span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
 <span class="kw">use </span><span class="kw">crate</span>::user::repository::UserRepoImpl;
 <span class="kw">use </span><span class="kw">crate</span>::user::UserRepo;
 <span class="kw">use </span>log::info;
-<span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::path::Path;
 <span class="kw">use </span>std::str::FromStr;
 
@@ -460,9 +412,6 @@
 
     <span class="doccomment">/// Log level for filtering which log messages that end up in the log file.
     </span><span class="kw">pub </span>log_level: log::LevelFilter,
-
-    <span class="doccomment">/// The mapping of currency to the node url(s) to use.
-    </span><span class="kw">pub </span>node_urls: HashMap&lt;Currency, Vec&lt;String&gt;&gt;,
 }
 
 <span class="doccomment">/// Struct representing the  deserialized version of the config in JSON format.
@@ -478,22 +427,17 @@
     </span>storage_path: String,
 
     auth_provider: String,
-
-    node_urls: <span class="prelude-ty">Option</span>&lt;HashMap&lt;String, Vec&lt;String&gt;&gt;&gt;,
 }
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">impl </span>Default <span class="kw">for </span>DeserializedConfig {
     <span class="doccomment">/// Create a new [`DeserializedConfig`].
     </span><span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
-        <span class="kw">use </span><span class="kw">crate</span>::testing_utils::example_node_urls;
-
         <span class="self">Self </span>{
             backend_url: <span class="string">"http://example.com"</span>.to_string(),
             auth_provider: <span class="string">"standalone"</span>.to_string(),
             log_level: default_log_level(),
             storage_path: default_storage_path(),
-            node_urls: <span class="prelude-val">Some</span>(example_node_urls(<span class="prelude-val">None</span>)),
         }
     }
 }
@@ -531,31 +475,12 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::SetConfig(<span class="string">"auth_provider must not be empty"</span>.to_string()));
         }
 
-        <span class="kw">let </span><span class="kw-2">mut </span>node_urls = HashMap::new();
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(urls) = value.node_urls {
-            <span class="kw">for </span>(k, v) <span class="kw">in </span>urls {
-                <span class="comment">// parse the key into our currency
-                </span><span class="kw">let </span>currency = <span class="kw">match </span>k.to_lowercase().as_str() {
-                    <span class="string">"iota" </span>=&gt; Currency::Iota,
-                    <span class="string">"eth" </span>=&gt; Currency::Eth,
-                    other =&gt; {
-                        <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::SetConfig(<span class="macro">format!</span>(
-                            <span class="string">"invalid currency key `{other}` while parsing node_urls. Valid keys are: iota, eth."
-                        </span>)));
-                    }
-                };
-
-                node_urls.insert(currency, v);
-            }
-        }
-
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
             backend_url: reqwest::Url::parse(<span class="kw-2">&amp;</span>value.backend_url).map_err(|e| <span class="kw">crate</span>::Error::SetConfig(e.to_string()))<span class="question-mark">?</span>,
             log_level: log::LevelFilter::from_str(<span class="kw-2">&amp;</span>value.log_level)
                 .map_err(|e| <span class="kw">crate</span>::Error::SetConfig(<span class="macro">format!</span>(<span class="string">"Could not parse log level: {e:#?}"</span>)))<span class="question-mark">?</span>,
             auth_provider: value.auth_provider,
             path_prefix: path_prefix.into(),
-            node_urls,
         })
     }
 }
@@ -593,8 +518,18 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Get supported currencies and node urls from backend
-    </span><span class="kw">pub async fn </span>get_node_urls_backend(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;HashMap&lt;String, Vec&lt;String&gt;&gt;&gt; {
+    <span class="doccomment">/// Set networks
+    </span><span class="kw">pub fn </span>set_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, networks: <span class="prelude-ty">Option</span>&lt;Vec&lt;Network&gt;&gt;) {
+        <span class="self">self</span>.networks = networks;
+    }
+
+    <span class="doccomment">/// Get networks
+    </span><span class="kw">pub fn </span>get_networks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;Network&gt;&gt; {
+        <span class="self">self</span>.networks.clone()
+    }
+
+    <span class="doccomment">/// Get supported networks from backend
+    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>get_networks_backend(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt; {
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>username = <span class="kw-2">&amp;</span><span class="self">self
             </span>.active_user
@@ -605,9 +540,10 @@
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>backend_node_urls = get_node_urls(config, username, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>backend_networks = get_networks(config, username, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>networks: Vec&lt;Network&gt; = backend_networks.iter().map(|n| Network::from(n.clone())).collect();
 
-        <span class="prelude-val">Ok</span>(backend_node_urls)
+        <span class="prelude-val">Ok</span>(networks)
     }
 
     <span class="doccomment">/// Set path prefix
@@ -648,19 +584,6 @@
 <span class="attr">#[cfg(test)]
 #[allow(clippy::expect_used)] </span><span class="comment">// this is testing code so expect is fine
 </span><span class="kw">impl </span>Config {
-    <span class="kw">fn </span>default_test_node_urls() -&gt; HashMap&lt;Currency, Vec&lt;String&gt;&gt; {
-        HashMap::from([
-            (Currency::Iota, <span class="macro">vec!</span>[<span class="string">"https://api.testnet.iotaledger.net"</span>.to_string()]),
-            (
-                Currency::Eth,
-                <span class="macro">vec!</span>[
-                    <span class="string">"https://ethereum-sepolia-rpc.publicnode.com/"</span>.to_string(),
-                    <span class="string">"31337"</span>.to_string(),
-                ],
-            ),
-        ])
-    }
-
     <span class="doccomment">/// Create a new [`Config`] with a [`testing::CleanUp`] as the path_prefix.
     </span><span class="kw">pub fn </span>new_test_with_cleanup() -&gt; (<span class="self">Self</span>, testing::CleanUp) {
         <span class="kw">let </span>cleanup = testing::CleanUp::default();
@@ -670,7 +593,6 @@
                 path_prefix: Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix).into(),
                 auth_provider: <span class="string">"standalone"</span>.to_string(),
                 log_level: log::LevelFilter::Debug,
-                node_urls: <span class="self">Self</span>::default_test_node_urls(),
             },
             cleanup,
         )
@@ -685,7 +607,6 @@
                 path_prefix: Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix).into(),
                 auth_provider: <span class="string">"standalone"</span>.to_string(),
                 log_level: log::LevelFilter::Debug,
-                node_urls: <span class="self">Self</span>::default_test_node_urls(),
             },
             cleanup,
         )
@@ -696,34 +617,31 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_api_networks, example_networks};
     <span class="kw">use crate</span>::{
-        testing_utils::{
-            example_node_urls, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME,
-        },
+        testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME},
         wallet_manager::MockWalletManager,
     };
-    <span class="kw">use </span>api_types::api::dlt::ApiGetNodeUrlsResponse;
+    <span class="kw">use </span>api_types::api::dlt::ApiGetNetworksResponse;
     <span class="kw">use </span>rstest::rstest;
 
-    <span class="kw">fn </span>valid_deserialized_config(node_urls: <span class="prelude-ty">Option</span>&lt;HashMap&lt;String, Vec&lt;String&gt;&gt;&gt;) -&gt; DeserializedConfig {
+    <span class="kw">fn </span>valid_deserialized_config() -&gt; DeserializedConfig {
         DeserializedConfig {
             backend_url: <span class="string">"http://example.com"</span>.to_string(),
             log_level: <span class="string">"INFO"</span>.to_string(),
             storage_path: <span class="string">"."</span>.to_string(),
             auth_provider: <span class="string">"nonempty"</span>.to_string(),
-            node_urls,
         }
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_valid_config() {
-        Config::try_from(valid_deserialized_config(<span class="prelude-val">None</span>)).unwrap();
-        Config::try_from(valid_deserialized_config(<span class="prelude-val">Some</span>(example_node_urls(<span class="prelude-val">None</span>)))).unwrap();
+        Config::try_from(valid_deserialized_config()).unwrap();
     }
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_path_prefix_error() {
-        <span class="kw">let </span><span class="kw-2">mut </span>config = valid_deserialized_config(<span class="prelude-val">None</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>config = valid_deserialized_config();
         config.storage_path = <span class="string">"nonexistent_file.txt"</span>.to_string();
 
         Config::try_from(config).unwrap_err();
@@ -731,7 +649,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_empty_auth_provider_error() {
-        <span class="kw">let </span><span class="kw-2">mut </span>config = valid_deserialized_config(<span class="prelude-val">None</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>config = valid_deserialized_config();
         config.auth_provider = <span class="string">""</span>.to_string();
 
         Config::try_from(config).unwrap_err();
@@ -739,7 +657,7 @@
 
     <span class="attr">#[test]
     </span><span class="kw">fn </span>test_invalid_backend_url_error() {
-        <span class="kw">let </span><span class="kw-2">mut </span>config = valid_deserialized_config(<span class="prelude-val">None</span>);
+        <span class="kw">let </span><span class="kw-2">mut </span>config = valid_deserialized_config();
         config.backend_url = <span class="string">"invalid url"</span>.to_string();
 
         Config::try_from(config).unwrap_err();
@@ -757,21 +675,13 @@
         <span class="macro">assert_eq!</span>(storage_path, <span class="string">"."</span>.to_string())
     }
 
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_set_config_invalid_node_url() {
-        <span class="kw">let </span>config = Config::try_from(valid_deserialized_config(<span class="prelude-val">Some</span>(example_node_urls(<span class="prelude-val">Some</span>(<span class="string">"BTC"</span>)))));
-        <span class="kw">let </span>error_msg =
-            <span class="string">"Error while setting the configuration: invalid currency key `btc` while parsing node_urls. Valid keys are: iota, eth."</span>.to_string();
-        <span class="macro">assert_eq!</span>(config.unwrap_err().to_string(), error_msg);
-    }
-
     <span class="attr">#[rstest]
-    #[case::success(<span class="prelude-val">Ok</span>(example_node_urls(<span class="prelude-val">None</span>)))]
+    #[case::success(<span class="prelude-val">Ok</span>(example_networks()))]
     #[case::user_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
     #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
     #[tokio::test]
-    </span><span class="kw">async fn </span>test_get_node_urls_backend(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;HashMap&lt;String, Vec&lt;String&gt;&gt;&gt;) {
+    </span><span class="kw">async fn </span>test_get_networks_backend(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt;) {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
@@ -785,13 +695,13 @@
                 });
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
 
-                <span class="kw">let </span>resp_body = ApiGetNodeUrlsResponse {
-                    node_urls: example_node_urls(<span class="prelude-val">None</span>),
+                <span class="kw">let </span>resp_body = ApiGetNetworksResponse {
+                    networks: example_api_networks(),
                 };
                 <span class="kw">let </span>mock_body_response = serde_json::to_string(<span class="kw-2">&amp;</span>resp_body).unwrap();
 
                 mock_server = <span class="prelude-val">Some</span>(
-                    srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/config/nodeurl"</span>)
+                    srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/config/networks"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
                         .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
@@ -808,7 +718,7 @@
         }
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = Sdk::get_node_urls_backend(<span class="kw-2">&amp;</span>sdk).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = Sdk::get_networks_backend(<span class="kw-2">&amp;</span>sdk).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -830,11 +740,7 @@
             "backend_url": "http://example.com",
             "storage_path": ".",
             "log_level": "INFO",
-            "auth_provider": "standalone",
-            "node_urls": {
-                "IOTA": ["https://api.stardust-mainnet.iotaledger.net/"],
-                "ETH": ["https://ethereum-sepolia-rpc.publicnode.com/", "31337"]
-            }
+            "auth_provider": "standalone"
           }"#</span>,
         <span class="prelude-val">Ok</span>(DeserializedConfig::default())
     )]

@@ -184,7 +184,36 @@
 <a href="#183" id="183">183</a>
 <a href="#184" id="184">184</a>
 <a href="#185" id="185">185</a>
-<a href="#186" id="186">186</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
 
 /// Account module.
 </span><span class="attr">#[cfg(feature = <span class="string">"billing"</span>)]
@@ -218,7 +247,7 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::build;
 <span class="kw">use </span><span class="kw">crate</span>::error::Result;
-<span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
+<span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::{AccessToken, EncryptionPin};
 <span class="kw">use </span><span class="kw">crate</span>::types::users::ActiveUser;
 <span class="kw">use </span><span class="kw">crate</span>::user::UserRepo;
@@ -238,8 +267,10 @@
     </span>access_token: <span class="prelude-ty">Option</span>&lt;AccessToken&gt;,
     <span class="doccomment">/// Contains the user repository for storing and loading different users.
     </span>repo: <span class="prelude-ty">Option</span>&lt;UserRepoT&gt;,
-    <span class="doccomment">/// The currently active coin currency
-    </span>currency: <span class="prelude-ty">Option</span>&lt;Currency&gt;,
+    <span class="doccomment">/// The currently active network
+    </span>network: <span class="prelude-ty">Option</span>&lt;Network&gt;,
+    <span class="doccomment">/// Available networks
+    </span>networks: <span class="prelude-ty">Option</span>&lt;Vec&lt;Network&gt;&gt;,
 }
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>Sdk {
@@ -257,7 +288,8 @@
             active_user: <span class="prelude-val">None</span>,
             access_token: <span class="prelude-val">None</span>,
             repo: <span class="prelude-val">None</span>,
-            currency: <span class="prelude-val">None</span>,
+            network: <span class="prelude-val">None</span>,
+            networks: <span class="prelude-val">None</span>,
         }
     }
 }
@@ -271,10 +303,31 @@
         <span class="prelude-val">Ok</span>(s)
     }
 
-    <span class="doccomment">/// Set currency
-    </span><span class="kw">pub fn </span>set_currency(<span class="kw-2">&amp;mut </span><span class="self">self</span>, currency: Currency) {
-        <span class="macro">debug!</span>(<span class="string">"Selected Currency: {:?}"</span>, currency);
-        <span class="self">self</span>.currency = <span class="prelude-val">Some</span>(currency);
+    <span class="doccomment">/// Set network
+    </span><span class="kw">pub async fn </span>set_network(<span class="kw-2">&amp;mut </span><span class="self">self</span>, network_id: String) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="macro">debug!</span>(<span class="string">"Selected network_id: {:?}"</span>, network_id.clone());
+        <span class="kw">let </span>networks = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.networks {
+            <span class="prelude-val">Some</span>(n) =&gt; n,
+            <span class="prelude-val">None </span>=&gt; {
+                <span class="kw">let </span>result = <span class="self">self</span>.get_networks_backend().<span class="kw">await</span>;
+                <span class="kw-2">&amp;</span><span class="kw">match </span>result {
+                    <span class="prelude-val">Ok</span>(n) =&gt; {
+                        <span class="self">self</span>.networks = <span class="prelude-val">Some</span>(n.clone());
+                        n
+                    }
+                    <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e)<span class="question-mark">?</span>,
+                }
+            }
+        };
+
+        <span class="kw">let </span><span class="prelude-val">Some</span>(network) = networks.iter().find(|network| network.id == network_id) <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::NetworkUnavailable(network_id));
+        };
+
+        <span class="macro">debug!</span>(<span class="string">"Selected Network: {:?}"</span>, network);
+        <span class="self">self</span>.network = <span class="prelude-val">Some</span>(network.clone());
+
+        <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Tries to get the wallet of the currently active user. Or returns an error if no user is
@@ -290,11 +343,11 @@
         <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
-        <span class="kw">let </span>currency = <span class="self">self</span>.currency.ok_or(<span class="kw">crate</span>::Error::MissingCurrency)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>wallet = active_user
             .wallet_manager
-            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, currency, pin)
+            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network, pin)
             .<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(wallet)
     }
@@ -313,6 +366,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_network_id, example_networks};
     <span class="kw">use crate</span>::{
         core::Sdk,
         error::Result,
@@ -327,6 +381,7 @@
     #[case::success(<span class="prelude-val">Ok</span>(WalletBorrow::from(MockWalletUser::new())))]
     #[case::repo_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized))]
     #[case::user_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized))]
+    #[case::missing_network(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingNetwork))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
     #[tokio::test]
     </span><span class="kw">async fn </span>test_try_get_active_user_wallet(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;WalletBorrow&lt;<span class="lifetime">'_</span>&gt;&gt;) {
@@ -342,7 +397,10 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_currency(<span class="kw">crate</span>::types::currencies::Currency::Iota);
+                sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+                sdk.set_network(example_network_id(<span class="kw">crate</span>::types::currencies::Currency::Iota))
+                    .<span class="kw">await
+                    </span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
                 handle_error_test_cases(error, <span class="kw-2">&amp;mut </span>sdk, <span class="number">0</span>, <span class="number">0</span>).<span class="kw">await</span>;

@@ -960,13 +960,7 @@
 <a href="#959" id="959">959</a>
 <a href="#960" id="960">960</a>
 <a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a>
-<a href="#963" id="963">963</a>
-<a href="#964" id="964">964</a>
-<a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
+<a href="#962" id="962">962</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 //! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
 //! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
 //!
@@ -974,16 +968,15 @@
 </span><span class="kw">use </span><span class="kw">super</span>::share::Share;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::{WalletImplStardust, WalletUser};
 <span class="kw">use </span><span class="kw">super</span>::wallet_user_eth::WalletImplEth;
-<span class="kw">use </span><span class="kw">crate</span>::backend::dlt::get_node_urls;
 <span class="kw">use </span><span class="kw">crate</span>::core::{Config, UserRepoT};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
+<span class="kw">use </span><span class="kw">crate</span>::types::networks::{Network, NetworkType};
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::{ErrorKind, <span class="prelude-ty">Result</span>, WalletError};
 <span class="kw">use </span>async_trait::async_trait;
 <span class="kw">use </span>iota_sdk::crypto::keys::bip39::Mnemonic;
 <span class="kw">use </span>log::{info, warn};
 <span class="kw">use </span>secrecy::{ExposeSecret, SecretBox};
-<span class="kw">use </span>std::collections::HashMap;
 <span class="kw">use </span>std::marker::PhantomData;
 <span class="kw">use </span>std::ops::{Deref, DerefMut};
 
@@ -1106,7 +1099,7 @@
         config: <span class="kw-2">&amp;mut </span>Config,
         access_token: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;AccessToken&gt;,
         repo: <span class="kw-2">&amp;mut </span>UserRepoT,
-        currency: Currency,
+        network: Network,
         pin: <span class="kw-2">&amp;</span>EncryptionPin,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;WalletBorrow&lt;<span class="lifetime">'a</span>&gt;&gt;;
 }
@@ -1499,7 +1492,7 @@
         config: <span class="kw-2">&amp;mut </span>Config,
         access_token: <span class="kw-2">&amp;</span><span class="prelude-ty">Option</span>&lt;AccessToken&gt;,
         repo: <span class="kw-2">&amp;mut </span>UserRepoT,
-        currency: Currency,
+        network: Network,
         pin: <span class="kw-2">&amp;</span>EncryptionPin,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;WalletBorrow&lt;<span class="lifetime">'a</span>&gt;&gt; {
         <span class="kw">let </span>(mnemonic, _status) = <span class="self">self</span>.try_resemble_shares(config, access_token, repo, pin).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1510,27 +1503,16 @@
             .path_prefix
             .join(<span class="string">"wallets"</span>)
             .join(<span class="kw-2">&amp;</span><span class="self">self</span>.username)
-            .join(currency.coin_type().to_string());
+            .join(network.clone().id);
 
-        <span class="comment">// Get node urls from backend if they are not set in the config
-        </span><span class="kw">if </span>config.node_urls.is_empty() {
-            <span class="kw">let </span>access_token = access_token.as_ref().ok_or(WalletError::MissingAccessToken)<span class="question-mark">?</span>;
-            <span class="kw">let </span>backend_node_urls = get_node_urls(config, <span class="kw-2">&amp;</span><span class="self">self</span>.username, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
-            <span class="kw">let </span><span class="kw-2">mut </span>converted_node_urls = HashMap::new();
-            <span class="kw">for </span>(key, value) <span class="kw">in </span>backend_node_urls {
-                <span class="kw">let </span>convert_key = Currency::try_from(key)<span class="question-mark">?</span>;
-                converted_node_urls.insert(convert_key, value);
-            }
-            config.node_urls = converted_node_urls;
-        }
-
-        <span class="kw">let </span>bo = <span class="kw">match </span>currency {
-            Currency::Iota =&gt; {
-                <span class="kw">let </span>wallet = WalletImplStardust::new(config, mnemonic, <span class="kw-2">&amp;</span>path, currency).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>bo = <span class="kw">match </span>network.network_type {
+            NetworkType::Evm { node_url, chain_id } =&gt; {
+                <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic, <span class="kw-2">&amp;</span>path, node_url, chain_id).<span class="kw">await</span><span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
-            Currency::Eth =&gt; {
-                <span class="kw">let </span>wallet = WalletImplEth::new(config, mnemonic, <span class="kw-2">&amp;</span>path).<span class="kw">await</span><span class="question-mark">?</span>;
+            NetworkType::Stardust { node_url } =&gt; {
+                <span class="kw">let </span>currency = Currency::try_from(network.currency)<span class="question-mark">?</span>;
+                <span class="kw">let </span>wallet = WalletImplStardust::new(mnemonic, <span class="kw-2">&amp;</span>path, currency, node_url).<span class="kw">await</span><span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
         };
@@ -1548,7 +1530,7 @@
     <span class="kw">use crate</span>::{
         core::{Config, UserRepoT},
         kdbx::KdbxStorageError,
-        testing_utils::BACKUP_PASSWORD,
+        testing_utils::{example_network, BACKUP_PASSWORD},
         types::{
             newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -1675,7 +1657,7 @@
             </span>.expect(<span class="string">"should succeed to change wallet password"</span>);
 
         <span class="kw">let </span>wallet = manager
-            .try_get(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, Currency::Iota, <span class="kw-2">&amp;</span>pin)
+            .try_get(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, example_network(Currency::Iota), <span class="kw-2">&amp;</span>pin)
             .<span class="kw">await
             </span>.expect(<span class="string">"should succeed to get wallet after password change"</span>);
 
@@ -1697,7 +1679,7 @@
 
         <span class="comment">// get the wallet instance to make sure any files are created
         </span><span class="kw">let </span>_wallet = manager
-            .try_get(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, Currency::Iota, <span class="kw-2">&amp;</span>pin)
+            .try_get(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, example_network(Currency::Iota), <span class="kw-2">&amp;</span>pin)
             .<span class="kw">await
             </span>.expect(<span class="string">"should succeed to get wallet"</span>);
 
@@ -1917,7 +1899,13 @@
             tokio::time::sleep(std::time::Duration::from_secs(<span class="number">1</span>)).<span class="kw">await</span>;
 
             <span class="kw">let </span>wallet = manager
-                .try_get(<span class="kw-2">&amp;mut </span>config, <span class="kw-2">&amp;</span>access_token, <span class="kw-2">&amp;mut </span>repo, Currency::Iota, <span class="kw-2">&amp;</span>pin)
+                .try_get(
+                    <span class="kw-2">&amp;mut </span>config,
+                    <span class="kw-2">&amp;</span>access_token,
+                    <span class="kw-2">&amp;mut </span>repo,
+                    example_network(Currency::Iota),
+                    <span class="kw-2">&amp;</span>pin,
+                )
                 .<span class="kw">await
                 </span>.unwrap();
 

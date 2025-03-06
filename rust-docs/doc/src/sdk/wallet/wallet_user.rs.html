@@ -746,27 +746,7 @@
 <a href="#745" id="745">745</a>
 <a href="#746" id="746">746</a>
 <a href="#747" id="747">747</a>
-<a href="#748" id="748">748</a>
-<a href="#749" id="749">749</a>
-<a href="#750" id="750">750</a>
-<a href="#751" id="751">751</a>
-<a href="#752" id="752">752</a>
-<a href="#753" id="753">753</a>
-<a href="#754" id="754">754</a>
-<a href="#755" id="755">755</a>
-<a href="#756" id="756">756</a>
-<a href="#757" id="757">757</a>
-<a href="#758" id="758">758</a>
-<a href="#759" id="759">759</a>
-<a href="#760" id="760">760</a>
-<a href="#761" id="761">761</a>
-<a href="#762" id="762">762</a>
-<a href="#763" id="763">763</a>
-<a href="#764" id="764">764</a>
-<a href="#765" id="765">765</a>
-<a href="#766" id="766">766</a>
-<a href="#767" id="767">767</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::{<span class="prelude-ty">Result</span>, WalletError};
-<span class="kw">use </span><span class="kw">crate</span>::core::Config;
+<a href="#748" id="748">748</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::{<span class="prelude-ty">Result</span>, WalletError};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::{CryptoAmount, Currency};
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 <span class="kw">use </span>alloy_consensus::TxEip1559;
@@ -859,7 +839,6 @@
     /// * `amount` - The amount to send (Ether).
     /// * `tag` - The transactions tag. Optional.
     /// * `message` - The transactions message. Optional.
-    /// * `chain_id` - The identifier of the chain to which the transaction belongs (e.g., 1 for Ethereum mainnet).
     ///
     ///
     /// Returns a `Result` containing the sent transaction id if successful, or an `Error` if it fails.
@@ -874,7 +853,6 @@
         amount: CryptoAmount,
         tag: <span class="prelude-ty">Option</span>&lt;TaggedDataPayload&gt;,
         message: <span class="prelude-ty">Option</span>&lt;String&gt;,
-        chain_id: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt;;
 
     <span class="doccomment">/// Send a transaction with one output.
@@ -901,7 +879,6 @@
     /// * `index` - The index of the transaction.
     /// * `address` - The address to send the amount.
     /// * `amount` - The amount to send (Ether)
-    /// * `chain_id` - The identifier of the chain to which the transaction belongs (e.g., 1 for Ethereum mainnet).
     ///
     /// # Returns
     ///
@@ -911,13 +888,7 @@
     ///
     /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
     </span><span class="attr">#[allow(clippy::too_many_arguments)]
-    </span><span class="kw">async fn </span>send_transaction_eth(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        index: <span class="kw-2">&amp;</span>str,
-        address: <span class="kw-2">&amp;</span>str,
-        amount: CryptoAmount,
-        chain_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt;;
+    </span><span class="kw">async fn </span>send_transaction_eth(<span class="kw-2">&amp;</span><span class="self">self</span>, index: <span class="kw-2">&amp;</span>str, address: <span class="kw-2">&amp;</span>str, amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt;;
 
     <span class="doccomment">/// Synchronizes the wallet with the network.
     ///
@@ -990,13 +961,9 @@
 
 <span class="kw">impl </span>WalletImplStardust {
     <span class="doccomment">/// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
-    </span><span class="kw">pub async fn </span>new(config: <span class="kw-2">&amp;</span>Config, mnemonic: Mnemonic, path: <span class="kw-2">&amp;</span>Path, currency: Currency) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub async fn </span>new(mnemonic: Mnemonic, path: <span class="kw-2">&amp;</span>Path, currency: Currency, node_url: String) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// we now have the mnemonic and can initialize a wallet
-        </span><span class="kw">let </span>node_urls = config
-            .node_urls
-            .get(<span class="kw-2">&amp;</span>currency)
-            .ok_or(WalletError::MissingNodeUrls { currency })
-            .map(|e| e.iter().map(|i| i.as_str()).collect::&lt;Vec&lt;<span class="kw-2">&amp;</span>str&gt;&gt;())<span class="question-mark">?</span>;
+        </span><span class="kw">let </span>node_urls = <span class="macro">vec!</span>[node_url.as_str()];
 
         <span class="macro">info!</span>(<span class="string">"Used node_urls: {:?}"</span>, node_urls);
         <span class="kw">let </span>client_options = ClientOptions::new()
@@ -1127,7 +1094,6 @@
         _amount: CryptoAmount,
         _tag: <span class="prelude-ty">Option</span>&lt;TaggedDataPayload&gt;,
         _message: <span class="prelude-ty">Option</span>&lt;String&gt;,
-        _chain_id: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="prelude-val">Err</span>(WalletError::WalletFeatureNotImplemented)
     }
@@ -1146,13 +1112,7 @@
     }
 
     <span class="attr">#[allow(clippy::too_many_arguments)]
-    </span><span class="kw">async fn </span>send_transaction_eth(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        _index: <span class="kw-2">&amp;</span>str,
-        _address: <span class="kw-2">&amp;</span>str,
-        _amount: CryptoAmount,
-        _chain_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    </span><span class="kw">async fn </span>send_transaction_eth(<span class="kw-2">&amp;</span><span class="self">self</span>, _index: <span class="kw-2">&amp;</span>str, _address: <span class="kw-2">&amp;</span>str, _amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="prelude-val">Err</span>(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -1250,6 +1210,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
+    <span class="kw">use </span><span class="kw">crate</span>::core::Config;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::MNEMONIC;
     <span class="kw">use </span><span class="kw">crate</span>::types::{<span class="self">self</span>, currencies::Currency};
     <span class="kw">use </span>iota_sdk::{
@@ -1267,8 +1228,9 @@
 
     </span><span class="doccomment">/// helper function to get a [`WalletUser`] instance.
     </span><span class="kw">async fn </span>get_wallet_user(mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;, currency: Currency) -&gt; (WalletImplStardust, CleanUp) {
-        <span class="kw">let </span>(config, cleanup) = Config::new_test_with_cleanup();
-        <span class="kw">let </span>wallet = WalletImplStardust::new(<span class="kw-2">&amp;</span>config, mnemonic.into(), Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix), currency)
+        <span class="kw">let </span>(<span class="kw">_</span>, cleanup) = Config::new_test_with_cleanup();
+        <span class="kw">let </span>node_url = String::from(<span class="string">"https://api.testnet.iotaledger.net"</span>);
+        <span class="kw">let </span>wallet = WalletImplStardust::new(mnemonic.into(), Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix), currency, node_url)
             .<span class="kw">await
             </span>.expect(<span class="string">"should initialize wallet"</span>);
         (wallet, cleanup)

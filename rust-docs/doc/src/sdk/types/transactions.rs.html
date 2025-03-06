@@ -138,7 +138,15 @@
 <a href="#137" id="137">137</a>
 <a href="#138" id="138">138</a>
 <a href="#139" id="139">139</a>
-<a href="#140" id="140">140</a></pre></div><pre class="rust"><code><span class="kw">use </span>api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus};
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a></pre></div><pre class="rust"><code><span class="kw">use </span>api_types::api::{
+    networks::ApiNetwork,
+    transactions::{ApiApplicationMetadata, ApiTxStatus},
+};
 <span class="kw">use </span>chrono::{LocalResult, TimeZone, Utc};
 <span class="kw">use </span>iota_sdk::{
     types::block::{helper::network_name_to_id, output::Output, payload::transaction::TransactionEssence},
@@ -266,6 +274,8 @@
     </span><span class="kw">pub </span>amount: Decimal,
     <span class="doccomment">/// The status of transaction
     </span><span class="kw">pub </span>status: ApiTxStatus,
+    <span class="doccomment">/// The network that the transaction is sent in
+    </span><span class="kw">pub </span>network: ApiNetwork,
 }
 
 <span class="doccomment">/// Gas estimation (EIP-1559)

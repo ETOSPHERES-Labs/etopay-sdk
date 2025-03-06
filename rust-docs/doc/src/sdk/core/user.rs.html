@@ -635,14 +635,14 @@
 <a href="#634" id="634">634</a>
 <a href="#635" id="635">635</a>
 <a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module defines methods for interacting with user-related functionality,
+<a href="#637" id="637">637</a>
+<a href="#638" id="638">638</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module defines methods for interacting with user-related functionality,
 //! such as getting user state, creating a new user, deleting a user, and more.
 
 </span><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend;
 <span class="kw">use </span><span class="kw">crate</span>::backend::kyc::check_kyc_status;
 <span class="kw">use </span><span class="kw">crate</span>::error::Result;
-<span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::AccessToken;
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::EncryptionPin;
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::EncryptionSalt;
@@ -857,8 +857,8 @@
         <span class="prelude-val">Ok</span>(is_verified)
     }
 
-    <span class="doccomment">/// Set the user preferred currency
-    </span><span class="kw">pub async fn </span>set_preferred_currency(<span class="kw-2">&amp;mut </span><span class="self">self</span>, currency: <span class="prelude-ty">Option</span>&lt;Currency&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    <span class="doccomment">/// Set the user preferred network
+    </span><span class="kw">pub async fn </span>set_preferred_network(<span class="kw-2">&amp;mut </span><span class="self">self</span>, network_id: <span class="prelude-ty">Option</span>&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
@@ -867,12 +867,12 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        backend::user::set_preferred_currency(config, access_token, <span class="kw-2">&amp;</span>user.username, currency).<span class="kw">await</span><span class="question-mark">?</span>;
+        backend::user::set_preferred_network(config, access_token, <span class="kw-2">&amp;</span>user.username, network_id).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Get the user preferred currency
-    </span><span class="kw">pub async fn </span>get_preferred_currency(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Currency&gt;&gt; {
+    <span class="doccomment">/// Get the user preferred network
+    </span><span class="kw">pub async fn </span>get_preferred_network(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt; {
         <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
@@ -881,8 +881,8 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>preferred_currency = backend::user::get_preferred_currency(config, access_token, <span class="kw-2">&amp;</span>user.username).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="prelude-val">Ok</span>(preferred_currency)
+        <span class="kw">let </span>preferred_network = backend::user::get_preferred_network(config, access_token, <span class="kw-2">&amp;</span>user.username).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="prelude-val">Ok</span>(preferred_network)
     }
 }
 
@@ -1174,7 +1174,7 @@
     #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
     #[tokio::test]
-    </span><span class="kw">async fn </span>test_set_preferred_currency(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;()&gt;) {
+    </span><span class="kw">async fn </span>test_set_preferred_network(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;()&gt;) {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
@@ -1189,7 +1189,7 @@
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
 
                 mock_server = <span class="prelude-val">Some</span>(
-                    srv.mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/currency"</span>)
+                    srv.mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/network"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
                         .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
@@ -1204,7 +1204,9 @@
         }
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = sdk.set_preferred_currency(<span class="prelude-val">Some</span>(Currency::Iota)).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = sdk
+            .set_preferred_network(<span class="prelude-val">Some</span>(String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>)))
+            .<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -1219,12 +1221,12 @@
     }
 
     <span class="attr">#[rstest]
-    #[case::success(<span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Currency::Iota)))]
+    #[case::success(<span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>))))]
     #[case::user_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized))]
     #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
     #[tokio::test]
-    </span><span class="kw">async fn </span>test_get_preferred_currency(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Currency&gt;&gt;) {
+    </span><span class="kw">async fn </span>test_get_preferred_network(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;) {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
@@ -1239,13 +1241,13 @@
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
 
                 mock_server = <span class="prelude-val">Some</span>(
-                    srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/user/currency"</span>)
+                    srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/user/network"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
                         .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-                        .with_body(<span class="string">"{\"currency\":\"Iota\"}"</span>)
+                        .with_body(<span class="string">"{\"network_id\":\"67a1f08edf55756bae21e7eb\"}"</span>)
                         .expect(<span class="number">1</span>)
                         .create(),
                 );
@@ -1256,12 +1258,12 @@
         }
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = sdk.get_preferred_currency().<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = sdk.get_preferred_network().<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
-            <span class="prelude-val">Ok</span>(currency) =&gt; {
-                <span class="macro">assert_eq!</span>(response.unwrap(), currency)
+            <span class="prelude-val">Ok</span>(network_id) =&gt; {
+                <span class="macro">assert_eq!</span>(response.unwrap(), network_id)
             }
             <span class="prelude-val">Err</span>(<span class="kw-2">ref </span>expected_err) =&gt; {
                 <span class="macro">assert_eq!</span>(response.err().unwrap().to_string(), expected_err.to_string());

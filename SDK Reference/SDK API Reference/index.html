@@ -1014,18 +1014,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-supported-node-urls" class="md-nav__link">
+  <a href="#get-supported-networks" class="md-nav__link">
     <span class="md-ellipsis">
-      Get supported node urls
+      Get supported networks
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#set-currency" class="md-nav__link">
+  <a href="#set-network" class="md-nav__link">
     <span class="md-ellipsis">
-      Set currency
+      Set network
     </span>
   </a>
   
@@ -1698,18 +1698,18 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#get-user-preferred-currency" class="md-nav__link">
+  <a href="#get-user-preferred-network" class="md-nav__link">
     <span class="md-ellipsis">
-      Get user preferred currency
+      Get user preferred network
     </span>
   </a>
   
 </li>
         
           <li class="md-nav__item">
-  <a href="#set-user-preferred-currency" class="md-nav__link">
+  <a href="#set-user-preferred-network" class="md-nav__link">
     <span class="md-ellipsis">
-      Set user preferred currency
+      Set user preferred network
     </span>
   </a>
   
@@ -2160,7 +2160,7 @@
 </div>
 </div>
 </div>
-<h3 id="get-supported-node-urls">Get supported node urls<a class="headerlink" href="#get-supported-node-urls" title="Permanent link">&para;</a></h3>
+<h3 id="get-supported-networks">Get supported networks<a class="headerlink" href="#get-supported-networks" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2174,9 +2174,9 @@
 </thead>
 <tbody>
 <tr>
-<td>Get the supported currencies and their corresponding node urls.</td>
+<td>Get the supported networks.</td>
 <td></td>
-<td>Returns a serialized string of a hashmap with currencies as key (String) and node urls as value (vector of strings).</td>
+<td>Returns a list of ApiNetwork.</td>
 <td></td>
 <td><a href="./#instantiating-the-sdk">Constructor</a>, <a href="./#set-configuration">Set Configuration</a>, <a href="./#refreshing-access-token">Refresh access token</a>, <a href="./#initializing-a-user">User initialization</a></td>
 <td>Basic</td>
@@ -2186,22 +2186,22 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Rust</label><label for="__tabbed_3_2">Java</label><label for="__tabbed_3_3">Typescript</label><label for="__tabbed_3_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_node_urls_backend">get_node_urls_backend</a></p>
+<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_networks">getNetworks</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#getNodeUrls()">getNodeUrls</a></p>
+<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#get_networks()">getNetworks</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../jstsdocs/classes/CryptpaySdk.html#get_node_urls">get_node_urls</a></p>
+<p><a href="../jstsdocs/classes/CryptpaySdk.html#get_networks">getNetworks</a></p>
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getNodeUrls</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">String</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getNetworks</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="nb">String</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
-<h3 id="set-currency">Set currency<a class="headerlink" href="#set-currency" title="Permanent link">&para;</a></h3>
+<h3 id="set-network">Set network<a class="headerlink" href="#set-network" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -2215,8 +2215,8 @@
 </thead>
 <tbody>
 <tr>
-<td>Sets the currency</td>
-<td><code>currency</code> - The currency as string. Allowed values are <code>smr</code>, <code>iota</code> and <code>eth</code></td>
+<td>Sets the network</td>
+<td><code>network_id</code> - The network_id as string.</td>
 <td></td>
 <td><a href="./#instantiating-the-sdk">Constructor</a></td>
 <td>Basic</td>
@@ -2227,17 +2227,17 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="4:4"><input checked="checked" id="__tabbed_4_1" name="__tabbed_4" type="radio" /><input id="__tabbed_4_2" name="__tabbed_4" type="radio" /><input id="__tabbed_4_3" name="__tabbed_4" type="radio" /><input id="__tabbed_4_4" name="__tabbed_4" type="radio" /><div class="tabbed-labels"><label for="__tabbed_4_1">Rust</label><label for="__tabbed_4_2">Java</label><label for="__tabbed_4_3">Typescript</label><label for="__tabbed_4_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_currency">set_currency</a></p>
+<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_network">set_network</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#setCurrency(java.lang.String)">setCurrency</a></p>
+<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#setNetwork(java.lang.String)">setNetwork</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../jstsdocs/classes/CryptpaySdk.html#setCurrency">setCurrency</a></p>
+<p><a href="../jstsdocs/classes/CryptpaySdk.html#setNetwork">setNetwork</a></p>
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setCurrency</span><span class="p">(</span><span class="n">currency</span><span class="p">:</span><span class="w"> </span><span class="n">Currency</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setNetwork</span><span class="p">(</span><span class="n">network_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span>
 </span></code></pre></div>
 </div>
 </div>
@@ -2919,10 +2919,10 @@
 </thead>
 <tbody>
 <tr>
-<td>Generates a new receiver address for the wallet based on the currency selected in the config</td>
+<td>Generates a new receiver address for the wallet based on the selected network.</td>
 <td><code>pin</code> - The PIN for the wallet</td>
 <td>Returns the generated address as a <code>String</code> if successful.</td>
-<td><a href="./#create-new-wallet">Wallet initialization</a>, <a href="./#set-currency">Set currency</a></td>
+<td><a href="./#create-new-wallet">Wallet initialization</a>, <a href="./#set-network">Set network</a></td>
 <td>Usage</td>
 <td>Application</td>
 </tr>
@@ -4865,7 +4865,7 @@
 </div>
 </div>
 </div>
-<h3 id="get-user-preferred-currency">Get user preferred currency<a class="headerlink" href="#get-user-preferred-currency" title="Permanent link">&para;</a></h3>
+<h3 id="get-user-preferred-network">Get user preferred network<a class="headerlink" href="#get-user-preferred-network" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -4879,9 +4879,9 @@
 </thead>
 <tbody>
 <tr>
-<td>Fetches the users preferred currency</td>
+<td>Fetches the users preferred network</td>
 <td></td>
-<td>Returns the currency if successful or an empty value if no preferred currency has been set.</td>
+<td>Returns the network if successful or an empty value if no preferred network has been set.</td>
 <td><a href="./#initializing-a-user">User initialization</a></td>
 <td>Usage</td>
 <td>Application</td>
@@ -4891,22 +4891,22 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="61:4"><input checked="checked" id="__tabbed_61_1" name="__tabbed_61" type="radio" /><input id="__tabbed_61_2" name="__tabbed_61" type="radio" /><input id="__tabbed_61_3" name="__tabbed_61" type="radio" /><input id="__tabbed_61_4" name="__tabbed_61" type="radio" /><div class="tabbed-labels"><label for="__tabbed_61_1">Rust</label><label for="__tabbed_61_2">Java</label><label for="__tabbed_61_3">Typescript</label><label for="__tabbed_61_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_preferred_currency">get_preferred_currency</a></p>
+<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_preferred_network">get_preferred_network</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#getPreferredCurrency()">getPreferredCurrency</a></p>
+<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#getPreferredNetwork()">getPreferredNetwork</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../jstsdocs/classes/CryptpaySdk.html#getPreferredCurrency">getPreferredCurrency</a></p>
+<p><a href="../jstsdocs/classes/CryptpaySdk.html#getPreferredNetwork">getPreferredNetwork</a></p>
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getPreferredCurrency</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">PreferredCurrency</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getPreferredNetwork</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">PreferredNetwork</span>
 </span></code></pre></div>
 </div>
 </div>
 </div>
-<h3 id="set-user-preferred-currency">Set user preferred currency<a class="headerlink" href="#set-user-preferred-currency" title="Permanent link">&para;</a></h3>
+<h3 id="set-user-preferred-network">Set user preferred network<a class="headerlink" href="#set-user-preferred-network" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
 <tr>
@@ -4920,8 +4920,8 @@
 </thead>
 <tbody>
 <tr>
-<td>Sets the users preferred currency, or resets it if an empty value is provided.</td>
-<td><code>currency</code> - The preferred user currency. Optional value.</td>
+<td>Sets the users preferred network, or resets it if an empty value is provided.</td>
+<td><code>network_id</code> - The preferred user network. Optional value.</td>
 <td></td>
 <td><a href="./#initializing-a-user">User initialization</a></td>
 <td>Usage</td>
@@ -4932,17 +4932,17 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="62:4"><input checked="checked" id="__tabbed_62_1" name="__tabbed_62" type="radio" /><input id="__tabbed_62_2" name="__tabbed_62" type="radio" /><input id="__tabbed_62_3" name="__tabbed_62" type="radio" /><input id="__tabbed_62_4" name="__tabbed_62" type="radio" /><div class="tabbed-labels"><label for="__tabbed_62_1">Rust</label><label for="__tabbed_62_2">Java</label><label for="__tabbed_62_3">Typescript</label><label for="__tabbed_62_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_preferred_currency">set_preferred_currency</a></p>
+<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_preferred_network">set_preferred_network</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#setPreferredCurrency(java.lang.String)">setPreferredCurrency</a></p>
+<p><a href="../../javadoc/com/etogruppe/CryptpaySdk.html#setPreferredNetwork(java.lang.String)">setPreferredNetwork</a></p>
 </div>
 <div class="tabbed-block">
-<p><a href="../jstsdocs/classes/CryptpaySdk.html#setPreferredCurrency">setPreferredCurrency</a></p>
+<p><a href="../jstsdocs/classes/CryptpaySdk.html#setPreferredNetwork">setPreferredNetwork</a></p>
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPreferredCurrency</span><span class="p">(</span><span class="n">currency</span><span class="p">:</span><span class="w"> </span><span class="n">PreferredCurrency</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPreferredNetwork</span><span class="p">(</span><span class="n">network_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -4969,7 +4969,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 4, 2025 08:17:04">March 4, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 6, 2025 14:28:16">March 6, 2025</span>
   </span>
 
     

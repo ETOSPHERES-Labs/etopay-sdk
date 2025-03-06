@@ -1774,9 +1774,44 @@
 <a href="#1773" id="1773">1773</a>
 <a href="#1774" id="1774">1774</a>
 <a href="#1775" id="1775">1775</a>
-<a href="#1776" id="1776">1776</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<a href="#1776" id="1776">1776</a>
+<a href="#1777" id="1777">1777</a>
+<a href="#1778" id="1778">1778</a>
+<a href="#1779" id="1779">1779</a>
+<a href="#1780" id="1780">1780</a>
+<a href="#1781" id="1781">1781</a>
+<a href="#1782" id="1782">1782</a>
+<a href="#1783" id="1783">1783</a>
+<a href="#1784" id="1784">1784</a>
+<a href="#1785" id="1785">1785</a>
+<a href="#1786" id="1786">1786</a>
+<a href="#1787" id="1787">1787</a>
+<a href="#1788" id="1788">1788</a>
+<a href="#1789" id="1789">1789</a>
+<a href="#1790" id="1790">1790</a>
+<a href="#1791" id="1791">1791</a>
+<a href="#1792" id="1792">1792</a>
+<a href="#1793" id="1793">1793</a>
+<a href="#1794" id="1794">1794</a>
+<a href="#1795" id="1795">1795</a>
+<a href="#1796" id="1796">1796</a>
+<a href="#1797" id="1797">1797</a>
+<a href="#1798" id="1798">1798</a>
+<a href="#1799" id="1799">1799</a>
+<a href="#1800" id="1800">1800</a>
+<a href="#1801" id="1801">1801</a>
+<a href="#1802" id="1802">1802</a>
+<a href="#1803" id="1803">1803</a>
+<a href="#1804" id="1804">1804</a>
+<a href="#1805" id="1805">1805</a>
+<a href="#1806" id="1806">1806</a>
+<a href="#1807" id="1807">1807</a>
+<a href="#1808" id="1808">1808</a>
+<a href="#1809" id="1809">1809</a>
+<a href="#1810" id="1810">1810</a>
+<a href="#1811" id="1811">1811</a>
+<a href="#1812" id="1812">1812</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::WalletUser;
-<span class="kw">use </span><span class="kw">crate</span>::core::Config;
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::{CryptoAmount, Currency};
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::WalletError;
@@ -1859,8 +1894,9 @@
     <span class="doccomment">/// State for the account manager to be passed to calling functions
     </span>account_manager: iota_sdk::wallet::Wallet,
 
-    <span class="doccomment">/// Store a copy of the node urls.
-    </span>node_urls: Vec&lt;String&gt;,
+    <span class="comment">// /// Store a copy of the node urls.
+    </span>node_url: String,
+    chain_id: u64,
 
     <span class="doccomment">/// Rpc client
     </span>http_provider: RootProvider&lt;Http&lt;Client&gt;&gt;,
@@ -1869,32 +1905,20 @@
 <span class="kw">impl </span>WalletImplEth {
     <span class="attr">#[cfg(test)]
     </span><span class="kw">pub async fn </span>new_with_mocked_provider(
-        config: <span class="kw-2">&amp;</span>Config,
         mnemonic: Mnemonic,
         path: <span class="kw-2">&amp;</span>Path,
         http_provider: RootProvider&lt;Http&lt;Client&gt;&gt;,
+        node_url: String,
+        chain_id: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="comment">// get the ETH node urls
-        </span><span class="kw">let </span><span class="prelude-val">Some</span>(node_urls) = config.node_urls.get(<span class="kw-2">&amp;</span>Currency::Eth) <span class="kw">else </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::MissingNodeUrls {
-                currency: Currency::Eth,
-            });
-        };
-
-        <span class="kw">if </span>node_urls.is_empty() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::MissingNodeUrls {
-                currency: Currency::Eth,
-            });
-        }
-
-        <span class="kw">let </span>eth_node_url: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str] = <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>node_urls[<span class="number">0</span>]];
+        <span class="kw">let </span>node_urls: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str] = <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>node_url];
 
         <span class="macro">info!</span>(<span class="string">"Used node_urls: {:?}"</span>, node_urls);
-        <span class="macro">info!</span>(<span class="string">"Eth eth_node_url: {:?}"</span>, eth_node_url);
+        <span class="macro">info!</span>(<span class="string">"Eth eth_node_url: {:?}"</span>, node_urls);
         <span class="kw">let </span>client_options = ClientOptions::new()
             .with_local_pow(<span class="bool-val">false</span>)
             .with_fallback_to_local_pow(<span class="bool-val">true</span>)
-            .with_nodes(eth_node_url)<span class="question-mark">?</span>;
+            .with_nodes(node_urls)<span class="question-mark">?</span>;
 
         <span class="comment">// we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
         </span><span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
@@ -1929,34 +1953,21 @@
 
         <span class="prelude-val">Ok</span>(WalletImplEth {
             account_manager,
-            node_urls: node_urls.clone(),
+            node_url,
+            chain_id,
             http_provider,
         })
     }
 
-    <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Config`] and [`Mnemonic`].
-    </span><span class="kw">pub async fn </span>new(config: <span class="kw-2">&amp;</span>Config, mnemonic: Mnemonic, path: <span class="kw-2">&amp;</span>Path) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
-        <span class="comment">// get the ETH node urls
-        </span><span class="kw">let </span><span class="prelude-val">Some</span>(node_urls) = config.node_urls.get(<span class="kw-2">&amp;</span>Currency::Eth) <span class="kw">else </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::MissingNodeUrls {
-                currency: Currency::Eth,
-            });
-        };
-
-        <span class="kw">if </span>node_urls.is_empty() {
-            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::MissingNodeUrls {
-                currency: Currency::Eth,
-            });
-        }
-
-        <span class="kw">let </span>eth_node_url: <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>str] = <span class="kw-2">&amp;</span>[<span class="kw-2">&amp;</span>node_urls[<span class="number">0</span>]];
+    <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
+    </span><span class="kw">pub async fn </span>new(mnemonic: Mnemonic, path: <span class="kw-2">&amp;</span>Path, node_url: String, chain_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="kw">let </span>node_urls = <span class="macro">vec!</span>[node_url.as_str()];
 
         <span class="macro">info!</span>(<span class="string">"Used node_urls: {:?}"</span>, node_urls);
-        <span class="macro">info!</span>(<span class="string">"Eth eth_node_url: {:?}"</span>, eth_node_url);
         <span class="kw">let </span>client_options = ClientOptions::new()
             .with_local_pow(<span class="bool-val">false</span>)
             .with_fallback_to_local_pow(<span class="bool-val">true</span>)
-            .with_nodes(eth_node_url)<span class="question-mark">?</span>;
+            .with_nodes(<span class="kw-2">&amp;</span>node_urls)<span class="question-mark">?</span>;
 
         <span class="comment">// we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
         </span><span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
@@ -1987,15 +1998,16 @@
                 .<span class="kw">await</span><span class="question-mark">?</span>;
         }
 
-        <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>node_urls[<span class="number">0</span>].clone())
-            .map_err(|e| WalletError::Parse(<span class="macro">format!</span>(<span class="string">"could not parse the url: {e:?}"</span>)))<span class="question-mark">?</span>;
-        <span class="kw">let </span>http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>url =
+            Url::parse(node_urls[<span class="number">0</span>]).map_err(|e| WalletError::Parse(<span class="macro">format!</span>(<span class="string">"could not parse the url: {e:?}"</span>)))<span class="question-mark">?</span>;
+        <span class="kw">let </span>http_provider = ProviderBuilder::new().on_http(url);
 
         <span class="macro">info!</span>(<span class="string">"Wallet creation successful"</span>);
 
         <span class="prelude-val">Ok</span>(WalletImplEth {
             account_manager,
-            node_urls: node_urls.clone(),
+            chain_id,
+            node_url,
             http_provider,
         })
     }
@@ -2137,10 +2149,6 @@
     <span class="kw">async fn </span>get_wallet_addr_raw(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="kw">let </span>wallet_addr_raw = <span class="self">self</span>.get_address().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(wallet_addr_raw)
-    }
-
-    <span class="kw">fn </span>get_node_url_raw(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; String {
-        <span class="self">self</span>.node_urls[<span class="number">0</span>].clone()
     }
 
     <span class="kw">async fn </span>fetch_block_date(<span class="kw-2">&amp;</span><span class="self">self</span>, block_number: BlockNumberOrTag) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;u64&gt;&gt; {
@@ -2286,7 +2294,6 @@
         amount: CryptoAmount,
         tag: <span class="prelude-ty">Option</span>&lt;TaggedDataPayload&gt;,
         message: <span class="prelude-ty">Option</span>&lt;String&gt;,
-        chain_id: u64,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="kw">let </span>addr_from = <span class="self">self</span>.get_wallet_addr().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>addr_to = Address::from_str(address)<span class="question-mark">?</span>;
@@ -2296,7 +2303,17 @@
         <span class="kw">let </span>amount_wei_u256 = <span class="self">Self</span>::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>transaction = <span class="self">self
-            </span>.build_transaction(addr_from, addr_to, amount_wei_u256, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, chain_id, tag, message)
+            </span>.build_transaction(
+                addr_from,
+                addr_to,
+                amount_wei_u256,
+                <span class="number">0</span>,
+                <span class="number">0</span>,
+                <span class="number">0</span>,
+                <span class="self">self</span>.chain_id,
+                tag,
+                message,
+            )
             .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Estimate gas cost
@@ -2319,13 +2336,7 @@
     }
 
     <span class="comment">// todo: unlock method for other protocols by passing interface instead of hardcoded list of fields (eip 1559 at the moment)
-    </span><span class="kw">async fn </span>send_transaction_eth(
-        <span class="kw-2">&amp;</span><span class="self">self</span>,
-        index: <span class="kw-2">&amp;</span>str,
-        address: <span class="kw-2">&amp;</span>str,
-        amount: CryptoAmount,
-        chain_id: u64,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    </span><span class="kw">async fn </span>send_transaction_eth(<span class="kw-2">&amp;</span><span class="self">self</span>, index: <span class="kw-2">&amp;</span>str, address: <span class="kw-2">&amp;</span>str, amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="kw">let </span>addr_from = <span class="self">self</span>.get_wallet_addr().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>addr_to = Address::from_str(address)<span class="question-mark">?</span>;
 
@@ -2334,7 +2345,7 @@
         <span class="kw">let </span>amount_wei_u256 = <span class="self">Self</span>::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>transaction = <span class="self">self
-            </span>.build_transaction(addr_from, addr_to, amount_wei_u256, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, chain_id, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>)
+            </span>.build_transaction(addr_from, addr_to, amount_wei_u256, <span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>, <span class="self">self</span>.chain_id, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>)
             .<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Estimate gas cost
@@ -2419,7 +2430,7 @@
                     amount: value_eth_f64,
                     network: <span class="string">"ETH"</span>.to_string(),
                     status: <span class="macro">format!</span>(<span class="string">"{:?}"</span>, status),
-                    explorer_url: <span class="prelude-val">Some</span>(<span class="self">self</span>.get_node_url_raw()),
+                    explorer_url: <span class="prelude-val">Some</span>(<span class="self">self</span>.node_url.clone()),
                 })
             }
             <span class="prelude-val">None </span>=&gt; <span class="prelude-val">Err</span>(WalletError::TransactionNotFound),
@@ -2460,6 +2471,8 @@
 
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
+    <span class="kw">use </span><span class="kw">crate</span>::core::Config;
+
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span>alloy::{hex::decode, primitives::Address};
     <span class="kw">use </span>iota_sdk::crypto::keys::bip39::Mnemonic;
@@ -2476,8 +2489,11 @@
 
     <span class="doccomment">/// helper function to get a [`WalletUser`] instance.
     </span><span class="kw">async fn </span>get_wallet_user(mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;) -&gt; (WalletImplEth, CleanUp) {
-        <span class="kw">let </span>(config, cleanup) = Config::new_test_with_cleanup();
-        <span class="kw">let </span>wallet = WalletImplEth::new(<span class="kw-2">&amp;</span>config, mnemonic.into(), Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix))
+        <span class="kw">let </span>(<span class="kw">_</span>, cleanup) = Config::new_test_with_cleanup();
+        <span class="kw">let </span>node_url = String::from(<span class="string">"https://sepolia.mode.network"</span>);
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
+
+        <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic.into(), Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix), node_url, chain_id)
             .<span class="kw">await
             </span>.expect(<span class="string">"should initialize wallet"</span>);
         (wallet, cleanup)
@@ -2487,13 +2503,16 @@
     </span><span class="kw">async fn </span>get_wallet_user_with_mocked_provider(
         mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;,
         http_provider: RootProvider&lt;Http&lt;Client&gt;&gt;,
+        node_url: String,
+        chain_id: u64,
     ) -&gt; (WalletImplEth, CleanUp) {
-        <span class="kw">let </span>(config, cleanup) = Config::new_test_with_cleanup();
+        <span class="kw">let </span>(<span class="kw">_</span>, cleanup) = Config::new_test_with_cleanup();
         <span class="kw">let </span>wallet = WalletImplEth::new_with_mocked_provider(
-            <span class="kw-2">&amp;</span>config,
             mnemonic.into(),
             Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix),
             http_provider,
+            node_url,
+            chain_id,
         )
         .<span class="kw">await
         </span>.expect(<span class="string">"should initialize wallet"</span>);
@@ -2572,10 +2591,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>wallet_addr = wallet_user.get_wallet_addr().<span class="kw">await</span>.unwrap();
 
@@ -2619,10 +2644,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>wallet_addr = wallet_user.get_wallet_addr().<span class="kw">await</span>.unwrap();
         <span class="kw">let </span>mocked_transaction_count = <span class="number">5</span>;
@@ -2663,10 +2694,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>wallet_addr = wallet_user.get_wallet_addr().<span class="kw">await</span>.unwrap();
         <span class="kw">let </span>mocked_transaction_count = <span class="number">5</span>;
@@ -2698,7 +2735,6 @@
         <span class="kw">let </span>amount_to_send = U256::from(<span class="number">1</span>);
         <span class="kw">let </span>gas_limit = <span class="number">21_000</span>;
         <span class="kw">let </span>max_fee_per_gas = <span class="number">20_000_000_000</span>;
-        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
         <span class="kw">let </span>max_priority_fee_per_gas = <span class="number">1_000_000_000</span>;
 
         <span class="comment">// Act
@@ -2710,7 +2746,7 @@
                 gas_limit,
                 max_fee_per_gas,
                 max_priority_fee_per_gas,
-                chain_id,
+                wallet_user.chain_id,
                 <span class="prelude-val">None</span>,
                 <span class="prelude-val">None</span>,
             )
@@ -2727,10 +2763,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>wallet_addr = wallet_user.get_wallet_addr().<span class="kw">await</span>.unwrap();
         <span class="kw">let </span>mocked_transaction_count = <span class="number">5</span>;
@@ -2762,7 +2804,6 @@
         <span class="kw">let </span>amount_to_send = U256::from(<span class="number">1</span>);
         <span class="kw">let </span>gas_limit = <span class="number">21_000</span>;
         <span class="kw">let </span>max_fee_per_gas = <span class="number">20_000_000_000</span>;
-        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
         <span class="kw">let </span>max_priority_fee_per_gas = <span class="number">1_000_000_000</span>;
         <span class="kw">let </span>tag = TaggedDataPayload::new(Vec::from([<span class="number">8</span>, <span class="number">16</span>]), Vec::from([<span class="number">8</span>, <span class="number">16</span>])).unwrap();
         <span class="kw">let </span>metadata = String::from(<span class="string">"test message"</span>);
@@ -2776,7 +2817,7 @@
                 gas_limit,
                 max_fee_per_gas,
                 max_priority_fee_per_gas,
-                chain_id,
+                wallet_user.chain_id,
                 <span class="prelude-val">Some</span>(tag),
                 <span class="prelude-val">Some</span>(metadata),
             )
@@ -2819,10 +2860,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>mocked_transaction_count = <span class="number">5</span>;
         <span class="kw">let </span>index = <span class="string">"1"</span>;
@@ -2915,12 +2962,8 @@
             ))
             .create();
 
-        <span class="kw">let </span>chain_id: u64 = <span class="number">31337</span>;
-
         <span class="comment">// Act
-        </span><span class="kw">let </span>transaction_id = wallet_user
-            .send_transaction_eth(index, <span class="kw-2">&amp;</span>to, amount_to_send, chain_id)
-            .<span class="kw">await</span>;
+        </span><span class="kw">let </span>transaction_id = wallet_user.send_transaction_eth(index, <span class="kw-2">&amp;</span>to, amount_to_send).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span>mocked_rpc_get_transaction_count.assert();
@@ -2936,10 +2979,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>mocked_transaction_count = <span class="number">5</span>;
         <span class="kw">let </span>amount_to_send = CryptoAmount::from(<span class="number">100</span>);
@@ -3031,13 +3080,12 @@
             ))
             .create();
 
-        <span class="kw">let </span>chain_id: u64 = <span class="number">31337</span>;
         <span class="kw">let </span>tagged_data_payload = TaggedDataPayload::new(Vec::from([<span class="number">8</span>, <span class="number">16</span>]), Vec::from([<span class="number">8</span>, <span class="number">16</span>])).unwrap();
         <span class="kw">let </span>metadata = String::from(<span class="string">"test message"</span>);
 
         <span class="comment">// Act
         </span><span class="kw">let </span>transaction_id = wallet_user
-            .send_amount_eth(<span class="kw-2">&amp;</span>to, amount_to_send, <span class="prelude-val">Some</span>(tagged_data_payload), <span class="prelude-val">Some</span>(metadata), chain_id)
+            .send_amount_eth(<span class="kw-2">&amp;</span>to, amount_to_send, <span class="prelude-val">Some</span>(tagged_data_payload), <span class="prelude-val">Some</span>(metadata))
             .<span class="kw">await</span>;
 
         <span class="comment">// Assert
@@ -3056,10 +3104,16 @@
         <span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>mocked_rpc_get_transaction_by_hash = server
             .mock(<span class="string">"POST"</span>, <span class="string">"/"</span>)
@@ -3096,10 +3150,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>dummy_transaction_hash = <span class="string">"0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c"</span>;
         <span class="kw">let </span>dummy_block_number = <span class="string">"0x107d7b0"</span>;
@@ -3237,10 +3297,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>dummy_transaction_id = <span class="string">"0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c"</span>;
 
@@ -3458,10 +3524,16 @@
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
         <span class="kw">let </span>node_url = Url::parse(<span class="kw-2">&amp;</span>url).unwrap();
-        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url);
+        <span class="kw">let </span>mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
+        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>(wallet_user, _cleanup) =
-            get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, mockito_http_provider).<span class="kw">await</span>;
+        <span class="kw">let </span>(wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
+            HARDHAT_MNEMONIC,
+            mockito_http_provider,
+            node_url.to_string(),
+            chain_id,
+        )
+        .<span class="kw">await</span>;
 
         <span class="kw">let </span>to = String::from(<span class="string">"0xb0b0000000000000000000000000000000000000"</span>);
         <span class="kw">let </span>value = U256::from(<span class="number">1</span>);

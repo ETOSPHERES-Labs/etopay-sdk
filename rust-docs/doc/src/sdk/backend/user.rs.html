@@ -299,20 +299,14 @@
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
 <a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module provides functionality for managing a user in the backend. It currently only has the delete user function.
+<a href="#301" id="301">301</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module provides functionality for managing a user in the backend. It currently only has the delete user function.
 //!
 //! The `delete_user_account` function is used to delete a user account by sending a DELETE request to the backend API.
 //! It requires a `Config` object, an access token, and the username of the user to be deleted.
 
 </span><span class="kw">use </span><span class="kw">super</span>::error::{ApiError, <span class="prelude-ty">Result</span>};
-<span class="kw">use crate</span>::{
-    core::Config,
-    types::{currencies::Currency, newtypes::AccessToken},
-};
-<span class="kw">use </span>api_types::api::dlt::{GetPreferredCurrencyResponse, SetPreferredCurrencyRequest};
+<span class="kw">use crate</span>::{core::Config, types::newtypes::AccessToken};
+<span class="kw">use </span>api_types::api::dlt::{GetPreferredNetworkResponse, SetPreferredNetworkRequest};
 <span class="kw">use </span>log::{debug, error, info};
 <span class="kw">use </span>reqwest::StatusCode;
 
@@ -381,20 +375,18 @@
 /// # Errors
 ///
 /// Returns an `Err` variant of [`ApiError`] if there is an error updaing the preferred currency.
-</span><span class="kw">pub async fn </span>set_preferred_currency(
+</span><span class="kw">pub async fn </span>set_preferred_network(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
     username: <span class="kw-2">&amp;</span>str,
-    currency: <span class="prelude-ty">Option</span>&lt;Currency&gt;,
+    network_id: <span class="prelude-ty">Option</span>&lt;String&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
-    <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/currency"</span>);
+    <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/network"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
-    <span class="macro">info!</span>(<span class="string">"Setting preferred currency for {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Setting preferred network for {username}"</span>);
 
-    <span class="kw">let </span>body = SetPreferredCurrencyRequest {
-        currency: currency.map(Into::into),
-    };
+    <span class="kw">let </span>body = SetPreferredNetworkRequest { network_id };
 
     <span class="kw">let </span>client = reqwest::Client::new();
     <span class="kw">let </span>response = client
@@ -425,7 +417,7 @@
     }
 }
 
-<span class="doccomment">/// Get user's preferred currency
+<span class="doccomment">/// Get user's preferred network (id)
 ///
 /// # Arguments
 ///
@@ -435,20 +427,20 @@
 ///
 /// # Returns
 ///
-/// Returns the user's preferred currency, or None if it is not set.
+/// Returns the user's preferred network (id), or None if it is not set.
 ///
 /// # Errors
 ///
-/// Returns an `Err` variant of [`ApiError`] if there is an error getting the preferred currency.
-</span><span class="kw">pub async fn </span>get_preferred_currency(
+/// Returns an `Err` variant of [`ApiError`] if there is an error getting the preferred network (id).
+</span><span class="kw">pub async fn </span>get_preferred_network(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
     username: <span class="kw-2">&amp;</span>str,
-) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Currency&gt;&gt; {
+) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
-    <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/currency"</span>);
+    <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/network"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
-    <span class="macro">info!</span>(<span class="string">"Getting preferred currency for {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Getting preferred network for {username}"</span>);
 
     <span class="kw">let </span>client = reqwest::Client::new();
     <span class="kw">let </span>response = client
@@ -461,11 +453,7 @@
     <span class="macro">debug!</span>(<span class="string">"Response: {response:#?}"</span>);
 
     <span class="kw">match </span>response.status() {
-        StatusCode::OK =&gt; <span class="prelude-val">Ok</span>(response
-            .json::&lt;GetPreferredCurrencyResponse&gt;()
-            .<span class="kw">await</span><span class="question-mark">?
-            </span>.currency
-            .map(Into::into)),
+        StatusCode::OK =&gt; <span class="prelude-val">Ok</span>(response.json::&lt;GetPreferredNetworkResponse&gt;().<span class="kw">await</span><span class="question-mark">?</span>.network_id),
         StatusCode::UNAUTHORIZED =&gt; <span class="prelude-val">Err</span>(ApiError::MissingAccessToken),
         <span class="kw">_ </span>=&gt; {
             <span class="kw">let </span>status = response.status();
@@ -525,7 +513,7 @@
     }
 
     <span class="attr">#[rstest::rstest]
-    #[case(<span class="number">200</span>, <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(Currency::Iota)))]
+    #[case(<span class="number">200</span>, <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>))))]
     #[case(<span class="number">401</span>, <span class="prelude-val">Err</span>(ApiError::MissingAccessToken))]
     #[case(<span class="number">500</span>, <span class="prelude-val">Err</span>(ApiError::UnexpectedResponse {
         code: StatusCode::INTERNAL_SERVER_ERROR,
@@ -536,12 +524,12 @@
         body: <span class="string">""</span>.to_string() 
     }))]
     #[tokio::test]
-    </span><span class="kw">async fn </span>test_get_preferred_currency(<span class="attr">#[case] </span>status_code: usize, <span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;Currency&gt;&gt;) {
+    </span><span class="kw">async fn </span>test_get_preferred_network(<span class="attr">#[case] </span>status_code: usize, <span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt;) {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
-            .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/currency"</span>)
+            .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/network"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
@@ -549,12 +537,12 @@
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
         <span class="comment">// Conditionally add the response body only for the 200 status code
         </span><span class="kw">if </span>status_code == <span class="number">200 </span>{
-            mock_server = mock_server.with_body(<span class="string">"{\"currency\":\"Iota\"}"</span>);
+            mock_server = mock_server.with_body(<span class="string">"{\"network_id\":\"67a1f08edf55756bae21e7eb\"}"</span>);
         }
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_preferred_currency(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_preferred_network(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -585,7 +573,7 @@
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
         <span class="kw">let </span>mock_server = srv
-            .mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/currency"</span>)
+            .mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/network"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
@@ -594,7 +582,13 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = set_preferred_currency(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, <span class="prelude-val">Some</span>(Currency::Iota)).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_preferred_network(
+            <span class="kw-2">&amp;</span>config,
+            <span class="kw-2">&amp;</span>TOKEN,
+            USERNAME,
+            <span class="prelude-val">Some</span>(String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>)),
+        )
+        .<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
