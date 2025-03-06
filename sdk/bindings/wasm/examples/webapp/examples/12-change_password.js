@@ -1,5 +1,5 @@
 import { initSdk } from './util';
-import * as wasm from "cryptpay-sdk-wasm";
+import * as wasm from "cawaena-sdk-wasm";
 
 async function main() {
     let username = "satoshi";
