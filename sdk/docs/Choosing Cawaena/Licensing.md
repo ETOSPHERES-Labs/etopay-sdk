@@ -8,4 +8,4 @@ However, till we decide on the best way to move forward with various open source
 
 ## License
 
-:fontawesome-regular-copyright: 2024 ETO GRUPPE TECHNOLOGIES GmbH, All rights reserved.
+:fontawesome-regular-copyright: 2025 ETOSPHERES Labs GmbH, All rights reserved.
