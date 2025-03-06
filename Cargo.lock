@@ -1081,7 +1081,7 @@ dependencies = [
  "log",
  "ring",
  "sdk",
- "serde_json",
+ "serde",
  "tokio",
  "uuid",
  "wasm-bindgen",
@@ -1364,25 +1364,6 @@ dependencies = [
  "serde_json",
  "tokio",
  "xml",
-]
-
-[[package]]
-name = "cryptpay-sdk-wasm"
-version = "0.14.0"
-dependencies = [
- "console_error_panic_hook",
- "console_log",
- "js-sys",
- "log",
- "ring",
- "sdk",
- "serde",
- "tokio",
- "uuid",
- "wasm-bindgen",
- "wasm-bindgen-futures",
- "wasm-bindgen-test",
- "web-sys",
 ]
 
 [[package]]
