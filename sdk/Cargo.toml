@@ -37,6 +37,9 @@ viviswap-swap = []
 # enables billing api calls
 billing = []
 
+# dummy feature to play nicely with dioxus
+server = []
+
 [dependencies]
 aes-gcm = { version = "0.10.3", default-features = false, features = [
     "alloc",
