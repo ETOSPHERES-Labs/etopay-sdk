@@ -43,7 +43,7 @@ jobs:
       - name: Publish to npm
         run: |
           cd sdk/bindings/wasm
-          wasm-pack publish out/web
+          wasm-pack publish out/web --access public
 
       - name: Pack artifact
         run: |
