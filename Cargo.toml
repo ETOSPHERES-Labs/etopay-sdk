@@ -31,7 +31,7 @@ repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
 [workspace.lints.rust]
 # Since we are using the deprecation annotation to mark things to remove later, it causes a lot of noise in the problems reported in vscode.
 # Therefore we can allow this lint for now, and simply remove it whenever we need to actually see them.
-deprecated = "allow"
+# deprecated = "allow"
 
 # used for the wasm bindings tests
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(wasm_bindgen_unstable_test_coverage)'] }
