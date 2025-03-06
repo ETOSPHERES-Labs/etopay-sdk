@@ -96,7 +96,7 @@ fn generate_pom_xml() {
     writer.write(XmlEvent::start_element("developers")).unwrap();
     writer.write(XmlEvent::start_element("developer")).unwrap();
     write_element!(writer, "name", env!("CARGO_PKG_AUTHORS"));
-    write_element!(writer, "organization", "ETO GRUPPE TECHNOLOGIES GmbH");
+    write_element!(writer, "organization", "ETOSPHERES Labs GmbH");
     write_element!(writer, "organizationUrl", "https://www.etogruppe.com/");
     writer.write(XmlEvent::end_element()).unwrap(); // Close developer
     writer.write(XmlEvent::end_element()).unwrap(); // Close developers
