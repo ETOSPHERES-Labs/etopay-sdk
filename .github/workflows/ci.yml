@@ -141,7 +141,7 @@ jobs:
         run: curl -LsSf https://get.nexte.st/latest/linux | tar zxf - -C ${CARGO_HOME:-~/.cargo}/bin
 
       - name: Run unit tests with coverage
-        run: cargo llvm-cov nextest --profile ci --locked --lib --workspace --no-fail-fast --all-features --cobertura --output-path cobertura.xml --exclude cryptpay-sdk-jni --exclude cryptpay-sdk-swift --exclude cawaena-sdk-wasm --ignore-filename-regex "sdk/bindings/|api_types/|.*/error\.rs"
+        run: cargo llvm-cov nextest --profile ci --locked --lib --workspace --no-fail-fast --all-features --cobertura --output-path cobertura.xml --exclude cawaena-sdk-jni --exclude cawaena-sdk-swift --exclude cawaena-sdk-wasm --ignore-filename-regex "sdk/bindings/|api_types/|.*/error\.rs"
 
       - name: Publish Coverage
         uses: 5monkeys/cobertura-action@master
