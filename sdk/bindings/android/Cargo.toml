@@ -39,7 +39,6 @@ jni = { workspace = true }
 
 [build-dependencies]
 jnigen-build = { path = "../../../tools/jnigen-build" }
-xml = { version = "0.8.20", default-features = false }
 
 # cargo-machete thinks that `jni`, `jnigen-build` and `xml` dependencies are unused, but they are actually needed
 [package.metadata.cargo-machete]
