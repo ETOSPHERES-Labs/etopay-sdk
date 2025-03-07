@@ -52,7 +52,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Publish package
-        run: cd sdk/bindings/android && mvn deploy
+        run: cd sdk/bindings/android && mvn -s settings.xml deploy
         env:
           TOKEN_USERNAME: ${{ secrets.TOKEN_USERNAME }}
           TOKEN_PASSWORD: ${{ secrets.TOKEN_PASSWORD }}
