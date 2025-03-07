@@ -1,5 +1,6 @@
-name: Manual Trigger
+name: deploy-wasm
 
+# Only manual for now since there are no snapshot releases
 on:
   workflow_dispatch:
 
