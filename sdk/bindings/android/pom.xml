@@ -67,6 +67,29 @@
                             </inlineDescriptors>
                         </configuration>
                     </execution>
+					<execution>
+                        <id>linux-x86_64</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <inlineDescriptors>
+                                <inlineDescriptor>
+                                    <id>native-linux-x86_64</id>
+                                    <formats>
+                                        <format>jar</format>
+                                    </formats>
+                                    <files>
+                                        <file>
+											<source>../../../target/release/libwalletsdk.so</source>
+											<outputDirectory>native/x86_64/linux/</outputDirectory>
+                                        </file>
+                                    </files>
+                                </inlineDescriptor>
+                            </inlineDescriptors>
+                        </configuration>
+                    </execution>
 
                 </executions>
             </plugin>
