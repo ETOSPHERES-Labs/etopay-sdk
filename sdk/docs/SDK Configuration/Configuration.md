@@ -48,11 +48,11 @@ Every time the OAuth client refreshes or fetches a new access token for the user
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
 
             try {
                 sdk.setConfig("...");
