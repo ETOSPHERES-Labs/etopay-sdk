@@ -11,7 +11,7 @@ name = "cryptpay-sdk-jni"
 description = "The SDK java native bindings for use in java based applications and android"
 
 [lib]
-name = "walletsdk_jni"
+name = "walletsdk"
 crate-type = ["cdylib"]
 
 [lints]

@@ -8,10 +8,6 @@
 
 build_sdk:
 	@cargo ndk -o ./jar/java/jniLibs -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 build --release --locked
-	@mv ./jar/java/jniLibs/arm64-v8a/libwalletsdk_jni.so		./jar/java/jniLibs/arm64-v8a/libwalletsdk.so
-	@mv ./jar/java/jniLibs/x86_64/libwalletsdk_jni.so		./jar/java/jniLibs/x86_64/libwalletsdk.so
-	@mv ./jar/java/jniLibs/armeabi-v7a/libwalletsdk_jni.so	./jar/java/jniLibs/armeabi-v7a/libwalletsdk.so
-	@mv ./jar/java/jniLibs/x86/libwalletsdk_jni.so			./jar/java/jniLibs/x86/libwalletsdk.so
 
 bundle:build_sdk
 	cd jar/java/com/cawaena && javac Wallet.java
