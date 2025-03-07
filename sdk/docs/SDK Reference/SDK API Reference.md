@@ -35,6 +35,14 @@ The Javadoc API reference for the Java bindings is available [here](../javadoc/c
 
 The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). Please consult the tables below for the dependencies between each function.
 
+## Java
+
+The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etogruppe/CryptpaySdk.html). Please consult the tables below for the dependencies between each function.
+
+## Rust
+
+The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). Please consult the tables below for the dependencies between each function.
+
 ## SDK Initialization and Configuration
 
 ### Instantiating the SDK
