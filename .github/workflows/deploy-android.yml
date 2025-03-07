@@ -1,4 +1,4 @@
-name: Deploy
+name: deploy-android
 
 # only run this on push to main (eg. after PR merge)
 on:
