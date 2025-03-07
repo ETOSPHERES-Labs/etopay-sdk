@@ -43,7 +43,7 @@ jobs:
       - name: Build android sdk bundle
         env:
           IS_SNAPSHOT: true
-        run: cd sdk/bindings/android && make bundle
+        run: cd sdk/bindings/android && make build_sdk
 
       - name: Set up Maven Central Repository
         uses: actions/setup-java@v4
@@ -52,7 +52,7 @@ jobs:
           distribution: 'zulu'
 
       - name: Publish package
-        run: mvn deploy
+        run: cd sdk/bindings/android && mvn deploy
         env:
           TOKEN_USERNAME: ${{ secrets.TOKEN_USERNAME }}
           TOKEN_PASSWORD: ${{ secrets.TOKEN_PASSWORD }}
