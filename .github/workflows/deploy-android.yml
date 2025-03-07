@@ -3,8 +3,8 @@ name: deploy-android
 # only run this on push to main (eg. after PR merge)
 on:
   push:
-    # branches:
-    #  - main
+    branches:
+     - main
 
 env:
   CARGO_TERM_COLOR: always
