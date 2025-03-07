@@ -51,3 +51,19 @@
     --md-footer-bg-color: #3A3E3B;
     /* Deep gray */
 }
+
+.md-footer-custom-links {
+    text-align: center;
+    padding: 1rem 0;
+}
+
+.md-footer-custom-links a {
+    color: var(--md-footer-fg-color--light);
+    margin: 0 0.5rem;
+}
+
+.md-footer-meta__inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
