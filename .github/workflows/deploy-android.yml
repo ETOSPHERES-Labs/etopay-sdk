@@ -1,0 +1,73 @@
+name: deploy-android
+
+# only run this on push to main (eg. after PR merge)
+on:
+  push:
+    branches:
+     - main
+
+env:
+  CARGO_TERM_COLOR: always
+  # Disable incremental compilation for faster from-scratch builds
+  CARGO_INCREMENTAL: 0
+
+# cancel the job if a newer pipeline starts for the same MR or branch
+concurrency:
+  group: deploy-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy-sdk-android:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: aarch64-linux-android,armv7-linux-androideabi,x86_64-linux-android,i686-linux-android
+      - uses: Swatinem/rust-cache@v2
+      - uses: nttld/setup-ndk@v1
+        with:
+          ndk-version: r26d
+          local-cache: true
+
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install cargo-ndk
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-ndk
+
+      - name: Build android native libraries
+        run: cd sdk/bindings/android && make build_sdk
+
+      - name: Set up Java and Maven
+        uses: actions/setup-java@v4
+        with:
+          java-version: "23"
+          distribution: "zulu"
+
+      - name: Set version
+        run: |
+          cd sdk/bindings/android
+
+          # get the version from cargo
+          PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "cawaena-sdk-jni") | .version')
+
+          # create the version string, only supports SNAPSHOT versions for now (add logic to change if release here)
+          PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")
+
+          # store the version in PUBLISH_VERSION env used by pom.xml in the next step
+          echo "PUBLISH_VERSION=$PUBLISH_VERSION" >> "$GITHUB_ENV"
+          echo "Publishing with version $PUBLISH_VERSION"
+
+      - name: Publish package
+        run: |
+          cd sdk/bindings/android
+          mvn -s settings.xml deploy
+        env:
+          TOKEN_USERNAME: ${{ secrets.TOKEN_USERNAME }}
+          TOKEN_PASSWORD: ${{ secrets.TOKEN_PASSWORD }}
