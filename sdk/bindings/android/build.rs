@@ -13,12 +13,12 @@ fn main() {
     // generate jni java bindings
     println!("cargo:rerun-if-changed=src/lib.rs");
     jnigen_build::generate("src/lib.rs", "walletsdk", "tests/src/main/java");
-    jnigen_build::generate("src/lib.rs", "walletsdk", "./jar/java");
+    jnigen_build::generate("src/lib.rs", "walletsdk", "src/main/java");
 
     if env::var("CARGO_CFG_TARGET_OS").unwrap() == "android" {
         android();
-        generate_pom_xml();
-        generate_settings_xml();
+        // generate_pom_xml();
+        // generate_settings_xml();
     }
 }
 

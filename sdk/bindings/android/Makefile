@@ -7,7 +7,7 @@
 .PHONY = clean build_sdk bundle lib_example run_example build_javadoc
 
 build_sdk:
-	@cargo ndk -o ./jar/java/jniLibs -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 build --release --locked
+	@cargo ndk -o ./jniLibs -t armeabi-v7a -t arm64-v8a -t x86 -t x86_64 build --release --locked
 
 bundle:build_sdk
 	cd jar/java/com/cawaena && javac Wallet.java
