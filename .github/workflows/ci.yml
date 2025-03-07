@@ -241,6 +241,12 @@ jobs:
           version: "21.12"
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          java-version: "23"
+          distribution: "zulu"
+
       - name: Run android bindings tests
         run: cd sdk/bindings/android/tests && gradle test
 

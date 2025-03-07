@@ -44,7 +44,7 @@ jobs:
       - name: Build android native libraries
         run: cd sdk/bindings/android && make build_sdk
 
-      - name: Set up Maven
+      - name: Set up Java and Maven
         uses: actions/setup-java@v4
         with:
           java-version: "23"
