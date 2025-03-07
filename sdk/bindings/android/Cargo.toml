@@ -7,11 +7,11 @@ homepage.workspace = true
 repository.workspace = true
 publish = false
 
-name = "cryptpay-sdk-jni"
+name = "cawaena-sdk-jni"
 description = "The SDK java native bindings for use in java based applications and android"
 
 [lib]
-name = "walletsdk_jni"
+name = "walletsdk"
 crate-type = ["cdylib"]
 
 [lints]
@@ -39,7 +39,6 @@ jni = { workspace = true }
 
 [build-dependencies]
 jnigen-build = { path = "../../../tools/jnigen-build" }
-xml = { version = "0.8.20", default-features = false }
 
 # cargo-machete thinks that `jni`, `jnigen-build` and `xml` dependencies are unused, but they are actually needed
 [package.metadata.cargo-machete]

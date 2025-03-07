@@ -71,11 +71,11 @@ This does not require any user input except `username`,  `password` and `pin`. B
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
             sdk.setConfig("...");
             
             // Generate access token
@@ -149,11 +149,11 @@ This just performs the second step of the create fresh wallet process and needs 
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
             sdk.setConfig("...");
             
             // Generate access token
@@ -236,11 +236,11 @@ To restore the backup, the following are required:
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
             sdk.setConfig("...");
             
             // Generate access token
@@ -314,11 +314,11 @@ This function just deletes the wallet files and is a one-way function, to be use
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
             sdk.setConfig("...");
             
             // Generate access token
@@ -397,11 +397,11 @@ In addition to creating, migrating, backups and initialization, the wallet modul
 
     ```java linenums="1"
     package org.example.app;
-    import com.etogruppe.CawaenaSdk;
+    import com.cawaena.Wallet;
 
     public class app {
         public static void main(){
-            CawaenaSdk sdk = new CawaenaSdk();
+            Wallet sdk = new Wallet();
             sdk.setConfig("...");
             
             // Generate access token

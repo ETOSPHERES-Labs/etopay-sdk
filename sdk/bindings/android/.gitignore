@@ -1,6 +1,5 @@
 target
 /jar
-jniLibs.zip
-lib/*.class
-lib/*.h
+jniLibs/
 javadoc/
+/src/main

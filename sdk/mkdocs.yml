@@ -89,12 +89,15 @@ theme:
 copyright: Copyright &copy; 2025 - ETOSPHERES Labs GmbH
 extra:
   social:
-    - icon: fontawesome/solid/stamp
-      link: https://cawaena.com/#/main/imprint
-      name: Imprint
     - icon: fontawesome/solid/paper-plane
       link: mailto:contact@etospheres.com
       name: Contact Us
+    - icon: fontawesome/brands/x-twitter
+      link: https://x.com/ETOSPHERES
+      name: X
+    - icon: fontawesome/brands/linkedin
+      link: https://www.linkedin.com/company/etospheres/
+      name: LinkedIn
     - icon: fontawesome/brands/discord
       link: https://discord.gg/ppNGRFsV
       name: Cawaena Discord channel
