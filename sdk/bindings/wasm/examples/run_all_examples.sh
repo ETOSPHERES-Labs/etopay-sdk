@@ -19,7 +19,6 @@ examples=(
     "12-change_password.ts"
     "13-send_amount.ts"
     "14-get_exchange_rate.ts"
-    "15-claim_output.ts"
     "16-get_tx_list.ts"
     "17-create_customer.ts"
     "18-delete_user.ts"
