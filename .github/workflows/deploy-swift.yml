@@ -2,6 +2,7 @@ name: deploy-swift
 
 # only run this on push to main (eg. after PR merge)
 on:
+  workflow_dispatch:
   push:
     branches:
      - main
