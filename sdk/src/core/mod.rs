@@ -91,21 +91,17 @@ impl Sdk {
     /// Set network
     pub async fn set_network(&mut self, network_id: String) -> Result<()> {
         debug!("Selected network_id: {:?}", network_id.clone());
-        let networks = match &self.networks {
+        let networks = match self.networks.as_ref() {
             Some(n) => n,
             None => {
-                // if there is an access token, push the generated address to the backend
-                if let Some(_access_token) = self.access_token.as_ref() {
-                    let result = self.get_networks_backend().await;
-                    &match result {
-                        Ok(n) => {
-                            self.networks = Some(n.clone());
-                            n
-                        }
-                        Err(e) => Err(e)?,
-                    }
-                } else {
+                if self.access_token.is_none() {
                     return Err(crate::Error::MissingNetwork);
+                }
+                let fetched = self.get_networks_backend().await?;
+                self.networks = Some(fetched);
+                match self.networks.as_ref() {
+                    Some(n) => n,
+                    None => return Err(crate::Error::MissingNetwork),
                 }
             }
         };
