@@ -99,7 +99,7 @@ web-sys = { version = "0.3", default-features = false, features = [
 ] }
 
 [build-dependencies]
-shadow-rs = { version = "1.0.1", default-features = false }
+shadow-rs = { version = "1.0.1", default-features = false, features = ["build"] }
 
 [dev-dependencies]
 dotenvy = { workspace = true }
