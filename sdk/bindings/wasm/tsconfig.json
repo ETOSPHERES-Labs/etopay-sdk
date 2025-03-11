@@ -1,5 +1,5 @@
 {
     "files": [
-        "pkg/cryptpay_sdk_wasm.d.ts"
+        "pkg/cawaena_sdk_wasm.d.ts"
     ],
 }
