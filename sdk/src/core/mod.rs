@@ -94,13 +94,18 @@ impl Sdk {
         let networks = match &self.networks {
             Some(n) => n,
             None => {
-                let result = self.get_networks_backend().await;
-                &match result {
-                    Ok(n) => {
-                        self.networks = Some(n.clone());
-                        n
+                // if there is an access token, push the generated address to the backend
+                if let Some(_access_token) = self.access_token.as_ref() {
+                    let result = self.get_networks_backend().await;
+                    &match result {
+                        Ok(n) => {
+                            self.networks = Some(n.clone());
+                            n
+                        }
+                        Err(e) => Err(e)?,
                     }
-                    Err(e) => Err(e)?,
+                } else {
+                    return Err(crate::Error::MissingNetwork);
                 }
             }
         };
