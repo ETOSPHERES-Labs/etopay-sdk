@@ -1,5 +1,6 @@
 /// This file configures and generates metadata for the SDK build process, including information
 /// about the environment, version, and other build-related properties.
+#[allow(clippy::expect_used)]
 fn main() {
     // Create a default deny set which excludes `CARGO_METADATA`.
 
@@ -11,5 +12,8 @@ fn main() {
     deny.insert(shadow_rs::COMMIT_AUTHOR);
     deny.insert(shadow_rs::COMMIT_EMAIL);
 
-    shadow_rs::ShadowBuilder::builder().deny_const(deny).build().unwrap();
+    shadow_rs::ShadowBuilder::builder()
+        .deny_const(deny)
+        .build()
+        .expect("could not build shadow_rs constants");
 }
