@@ -1,5 +1,5 @@
 //  Need to do manual verification on postident: https://postident-itu.deutschepost.de/testapp
-import * as wasm from "../pkg/cryptpay_sdk_wasm";
+import * as wasm from "../pkg/cawaena_sdk_wasm";
 import { initSdk } from './utils';
 
 async function main() {

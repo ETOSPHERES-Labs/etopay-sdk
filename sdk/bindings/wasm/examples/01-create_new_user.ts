@@ -1,4 +1,4 @@
-import * as wasm from "../pkg/cryptpay_sdk_wasm";// Import the WASM module
+import * as wasm from "../pkg/cawaena_sdk_wasm";// Import the WASM module
 import { initSdk } from './utils';
 
 async function main() {

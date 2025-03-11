@@ -1,4 +1,4 @@
-import * as wasm from "../pkg/cryptpay_sdk_wasm";
+import * as wasm from "../pkg/cawaena_sdk_wasm";
 import { initSdk } from './utils';
 
 // Send compliment example with sender `alice` and receiver `satoshi`
