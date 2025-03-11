@@ -83,7 +83,7 @@ Every time the OAuth client refreshes or fetches a new access token for the user
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cryptpay_sdk_wasm";
+    import * as wasm from "../pkg/cawaena_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
