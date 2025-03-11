@@ -213,7 +213,8 @@
 <a href="#212" id="212">212</a>
 <a href="#213" id="213">213</a>
 <a href="#214" id="214">214</a>
-<a href="#215" id="215">215</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
 
 /// Account module.
 </span><span class="attr">#[cfg(feature = <span class="string">"billing"</span>)]
@@ -306,16 +307,17 @@
     <span class="doccomment">/// Set network
     </span><span class="kw">pub async fn </span>set_network(<span class="kw-2">&amp;mut </span><span class="self">self</span>, network_id: String) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">debug!</span>(<span class="string">"Selected network_id: {:?}"</span>, network_id.clone());
-        <span class="kw">let </span>networks = <span class="kw">match </span><span class="kw-2">&amp;</span><span class="self">self</span>.networks {
+        <span class="kw">let </span>networks = <span class="kw">match </span><span class="self">self</span>.networks.as_ref() {
             <span class="prelude-val">Some</span>(n) =&gt; n,
             <span class="prelude-val">None </span>=&gt; {
-                <span class="kw">let </span>result = <span class="self">self</span>.get_networks_backend().<span class="kw">await</span>;
-                <span class="kw-2">&amp;</span><span class="kw">match </span>result {
-                    <span class="prelude-val">Ok</span>(n) =&gt; {
-                        <span class="self">self</span>.networks = <span class="prelude-val">Some</span>(n.clone());
-                        n
-                    }
-                    <span class="prelude-val">Err</span>(e) =&gt; <span class="prelude-val">Err</span>(e)<span class="question-mark">?</span>,
+                <span class="kw">if </span><span class="self">self</span>.access_token.is_none() {
+                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingNetwork);
+                }
+                <span class="kw">let </span>fetched = <span class="self">self</span>.get_networks_backend().<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="self">self</span>.networks = <span class="prelude-val">Some</span>(fetched);
+                <span class="kw">match </span><span class="self">self</span>.networks.as_ref() {
+                    <span class="prelude-val">Some</span>(n) =&gt; n,
+                    <span class="prelude-val">None </span>=&gt; <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingNetwork),
                 }
             }
         };
