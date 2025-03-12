@@ -8,7 +8,7 @@ pub enum NetworkType {
     /// Contains the URL for the node and the chain ID.
     Evm {
         /// node url
-        node_url: String,
+        node_url: Vec<String>,
         /// chain_id
         chain_id: u64,
     },
@@ -16,7 +16,7 @@ pub enum NetworkType {
     /// Contains the URL for the node.
     Stardust {
         /// node url
-        node_url: String,
+        node_url: Vec<String>,
     },
 }
 

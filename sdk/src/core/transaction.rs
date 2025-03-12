@@ -861,7 +861,7 @@ mod tests {
             amount: 5.0,
             network: String::from("ETH"),
             status: format!("{:?}", InclusionState::Pending),
-            explorer_url: Some(String::new()),
+            explorer_url: Some(vec![String::new()]),
         };
 
         let wallet_transactions = vec![wallet_transaction.clone()].to_owned();
