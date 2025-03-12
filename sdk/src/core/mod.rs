@@ -92,22 +92,8 @@ impl Sdk {
     /// Set network
     pub async fn set_network(&mut self, network_id: String) -> Result<()> {
         debug!("Selected network_id: {:?}", network_id.clone());
-        let networks = match self.networks.as_ref() {
-            Some(n) => n,
-            None => {
-                if self.access_token.is_none() {
-                    return Err(crate::Error::MissingNetwork);
-                }
-                let fetched = self.get_networks_backend().await?;
-                self.networks = Some(fetched);
-                match self.networks.as_ref() {
-                    Some(n) => n,
-                    None => return Err(crate::Error::MissingNetwork),
-                }
-            }
-        };
 
-        let Some(network) = networks.iter().find(|network| network.id == network_id) else {
+        let Some(network) = self.networks.iter().find(|network| network.id == network_id) else {
             return Err(crate::Error::NetworkUnavailable(network_id));
         };
 
@@ -125,6 +111,10 @@ impl Sdk {
     /// Get networks
     pub async fn get_networks(&mut self) -> Result<Vec<Network>> {
         if self.networks.is_empty() {
+            if self.access_token.is_none() {
+                return Err(crate::Error::MissingNetwork);
+            }
+
             let result = self.get_networks_backend().await;
             match result {
                 Ok(n) => {
