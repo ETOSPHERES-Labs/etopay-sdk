@@ -1,5 +1,5 @@
 import * as wasm from "../pkg/cawaena_sdk_wasm";
-import { initSdk } from './utils';
+import { initSdk, IOTA_NETWORK_ID } from './utils';
 
 async function main() {
     let username = "satoshi";
@@ -23,8 +23,10 @@ async function main() {
     // Migrate wallet from backup
     await sdk.createWalletFromBackup(pin, backup, backup_password);
 
+    // fetch networks from backend
     await sdk.getNetworks();
-    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+    // set the network configuration for the wallet
+    sdk.setNetwork(IOTA_NETWORK_ID);
 
     // use wallet
     let _address = await sdk.generateNewAddress(pin);

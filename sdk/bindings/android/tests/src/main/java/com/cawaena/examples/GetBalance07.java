@@ -21,6 +21,11 @@ public class GetBalance07 {
             sdk.setWalletPassword(utils.PIN, password);
             sdk.createWalletFromMnemonic(utils.PIN, mnemonic);
             System.out.println("Created and initialized new wallet from mnemonic.");
+            
+            // fetch networks from backend
+            sdk.getNetworks();
+            // set the network configuration for the wallet
+            sdk.setNetwork(utils.IOTA_NETWORK_ID);
 
             // generate receiver address
             String address = sdk.generateNewAddress(utils.PIN);

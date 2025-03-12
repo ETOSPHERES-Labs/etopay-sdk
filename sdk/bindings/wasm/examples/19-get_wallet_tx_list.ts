@@ -1,5 +1,5 @@
 import * as wasm from "../pkg/cawaena_sdk_wasm";
-import { initSdk } from './utils';
+import { initSdk, IOTA_NETWORK_ID } from './utils';
 
 
 async function main() {
@@ -16,8 +16,10 @@ async function main() {
     await sdk.createWalletFromMnemonic(pin, mnemonic); // Initialize the wallet
     console.log("Wallet initialized!");
 
+    // fetch networks from backend
     await sdk.getNetworks();
-    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+    // set the network configuration for the wallet
+    sdk.setNetwork(IOTA_NETWORK_ID);
 
     let transactions = await sdk.getWalletTransactionList(pin, 0, 10);  // Get the transaction list
     console.log("Wallet transactions list: " + JSON.stringify(transactions));

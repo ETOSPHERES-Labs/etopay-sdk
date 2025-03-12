@@ -1,6 +1,6 @@
 use rust_decimal_macros::dec;
 use sdk::types::currencies::CryptoAmount;
-use testing::USER_SATOSHI;
+use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
 mod utils;
 use utils::init_sdk;
 
@@ -20,6 +20,10 @@ async fn main() {
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
+
+    // Fetch networks from backend
+    sdk.get_networks().await.unwrap();
+    sdk.set_network(IOTA_NETWORK_ID.to_string()).await.unwrap();
 
     // Generate address
     let address = sdk.generate_new_address(&user.pin).await.unwrap();

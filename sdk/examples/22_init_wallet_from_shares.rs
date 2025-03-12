@@ -1,5 +1,5 @@
 use sdk::{ErrorKind, WalletError};
-use testing::USER_SATOSHI;
+use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
 use utils::init_sdk;
 mod utils;
 
@@ -15,6 +15,10 @@ async fn main() {
     // Create new user
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
+
+    // Fetch networks from backend
+    sdk.get_networks().await.unwrap();
+    sdk.set_network(IOTA_NETWORK_ID.to_string()).await.unwrap();
 
     // use wallet without creating a new one first
     let output = sdk.generate_new_address(&user.pin).await;

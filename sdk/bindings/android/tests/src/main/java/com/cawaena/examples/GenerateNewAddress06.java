@@ -22,6 +22,12 @@ public class GenerateNewAddress06 {
             sdk.createWalletFromMnemonic(utils.PIN, mnemonic);
             System.out.println("Created and initialized new wallet from mnemonic.");
 
+            
+            // fetch networks from backend
+            sdk.getNetworks();
+            // set the network configuration for the wallet
+            sdk.setNetwork(utils.IOTA_NETWORK_ID);
+
             // generate receiver address
             String address = sdk.generateNewAddress(utils.PIN);
             System.out.println("address: " + address);

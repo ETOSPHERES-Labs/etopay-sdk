@@ -2,7 +2,7 @@ use api_types::api::transactions::ApiTxStatus;
 use rust_decimal_macros::dec;
 use sdk::types::{currencies::CryptoAmount, newtypes::AccessToken};
 use std::time::Duration;
-use testing::USER_HANS34;
+use testing::{IOTA_NETWORK_ID, USER_HANS34};
 mod utils;
 use tokio::time;
 use utils::init_sdk;
@@ -31,6 +31,10 @@ async fn main() {
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
+
+    // Fetch networks from backend
+    sdk.get_networks().await.unwrap();
+    sdk.set_network(IOTA_NETWORK_ID.to_string()).await.unwrap();
 
     // Generate address and get balance
     let address = sdk.generate_new_address(&user.pin).await.unwrap(); // this is needed, otherwise the balance will be 0 and tx will fail

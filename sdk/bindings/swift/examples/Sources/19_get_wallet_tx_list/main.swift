@@ -29,6 +29,11 @@ Task {
         let _ = try await sdk.createNewWallet(env.pin)
         print("created new wallet")
         
+        // Fetch networks from backend
+        try await sdk.getNetworks()
+        try await sdk.setNetwork(NetworkConstants.iotaNetworkId)
+        print("retrieved available networks and set the network for the wallet")
+        
         // Get wallet tx list
         let tx_list = try await sdk.getWalletTransactionList(env.pin, 0, 10)
         // need to properly print the list

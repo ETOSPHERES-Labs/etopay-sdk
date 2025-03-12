@@ -15,6 +15,11 @@ public class GetExchangeRate14 {
             sdk.createNewUser(utils.USERNAME_SATOSHI);
             sdk.initializeUser(utils.USERNAME_SATOSHI);
             System.out.println("Created and initialized new user.");
+            
+            // fetch networks from backend
+            sdk.getNetworks();
+            // set the network configuration for the wallet
+            sdk.setNetwork(utils.IOTA_NETWORK_ID);
 
             // get exchange rate
             double exchange_rate = sdk.getExchangeRate();

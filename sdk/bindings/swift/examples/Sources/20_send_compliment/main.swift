@@ -30,6 +30,11 @@ Task {
         try await sdk.setWalletPassword(env.pin, env.password)
         let _ = try await sdk.createWalletFromMnemonic(env.pin, mnemonic_alice)
         print("migrated wallet from mnemonic")
+        
+        // Fetch networks from backend
+        try await sdk.getNetworks()
+        try await sdk.setNetwork(NetworkConstants.iotaNetworkId)
+        print("retrieved available networks and set the network for the wallet")
 
         // Generate address
         let address = try await sdk.generateNewAddress(env.pin)

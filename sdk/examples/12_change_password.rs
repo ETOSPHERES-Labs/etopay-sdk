@@ -1,6 +1,6 @@
 use sdk::types::newtypes::PlainPassword;
 mod utils;
-use testing::USER_SATOSHI;
+use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
 use utils::init_sdk;
 
 #[allow(clippy::unwrap_used, clippy::expect_used)]
@@ -21,6 +21,10 @@ async fn main() {
     // Change password
     let new_password = PlainPassword::try_from_string("StrongP@ssw0rd").unwrap();
     sdk.set_wallet_password(&user.pin, &new_password).await.unwrap();
+
+    // Fetch networks from backend
+    sdk.get_networks().await.unwrap();
+    sdk.set_network(IOTA_NETWORK_ID.to_string()).await.unwrap();
 
     // use wallet
     let _address = sdk.generate_new_address(&user.pin).await.unwrap();

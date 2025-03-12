@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 import axios from 'axios';
 import { LocalStorage } from "node-localstorage";
 
+export const IOTA_NETWORK_ID = "67a1f08edf55756bae21e7eb";
+
 export async function initSdk(username: string) {
     dotenv.config();
 

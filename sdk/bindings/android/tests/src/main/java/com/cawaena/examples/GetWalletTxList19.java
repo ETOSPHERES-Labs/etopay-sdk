@@ -20,6 +20,11 @@ public class GetWalletTxList19 {
             sdk.setWalletPassword(utils.PIN, password);
             sdk.createNewWallet(utils.PIN);
             System.out.println("Created and initialized new wallet.");
+            
+            // fetch networks from backend
+            sdk.getNetworks();
+            // set the network configuration for the wallet
+            sdk.setNetwork(utils.IOTA_NETWORK_ID);
 
             // get wallet_tx_list
             String wallet_tx_list = sdk.getWalletTransactionList(utils.PIN, 0, 10);

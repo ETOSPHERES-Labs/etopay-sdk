@@ -19,6 +19,12 @@ public class MigrateWalletFromMnemonic04 {
 
             // create new wallet
             sdk.setWalletPassword(utils.PIN, password);
+
+            // fetch networks from backend
+            sdk.getNetworks();
+            // set the network configuration for the wallet
+            sdk.setNetwork(utils.IOTA_NETWORK_ID);
+
             sdk.createWalletFromMnemonic(utils.PIN, mnemonic);
             System.out.println("Created new wallet from mnemonic.");
 

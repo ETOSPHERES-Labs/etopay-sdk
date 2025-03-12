@@ -1,5 +1,5 @@
 import * as wasm from "../pkg/cawaena_sdk_wasm";
-import { initSdk } from './utils';
+import { initSdk, IOTA_NETWORK_ID } from './utils';
 
 async function main() {
 
@@ -9,8 +9,10 @@ async function main() {
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
 
+    // fetch networks from backend
     await sdk.getNetworks();
-    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+    // set the network configuration for the wallet
+    sdk.setNetwork(IOTA_NETWORK_ID);
 
     let course = await sdk.getExchangeRate();
     console.log(course);
