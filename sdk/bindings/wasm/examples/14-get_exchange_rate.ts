@@ -8,6 +8,10 @@ async function main() {
     const sdk = await initSdk(username);
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
+
+    await sdk.getNetworks();
+    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+
     let course = await sdk.getExchangeRate();
     console.log(course);
 }

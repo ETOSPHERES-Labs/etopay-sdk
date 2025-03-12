@@ -16,6 +16,9 @@ async function main() {
     await sdk.createWalletFromMnemonic(pin, mnemonic); // Initialize the wallet
     console.log("Wallet initialized!");
 
+    await sdk.getNetworks();
+    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+
     let transactions = await sdk.getWalletTransactionList(pin, 0, 10);  // Get the transaction list
     console.log("Wallet transactions list: " + JSON.stringify(transactions));
 }

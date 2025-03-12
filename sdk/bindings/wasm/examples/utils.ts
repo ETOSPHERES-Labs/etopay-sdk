@@ -34,12 +34,10 @@ export async function initSdk(username: string) {
     }
     `);
 
-    await sdk.getNetworks();
-    sdk.setNetwork("67a1f08edf55756bae21e7eb");
-
     // Generate access token
     let access_token = await generateAccessToken(username);
     await sdk.refreshAccessToken(access_token);
+
     return sdk;
 }
 

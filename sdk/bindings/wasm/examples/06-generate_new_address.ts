@@ -13,6 +13,9 @@ async function main() {
     await sdk.initializeUser(username);
     await sdk.setWalletPassword(pin, password);
 
+    await sdk.getNetworks();
+    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+
     await sdk.createNewWallet(pin);
     console.log("Wallet initialized!");
     let address = await sdk.generateNewAddress(pin);

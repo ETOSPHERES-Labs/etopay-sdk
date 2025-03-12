@@ -19,6 +19,9 @@ async function main() {
     console.log("change password successful");
 
     // use wallet
+    await sdk.getNetworks();
+    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+
     let _address = await sdk.generateNewAddress(pin);
 }
 
