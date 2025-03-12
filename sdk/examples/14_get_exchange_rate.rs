@@ -14,8 +14,9 @@ async fn main() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Fetch networks from backend
-    sdk.get_networks().await.unwrap();
-    sdk.set_network(IOTA_NETWORK_ID.to_string()).await.unwrap();
+    let networks = sdk.get_networks().await.unwrap();
+    let iota_network_id = &networks.first().unwrap().id;
+    sdk.set_network(iota_network_id.to_string()).await.unwrap();
 
     // Get exchange rate
     let exchange_rate = sdk.get_exchange_rate().await.unwrap();
