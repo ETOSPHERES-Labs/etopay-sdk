@@ -1,4 +1,4 @@
-use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
+use testing::USER_SATOSHI;
 mod utils;
 use utils::init_sdk;
 

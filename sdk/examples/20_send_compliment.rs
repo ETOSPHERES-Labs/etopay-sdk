@@ -2,7 +2,7 @@ use api_types::api::transactions::ApiTxStatus;
 use rust_decimal_macros::dec;
 use sdk::types::{currencies::CryptoAmount, newtypes::AccessToken};
 use std::time::Duration;
-use testing::{IOTA_NETWORK_ID, USER_HANS34};
+use testing::USER_HANS34;
 mod utils;
 use tokio::time;
 use utils::init_sdk;

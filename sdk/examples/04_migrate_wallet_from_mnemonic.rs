@@ -1,5 +1,5 @@
 mod utils;
-use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
+use testing::USER_SATOSHI;
 use utils::init_sdk;
 
 #[allow(clippy::unwrap_used, clippy::expect_used)]

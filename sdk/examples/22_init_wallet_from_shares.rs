@@ -1,5 +1,5 @@
 use sdk::{ErrorKind, WalletError};
-use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
+use testing::USER_SATOSHI;
 use utils::init_sdk;
 mod utils;
 

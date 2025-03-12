@@ -1,6 +1,6 @@
 use rust_decimal_macros::dec;
 use sdk::types::currencies::CryptoAmount;
-use testing::{IOTA_NETWORK_ID, USER_SATOSHI};
+use testing::USER_SATOSHI;
 mod utils;
 use utils::init_sdk;
 
@@ -22,8 +22,9 @@ async fn main() {
         .unwrap();
 
     // Fetch networks from backend
-    sdk.get_networks().await.unwrap();
-    sdk.set_network(IOTA_NETWORK_ID.to_string()).await.unwrap();
+    let networks = sdk.get_networks().await.unwrap();
+    let iota_network_id = &networks.first().unwrap().id;
+    sdk.set_network(iota_network_id.to_string()).await.unwrap();
 
     // Generate address
     let address = sdk.generate_new_address(&user.pin).await.unwrap();
