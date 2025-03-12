@@ -2212,7 +2212,7 @@
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
-                sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+                sdk.set_networks(example_networks());
                 sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
 
                 <span class="kw">let </span>mock_request = SetUserAddressRequest {
@@ -2287,7 +2287,7 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+                sdk.set_networks(example_networks());
                 sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
@@ -2338,7 +2338,7 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+                sdk.set_networks(example_networks());
                 sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
@@ -2390,7 +2390,7 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+                sdk.set_networks(example_networks());
                 sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {

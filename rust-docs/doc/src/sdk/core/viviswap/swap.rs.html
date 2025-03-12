@@ -1759,7 +1759,7 @@
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
         sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
 
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(network.id.clone()).<span class="kw">await</span>.unwrap(); <span class="comment">// Set parametrized network
         </span>sdk.refresh_access_token(<span class="prelude-val">Some</span>(TOKEN.clone())).<span class="kw">await</span>.unwrap();
 
@@ -1842,7 +1842,7 @@
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
 
         <span class="kw">let </span>mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, <span class="bool-val">false</span>, <span class="number">3</span>, KycType::Viviswap);
@@ -1886,7 +1886,7 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
 
         sdk.repo = <span class="prelude-val">Some</span>(Box::new(example_get_user(

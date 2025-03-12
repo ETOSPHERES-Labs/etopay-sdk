@@ -284,110 +284,12 @@
 <a href="#283" id="283">283</a>
 <a href="#284" id="284">284</a>
 <a href="#285" id="285">285</a>
-<a href="#286" id="286">286</a>
-<a href="#287" id="287">287</a>
-<a href="#288" id="288">288</a>
-<a href="#289" id="289">289</a>
-<a href="#290" id="290">290</a>
-<a href="#291" id="291">291</a>
-<a href="#292" id="292">292</a>
-<a href="#293" id="293">293</a>
-<a href="#294" id="294">294</a>
-<a href="#295" id="295">295</a>
-<a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a>
-<a href="#313" id="313">313</a>
-<a href="#314" id="314">314</a>
-<a href="#315" id="315">315</a>
-<a href="#316" id="316">316</a>
-<a href="#317" id="317">317</a>
-<a href="#318" id="318">318</a>
-<a href="#319" id="319">319</a>
-<a href="#320" id="320">320</a>
-<a href="#321" id="321">321</a>
-<a href="#322" id="322">322</a>
-<a href="#323" id="323">323</a>
-<a href="#324" id="324">324</a>
-<a href="#325" id="325">325</a>
-<a href="#326" id="326">326</a>
-<a href="#327" id="327">327</a>
-<a href="#328" id="328">328</a>
-<a href="#329" id="329">329</a>
-<a href="#330" id="330">330</a>
-<a href="#331" id="331">331</a>
-<a href="#332" id="332">332</a>
-<a href="#333" id="333">333</a>
-<a href="#334" id="334">334</a>
-<a href="#335" id="335">335</a>
-<a href="#336" id="336">336</a>
-<a href="#337" id="337">337</a>
-<a href="#338" id="338">338</a>
-<a href="#339" id="339">339</a>
-<a href="#340" id="340">340</a>
-<a href="#341" id="341">341</a>
-<a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a>
-<a href="#349" id="349">349</a>
-<a href="#350" id="350">350</a>
-<a href="#351" id="351">351</a>
-<a href="#352" id="352">352</a>
-<a href="#353" id="353">353</a>
-<a href="#354" id="354">354</a>
-<a href="#355" id="355">355</a>
-<a href="#356" id="356">356</a>
-<a href="#357" id="357">357</a>
-<a href="#358" id="358">358</a>
-<a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
-<a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a>
-<a href="#367" id="367">367</a>
-<a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a></pre></div><pre class="rust"><code><span class="doccomment">//! Configuration for SDK
+<a href="#286" id="286">286</a></pre></div><pre class="rust"><code><span class="doccomment">//! Configuration for SDK
 //!
 //!
 
 </span><span class="kw">use </span><span class="kw">super</span>::Sdk;
-<span class="kw">use </span><span class="kw">crate</span>::backend::dlt::get_networks;
 <span class="kw">use </span><span class="kw">crate</span>::error::{Error, <span class="prelude-ty">Result</span>};
-<span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
 <span class="kw">use </span><span class="kw">crate</span>::user::repository::UserRepoImpl;
 <span class="kw">use </span><span class="kw">crate</span>::user::UserRepo;
 <span class="kw">use </span>log::info;
@@ -518,34 +420,6 @@
         <span class="prelude-val">Ok</span>(())
     }
 
-    <span class="doccomment">/// Set networks
-    </span><span class="kw">pub fn </span>set_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, networks: <span class="prelude-ty">Option</span>&lt;Vec&lt;Network&gt;&gt;) {
-        <span class="self">self</span>.networks = networks;
-    }
-
-    <span class="doccomment">/// Get networks
-    </span><span class="kw">pub fn </span>get_networks(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Option</span>&lt;Vec&lt;Network&gt;&gt; {
-        <span class="self">self</span>.networks.clone()
-    }
-
-    <span class="doccomment">/// Get supported networks from backend
-    </span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">async fn </span>get_networks_backend(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt; {
-        <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>username = <span class="kw-2">&amp;</span><span class="self">self
-            </span>.active_user
-            .as_ref()
-            .ok_or(<span class="kw">crate</span>::Error::UserNotInitialized)<span class="question-mark">?
-            </span>.username;
-        <span class="kw">let </span>access_token = <span class="self">self
-            </span>.access_token
-            .as_ref()
-            .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>backend_networks = get_networks(config, username, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span>networks: Vec&lt;Network&gt; = backend_networks.iter().map(|n| Network::from(n.clone())).collect();
-
-        <span class="prelude-val">Ok</span>(networks)
-    }
-
     <span class="doccomment">/// Set path prefix
     </span><span class="kw">fn </span>initialize_user_repository(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="comment">// initialize jammdb
@@ -616,13 +490,6 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
-    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_api_networks, example_networks};
-    <span class="kw">use crate</span>::{
-        testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME},
-        wallet_manager::MockWalletManager,
-    };
-    <span class="kw">use </span>api_types::api::dlt::ApiGetNetworksResponse;
     <span class="kw">use </span>rstest::rstest;
 
     <span class="kw">fn </span>valid_deserialized_config() -&gt; DeserializedConfig {
@@ -673,65 +540,6 @@
     </span><span class="kw">fn </span>test_default_storage_path() {
         <span class="kw">let </span>storage_path = default_storage_path();
         <span class="macro">assert_eq!</span>(storage_path, <span class="string">"."</span>.to_string())
-    }
-
-    <span class="attr">#[rstest]
-    #[case::success(<span class="prelude-val">Ok</span>(example_networks()))]
-    #[case::user_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized))]
-    #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
-    #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
-    #[tokio::test]
-    </span><span class="kw">async fn </span>test_get_networks_backend(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt;) {
-        <span class="comment">// Arrange
-        </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
-        <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        <span class="kw">let </span><span class="kw-2">mut </span>mock_server = <span class="prelude-val">None</span>;
-
-        <span class="kw">match </span><span class="kw-2">&amp;</span>expected {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
-                sdk.active_user = <span class="prelude-val">Some</span>(<span class="kw">crate</span>::types::users::ActiveUser {
-                    username: USERNAME.into(),
-                    wallet_manager: Box::new(MockWalletManager::new()),
-                });
-                sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
-
-                <span class="kw">let </span>resp_body = ApiGetNetworksResponse {
-                    networks: example_api_networks(),
-                };
-                <span class="kw">let </span>mock_body_response = serde_json::to_string(<span class="kw-2">&amp;</span>resp_body).unwrap();
-
-                mock_server = <span class="prelude-val">Some</span>(
-                    srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/config/networks"</span>)
-                        .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
-                        .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
-                        .with_status(<span class="number">200</span>)
-                        .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-                        .with_body(<span class="kw-2">&amp;</span>mock_body_response)
-                        .expect(<span class="number">1</span>)
-                        .create(),
-                );
-            }
-            <span class="prelude-val">Err</span>(error) =&gt; {
-                handle_error_test_cases(error, <span class="kw-2">&amp;mut </span>sdk, <span class="number">0</span>, <span class="number">0</span>).<span class="kw">await</span>;
-            }
-        }
-
-        <span class="comment">// Act
-        </span><span class="kw">let </span>response = Sdk::get_networks_backend(<span class="kw-2">&amp;</span>sdk).<span class="kw">await</span>;
-
-        <span class="comment">// Assert
-        </span><span class="kw">match </span>expected {
-            <span class="prelude-val">Ok</span>(resp) =&gt; {
-                <span class="macro">assert_eq!</span>(response.unwrap(), resp);
-            }
-            <span class="prelude-val">Err</span>(<span class="kw-2">ref </span>expected_err) =&gt; {
-                <span class="macro">assert_eq!</span>(response.err().unwrap().to_string(), expected_err.to_string());
-            }
-        }
-        <span class="kw">if let </span><span class="prelude-val">Some</span>(m) = mock_server {
-            m.assert();
-        }
     }
 
     <span class="attr">#[rstest]

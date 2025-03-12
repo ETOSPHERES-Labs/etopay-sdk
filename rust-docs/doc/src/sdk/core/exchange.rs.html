@@ -178,7 +178,7 @@
                     wallet_manager: Box::new(MockWalletManager::new()),
                 });
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
-                sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+                sdk.set_networks(example_networks());
                 sdk.set_network(example_network_id(<span class="kw">crate</span>::types::currencies::Currency::Iota))
                     .<span class="kw">await
                     </span>.unwrap();

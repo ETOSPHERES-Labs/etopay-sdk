@@ -1520,7 +1520,7 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = <span class="prelude-val">None</span>;
 
@@ -1587,7 +1587,7 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server_details = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server_commit = <span class="prelude-val">None</span>;
@@ -1773,7 +1773,7 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(_srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
 
         <span class="kw">match </span><span class="kw-2">&amp;</span>expected {
@@ -1828,7 +1828,7 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(_srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(<span class="prelude-val">Some</span>(example_networks()));
+        sdk.set_networks(example_networks());
         sdk.set_network(example_network_id(Currency::Eth)).<span class="kw">await</span>.unwrap();
 
         <span class="kw">let </span>wallet_transaction = WalletTxInfo {
