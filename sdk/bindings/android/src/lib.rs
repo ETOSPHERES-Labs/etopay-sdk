@@ -104,13 +104,16 @@ mod ffi {
     /// Fetch available currencies and corresponding node urls.
     ///
     /// @return Serialized string of a hashmap with currencies as key and node urls as value
-    pub fn getNetworks() -> Result<(), String> {
+    pub fn getNetworks() -> Result<String, String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
             sdk.get_networks().await
         });
 
-        result.map_err(|e| format!("{e:#?}"))
+        match result {
+            Ok(value) => serde_json::to_string(&value).map_err(|e| format!("{e:#?}")),
+            Err(e) => Err(format!("{e:#?}")),
+        }
     }
 
     /// Selects the network for the Cryptpay SDK.
