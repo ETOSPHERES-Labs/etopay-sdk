@@ -14,6 +14,9 @@ async function main() {
     // Create new wallet from the mnemonic
     await sdk.createWalletFromMnemonic(pin, mnemonic);
 
+    await sdk.getNetworks();
+    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+
     // use wallet
     let _address = await sdk.generateNewAddress(pin);
 }

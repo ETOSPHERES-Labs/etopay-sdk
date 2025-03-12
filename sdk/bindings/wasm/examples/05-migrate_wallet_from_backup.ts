@@ -23,6 +23,9 @@ async function main() {
     // Migrate wallet from backup
     await sdk.createWalletFromBackup(pin, backup, backup_password);
 
+    await sdk.getNetworks();
+    sdk.setNetwork("67a1f08edf55756bae21e7eb");
+
     // use wallet
     let _address = await sdk.generateNewAddress(pin);
 }
