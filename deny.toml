@@ -73,6 +73,7 @@ ignore = [
     #"RUSTSEC-0000-0000",
     { id = "RUSTSEC-2024-0370", reason = "affected unmaintained crate proc-macro-error used by iota-sdk" },
     { id = "RUSTSEC-2024-0384", reason = "affected unmaintained crate instant used by iota-sdk" },
+    { id = "RUSTSEC-2024-0436", reason = "affected unmaintained crate paste used by alloy and rmp crates" },
     #"a-crate-that-is-yanked@0.1.1", # you can also ignore yanked crate versions if you wish
     #{ crate = "a-crate-that-is-yanked@0.1.1", reason = "you can specify why you are ignoring the yanked crate" },
 ]
@@ -91,6 +92,7 @@ ignore = [
 # [possible values: any SPDX 3.11 short identifier (+ optional exception)].
 allow = [
     "MIT",
+    "MIT-0",
     "Apache-2.0",
     "Apache-2.0 WITH LLVM-exception",
     "Unicode-3.0",	
@@ -102,7 +104,6 @@ allow = [
     "BSD-2-Clause",
 	"GPL-3.0",
 	"Zlib",
-	"OpenSSL", # not 100% sure about this one, used in ring
 ]
 # The confidence threshold for detecting a license from license text.
 # The higher the value, the more closely the license text must be to the
@@ -154,7 +155,7 @@ registries = [
 # https://embarkstudios.github.io/cargo-deny/checks/bans/cfg.html
 [bans]
 # Lint level for when multiple versions of the same crate are detected
-multiple-versions = "warn"
+multiple-versions = "allow"
 # Lint level for when a crate version requirement is `*`
 wildcards = "allow"
 # The graph highlighting used when creating dotgraphs for crates
@@ -240,7 +241,7 @@ allow-git = []
 
 [sources.allow-org]
 # github.com organizations to allow git sources for
-github = []
+github = ["ETO-GRUPPE-TECHNOLOGIES-GmbH"]
 # gitlab.com organizations to allow git sources for
 gitlab = []
 # bitbucket.org organizations to allow git sources for
