@@ -232,7 +232,7 @@ impl From<sdk::types::transactions::WalletTxInfo> for ffi::WalletTxInfo {
             amount: value.amount,
             network: value.network,
             status: value.status,
-            explorer_url: value.explorer_url.unwrap_or_default(),
+            explorer_url: value.explorer_url.unwrap_or("".to_string()),
         }
     }
 }

@@ -612,9 +612,9 @@ impl WalletUser for WalletImplEth {
                     transaction_id: transaction_id.to_string(),
                     incoming: is_transaction_incoming,
                     amount: value_eth_f64,
-                    network: "ETH".to_string(),
+                    network: "ETH".to_string(), // use the network type instead of hardcoded
                     status: format!("{:?}", status),
-                    explorer_url: Some(self.node_url.clone()),
+                    explorer_url: None, // get the explorer url from the network
                 })
             }
             None => Err(WalletError::TransactionNotFound),

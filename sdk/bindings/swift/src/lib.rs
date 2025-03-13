@@ -203,7 +203,7 @@ pub mod ffi {
         pub amount: f64,
         pub network: String,
         pub status: String,
-        pub explorer_url: Vec<String>,
+        pub explorer_url: String,
     }
 
     pub enum Currency {

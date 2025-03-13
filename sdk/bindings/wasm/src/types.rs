@@ -186,8 +186,8 @@ pub struct WalletTxInfo {
     pub network: String,
     /// Status of the transfer
     pub status: String,
-    /// Urls of network explorer
-    pub explorer_url: Option<Vec<String>>,
+    /// Url of network explorer
+    pub explorer_url: Option<String>,
 }
 
 #[wasm_bindgen(getter_with_clone, inspectable)]
