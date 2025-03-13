@@ -83,7 +83,7 @@ pub struct WalletImplEth {
     account_manager: iota_sdk::wallet::Wallet,
 
     // /// Store a copy of the node urls.
-    node_url: String,
+    node_urls: Vec<String>,
     chain_id: u64,
 
     /// Rpc client
@@ -96,17 +96,17 @@ impl WalletImplEth {
         mnemonic: Mnemonic,
         path: &Path,
         http_provider: RootProvider<Http<Client>>,
-        node_url: String,
+        node_urls: Vec<String>,
         chain_id: u64,
     ) -> Result<Self> {
-        let node_urls: &[&str] = &[&node_url];
+        let str_node_urls: Vec<&str> = node_urls.iter().map(String::as_str).collect();
 
-        info!("Used node_urls: {:?}", node_urls);
-        info!("Eth eth_node_url: {:?}", node_urls);
+        info!("Used node_urls: {:?}", str_node_urls);
+        info!("Eth eth_node_url: {:?}", str_node_urls);
         let client_options = ClientOptions::new()
             .with_local_pow(false)
             .with_fallback_to_local_pow(true)
-            .with_nodes(node_urls)?;
+            .with_nodes(&str_node_urls)?;
 
         // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
         #[cfg(not(target_arch = "wasm32"))]
@@ -141,21 +141,21 @@ impl WalletImplEth {
 
         Ok(WalletImplEth {
             account_manager,
-            node_url,
+            node_urls,
             chain_id,
             http_provider,
         })
     }
 
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub async fn new(mnemonic: Mnemonic, path: &Path, node_url: String, chain_id: u64) -> Result<Self> {
-        let node_urls = vec![node_url.as_str()];
+    pub async fn new(mnemonic: Mnemonic, path: &Path, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
+        let str_node_urls: Vec<&str> = node_urls.iter().map(String::as_str).collect();
 
-        info!("Used node_urls: {:?}", node_urls);
+        info!("Used node_urls: {:?}", str_node_urls);
         let client_options = ClientOptions::new()
             .with_local_pow(false)
             .with_fallback_to_local_pow(true)
-            .with_nodes(&node_urls)?;
+            .with_nodes(&str_node_urls)?;
 
         // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
         #[cfg(not(target_arch = "wasm32"))]
@@ -187,7 +187,7 @@ impl WalletImplEth {
         }
 
         let url =
-            Url::parse(node_urls[0]).map_err(|e| WalletError::Parse(format!("could not parse the url: {e:?}")))?;
+            Url::parse(str_node_urls[0]).map_err(|e| WalletError::Parse(format!("could not parse the url: {e:?}")))?;
         let http_provider = ProviderBuilder::new().on_http(url);
 
         info!("Wallet creation successful");
@@ -195,7 +195,7 @@ impl WalletImplEth {
         Ok(WalletImplEth {
             account_manager,
             chain_id,
-            node_url,
+            node_urls,
             http_provider,
         })
     }
@@ -612,9 +612,9 @@ impl WalletUser for WalletImplEth {
                     transaction_id: transaction_id.to_string(),
                     incoming: is_transaction_incoming,
                     amount: value_eth_f64,
-                    network: "ETH".to_string(),
+                    network: "ETH".to_string(), // TODO use the network type instead of hardcoded
                     status: format!("{:?}", status),
-                    explorer_url: Some(self.node_url.clone()),
+                    explorer_url: self.node_urls.first().cloned(), // TODO get the explorer url from the network
                 })
             }
             None => Err(WalletError::TransactionNotFound),
@@ -655,9 +655,8 @@ impl WalletUser for WalletImplEth {
 
 #[cfg(test)]
 mod tests {
-    use crate::core::Config;
-
     use super::*;
+    use crate::core::Config;
     use alloy::{hex::decode, primitives::Address};
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rust_decimal::prelude::FromPrimitive;
@@ -674,7 +673,7 @@ mod tests {
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEth, CleanUp) {
         let (_, cleanup) = Config::new_test_with_cleanup();
-        let node_url = String::from("https://sepolia.mode.network");
+        let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
         let wallet = WalletImplEth::new(mnemonic.into(), Path::new(&cleanup.path_prefix), node_url, chain_id)
@@ -695,7 +694,7 @@ mod tests {
             mnemonic.into(),
             Path::new(&cleanup.path_prefix),
             http_provider,
-            node_url,
+            vec![node_url],
             chain_id,
         )
         .await

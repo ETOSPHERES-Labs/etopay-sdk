@@ -544,13 +544,13 @@ impl WalletManager for WalletManagerImpl {
             .join(network.clone().id);
 
         let bo = match network.network_type {
-            NetworkType::Evm { node_url, chain_id } => {
-                let wallet = WalletImplEth::new(mnemonic, &path, node_url, chain_id).await?;
+            NetworkType::Evm { node_urls, chain_id } => {
+                let wallet = WalletImplEth::new(mnemonic, &path, node_urls, chain_id).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
-            NetworkType::Stardust { node_url } => {
+            NetworkType::Stardust { node_urls } => {
                 let currency = Currency::try_from(network.currency)?;
-                let wallet = WalletImplStardust::new(mnemonic, &path, currency, node_url).await?;
+                let wallet = WalletImplStardust::new(mnemonic, &path, currency, node_urls).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };

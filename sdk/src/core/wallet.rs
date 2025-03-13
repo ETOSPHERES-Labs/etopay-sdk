@@ -499,7 +499,7 @@ impl Sdk {
 
         let tx_list = match network.network_type {
             crate::types::networks::NetworkType::Evm {
-                node_url: _,
+                node_urls: _,
                 chain_id: _,
             } => {
                 // We retrieve the transaction list from the wallet,
@@ -518,7 +518,7 @@ impl Sdk {
                     transactions: wallet_transactions,
                 }
             }
-            crate::types::networks::NetworkType::Stardust { node_url: _ } => {
+            crate::types::networks::NetworkType::Stardust { node_urls: _ } => {
                 wallet.get_wallet_tx_list(start, limit).await?
             }
         };
