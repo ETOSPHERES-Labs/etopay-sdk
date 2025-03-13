@@ -8,7 +8,7 @@ pub enum NetworkType {
     /// Contains the URL for the node and the chain ID.
     Evm {
         /// node url
-        node_url: String,
+        node_urls: Vec<String>,
         /// chain_id
         chain_id: u64,
     },
@@ -16,7 +16,7 @@ pub enum NetworkType {
     /// Contains the URL for the node.
     Stardust {
         /// node url
-        node_url: String,
+        node_urls: Vec<String>,
     },
 }
 
@@ -42,8 +42,8 @@ pub struct Network {
 impl From<ApiNetworkType> for NetworkType {
     fn from(value: ApiNetworkType) -> Self {
         match value {
-            ApiNetworkType::Evm { node_url, chain_id } => NetworkType::Evm { node_url, chain_id },
-            ApiNetworkType::Stardust { node_url } => NetworkType::Stardust { node_url },
+            ApiNetworkType::Evm { node_urls, chain_id } => NetworkType::Evm { node_urls, chain_id },
+            ApiNetworkType::Stardust { node_urls } => NetworkType::Stardust { node_urls },
         }
     }
 }

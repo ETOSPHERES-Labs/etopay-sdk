@@ -169,7 +169,7 @@ pub fn example_tx_details() -> GetTransactionDetailsResponse {
             enabled: true,
             network_identifier: Some(String::from("iota_mainnet")),
             network_type: ApiNetworkType::Stardust {
-                node_url: String::from("https://api.testnet.iotaledger.net"),
+                node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
             },
         },
     }
@@ -192,7 +192,7 @@ pub fn example_api_network(currency: Currency) -> ApiNetwork {
             enabled: true,
             network_identifier: Some(String::from("iota_mainnet")),
             network_type: ApiNetworkType::Stardust {
-                node_url: String::from("https://api.testnet.iotaledger.net"),
+                node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
             },
         },
         Currency::Eth => ApiNetwork {
@@ -203,7 +203,7 @@ pub fn example_api_network(currency: Currency) -> ApiNetwork {
             enabled: true,
             network_identifier: Some(String::from("ethereum_mainnet")),
             network_type: ApiNetworkType::Evm {
-                node_url: String::from("https://sepolia.mode.network"),
+                node_urls: vec![String::from("https://sepolia.mode.network")],
                 chain_id: 31337,
             },
         },
@@ -220,7 +220,7 @@ pub fn example_network(currency: Currency) -> Network {
             enabled: true,
             network_identifier: Some(String::from("iota_mainnet")),
             network_type: NetworkType::Stardust {
-                node_url: String::from("https://api.testnet.iotaledger.net"),
+                node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
             },
         },
         Currency::Eth => Network {
@@ -231,7 +231,7 @@ pub fn example_network(currency: Currency) -> Network {
             enabled: true,
             network_identifier: Some(String::from("ethereum_mainnet")),
             network_type: NetworkType::Evm {
-                node_url: String::from("https://sepolia.mode.network"),
+                node_urls: vec![String::from("https://sepolia.mode.network")],
                 chain_id: 31337,
             },
         },
@@ -252,7 +252,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
             enabled: true,
             network_identifier: Some(String::from("iota_mainnet")),
             network_type: ApiNetworkType::Stardust {
-                node_url: String::from("https://api.testnet.iotaledger.net"),
+                node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
             },
         },
         ApiNetwork {
@@ -263,7 +263,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
             enabled: true,
             network_identifier: Some(String::from("ethereum_mainnet")),
             network_type: ApiNetworkType::Evm {
-                node_url: String::from("https://sepolia.mode.network"),
+                node_urls: vec![String::from("https://sepolia.mode.network")],
                 chain_id: 31337,
             },
         },

@@ -54,13 +54,13 @@ pub struct WalletTxInfo {
     pub incoming: bool,
     /// Amount of transfer
     pub amount: f64,
-    /// either ETH, SMR or IOTA [convert network_id to string based on the value]
+    /// either ETH or IOTA [convert network_id to string based on the value]
     pub network: String,
     /// Status of the transfer
     pub status: String,
-    /// Url of network SMR/IOTA/ETH
+    /// Url of network IOTA/ETH
     pub explorer_url: Option<String>, // ok
-                                      // change based on the network either shimmer or iota
+                                      // change based on the network either eth or iota
                                       // base explorer url for IOTA = https://explorer.iota.org/mainnet/block/[block_id]
                                       // base explorer url for EVM = [node url]
 }

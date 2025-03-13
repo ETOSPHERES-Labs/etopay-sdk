@@ -54,6 +54,8 @@ jobs:
   deploy-sdk-swift:
     runs-on: macos-latest
     needs: build-sdk-swift
+    # For now this does not work and just fails because the way it expects artifacts to be there. We need a better solution.
+    if: false
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4

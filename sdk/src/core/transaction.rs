@@ -175,7 +175,7 @@ impl Sdk {
         let amount = tx_details.amount.try_into()?;
         let tx_id = match tx_details.network.network_type {
             ApiNetworkType::Evm {
-                node_url: _,
+                node_urls: _,
                 chain_id: _,
             } => {
                 let tx_id = wallet
@@ -189,7 +189,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
-            ApiNetworkType::Stardust { node_url: _ } => {
+            ApiNetworkType::Stardust { node_urls: _ } => {
                 wallet
                     .send_transaction(purchase_id, &tx_details.system_address, amount)
                     .await?
@@ -256,7 +256,7 @@ impl Sdk {
 
         match network.network_type {
             NetworkType::Evm {
-                node_url: _,
+                node_urls: _,
                 chain_id: _,
             } => {
                 let tx_id = wallet
@@ -269,7 +269,7 @@ impl Sdk {
                 wallet_transactions.push(newly_created_transaction);
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
             }
-            NetworkType::Stardust { node_url: _ } => {
+            NetworkType::Stardust { node_urls: _ } => {
                 wallet
                     .send_amount(address, amount, tagged_data_payload, message)
                     .await?;
