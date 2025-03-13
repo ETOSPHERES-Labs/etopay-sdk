@@ -212,6 +212,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "alloy-json-rpc"
+version = "0.11.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "762414662d793d7aaa36ee3af6928b6be23227df1681ce9c039f6f11daadef64"
+dependencies = [
+ "alloy-primitives",
+ "alloy-sol-types",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
 name = "alloy-network"
 version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -220,7 +234,7 @@ dependencies = [
  "alloy-consensus",
  "alloy-consensus-any",
  "alloy-eips",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.8.3",
  "alloy-network-primitives",
  "alloy-primitives",
  "alloy-rpc-types-any",
@@ -285,7 +299,7 @@ dependencies = [
  "alloy-chains",
  "alloy-consensus",
  "alloy-eips",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.8.3",
  "alloy-network",
  "alloy-network-primitives",
  "alloy-primitives",
@@ -341,7 +355,7 @@ version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "531137b283547d5b9a5cafc96b006c64ef76810c681d606f28be9781955293b6"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.8.3",
  "alloy-primitives",
  "alloy-transport",
  "alloy-transport-http",
@@ -490,7 +504,7 @@ version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "538a04a37221469cac0ce231b737fd174de2fdfcdd843bdd068cb39ed3e066ad"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.8.3",
  "base64 0.22.1",
  "futures-util",
  "futures-utils-wasm",
@@ -510,7 +524,7 @@ version = "0.8.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2ed40eb1e1265b2911512f6aa1dcece9702d078f5a646730c45e39e2be00ac1c"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.8.3",
  "alloy-transport",
  "reqwest 0.12.12",
  "serde_json",
@@ -3810,7 +3824,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "be769465445e8c1474e9c5dac2018218498557af32d9ed057325ec9a41ae81bf"
 dependencies = [
  "heck 0.5.0",
- "itertools 0.12.1",
+ "itertools 0.13.0",
  "log",
  "multimap",
  "once_cell",
@@ -3830,7 +3844,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8a56d757972c98b346a9b766e3f02746cde6dd1cd1d1d563472929fdd74bec4d"
 dependencies = [
  "anyhow",
- "itertools 0.12.1",
+ "itertools 0.13.0",
  "proc-macro2",
  "quote",
  "syn 2.0.100",
@@ -3900,7 +3914,7 @@ dependencies = [
  "once_cell",
  "socket2",
  "tracing",
- "windows-sys 0.52.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
@@ -4575,7 +4589,7 @@ dependencies = [
  "aes-gcm",
  "alloy",
  "alloy-consensus",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.11.1",
  "alloy-primitives",
  "alloy-provider",
  "alloy-transport",
@@ -5875,7 +5889,7 @@ version = "0.1.9"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "cf221c93e13a30d793f7645a0e7762c55d169dbb0a49671918a2319d289b10bb"
 dependencies = [
- "windows-sys 0.48.0",
+ "windows-sys 0.59.0",
 ]
 
 [[package]]
