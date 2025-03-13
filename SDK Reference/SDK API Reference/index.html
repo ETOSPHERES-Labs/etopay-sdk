@@ -1682,39 +1682,6 @@
   
 </li>
         
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#billing-account-functions" class="md-nav__link">
-    <span class="md-ellipsis">
-      Billing account functions
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Billing account functions">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#create-a-new-billing-customer-account" class="md-nav__link">
-    <span class="md-ellipsis">
-      Create a new billing customer account
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#get-account-status" class="md-nav__link">
-    <span class="md-ellipsis">
-      Get account status
-    </span>
-  </a>
-  
-</li>
-        
           <li class="md-nav__item">
   <a href="#get-user-preferred-network" class="md-nav__link">
     <span class="md-ellipsis">
@@ -4804,89 +4771,6 @@
 </div>
 </div>
 </div>
-<h2 id="billing-account-functions">Billing account functions<a class="headerlink" href="#billing-account-functions" title="Permanent link">&para;</a></h2>
-<h3 id="create-a-new-billing-customer-account">Create a new billing customer account<a class="headerlink" href="#create-a-new-billing-customer-account" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Arguments</th>
-<th>Returns</th>
-<th>Dependencies</th>
-<th>Level</th>
-<th>Repeat</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Create a new account</td>
-<td><code>country_code</code> - The country code for the customer.</td>
-<td></td>
-<td><a href="./#initializing-a-user">User initialization</a></td>
-<td>Usage</td>
-<td>User</td>
-</tr>
-</tbody>
-</table>
-<div class="tabbed-set tabbed-alternate" data-tabs="59:4"><input checked="checked" id="__tabbed_59_1" name="__tabbed_59" type="radio" /><input id="__tabbed_59_2" name="__tabbed_59" type="radio" /><input id="__tabbed_59_3" name="__tabbed_59" type="radio" /><input id="__tabbed_59_4" name="__tabbed_59" type="radio" /><div class="tabbed-labels"><label for="__tabbed_59_1">Rust</label><label for="__tabbed_59_2">Java</label><label for="__tabbed_59_3">Typescript</label><label for="__tabbed_59_4">Swift</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_customer">create_customer</a></p>
-</div>
-<div class="tabbed-block">
-<p><a href="../javadoc/com/etogruppe/CryptpaySdk.html#customerCreate(java.lang.String)">customerCreate</a></p>
-</div>
-<div class="tabbed-block">
-<p><a href="../../jstsdocs/classes/CryptpaySdk.html#createCustomer">createCustomer</a></p>
-</div>
-<div class="tabbed-block">
-<p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">createCustomer</span><span class="p">(</span><span class="n">country_code</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
-</span></code></pre></div>
-</div>
-</div>
-</div>
-<h3 id="get-account-status">Get account status<a class="headerlink" href="#get-account-status" title="Permanent link">&para;</a></h3>
-<table>
-<thead>
-<tr>
-<th>Method</th>
-<th>Arguments</th>
-<th>Returns</th>
-<th>Dependencies</th>
-<th>Level</th>
-<th>Repeat</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>Fetches the customer account and updates it internally</td>
-<td></td>
-<td></td>
-<td><a href="./#initializing-a-user">User initialization</a></td>
-<td>Usage</td>
-<td>Application</td>
-</tr>
-</tbody>
-</table>
-<div class="tabbed-set tabbed-alternate" data-tabs="60:4"><input checked="checked" id="__tabbed_60_1" name="__tabbed_60" type="radio" /><input id="__tabbed_60_2" name="__tabbed_60" type="radio" /><input id="__tabbed_60_3" name="__tabbed_60" type="radio" /><input id="__tabbed_60_4" name="__tabbed_60" type="radio" /><div class="tabbed-labels"><label for="__tabbed_60_1">Rust</label><label for="__tabbed_60_2">Java</label><label for="__tabbed_60_3">Typescript</label><label for="__tabbed_60_4">Swift</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_customer">get_customer</a></p>
-</div>
-<div class="tabbed-block">
-<p><a href="../javadoc/com/etogruppe/CryptpaySdk.html#customerGet()">customerGet</a></p>
-</div>
-<div class="tabbed-block">
-<p><a href="../../jstsdocs/classes/CryptpaySdk.html#getCustomer">getCustomer</a></p>
-</div>
-<div class="tabbed-block">
-<p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getCustomer</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span>
-</span></code></pre></div>
-</div>
-</div>
-</div>
 <h3 id="get-user-preferred-network">Get user preferred network<a class="headerlink" href="#get-user-preferred-network" title="Permanent link">&para;</a></h3>
 <table>
 <thead>
@@ -4910,7 +4794,7 @@
 </tr>
 </tbody>
 </table>
-<div class="tabbed-set tabbed-alternate" data-tabs="61:4"><input checked="checked" id="__tabbed_61_1" name="__tabbed_61" type="radio" /><input id="__tabbed_61_2" name="__tabbed_61" type="radio" /><input id="__tabbed_61_3" name="__tabbed_61" type="radio" /><input id="__tabbed_61_4" name="__tabbed_61" type="radio" /><div class="tabbed-labels"><label for="__tabbed_61_1">Rust</label><label for="__tabbed_61_2">Java</label><label for="__tabbed_61_3">Typescript</label><label for="__tabbed_61_4">Swift</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="59:4"><input checked="checked" id="__tabbed_59_1" name="__tabbed_59" type="radio" /><input id="__tabbed_59_2" name="__tabbed_59" type="radio" /><input id="__tabbed_59_3" name="__tabbed_59" type="radio" /><input id="__tabbed_59_4" name="__tabbed_59" type="radio" /><div class="tabbed-labels"><label for="__tabbed_59_1">Rust</label><label for="__tabbed_59_2">Java</label><label for="__tabbed_59_3">Typescript</label><label for="__tabbed_59_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_preferred_network">get_preferred_network</a></p>
@@ -4923,7 +4807,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-72-1"><a id="__codelineno-72-1" name="__codelineno-72-1" href="#__codelineno-72-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getPreferredNetwork</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">PreferredNetwork</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-70-1"><a id="__codelineno-70-1" name="__codelineno-70-1" href="#__codelineno-70-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">getPreferredNetwork</span><span class="p">()</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span><span class="p">-&gt;</span><span class="w"> </span><span class="n">PreferredNetwork</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -4951,7 +4835,7 @@
 </tr>
 </tbody>
 </table>
-<div class="tabbed-set tabbed-alternate" data-tabs="62:4"><input checked="checked" id="__tabbed_62_1" name="__tabbed_62" type="radio" /><input id="__tabbed_62_2" name="__tabbed_62" type="radio" /><input id="__tabbed_62_3" name="__tabbed_62" type="radio" /><input id="__tabbed_62_4" name="__tabbed_62" type="radio" /><div class="tabbed-labels"><label for="__tabbed_62_1">Rust</label><label for="__tabbed_62_2">Java</label><label for="__tabbed_62_3">Typescript</label><label for="__tabbed_62_4">Swift</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="60:4"><input checked="checked" id="__tabbed_60_1" name="__tabbed_60" type="radio" /><input id="__tabbed_60_2" name="__tabbed_60" type="radio" /><input id="__tabbed_60_3" name="__tabbed_60" type="radio" /><input id="__tabbed_60_4" name="__tabbed_60" type="radio" /><div class="tabbed-labels"><label for="__tabbed_60_1">Rust</label><label for="__tabbed_60_2">Java</label><label for="__tabbed_60_3">Typescript</label><label for="__tabbed_60_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
 <p><a href="../../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_preferred_network">set_preferred_network</a></p>
@@ -4964,7 +4848,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-73-1"><a id="__codelineno-73-1" name="__codelineno-73-1" href="#__codelineno-73-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPreferredNetwork</span><span class="p">(</span><span class="n">network_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPreferredNetwork</span><span class="p">(</span><span class="n">network_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -4991,7 +4875,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 7, 2025 08:46:35">March 7, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 13, 2025 13:43:48">March 13, 2025</span>
   </span>
 
     

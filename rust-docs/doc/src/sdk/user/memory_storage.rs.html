@@ -170,9 +170,7 @@
 <a href="#169" id="169">169</a>
 <a href="#170" id="170">170</a>
 <a href="#171" id="171">171</a>
-<a href="#172" id="172">172</a>
-<a href="#173" id="173">173</a>
-<a href="#174" id="174">174</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module provides the implementation of the `UserRepo` using a non-persistent in-memory
+<a href="#172" id="172">172</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module provides the implementation of the `UserRepo` using a non-persistent in-memory
 //! database. This implementation is mainly used on platforms that do not support file-access,
 //! such as when compiling for the WASM target (see the WASM binding README for more information).
 
@@ -239,8 +237,6 @@
             is_kyc_verified: <span class="bool-val">false</span>,
             kyc_type: KycType::Undefined,
             viviswap_state: <span class="prelude-val">None</span>,
-            customer_details: <span class="prelude-val">None</span>,
-
             local_share: <span class="prelude-val">None</span>,
             wallet_transactions: Vec::new(),
         }

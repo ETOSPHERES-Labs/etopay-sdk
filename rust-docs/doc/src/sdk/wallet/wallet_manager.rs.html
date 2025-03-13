@@ -958,9 +958,7 @@
 <a href="#957" id="957">957</a>
 <a href="#958" id="958">958</a>
 <a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a>
-<a href="#962" id="962">962</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
+<a href="#960" id="960">960</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 //! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
 //! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
 //!
@@ -1566,7 +1564,6 @@
             is_kyc_verified: <span class="bool-val">false</span>,
             kyc_type: KycType::Undefined,
             viviswap_state: <span class="prelude-val">None</span>,
-            customer_details: <span class="prelude-val">None</span>,
             local_share: <span class="prelude-val">None</span>,
             wallet_transactions: Vec::new(),
         })
@@ -1863,7 +1860,6 @@
             is_kyc_verified: <span class="bool-val">true</span>,
             kyc_type: KycType::Undefined,
             viviswap_state: <span class="prelude-val">None</span>,
-            customer_details: <span class="prelude-val">None</span>,
             local_share: local_share.map(|s| s.to_string()),
             wallet_transactions: Vec::new(),
         };

@@ -1636,8 +1636,6 @@
 </ul>
 <h2 id="v070">[v0.7.0]<a class="headerlink" href="#v070" title="Permanent link">&para;</a></h2>
 <ul>
-<li>Added new function <code>updateCustomer</code> which updates or creates a new customer account for billing. It requires the two-character
- country code of the user, which can be the same as the one used while doing a new user registration. Calling this function is mandatory before initializing wallet. The list of valid/legally allowed country codes will be given to the team before go-live.</li>
 <li>Modified the function createPurchaseRequest. It now requires three more parameters: <code>product_hash</code>, <code>app_data</code> (may be empty but can be used to store additional data of the image like thumbnail URL etc…), <code>purchase_type</code> (Required currently and should be set to the constant value “COMPLIMENT”)</li>
 <li><code>getBalance</code> is now modified internally. It performs claiming of dust outputs, so that micro-transactions and locked outputs do not get lost. if not claimed. This feature is only internal to the crypto-currency and has no impact on the UX/UI.</li>
 <li>QA and staging environment now use SMR mainnet. Getting tokens now happens via either purchase from viviswap or transfer of existing SMR from own wallet-</li>
@@ -1722,7 +1720,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="January 24, 2025 08:34:27">January 24, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 13, 2025 13:43:48">March 13, 2025</span>
   </span>
 
     

@@ -67,10 +67,7 @@
 <a href="#66" id="66">66</a>
 <a href="#67" id="67">67</a>
 <a href="#68" id="68">68</a>
-<a href="#69" id="69">69</a>
-<a href="#70" id="70">70</a>
-<a href="#71" id="71">71</a>
-<a href="#72" id="72">72</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{
+<a href="#69" id="69">69</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{
     newtypes::{EncryptedPassword, EncryptionSalt},
     transactions::WalletTxInfo,
 };
@@ -78,7 +75,6 @@
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
-<span class="kw">use </span>api_types::api::account::Customer;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="doccomment">/// Struct for storing a user in the database
@@ -99,8 +95,6 @@
     </span><span class="kw">pub </span>kyc_type: KycType,
     <span class="doccomment">/// User Viviswap state
     </span><span class="kw">pub </span>viviswap_state: <span class="prelude-ty">Option</span>&lt;ViviswapState&gt;,
-    <span class="doccomment">/// User customer details
-    </span><span class="kw">pub </span>customer_details: <span class="prelude-ty">Option</span>&lt;Customer&gt;,
 
     <span class="doccomment">/// The local share from the SSS scheme, stored as a string (same as in the backend)
     </span><span class="kw">pub </span>local_share: <span class="prelude-ty">Option</span>&lt;String&gt;,
