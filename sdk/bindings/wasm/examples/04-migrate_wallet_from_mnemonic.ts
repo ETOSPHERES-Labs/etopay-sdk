@@ -18,7 +18,6 @@ async function main() {
     let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
     sdk.setNetwork(networks[0].id);
-    console.log(networks[0].id);
 
     // use wallet
     let _address = await sdk.generateNewAddress(pin);
