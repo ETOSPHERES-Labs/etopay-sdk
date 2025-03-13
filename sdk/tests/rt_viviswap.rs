@@ -20,8 +20,6 @@ async fn should_create_new_almost_verified_user() {
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
 
-    // Create the user as customer
-    sdk.create_customer("DE").await.unwrap();
     // Start KYC verification for the user on viviswap
     let new_user = sdk
         .start_kyc_verification_for_viviswap(&user.email, true)

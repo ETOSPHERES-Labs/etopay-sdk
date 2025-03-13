@@ -20,7 +20,6 @@ examples=(
     "13_send_amount"
     "14_get_exchange_rate"
     "16_get_tx_list"
-    "17_create_customer"
     "18_delete_user"
     "19_get_wallet_tx_list"
     # "20_send_compliment"
@@ -28,11 +27,10 @@ examples=(
 )
 
 # Iterate through each example and run it
-# enable the "billing" feature flag for the example 17"
 for example in "${examples[@]}"
 do
     echo "------------------------------ Running example: $example -----------------------------------------------------------"
-    cargo run --package sdk --release --example "$example" --features="billing"
+    cargo run --package sdk --release --example "$example"
 done
 
 echo "All examples finished successfully."

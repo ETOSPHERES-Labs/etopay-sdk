@@ -26,15 +26,6 @@ public class OnboardUserPostident02 {
                 return;
             }
 
-            // Create sap customer if not exists
-            try {
-                sdk.customerGet();
-                System.out.println("customer already exists");
-            } catch (Exception e) {
-                sdk.customerCreate("DE");
-                System.out.println("created SAP customer");
-            }
-
             // Start KYC verification for postident
             String new_case = sdk.startKycVerificationForPostident();
             System.out.println("New postident user with case: " + new_case);

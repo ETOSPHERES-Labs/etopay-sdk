@@ -20,11 +20,10 @@ unwrap_used = "deny"
 expect_used = "deny"
 
 [features]
-default = ["postident", "viviswap-kyc", "viviswap-swap", "billing"]
+default = ["postident", "viviswap-kyc", "viviswap-swap"]
 postident = ["sdk/postident"]
 viviswap-kyc = ["sdk/viviswap-kyc"]
 viviswap-swap = ["sdk/viviswap-swap"]
-billing = ["sdk/billing"]
 
 [dependencies]
 sdk = { package = "sdk", path = "../../" }

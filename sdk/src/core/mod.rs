@@ -1,8 +1,5 @@
 //! Main SDK module.
 
-/// Account module.
-#[cfg(feature = "billing")]
-pub mod account;
 /// Config module.
 pub mod config;
 

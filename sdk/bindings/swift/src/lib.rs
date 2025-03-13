@@ -403,10 +403,6 @@ pub mod ffi {
         async fn get_swap_details(&self, order_id: String) -> Result<Order, String>;
         #[swift_bridge(swift_name = "getExchangeRate")]
         async fn get_exchange_rate(&self) -> Result<f64, String>;
-        #[swift_bridge(swift_name = "createCustomer")]
-        async fn create_customer(&self, country_code: String) -> Result<(), String>;
-        #[swift_bridge(swift_name = "getCustomer")]
-        async fn get_customer(&self) -> Result<(), String>;
         #[swift_bridge(swift_name = "deleteUser")]
         async fn delete_user(&self, pin: Option<String>) -> Result<(), String>;
         #[swift_bridge(swift_name = "getSwapList")]

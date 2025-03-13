@@ -1891,52 +1891,6 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     public func updateKycStatusForPostident(case_id: String) throws
     ```
 
-## Billing account functions
-
-### Create a new billing customer account
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Create a new account | `country_code` - The country code for the customer. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
-
-=== "Rust"
-    [create_customer](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_customer)
-
-=== "Java"
-    [customerCreate](../javadoc/com/etogruppe/CryptpaySdk.html#customerCreate(java.lang.String))
-
-=== "Typescript"
-    [createCustomer](../jstsdocs/classes/CryptpaySdk.html#createCustomer)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func createCustomer(country_code: String) throws
-    ```
-
-### Get account status
-
-| Method | Arguments | Returns | Dependencies | Level | Repeat|
-|--------|-----------|---------|--------------|-------|-------|
-| Fetches the customer account and updates it internally | | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
-
-=== "Rust"
-    [get_customer](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_customer)
-
-=== "Java"
-    [customerGet](../javadoc/com/etogruppe/CryptpaySdk.html#customerGet())
-
-=== "Typescript"
-    [getCustomer](../jstsdocs/classes/CryptpaySdk.html#getCustomer)
-
-=== "Swift"
-    Not available yet!
-
-    ```swift
-    public func getCustomer() throws
-    ```
-
 ### Get user preferred network
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|

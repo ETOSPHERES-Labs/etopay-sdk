@@ -15,7 +15,6 @@ import { main as change_password } from './examples/12-change_password';
 import { main as send_amount } from './examples/13-send_amount';
 import { main as get_exchange_rate } from './examples/14-get_exchange_rate';
 import { main as get_tx_list } from './examples/16-get_tx_list'
-import { main as create_customer } from './examples/17-create_customer';
 import { main as delete_user } from './examples/18-delete_user';
 import { main as get_wallet_tx_list } from './examples/19-get_wallet_tx_list'
 import { main as send_compliment } from './examples/20-send_compliment';
@@ -37,7 +36,6 @@ const examples = [
     ['13-send_amount.js', send_amount],
     ['14-get_exchange_rate.js', get_exchange_rate],
     ['16-get_tx_list.js', get_tx_list],
-    ['17-create_customer.js', create_customer],
     ['18-delete_user.js', delete_user],
     ['19-wallet_tx_list.js', get_wallet_tx_list],
     ['20-send_compliment.js', send_compliment],

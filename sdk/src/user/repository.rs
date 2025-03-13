@@ -12,7 +12,6 @@ use crate::{
     },
     user::error::UserKvStorageError,
 };
-use api_types::api::account::Customer;
 use log::info;
 
 pub struct UserRepoImpl<I: super::UserKvStorage> {
@@ -119,14 +118,6 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
         self.inner.set(username, &user)
     }
 
-    fn set_customer_details(&mut self, customer: Customer) -> Result<()> {
-        info!("Setting customer details in user DB: {customer:#?}");
-        let username = customer.username.clone();
-        let mut user = self.inner.get(&username)?;
-        user.customer_details = Some(customer);
-        self.inner.set(&username, &user)
-    }
-
     fn set_local_share(&mut self, username: &str, share: Option<&Share>) -> Result<()> {
         use secrecy::ExposeSecret;
         info!("Setting local share in user DB for: {username}");
@@ -168,7 +159,6 @@ mod tests {
             is_kyc_verified: false,
             kyc_type: KycType::Undefined,
             viviswap_state: None,
-            customer_details: None,
             local_share: None,
             wallet_transactions: Vec::new(),
         }
@@ -276,31 +266,7 @@ mod tests {
         assert!(result.is_ok());
         assert!(user.viviswap_state == Some(expected_state));
     }
-    #[test]
-    fn it_should_set_new_customer() {
-        // Arrange
-        let username = String::from("hauju");
 
-        let user = create_user_entity(&username, None);
-        let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
-        user_repo.create(&user).unwrap();
-        let customer = Customer {
-            username: username.clone(),
-            country_code: "DE".to_string(),
-            business_partner: api_types::api::account::BusinessPartner::Privat,
-            contract_currency: api_types::api::account::ContractCurrency::EUR,
-            vat_id: None,
-            customer_id: None,
-            contractaccount: None,
-        };
-        let expected_state = customer.clone();
-        // Act
-        let result = user_repo.set_customer_details(customer);
-        // Assert
-        let user = user_repo.get(&username).unwrap();
-        assert!(result.is_ok());
-        assert!(user.customer_details == Some(expected_state));
-    }
     #[test]
     fn it_should_update_existing_user_postident() {
         // Arrange
@@ -320,7 +286,6 @@ mod tests {
             is_kyc_verified: true,        // New KYC verification status
             kyc_type: KycType::Undefined, // New KYC type
             viviswap_state: None,
-            customer_details: None,
             local_share: None,
             wallet_transactions: Vec::new(),
         };
@@ -352,7 +317,6 @@ mod tests {
             is_kyc_verified: true,        // New KYC verification status
             kyc_type: KycType::Undefined, // New KYC type
             viviswap_state: None,
-            customer_details: None,
             local_share: None,
             wallet_transactions: Vec::new(),
         };
@@ -393,7 +357,6 @@ mod tests {
             // Add the actual field for storing KYC type
             kyc_type: KycType::Undefined,
             viviswap_state: None,
-            customer_details: None,
             local_share: None,
             wallet_transactions: Vec::new(),
         };
@@ -544,7 +507,6 @@ mod tests {
             is_kyc_verified: true,
             kyc_type: KycType::Undefined,
             viviswap_state: None,
-            customer_details: None,
             local_share: None,
             wallet_transactions: Vec::new(),
         };

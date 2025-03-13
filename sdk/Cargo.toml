@@ -34,9 +34,6 @@ viviswap-kyc = []
 # enables calls to Viviswap API for berforming swaps
 viviswap-swap = []
 
-# enables billing api calls
-billing = []
-
 # dummy feature to play nicely with dioxus
 server = []
 
@@ -74,10 +71,16 @@ zeroize = { version = "1.8", default-features = false, features = [
     "std",
     "zeroize_derive",
 ] }
-alloy = { version = "0.8.0", default-features = false, features = ["providers", "rpc-types"] }
+alloy = { version = "0.8.0", default-features = false, features = [
+    "providers",
+    "rpc-types",
+] }
 alloy-consensus = { version = "0.8.0", features = ["k256"] }
 alloy-primitives = "0.8.3"
-alloy-provider = { version = "0.8.0", default-features = false, features = ["reqwest", "reqwest-rustls-tls"] }
+alloy-provider = { version = "0.8.0", default-features = false, features = [
+    "reqwest",
+    "reqwest-rustls-tls",
+] }
 alloy-json-rpc = "0.8.0"
 alloy-transport = "0.8.0"
 shadow-rs = { version = "1.0.1", default-features = false }
@@ -99,7 +102,9 @@ web-sys = { version = "0.3", default-features = false, features = [
 ] }
 
 [build-dependencies]
-shadow-rs = { version = "1.0.1", default-features = false, features = ["build"] }
+shadow-rs = { version = "1.0.1", default-features = false, features = [
+    "build",
+] }
 
 [dev-dependencies]
 dotenvy = { workspace = true }
@@ -122,10 +127,6 @@ required-features = ["postident"]
 name = "rt_viviswap"
 required-features = ["viviswap-kyc", "viviswap-swap"]
 
-[[test]]
-name = "rt_account"
-required-features = ["billing"]
-
 [[example]]
 name = "02_onboard_user_postident"
 required-features = ["postident"]
@@ -133,10 +134,6 @@ required-features = ["postident"]
 [[example]]
 name = "09_onboard_user_viviswap"
 required-features = ["viviswap-kyc"]
-
-[[example]]
-name = "17_create_customer"
-required-features = ["billing"]
 
 # cargo-machete thinks that `alloy-consensus` is unused, but it is actually needed
 [package.metadata.cargo-machete]

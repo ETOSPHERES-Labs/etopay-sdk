@@ -34,15 +34,6 @@ Task {
             return
         }
 
-        // Create sap customer if not exists
-        do {
-            try await sdk.getCustomer()
-            print("sap customer exists. Continue")
-        } catch {
-            try await sdk.createCustomer("DE")
-            print("created new sap customer")
-        }
-
         // Start KYC verification for postident
         let new_user = try await sdk.initKycVerificationForPostident()
         print("New postident user: \(new_user.case_id.toString()), \(new_user.case_url.toString())")

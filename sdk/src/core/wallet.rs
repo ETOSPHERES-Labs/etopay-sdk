@@ -944,7 +944,6 @@ mod tests {
                         is_kyc_verified: false,
                         kyc_type: KycType::Undefined,
                         viviswap_state: Option::None,
-                        customer_details: Option::None,
                         local_share: None,
                         wallet_transactions: Vec::new(),
                     })

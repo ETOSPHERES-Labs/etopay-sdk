@@ -163,15 +163,6 @@ let package = Package(
         ),
 
         .executableTarget(
-            name: "17_create_customer",
-            dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
-                "utils",
-            ],
-            path: "Sources/17_create_customer"
-        ),
-
-        .executableTarget(
             name: "18_delete_user",
             dependencies: [
                 .product(name: "CawaenaSdk", package: "CawaenaSdk"),

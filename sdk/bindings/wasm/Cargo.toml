@@ -22,12 +22,10 @@ default = [
     "postident",
     "viviswap-kyc",
     "viviswap-swap",
-    "billing",
 ]
 postident = ["sdk/postident"]
 viviswap-kyc = ["sdk/viviswap-kyc"]
 viviswap-swap = ["sdk/viviswap-swap"]
-billing = ["sdk/billing"]
 
 [dependencies]
 # The `console_error_panic_hook` crate provides better debugging of panics by
