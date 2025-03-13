@@ -71,7 +71,7 @@
     /// Contains the URL for the node and the chain ID.
     </span>Evm {
         <span class="doccomment">/// node url
-        </span>node_url: String,
+        </span>node_urls: Vec&lt;String&gt;,
         <span class="doccomment">/// chain_id
         </span>chain_id: u64,
     },
@@ -79,7 +79,7 @@
     /// Contains the URL for the node.
     </span>Stardust {
         <span class="doccomment">/// node url
-        </span>node_url: String,
+        </span>node_urls: Vec&lt;String&gt;,
     },
 }
 
@@ -105,8 +105,8 @@
 <span class="kw">impl </span>From&lt;ApiNetworkType&gt; <span class="kw">for </span>NetworkType {
     <span class="kw">fn </span>from(value: ApiNetworkType) -&gt; <span class="self">Self </span>{
         <span class="kw">match </span>value {
-            ApiNetworkType::Evm { node_url, chain_id } =&gt; NetworkType::Evm { node_url, chain_id },
-            ApiNetworkType::Stardust { node_url } =&gt; NetworkType::Stardust { node_url },
+            ApiNetworkType::Evm { node_urls, chain_id } =&gt; NetworkType::Evm { node_urls, chain_id },
+            ApiNetworkType::Stardust { node_urls } =&gt; NetworkType::Stardust { node_urls },
         }
     }
 }

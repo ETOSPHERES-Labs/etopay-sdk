@@ -199,13 +199,13 @@
     </span><span class="kw">pub </span>incoming: bool,
     <span class="doccomment">/// Amount of transfer
     </span><span class="kw">pub </span>amount: f64,
-    <span class="doccomment">/// either ETH, SMR or IOTA [convert network_id to string based on the value]
+    <span class="doccomment">/// either ETH or IOTA [convert network_id to string based on the value]
     </span><span class="kw">pub </span>network: String,
     <span class="doccomment">/// Status of the transfer
     </span><span class="kw">pub </span>status: String,
-    <span class="doccomment">/// Url of network SMR/IOTA/ETH
+    <span class="doccomment">/// Url of network IOTA/ETH
     </span><span class="kw">pub </span>explorer_url: <span class="prelude-ty">Option</span>&lt;String&gt;, <span class="comment">// ok
-                                      // change based on the network either shimmer or iota
+                                      // change based on the network either eth or iota
                                       // base explorer url for IOTA = https://explorer.iota.org/mainnet/block/[block_id]
                                       // base explorer url for EVM = [node url]
 </span>}

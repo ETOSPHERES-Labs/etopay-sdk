@@ -914,9 +914,9 @@
 
 <span class="kw">impl </span>WalletImplStardust {
     <span class="doccomment">/// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
-    </span><span class="kw">pub async fn </span>new(mnemonic: Mnemonic, path: <span class="kw-2">&amp;</span>Path, currency: Currency, node_url: String) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub async fn </span>new(mnemonic: Mnemonic, path: <span class="kw-2">&amp;</span>Path, currency: Currency, node_url: Vec&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// we now have the mnemonic and can initialize a wallet
-        </span><span class="kw">let </span>node_urls = <span class="macro">vec!</span>[node_url.as_str()];
+        </span><span class="kw">let </span>node_urls: Vec&lt;<span class="kw-2">&amp;</span>str&gt; = node_url.iter().map(String::as_str).collect();
 
         <span class="macro">info!</span>(<span class="string">"Used node_urls: {:?}"</span>, node_urls);
         <span class="kw">let </span>client_options = ClientOptions::new()
@@ -1157,7 +1157,7 @@
     </span><span class="doccomment">/// helper function to get a [`WalletUser`] instance.
     </span><span class="kw">async fn </span>get_wallet_user(mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;, currency: Currency) -&gt; (WalletImplStardust, CleanUp) {
         <span class="kw">let </span>(<span class="kw">_</span>, cleanup) = Config::new_test_with_cleanup();
-        <span class="kw">let </span>node_url = String::from(<span class="string">"https://api.testnet.iotaledger.net"</span>);
+        <span class="kw">let </span>node_url = <span class="macro">vec!</span>[String::from(<span class="string">"https://api.testnet.iotaledger.net"</span>)];
         <span class="kw">let </span>wallet = WalletImplStardust::new(mnemonic.into(), Path::new(<span class="kw-2">&amp;</span>cleanup.path_prefix), currency, node_url)
             .<span class="kw">await
             </span>.expect(<span class="string">"should initialize wallet"</span>);

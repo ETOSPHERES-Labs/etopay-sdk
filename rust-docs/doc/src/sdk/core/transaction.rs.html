@@ -1153,7 +1153,7 @@
         <span class="kw">let </span>amount = tx_details.amount.try_into()<span class="question-mark">?</span>;
         <span class="kw">let </span>tx_id = <span class="kw">match </span>tx_details.network.network_type {
             ApiNetworkType::Evm {
-                node_url: <span class="kw">_</span>,
+                node_urls: <span class="kw">_</span>,
                 chain_id: <span class="kw">_</span>,
             } =&gt; {
                 <span class="kw">let </span>tx_id = wallet
@@ -1167,7 +1167,7 @@
                 <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>active_user.username, wallet_transactions);
                 tx_id
             }
-            ApiNetworkType::Stardust { node_url: <span class="kw">_ </span>} =&gt; {
+            ApiNetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; {
                 wallet
                     .send_transaction(purchase_id, <span class="kw-2">&amp;</span>tx_details.system_address, amount)
                     .<span class="kw">await</span><span class="question-mark">?
@@ -1234,7 +1234,7 @@
 
         <span class="kw">match </span>network.network_type {
             NetworkType::Evm {
-                node_url: <span class="kw">_</span>,
+                node_urls: <span class="kw">_</span>,
                 chain_id: <span class="kw">_</span>,
             } =&gt; {
                 <span class="kw">let </span>tx_id = wallet
@@ -1247,7 +1247,7 @@
                 wallet_transactions.push(newly_created_transaction);
                 <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>active_user.username, wallet_transactions);
             }
-            NetworkType::Stardust { node_url: <span class="kw">_ </span>} =&gt; {
+            NetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; {
                 wallet
                     .send_amount(address, amount, tagged_data_payload, message)
                     .<span class="kw">await</span><span class="question-mark">?</span>;

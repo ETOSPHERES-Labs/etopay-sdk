@@ -1706,7 +1706,7 @@
 
         <span class="kw">let </span>tx_list = <span class="kw">match </span>network.network_type {
             <span class="kw">crate</span>::types::networks::NetworkType::Evm {
-                node_url: <span class="kw">_</span>,
+                node_urls: <span class="kw">_</span>,
                 chain_id: <span class="kw">_</span>,
             } =&gt; {
                 <span class="comment">// We retrieve the transaction list from the wallet,
@@ -1725,7 +1725,7 @@
                     transactions: wallet_transactions,
                 }
             }
-            <span class="kw">crate</span>::types::networks::NetworkType::Stardust { node_url: <span class="kw">_ </span>} =&gt; {
+            <span class="kw">crate</span>::types::networks::NetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; {
                 wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?
             </span>}
         };
