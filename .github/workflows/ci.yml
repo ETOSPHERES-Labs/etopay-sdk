@@ -176,10 +176,10 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Build wasm sdk for web
+      - name: Build wasm sdk for nodejs
         run: |
           cd sdk/bindings/wasm
-          wasm-pack build --release --scope eto --target web --out-dir out/web/pkg --out-name cryptpay-sdk-web
+          wasm-pack build --release --scope eto --target nodejs --out-dir out/web/pkg --out-name cryptpay-sdk-node
           wasm-pack pack out/web
           cd examples/webapp
           echo -e "RUST_LOG=info\nTRACING_ENV=dev" > ../.env
@@ -228,7 +228,6 @@ jobs:
           pnpm install
           # run tsc with a list of all ts files as an argument
           find examples/ -name "*.ts" -exec tsc --noEmit {} +
-
 
   build-sdk-swift:
     runs-on: macos-latest
