@@ -3,6 +3,7 @@ use super::wallet_user::WalletUser;
 use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use crate::wallet::error::WalletError;
+use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
 use alloy::signers::local::coins_bip39::English;
@@ -13,11 +14,14 @@ use alloy::{
     primitives::U256,
     providers::{Provider, ProviderBuilder},
 };
+use alloy_consensus::Transaction;
+use alloy_primitives::TxHash;
 use alloy_provider::fillers::{
     BlobGasFiller, ChainIdFiller, FillProvider, GasFiller, JoinFill, NonceFiller, WalletFiller,
 };
 use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
+use iota_sdk::wallet::account::types::InclusionState;
 use iota_sdk::{crypto::keys::bip39::Mnemonic, wallet::account::types::Transaction as IotaWalletTransaction};
 use log::info;
 use reqwest::Url;
@@ -316,45 +320,51 @@ impl WalletUser for WalletImplEth {
     }
 
     async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
-        // let account = self.account_manager.get_account(APP_NAME).await?;
-        // let wallet_addr = self.get_wallet_addr().await?;
-        // let transaction_hash = TxHash::from_str(transaction_id)?;
-        // let transaction = self.http_provider.get_transaction_by_hash(transaction_hash).await?;
-        //
-        // match transaction {
-        //     Some(tx) => {
-        //         let block_number = tx.block_number;
-        //         let is_transaction_incoming = self.is_transaction_incoming(tx.to()).await?;
-        //         let value = tx.value();
-        //
-        //         let date = match block_number {
-        //             Some(b) => self.fetch_block_date(b.into()).await?,
-        //             None => None,
-        //         };
-        //
-        //         let is_transaction_successful = self.verify_transaction_success(transaction_hash).await?;
-        //
-        //         let status = self::WalletImplEth::map_transaction_success_to_inclusion_state(is_transaction_successful);
-        //
-        //         let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(tx.value())?;
-        //         let value_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
-        //
-        //         let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
-        //
-        //         Ok(WalletTxInfo {
-        //             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
-        //             block_id: block_number.map(|n| n.to_string()),
-        //             transaction_id: transaction_id.to_string(),
-        //             incoming: is_transaction_incoming,
-        //             amount: value_eth_f64,
-        //             network: "ETH".to_string(),
-        //             status: format!("{:?}", status),
-        //             explorer_url: Some(self.node_url.clone()),
-        //         })
-        //     }
-        //     None => Err(WalletError::TransactionNotFound),
-        // }
-        todo!()
+        let transaction_hash = TxHash::from_str(transaction_id)?;
+        let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
+
+        let Some(tx) = transaction else {
+            return Err(WalletError::TransactionNotFound);
+        };
+
+        let date = if let Some(block_number) = tx.block_number {
+            let block = self
+                .provider
+                .get_block_by_number(BlockNumberOrTag::Number(block_number))
+                .await?;
+            block.map(|b| b.header.timestamp)
+        } else {
+            None
+        };
+
+        let my_address = self.get_address().await?;
+
+        let is_transaction_incoming = tx.to().is_some_and(|to| to.to_string() == my_address);
+        let value = tx.value();
+
+        let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
+        let status = match receipt.map(|r| r.inner.is_success()) {
+            Some(true) => InclusionState::Confirmed,
+            Some(false) => InclusionState::Conflicting,
+            None => InclusionState::Pending,
+        };
+
+        let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
+        let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(tx.value())?;
+        let value_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
+
+        let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+
+        Ok(WalletTxInfo {
+            date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
+            block_id: tx.block_number.map(|n| n.to_string()),
+            transaction_id: transaction_id.to_string(),
+            incoming: is_transaction_incoming,
+            amount: value_eth_f64,
+            network: "ETH".to_string(),
+            status: format!("{:?}", status),
+            explorer_url: None,
+        })
     }
 
     async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {

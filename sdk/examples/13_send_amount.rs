@@ -27,6 +27,7 @@ async fn main() {
     // Send amount
     let amount = dec!(2.0).try_into().unwrap();
     sdk.send_amount(&user.pin, &recipient_address, amount, None, None, None)
+    sdk.send_amount(&user.pin, &recipient_address, amount, None)
         .await
         .unwrap();
 }
