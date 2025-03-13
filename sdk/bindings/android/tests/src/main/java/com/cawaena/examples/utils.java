@@ -23,7 +23,6 @@ public class utils {
     public static String NEW_PIN = "4321";
     public static String USERNAME_ARCHIVEME = "archiveme";
     public static String USERNAME_HANS48 = "hans48";
-    public static String IOTA_NETWORK_ID = "67a1f08edf55756bae21e7eb";
     
     public static Wallet initSdk(String username) {
         Wallet sdk = new Wallet();
