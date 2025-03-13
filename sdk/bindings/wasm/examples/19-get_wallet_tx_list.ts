@@ -17,9 +17,9 @@ async function main() {
     console.log("Wallet initialized!");
 
     // fetch networks from backend
-    await sdk.getNetworks();
+    let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
-    sdk.setNetwork(IOTA_NETWORK_ID);
+    sdk.setNetwork(networks[0].id);
 
     let transactions = await sdk.getWalletTransactionList(pin, 0, 10);  // Get the transaction list
     console.log("Wallet transactions list: " + JSON.stringify(transactions));

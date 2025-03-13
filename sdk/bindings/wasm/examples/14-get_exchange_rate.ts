@@ -10,9 +10,9 @@ async function main() {
     await sdk.initializeUser(username);
 
     // fetch networks from backend
-    await sdk.getNetworks();
+    let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
-    sdk.setNetwork(IOTA_NETWORK_ID);
+    sdk.setNetwork(networks[0].id);
 
     let course = await sdk.getExchangeRate();
     console.log(course);

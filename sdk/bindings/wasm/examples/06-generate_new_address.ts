@@ -14,9 +14,9 @@ async function main() {
     await sdk.setWalletPassword(pin, password);
 
     // fetch networks from backend
-    await sdk.getNetworks();
+    let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
-    sdk.setNetwork(IOTA_NETWORK_ID);
+    sdk.setNetwork(networks[0].id);
 
     await sdk.createNewWallet(pin);
     console.log("Wallet initialized!");
