@@ -59,30 +59,12 @@ pub trait WalletUser: Debug {
     /// * `message` - The transactions message. Optional.
     ///
     ///
-    /// Returns a `Result` containing the sent transaction if successful, or an `Error` if it fails.
+    /// Returns a `Result` containing the sent transaction ID if successful, or an `Error` if it fails.
     ///
     /// # Errors
     ///
     /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
-    async fn send_amount(&self, address: &str, amount: CryptoAmount, message: Option<Vec<u8>>) -> Result<Transaction>;
-
-    /// Send eth amount to receiver
-    ///
-    /// # Arguments
-    ///
-    /// * `address` - The address of the receiver.
-    /// * `amount` - The amount to send (Ether).
-    /// * `tag` - The transactions tag. Optional.
-    /// * `message` - The transactions message. Optional.
-    ///
-    ///
-    /// Returns a `Result` containing the sent transaction id if successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
-    #[allow(clippy::too_many_arguments)]
-    async fn send_amount_eth(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String>;
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, message: Option<Vec<u8>>) -> Result<String>;
 
     /// Send a transaction with one output.
     ///
@@ -251,7 +233,7 @@ impl WalletUser for WalletImplStardust {
         Ok(available_balance_iota)
     }
 
-    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<Transaction> {
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
         self.sync_wallet().await?;
 
         // hard-coded tag
@@ -269,11 +251,7 @@ impl WalletUser for WalletImplStardust {
 
         let amount_glow: u64 = (amount.inner() * dec!(1_000_000)).round().try_into()?;
         let transaction = account.send(amount_glow, address, options).await?;
-        Ok(transaction)
-    }
-
-    async fn send_amount_eth(&self, _address: &str, _amount: CryptoAmount, _data: Option<Vec<u8>>) -> Result<String> {
-        Err(WalletError::WalletFeatureNotImplemented)
+        Ok(transaction.transaction_id.to_string())
     }
 
     async fn estimate_gas_cost_eip1559(&self, _transaction: TxEip1559) -> Result<GasCostEstimation> {

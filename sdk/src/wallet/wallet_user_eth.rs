@@ -21,8 +21,8 @@ use alloy_provider::fillers::{
 };
 use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
+use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::wallet::account::types::InclusionState;
-use iota_sdk::{crypto::keys::bip39::Mnemonic, wallet::account::types::Transaction as IotaWalletTransaction};
 use log::info;
 use reqwest::Url;
 use rust_decimal::prelude::FromPrimitive;
@@ -47,10 +47,10 @@ type ProviderType = FillProvider<
 /// [`WalletUser`] implementation for ETH
 #[derive(Debug)]
 pub struct WalletImplEth {
-    // wallet: LocalSigner<SigningKey>,
+    /// ChainId for the transactions.
     chain_id: u64,
 
-    // / Rpc client
+    /// Rpc client, contains the Signer based on the mnemonic.
     provider: ProviderType,
 }
 
@@ -241,16 +241,7 @@ impl WalletUser for WalletImplEth {
         Ok(balance_eth_crypto_amount)
     }
 
-    async fn send_amount(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        message: Option<Vec<u8>>,
-    ) -> Result<IotaWalletTransaction> {
-        Err(WalletError::WalletFeatureNotImplemented)
-    }
-
-    async fn send_amount_eth(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
         let addr_to = Address::from_str(address)?;
         let amount_wei = Self::convert_eth_to_wei(amount);
         let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;

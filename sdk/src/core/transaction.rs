@@ -178,7 +178,7 @@ impl Sdk {
                 chain_id: _,
             } => {
                 let tx_id = wallet
-                    .send_amount_eth(
+                    .send_amount(
                         &tx_details.system_address,
                         amount,
                         Some(purchase_id.to_string().into_bytes()),
@@ -257,7 +257,7 @@ impl Sdk {
                 node_urls: _,
                 chain_id: _,
             } => {
-                let tx_id = wallet.send_amount_eth(address, amount, data).await?;
+                let tx_id = wallet.send_amount(address, amount, data).await?;
 
                 // store the created transaction in the repo
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -875,7 +875,7 @@ mod tests {
         mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
             let mut mock_wallet = MockWalletUser::new();
             mock_wallet
-                .expect_send_amount_eth()
+                .expect_send_amount()
                 .times(1)
                 .returning(move |_, _, _, _| Ok(String::from("tx_id")));
 
