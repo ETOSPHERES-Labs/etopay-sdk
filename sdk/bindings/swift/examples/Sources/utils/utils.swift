@@ -71,10 +71,6 @@ struct TokenResponse: Codable {
     let accessToken: String
 }
 
-public struct NetworkConstants {
-    public static let iotaNetworkId = "67a1f08edf55756bae21e7eb"
-}
-
 // Generate an access token by making a call to the KC API. This is mirroring the `hello.http` endpoint
 func generateAccessToken(username: String, password: String) async throws -> String {
 

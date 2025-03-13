@@ -22,10 +22,11 @@ Task {
         print("created new user: \(env.username)")
         try await sdk.initUser(env.username)
         print("initialized new user: \(env.username)")
-        
+
         // Fetch networks from backend
         try await sdk.getNetworks()
-        try await sdk.setNetwork(NetworkConstants.iotaNetworkId)
+        let iotaNetwork = networks[0]
+        try await sdk.setNetwork(iotaNetwork.id)
         print("retrieved available networks and set the network for the wallet")
 
         let exchange_rate = try await sdk.getExchangeRate()

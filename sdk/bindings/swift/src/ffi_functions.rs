@@ -15,8 +15,9 @@
 
 use crate::ffi::{
     CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, KycAmlaQuestion,
-    KycOpenDocument, NewCaseIdResponse, NewViviswapUser, Order, PurchaseDetails, TxInfo, ViviswapAddressDetail,
-    ViviswapDeposit, ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
+    KycOpenDocument, Network, NewCaseIdResponse, NewViviswapUser, Order, PurchaseDetails, TxInfo,
+    ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal,
+    WalletTxInfo,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
@@ -74,13 +75,26 @@ impl CawaenaSdk {
     ///
     /// * Ok - Serialized string of a Vec<Network>>
     /// * Err - if there is an error fetching the networks.
-    pub async fn get_networks(&self) -> Result<String, String> {
+    pub async fn get_networks(&self) -> Result<Vec<Network>, String> {
+        // let mut sdk = self.inner.write().await;
+        // async move {
+        //     let pin = EncryptionPin::try_from_string(pin)?;
+        //     sdk.get_wallet_tx_list(&pin, start, limit)
+        //         .await
+        //         .map(|l| l.transactions.into_iter().map(|tx| tx.into()).collect())
+        // }
+        // .await
+        // .map_err(|err| format!("{:#?}", err))
+
         let mut sdk = self.inner.write().await;
-        let result = sdk.get_networks().await;
-        match result {
-            Ok(value) => serde_json::to_string(&value).map_err(|e| format!("{e:#?}")),
-            Err(e) => Err(format!("{e:#?}")),
+
+        async move {
+            sdk.get_networks()
+                .await
+                .map(|n| n.into_iter().map(|network| network.into()).collect())
         }
+        .await
+        .map_err(|err| format!("{:#?}", err))
     }
 
     /// Selects the network for the Cawaena SDK.
