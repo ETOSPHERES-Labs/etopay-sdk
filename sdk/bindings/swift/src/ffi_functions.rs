@@ -77,13 +77,18 @@ impl CawaenaSdk {
     /// * Err - if there is an error fetching the networks.
     pub async fn get_networks(&self) -> Result<Vec<Network>, String> {
         let mut sdk = self.inner.write().await;
-        async move {
-            sdk.get_networks()
-                .await
-                .map(|n| n.into_iter().map(|network| network.into()).collect())
-        }
-        .await
-        .map_err(|err| format!("{:#?}", err))
+        // async move {
+        //     sdk.get_networks()
+        //         .await
+        //         .map(|n| n.into_iter().map(|network| network.into()).collect())
+        // }
+        // .await
+        // .map_err(|err| format!("{:#?}", err))
+
+        sdk.get_networks()
+            .await
+            .map(|n| n.into_iter().map(|network| network.into()).collect())
+            .map_err(|err| format!("{:#?}", err))
     }
 
     /// Selects the network for the Cawaena SDK.
