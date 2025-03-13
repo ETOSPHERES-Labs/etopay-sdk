@@ -40,7 +40,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
             enabled: true,
             network_identifier: Some(String::from("iota_mainnet")),
             network_type: NetworkType::Stardust {
-                node_url: String::from("https://api.testnet.iotaledger.net"),
+                node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
             },
         },
         Network {
@@ -51,7 +51,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
             enabled: true,
             network_identifier: Some(String::from("ethereum_mainnet")),
             network_type: NetworkType::Evm {
-                node_url: String::from("https://sepolia.mode.network"),
+                node_urls: vec![String::from("https://sepolia.mode.network")],
                 chain_id: 31337,
             },
         },
