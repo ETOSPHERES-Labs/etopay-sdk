@@ -6,7 +6,6 @@ use crate::{
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
-use api_types::api::account::Customer;
 use serde::{Deserialize, Serialize};
 
 /// Struct for storing a user in the database
@@ -27,8 +26,6 @@ pub struct UserEntity {
     pub kyc_type: KycType,
     /// User Viviswap state
     pub viviswap_state: Option<ViviswapState>,
-    /// User customer details
-    pub customer_details: Option<Customer>,
 
     /// The local share from the SSS scheme, stored as a string (same as in the backend)
     pub local_share: Option<String>,

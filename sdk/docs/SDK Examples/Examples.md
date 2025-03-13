@@ -404,32 +404,6 @@ The environment configuration to `Development` attaches the SDK to the developme
     --8<-- "bindings/wasm/examples/16-get_tx_list.ts"
     ```
 
-## 17. Create Customer
-
-=== "Rust"
-
-    ```rust
-    --8<-- "examples/17_create_customer.rs"
-    ```
-
-=== "Java"
-
-    ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/CreateCustomer17.java"
-    ```
-
-=== "Swift"
-
-    ```swift
-    --8<-- "bindings/swift/examples/Sources/17_create_customer/main.swift"
-    ```
-
-=== "JS/TS"
-
-    ```typescript
-    --8<-- "bindings/wasm/examples/17-create_customer.ts"
-    ```
-
 ## 18. Delete User
 
 === "Rust"

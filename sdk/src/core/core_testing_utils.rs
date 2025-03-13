@@ -87,7 +87,6 @@ pub async fn handle_error_test_cases(
                     is_kyc_verified: true,
                     kyc_type: KycType::Undefined,
                     viviswap_state: None,
-                    customer_details: None,
                     local_share: None,
                     wallet_transactions: Vec::new(),
                 })

@@ -14,18 +14,6 @@ async function main() {
         return;
     }
 
-    try {
-
-        await sdk.getCustomer();
-        console.log("sap customer exists. Continue");
-
-    } catch (error) {
-
-        await sdk.createCustomer("DE");
-        console.log("created new sap customer");
-
-    }
-
     // Start KYC verification for viviswap
     // The user already exists in viviswap db. Therefore, the test will fail here.
 

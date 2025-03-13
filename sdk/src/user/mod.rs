@@ -18,7 +18,6 @@ use crate::{
         viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep},
     },
 };
-use api_types::api::account::Customer;
 use error::{Result, UserKvStorageError};
 
 /// Storage abstraction of [`UserEntity`] objects as a simple Key-Value storage
@@ -172,21 +171,6 @@ pub trait UserRepo {
         monthly_limit_eur: f32,
         next_verification_step: ViviswapVerificationStep,
     ) -> Result<()>;
-
-    /// Set the customer details for a user.
-    ///
-    /// # Arguments
-    ///
-    /// * `customer` - The customer details to set for the user.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` if the customer details are set successfully, otherwise returns an `Error`.
-    ///
-    /// # Errors
-    ///
-    /// Returns an `Error::KVError` if there is an error retrieving the user from the database.
-    fn set_customer_details(&mut self, customer: Customer) -> Result<()>;
 
     /// Set wallet transactions.
     ///

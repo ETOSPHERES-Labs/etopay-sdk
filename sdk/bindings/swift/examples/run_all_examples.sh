@@ -20,7 +20,6 @@ examples=(
     "13_send_amount"
     "14_get_exchange_rate"
     "16_get_tx_list"
-    "17_create_customer"
     "18_delete_user"
     "19_get_wallet_tx_list"
     # "20_send_compliment"

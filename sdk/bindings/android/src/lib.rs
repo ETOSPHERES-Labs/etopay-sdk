@@ -1005,32 +1005,6 @@ mod ffi {
         result.map_err(|e| format!("{e:#?}"))
     }
 
-    /// Creates a customer in backend for accounting purposes
-    ///
-    /// @param country_code The ISO 3166-1 alpha 2 of the user
-    #[public_name = "customerCreate"]
-    pub fn createCustomer(country_code: String) -> Result<(), String> {
-        sdk::require_feature!("billing", {
-            let result = runtime().block_on(async move {
-                let sdk = get_or_init_sdk().read().await;
-                sdk.create_customer(&country_code).await
-            });
-            result.map_err(|e| format!("{e:#?}"))
-        })
-    }
-
-    /// Fetches the created accounting purpose customer internally, if existing
-    #[public_name = "customerGet"]
-    pub fn getCustomer() -> Result<(), String> {
-        sdk::require_feature!("billing", {
-            let result = runtime().block_on(async move {
-                let mut sdk = get_or_init_sdk().write().await;
-                sdk.get_customer().await
-            });
-            result.map_err(|e| format!("{e:#?}"))
-        })
-    }
-
     /// Deletes the user in Cawaena. Hazmat!
     ///
     /// @param pin The wallet pin for confirmation. Optional in case there is an active wallet.

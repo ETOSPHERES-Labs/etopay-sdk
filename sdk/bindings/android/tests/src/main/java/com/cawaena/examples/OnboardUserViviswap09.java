@@ -25,15 +25,6 @@ public class OnboardUserViviswap09 {
                 return;
             }
 
-            // Create sap customer if not exists
-            try {
-                sdk.customerGet();
-                System.out.println("customer already exists");
-            } catch (Exception e) {
-                sdk.customerCreate("DE");
-                System.out.println("created SAP customer");
-            }
-
             // Start KYC verification for viviswap
             // The user already exists in viviswap db. Therefore, the test will fail here.
             String new_user = sdk

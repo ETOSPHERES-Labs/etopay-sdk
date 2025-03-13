@@ -23,11 +23,6 @@ async fn main() {
         return;
     }
 
-    // Create sap customer if not exists
-    if sdk.get_customer().await.is_err() {
-        sdk.create_customer("DE").await.unwrap();
-    };
-
     // Start KYC verification for postident
     let new_case_id = sdk.start_kyc_verification_for_postident().await.unwrap();
     println!("New postident user with case: {:#?}", new_case_id);

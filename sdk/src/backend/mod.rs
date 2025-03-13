@@ -2,8 +2,6 @@
 //!
 //!
 
-#[cfg(feature = "billing")]
-pub mod account;
 pub mod dlt;
 pub mod kyc;
 

@@ -35,15 +35,6 @@ Task {
             return
         }
 
-        // Create sap customer if not exists
-        do {
-            try await sdk.getCustomer()
-            print("sap customer exists. Continue")
-        } catch {
-            try await sdk.createCustomer("DE")
-            print("created new sap customer")
-        }
-
         // Start KYC verification for viviswap
         let new_user = try await sdk.startKycVerificationForViviswap(
             "swift_example@gmail.com", true)

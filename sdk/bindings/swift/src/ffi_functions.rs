@@ -1117,43 +1117,6 @@ impl CawaenaSdk {
         }
     }
 
-    /// Creates a new customer
-    ///
-    /// # Arguments
-    ///
-    /// * `country_code` - The country code for the customer.
-    ///
-    /// # Returns
-    ///
-    /// * Ok - empty if the customer account is created successfully.
-    /// * Err - if there is an issue creating the customer account.
-    #[cfg_attr(not(feature = "billing"), allow(unused_variables))]
-    pub async fn create_customer(&self, country_code: String) -> Result<(), String> {
-        sdk::require_feature!("billing", {
-            let sdk = self.inner.write().await;
-            sdk.create_customer(&country_code)
-                .await
-                .map_err(|err| format!("{:#?}", err))
-        })
-    }
-
-    /// Gets an existing new customer
-    ///
-    /// # Arguments
-    ///
-    /// * `None`
-    ///
-    /// # Returns
-    ///
-    /// * Ok - empty if the customer account details are retrieved successfully.
-    /// * Err - if there is an issue retrieving the customer account details.
-    pub async fn get_customer(&self) -> Result<(), String> {
-        sdk::require_feature!("billing", {
-            let mut sdk = self.inner.write().await;
-            sdk.get_customer().await.map_err(|err| format!("{:#?}", err))
-        })
-    }
-
     /// Deletes the user
     ///
     /// # Arguments

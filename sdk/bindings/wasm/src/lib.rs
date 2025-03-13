@@ -536,29 +536,6 @@ impl CryptpaySdk {
             .map_err(|e| format!("{e:#?}"))
     }
 
-    /// Creates a customer in backend for accounting purposes
-    ///
-    /// @param {string} country_code - The ISO 3166-1 alpha 2 of the user
-    /// @returns {Promise<void>}
-    #[wasm_bindgen(skip_jsdoc, js_name = "createCustomer")]
-    #[cfg_attr(not(feature = "billing"), allow(unused_variables))]
-    pub async fn create_customer(&self, country_code: String) -> Result<(), String> {
-        sdk::require_feature!("billing", {
-            let sdk = self.inner.read().await;
-            sdk.create_customer(&country_code).await.map_err(|e| format!("{e:#?}"))
-        })
-    }
-
-    /// Fetches the created accounting purpose customer internally, if existing
-    /// @returns {Promise<void>}
-    #[wasm_bindgen(skip_jsdoc, js_name = "getCustomer")]
-    pub async fn get_customer(&self) -> Result<(), String> {
-        sdk::require_feature!("billing", {
-            let mut sdk = self.inner.write().await;
-            sdk.get_customer().await.map_err(|e| format!("{e:#?}"))
-        })
-    }
-
     /// Deletes the user in cryptpay. Hazmat!
     ///
     /// @param {string} pin - The wallet pin for confirmation. Optional in case there is an active wallet.

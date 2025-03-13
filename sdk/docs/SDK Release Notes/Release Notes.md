@@ -112,8 +112,6 @@
 
 ## [v0.7.0]
 
-- Added new function `updateCustomer` which updates or creates a new customer account for billing. It requires the two-character
- country code of the user, which can be the same as the one used while doing a new user registration. Calling this function is mandatory before initializing wallet. The list of valid/legally allowed country codes will be given to the team before go-live.
 - Modified the function createPurchaseRequest. It now requires three more parameters: `product_hash`, `app_data` (may be empty but can be used to store additional data of the image like thumbnail URL etc…), `purchase_type` (Required currently and should be set to the constant value “COMPLIMENT”)
 - `getBalance` is now modified internally. It performs claiming of dust outputs, so that micro-transactions and locked outputs do not get lost. if not claimed. This feature is only internal to the crypto-currency and has no impact on the UX/UI.
 - QA and staging environment now use SMR mainnet. Getting tokens now happens via either purchase from viviswap or transfer of existing SMR from own wallet-

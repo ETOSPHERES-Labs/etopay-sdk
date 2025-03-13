@@ -30,11 +30,6 @@ async fn main() {
         return;
     }
 
-    // Create sap customer if not exists
-    if sdk.get_customer().await.is_err() {
-        sdk.create_customer("DE").await.unwrap();
-    };
-
     // Start KYC verification for viviswap
     // The user already exists in viviswap db. Therefore, the test will fail here.
     let new_user = sdk

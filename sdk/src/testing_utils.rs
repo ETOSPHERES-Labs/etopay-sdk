@@ -18,7 +18,6 @@ use crate::{
 };
 use api_types::api::networks::{ApiNetwork, ApiNetworkType};
 use api_types::api::{
-    account::Customer,
     postident::{CaseDetailsResponse, NewCaseIdResponse},
     transactions::{ApiApplicationMetadata, ApiTxStatus, GetTransactionDetailsResponse},
     viviswap::{
@@ -141,7 +140,6 @@ pub fn example_get_user(key: SwapPaymentDetailKey, verified: bool, times: usize,
                     ]),
                 }),
             }),
-            customer_details: None,
             local_share: None,
             wallet_transactions: Vec::new(),
         })
@@ -365,18 +363,6 @@ pub fn example_crypto_details() -> Option<ViviswapApiContractDetails> {
         deposit_address: ADDRESS.into(),
         wallet_id: "some".into(),
     }))
-}
-
-pub fn example_customer() -> Customer {
-    Customer {
-        country_code: "DE".to_string(),
-        username: USERNAME.into(),
-        contractaccount: None,
-        customer_id: None,
-        business_partner: api_types::api::account::BusinessPartner::Privat,
-        contract_currency: api_types::api::account::ContractCurrency::EUR,
-        vat_id: None,
-    }
 }
 
 pub fn example_wallet_borrow() -> MockWalletManager {
