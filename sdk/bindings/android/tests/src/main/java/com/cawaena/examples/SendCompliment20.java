@@ -1,14 +1,17 @@
 package com.cawaena.examples;
 
+import com.cawaena.Wallet;
+import com.cawaena.model.Network;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
 import java.util.concurrent.ExecutionException;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-
-import com.cawaena.Wallet;import com.cawaena.model.TxDetailsResponse;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.cawaena.model.TxDetailsResponse;
 
 public class SendCompliment20 {
 
@@ -45,7 +48,7 @@ public class SendCompliment20 {
 
             Network iotaNetwork = networksList.get(0);
             // set the network configuration for the wallet
-            sdk.setNetwork(iotaNetwork.id)
+            sdk.setNetwork(iotaNetwork.id);
 
             // generate receiver address
             String address = sdk.generateNewAddress(utils.PIN);
