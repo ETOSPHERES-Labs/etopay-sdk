@@ -364,12 +364,8 @@ mod tests {
     use crate::core::Config;
     use crate::testing_utils::MNEMONIC;
     use crate::types::{self, currencies::Currency};
-    use iota_sdk::{
-        crypto::keys::bip39::Mnemonic,
-        types::block::payload::{transaction::TransactionEssence, Payload},
-    };
+    use iota_sdk::{crypto::keys::bip39::Mnemonic, types::block::payload::transaction::TransactionEssence};
     use rstest::rstest;
-    use rust_decimal::prelude::ToPrimitive;
     use rust_decimal_macros::dec;
     use testing::CleanUp;
 
@@ -571,32 +567,14 @@ mod tests {
         println!("Address: {address}, balance: {balance:?}");
 
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
-        let tag: Box<[u8]> = "test tag".to_string().into_bytes().into_boxed_slice();
-        let data: Box<[u8]> = (amount.inner() * dec!(1_000_000))
-            .round()
-            .to_u64()
-            .unwrap()
-            .to_be_bytes()
-            .into();
-        let tagged_data_payload = Some(TaggedDataPayload::new(tag.clone(), data.clone()).unwrap());
-        let message = Some(String::from("test message"));
+        let message = Some(String::from("test message").into_bytes());
 
         // Act
-        let result = wallet_user
-            .send_amount(&address, amount, tagged_data_payload.clone(), message.clone())
-            .await;
+        let result = wallet_user.send_amount(&address, amount, message.clone()).await;
 
         // Assert
         let transaction = result.unwrap();
-
-        assert_eq!(
-            transaction.payload.essence().as_regular().payload(),
-            Some(Payload::TaggedData(Box::new(
-                TaggedDataPayload::new(tag, data).unwrap()
-            )))
-            .as_ref()
-        );
-        assert_eq!(transaction.note, message);
+        assert!(!transaction.is_empty());
     }
 
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
@@ -611,13 +589,11 @@ mod tests {
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
         // Act
-        let result = wallet_user.send_amount(&address, amount, None, None).await;
+        let result = wallet_user.send_amount(&address, amount, None).await;
 
         // Assert
         let transaction = result.unwrap();
-
-        assert_eq!(transaction.payload.essence().as_regular().payload(), None);
-        assert_eq!(transaction.note, None);
+        assert!(!transaction.is_empty());
     }
 
     #[tokio::test]
@@ -631,7 +607,7 @@ mod tests {
         let amount = CryptoAmount::try_from(dec!(96854.0)).unwrap();
 
         // Act
-        let transaction = wallet_user.send_amount(&address, amount, None, None).await;
+        let transaction = wallet_user.send_amount(&address, amount, None).await;
 
         // Assert
         assert!(

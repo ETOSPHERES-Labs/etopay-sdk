@@ -804,7 +804,7 @@ mod tests {
                     mock_wallet
                         .expect_send_amount()
                         .times(1)
-                        .returning(move |_, _, _, _| Ok(example_wallet_transaction()));
+                        .returning(move |_, _, _| Ok(String::from("transaction id")));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 
@@ -825,9 +825,7 @@ mod tests {
                 &EncryptionPin::try_from_string("1234").unwrap(),
                 "smrq1...",
                 amount,
-                Some(Vec::from([8, 16])),
-                Some(Vec::from([8, 16])),
-                Some(String::from("test message")),
+                Some(String::from("test message").into_bytes()),
             )
             .await;
 
@@ -877,7 +875,7 @@ mod tests {
             mock_wallet
                 .expect_send_amount()
                 .times(1)
-                .returning(move |_, _, _, _| Ok(String::from("tx_id")));
+                .returning(move |_, _, _| Ok(String::from("tx_id")));
 
             let value = wallet_transaction.clone();
             mock_wallet
@@ -900,9 +898,7 @@ mod tests {
                 &EncryptionPin::try_from_string("1234").unwrap(),
                 "0xb0b...",
                 amount,
-                Some(Vec::from([8, 16])),
-                Some(Vec::from([8, 16])),
-                Some(String::from("test message")),
+                Some(String::from("test message").into_bytes()),
             )
             .await;
 

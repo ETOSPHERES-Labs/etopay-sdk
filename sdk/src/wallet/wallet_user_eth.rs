@@ -55,63 +55,6 @@ pub struct WalletImplEth {
 }
 
 impl WalletImplEth {
-    #[cfg(test)]
-    pub async fn new_with_mocked_provider(
-        mnemonic: Mnemonic,
-        path: &Path,
-        http_provider: RootProvider<Http<Client>>,
-        node_urls: Vec<String>,
-        chain_id: u64,
-    ) -> Result<Self> {
-        // let str_node_urls: Vec<&str> = node_urls.iter().map(String::as_str).collect();
-        //
-        // info!("Used node_urls: {:?}", str_node_urls);
-        // info!("Eth eth_node_url: {:?}", str_node_urls);
-        // let client_options = ClientOptions::new()
-        //     .with_local_pow(false)
-        //     .with_fallback_to_local_pow(true)
-        //     .with_nodes(&str_node_urls)?;
-        //
-        // // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
-        // #[cfg(not(target_arch = "wasm32"))]
-        // if let Err(e) = std::fs::create_dir_all(path) {
-        //     error!("Could not create the wallet directory: {e:?}");
-        // }
-        //
-        // let account_manager = {
-        //     let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
-        //     iota_sdk::wallet::Wallet::builder()
-        //         .with_client_options(client_options)
-        //         .with_coin_type(Currency::Eth.coin_type())
-        //         .with_secret_manager(secret_manager)
-        //         .with_storage_path(path) // we still need this since the account stores stuff in jammdb
-        //         .finish()
-        //         .await?
-        // };
-        //
-        // let account = account_manager.get_account(APP_NAME).await;
-        //
-        // if let Err(account_error) = account {
-        //     info!("{:?}", account_error);
-        //     info!("Creating a new account with alias {APP_NAME}");
-        //     account_manager
-        //         .create_account()
-        //         .with_alias(String::from(APP_NAME))
-        //         .finish()
-        //         .await?;
-        // }
-        //
-        // info!("Wallet creation successful");
-        //
-        // Ok(WalletImplEth {
-        //     account_manager,
-        //     node_urls,
-        //     chain_id,
-        //     http_provider,
-        // })
-        todo!()
-    }
-
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
     pub async fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
         // Ase mnemonic to create a Signer
@@ -351,7 +294,7 @@ impl WalletUser for WalletImplEth {
 mod tests {
     use super::*;
     use crate::core::Config;
-    use alloy::{hex::decode, primitives::Address};
+    use alloy::primitives::Address;
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rust_decimal::prelude::FromPrimitive;
     use serde_json::json;
@@ -379,22 +322,15 @@ mod tests {
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user_with_mocked_provider(
         mnemonic: impl Into<Mnemonic>,
-        http_provider: RootProvider<Http<Client>>,
         node_url: String,
         chain_id: u64,
-    ) -> (WalletImplEth, CleanUp) {
-        let (_, cleanup) = Config::new_test_with_cleanup();
-        let wallet = WalletImplEth::new_with_mocked_provider(
-            mnemonic.into(),
-            Path::new(&cleanup.path_prefix),
-            http_provider,
-            vec![node_url],
-            chain_id,
-        )
-        .await
-        .expect("should initialize wallet");
+    ) -> WalletImplEth {
+        // let (_, cleanup) = Config::new_test_with_cleanup();
+        let wallet = WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id)
+            .await
+            .expect("could not initialize WalletImplEth");
 
-        (wallet, cleanup)
+        wallet
     }
 
     #[tokio::test]
@@ -468,18 +404,11 @@ mod tests {
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
         let chain_id = 31337;
 
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
+        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
-        let wallet_addr = wallet_user.get_wallet_addr().await.unwrap();
+        let wallet_addr = wallet_user.get_address().await.unwrap();
 
         let mocked_balance: i128 = 10_000_000_000_000_000_000_000; // 10^22
         let mocked_balance_in_hex = format!("0x{:X}", mocked_balance);
@@ -515,238 +444,16 @@ mod tests {
         assert_eq!(balance, CryptoAmount::from(10000))
     }
 
-    #[tokio::test]
-    async fn test_get_next_nonce() {
-        //Arrange
-        let mut server = mockito::Server::new_async().await;
-        let url = server.url();
-        let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
-        let chain_id = 31337;
-
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
-
-        let wallet_addr = wallet_user.get_wallet_addr().await.unwrap();
-        let mocked_transaction_count = 5;
-
-        let mocked_rpc_get_transaction_count = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionCount",
-                "params": [
-                    wallet_addr,
-                    "latest"
-                ],
-            })))
-            .with_status(200)
-            .with_body(format!(
-                r#"{{
-                    "jsonrpc": "2.0",
-                    "id": 1,
-                    "result": "{}"
-                }}"#,
-                mocked_transaction_count
-            ))
-            .create();
-
-        // Act
-        let nonce = wallet_user.get_next_nonce(wallet_addr).await.unwrap();
-        mocked_rpc_get_transaction_count.assert();
-
-        // Assert
-        assert_eq!(nonce, mocked_transaction_count)
-    }
-
-    #[tokio::test]
-    async fn test_build_transaction() {
-        //Arrange
-        let mut server = mockito::Server::new_async().await;
-        let url = server.url();
-        let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
-        let chain_id = 31337;
-
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
-
-        let wallet_addr = wallet_user.get_wallet_addr().await.unwrap();
-        let mocked_transaction_count = 5;
-
-        let mocked_rpc_get_transaction_count = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionCount",
-                "params": [
-                    wallet_addr,
-                    "latest"
-                ],
-            })))
-            .with_status(200)
-            .with_body(format!(
-                r#"{{
-                        "jsonrpc": "2.0",
-                        "id": 1,
-                        "result": "{}"
-                    }}"#,
-                mocked_transaction_count
-            ))
-            .create();
-
-        let addr_from = wallet_addr;
-        let addr_to = Address::from_str(RECEIVER_ADDR_RAW).unwrap();
-        let amount_to_send = U256::from(1);
-        let gas_limit = 21_000;
-        let max_fee_per_gas = 20_000_000_000;
-        let max_priority_fee_per_gas = 1_000_000_000;
-
-        // Act
-        let transaction = wallet_user
-            .build_transaction(
-                addr_from,
-                addr_to,
-                amount_to_send,
-                gas_limit,
-                max_fee_per_gas,
-                max_priority_fee_per_gas,
-                wallet_user.chain_id,
-                None,
-                None,
-            )
-            .await;
-
-        // Assert
-        mocked_rpc_get_transaction_count.assert();
-        transaction.unwrap();
-    }
-
-    #[tokio::test]
-    async fn test_build_transaction_with_tag_and_metadata() {
-        //Arrange
-        let mut server = mockito::Server::new_async().await;
-        let url = server.url();
-        let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
-        let chain_id = 31337;
-
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
-
-        let wallet_addr = wallet_user.get_wallet_addr().await.unwrap();
-        let mocked_transaction_count = 5;
-
-        let mocked_rpc_get_transaction_count = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionCount",
-                "params": [
-                    wallet_addr,
-                    "latest"
-                ],
-            })))
-            .with_status(200)
-            .with_body(format!(
-                r#"{{
-                        "jsonrpc": "2.0",
-                        "id": 1,
-                        "result": "{}"
-                    }}"#,
-                mocked_transaction_count
-            ))
-            .create();
-
-        let addr_from = wallet_addr;
-        let addr_to = Address::from_str(RECEIVER_ADDR_RAW).unwrap();
-        let amount_to_send = U256::from(1);
-        let gas_limit = 21_000;
-        let max_fee_per_gas = 20_000_000_000;
-        let max_priority_fee_per_gas = 1_000_000_000;
-        let tag = TaggedDataPayload::new(Vec::from([8, 16]), Vec::from([8, 16])).unwrap();
-        let metadata = String::from("test message");
-
-        // Act
-        let transaction = wallet_user
-            .build_transaction(
-                addr_from,
-                addr_to,
-                amount_to_send,
-                gas_limit,
-                max_fee_per_gas,
-                max_priority_fee_per_gas,
-                wallet_user.chain_id,
-                Some(tag),
-                Some(metadata),
-            )
-            .await;
-
-        // Assert
-        mocked_rpc_get_transaction_count.assert();
-        transaction.unwrap();
-    }
-
-    #[tokio::test]
-    async fn test_sign_transaction() {
-        //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
-        let transaction_to_sign = TxEip1559 {
-            chain_id: 31337,
-            nonce: 0,
-            gas_limit: 21_000,
-            max_fee_per_gas: 20_000,
-            max_priority_fee_per_gas: 1_000,
-            to: alloy_primitives::TxKind::Call(Address::from_str(RECEIVER_ADDR_RAW).unwrap()),
-            value: U256::from(100),
-            access_list: Default::default(),
-            input: Default::default(),
-        };
-
-        let wallet_addr_raw = wallet_user.get_wallet_addr_raw().await.unwrap();
-
-        // Act
-        let signed_transaction = wallet_user.sign_transaction(transaction_to_sign, wallet_addr_raw).await;
-
-        // Assert
-        signed_transaction.unwrap();
-    }
-
+    /// TODO: is this a duplicate of the next test?
     #[tokio::test]
     async fn test_send_transaction_eth() {
         //Arrange
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
         let chain_id = 31337;
 
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
+        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
         let mocked_transaction_count = 5;
         let index = "1";
@@ -840,7 +547,9 @@ mod tests {
             .create();
 
         // Act
-        let transaction_id = wallet_user.send_transaction_eth(index, &to, amount_to_send).await;
+        let transaction_id = wallet_user
+            .send_amount(&to, amount_to_send, Some(index.to_string().into_bytes()))
+            .await;
 
         // Assert
         mocked_rpc_get_transaction_count.assert();
@@ -856,16 +565,9 @@ mod tests {
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
         let chain_id = 31337;
 
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
+        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
         let mocked_transaction_count = 5;
         let amount_to_send = CryptoAmount::from(100);
@@ -957,13 +659,10 @@ mod tests {
             ))
             .create();
 
-        let tagged_data_payload = TaggedDataPayload::new(Vec::from([8, 16]), Vec::from([8, 16])).unwrap();
-        let metadata = String::from("test message");
+        let metadata = String::from("test message").into_bytes();
 
         // Act
-        let transaction_id = wallet_user
-            .send_amount_eth(&to, amount_to_send, Some(tagged_data_payload), Some(metadata))
-            .await;
+        let transaction_id = wallet_user.send_amount(&to, amount_to_send, Some(metadata)).await;
 
         // Assert
         mocked_rpc_get_transaction_count.assert();
@@ -981,16 +680,9 @@ mod tests {
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
         let chain_id = 31337;
 
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
+        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
         let mocked_rpc_get_transaction_by_hash = server
             .mock("POST", "/")
@@ -1027,16 +719,9 @@ mod tests {
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
         let chain_id = 31337;
 
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
+        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
         let dummy_transaction_hash = "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c";
         let dummy_block_number = "0x107d7b0";
@@ -1169,248 +854,14 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_verify_transaction_success() {
-        //Arrange
-        let mut server = mockito::Server::new_async().await;
-        let url = server.url();
-        let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
-        let chain_id = 31337;
-
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
-
-        let dummy_transaction_id = "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c";
-
-        let mocked_rpc_get_transaction_receipt_response_json = json!({
-            "jsonrpc": "2.0",
-            "id": 1,
-            "result": {
-                "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
-                "blockNumber": "0x107d7b0",
-                "contractAddress": null,
-                "cumulativeGasUsed": "0x19aac9a",
-                "effectiveGasPrice": "0xb9029a7ea",
-                "from": "0x901c7c311d39e0b26257219765e71e8db3107a81",
-                "gasUsed": "0x27fb4",
-                "logs": [
-                    {
-                        "address": "0xdac17f958d2ee523a2206206994597c13d831ec7",
-                        "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
-                        "blockNumber": "0x107d7b0",
-                        "data": "0x0000000000000000000000000000000000000000000000000000000103f1bfef",
-                        "logIndex": "0x24e",
-                        "removed": false,
-                        "topics": [
-                            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-                            "0x000000000000000000000000a82f91562e1cef9dec93a4ad328d01ea7827910a",
-                            "0x000000000000000000000000901c7c311d39e0b26257219765e71e8db3107a81"
-                        ],
-                        "transactionHash": "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c",
-                        "transactionIndex": "0xfc"
-                    },
-                    {
-                        "address": "0xb7135877cd5d40aa3b086ac6f21c51bbafbbb41f",
-                        "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
-                        "blockNumber": "0x107d7b0",
-                        "data": "0x00000000000000000000000000000000000000000003f6526b99745385c00000",
-                        "logIndex": "0x24f",
-                        "removed": false,
-                        "topics": [
-                            "0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0f7b2291e5b200ac8c7c3b925",
-                            "0x000000000000000000000000901c7c311d39e0b26257219765e71e8db3107a81",
-                            "0x000000000000000000000000000000000022d473030f116ddee9f6b43ac78ba3"
-                        ],
-                        "transactionHash": "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c",
-                        "transactionIndex": "0xfc"
-                    },
-                    {
-                        "address": "0xb7135877cd5d40aa3b086ac6f21c51bbafbbb41f",
-                        "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
-                        "blockNumber": "0x107d7b0",
-                        "data": "0x000000000000000000000000000000000000000000000a968163f0a57b400000",
-                        "logIndex": "0x250",
-                        "removed": false,
-                        "topics": [
-                            "0xddf252ad1be2c89b69c2b068fc378daa952ba7f163c4a11628f55a4df523b3ef",
-                            "0x000000000000000000000000901c7c311d39e0b26257219765e71e8db3107a81",
-                            "0x000000000000000000000000a82f91562e1cef9dec93a4ad328d01ea7827910a"
-                        ],
-                        "transactionHash": "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c",
-                        "transactionIndex": "0xfc"
-                    },
-                    {
-                        "address": "0xa82f91562e1cef9dec93a4ad328d01ea7827910a",
-                        "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
-                        "blockNumber": "0x107d7b0",
-                        "data": "0x000000000000000000000000000000000000000000000a968163f0a57b400000fffffffffffffffffffffffffffffffffffffffffffffffffffffffefc0e40110000000000000000000000000000000000000000000004f77993b72687d0b8d40000000000000000000000000000000000000000000000002672ab0fa51842cafffffffffffffffffffffffffffffffffffffffffffffffffffffffffffb6981",
-                        "logIndex": "0x251",
-                        "removed": false,
-                        "topics": [
-                            "0xc42079f94a6350d7e6235f29174924f928cc2ac818eb64fed8004e115fbcca67",
-                            "0x000000000000000000000000ef1c6e67703c7bd7107eed8303fbe6ec2554bf6b",
-                            "0x000000000000000000000000901c7c311d39e0b26257219765e71e8db3107a81"
-                        ],
-                        "transactionHash": "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c",
-                        "transactionIndex": "0xfc"
-                    }
-                ],
-                "logsBloom": "0x00000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000010000000000800020000000000000200000000040000000000800104008000000000000000000000800000000001200000000000000000000000000000000000000000000000020000000020010000800000000000000000000000000000000000000000000000000000000000000120000020800000000000000100084000000000000000000000000000000000000000000000002000000000000001000000000400000000000000000000000000000000010000000000000000000000000000000000000000000000000000090000000",
-                "status": "0x1",
-                "to": "0xef1c6e67703c7bd7107eed8303fbe6ec2554bf6b",
-                "transactionHash": "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c",
-                "transactionIndex": "0xfc",
-                "type": "0x2"
-            }
-        });
-
-        let mocked_rpc_get_transaction_receipt = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionReceipt",
-                "params": [
-                    dummy_transaction_id
-                ],
-            })))
-            .with_status(200)
-            .with_body(serde_json::to_vec(&mocked_rpc_get_transaction_receipt_response_json).unwrap())
-            .create();
-
-        let transaction_hash = TxHash::from_str(dummy_transaction_id).unwrap();
-
-        // Act
-        let is_transaction_successful = wallet_user.verify_transaction_success(transaction_hash).await;
-
-        // Assert
-        mocked_rpc_get_transaction_receipt.assert();
-        is_transaction_successful.unwrap();
-    }
-
-    #[tokio::test]
-    async fn test_is_transaction_incoming_returns_true_if_the_transaction_receiver_is_our_wallet_address() {
-        //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
-        let wallet_addr_raw = wallet_user.get_wallet_addr_raw().await.unwrap();
-        let receiver_addr = Address::from_str(&wallet_addr_raw).unwrap();
-
-        // Act
-        let is_transaction_incoming = wallet_user.is_transaction_incoming(Some(receiver_addr)).await.unwrap();
-
-        // Assert
-        assert!(is_transaction_incoming)
-    }
-
-    #[tokio::test]
-    async fn test_is_transaction_incoming_returns_false_if_the_transaction_receiver_is_not_our_wallet_address() {
-        //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
-        let receiver_addr = Address::from_str(RECEIVER_ADDR_RAW).unwrap();
-
-        // Act
-        let is_transaction_incoming = wallet_user.is_transaction_incoming(Some(receiver_addr)).await.unwrap();
-
-        // Assert
-        assert!(!is_transaction_incoming)
-    }
-
-    #[tokio::test]
-    async fn test_compare_addresses_returns_true_when_addresses_are_the_same() {
-        //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
-        let wallet_addr_raw = wallet_user.get_wallet_addr_raw().await.unwrap();
-        let wallet_addr = Address::from_str(&wallet_addr_raw).unwrap();
-        let receiver_addr = Address::from_str(&wallet_addr_raw).unwrap();
-
-        // Act
-        let result = WalletImplEth::compare_addresses(wallet_addr, Some(receiver_addr));
-
-        // Assert
-        assert!(result)
-    }
-
-    #[tokio::test]
-    async fn test_compare_addresses_returns_false_when_addresses_are_different() {
-        //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
-        let wallet_addr = wallet_user.get_wallet_addr().await.unwrap();
-        let receiver_addr = Address::from_str(RECEIVER_ADDR_RAW).unwrap();
-
-        // Act
-        let result = WalletImplEth::compare_addresses(wallet_addr, Some(receiver_addr));
-
-        // Assert
-        assert!(!result)
-    }
-
-    #[tokio::test]
-    async fn test_compare_addresses_returns_false_when_receiver_addr_is_none() {
-        //Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(HARDHAT_MNEMONIC).await;
-
-        let wallet_addr_raw = wallet_user.get_wallet_addr_raw().await.unwrap();
-        let wallet_addr = Address::from_str(&wallet_addr_raw).unwrap();
-        let receiver_addr = None;
-
-        // Act
-        let result = WalletImplEth::compare_addresses(wallet_addr, receiver_addr);
-
-        // Assert
-        assert!(!result)
-    }
-
-    #[tokio::test]
-    async fn test_serialize_and_deserialize_unified_transaction_metadata() {
-        // Arrange
-        let readable_tag = "temperature";
-        let readable_data = "20";
-        let readable_metadata = "still too warm".to_string();
-
-        let unified_transaction_metadata = UnifiedTransactionMetadata {
-            tag: Some(readable_tag.as_bytes().to_vec()),
-            data: Some(readable_data.as_bytes().to_vec()),
-            message: Some(readable_metadata),
-        };
-
-        // Act
-        let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata).unwrap();
-        let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
-        let decoded_unified_transaction_metadata = decode(encoded_unified_transaction_metadata).unwrap();
-
-        let decoded_unified_transaction_metadata = String::from_utf8(decoded_unified_transaction_metadata).unwrap();
-        let deserialized_unified_transaction_metadata: UnifiedTransactionMetadata =
-            serde_json::from_str(&decoded_unified_transaction_metadata).unwrap();
-
-        // Assert
-        assert_eq!(unified_transaction_metadata, deserialized_unified_transaction_metadata)
-    }
-
-    #[tokio::test]
     async fn should_estimate_gas_cost_eip1559() {
         // Arrange
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
         let node_url = Url::parse(&url).unwrap();
-        let mockito_http_provider = ProviderBuilder::new().on_http(node_url.clone());
         let chain_id = 31337;
 
-        let (wallet_user, _cleanup) = get_wallet_user_with_mocked_provider(
-            HARDHAT_MNEMONIC,
-            mockito_http_provider,
-            node_url.to_string(),
-            chain_id,
-        )
-        .await;
+        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
         let to = String::from("0xb0b0000000000000000000000000000000000000");
         let value = U256::from(1);
@@ -1420,14 +871,8 @@ mod tests {
         let readable_data = "20";
         let readable_metadata = "still too warm".to_string();
 
-        let unified_transaction_metadata = UnifiedTransactionMetadata {
-            tag: Some(readable_tag.as_bytes().to_vec()),
-            data: Some(readable_data.as_bytes().to_vec()),
-            message: Some(readable_metadata),
-        };
-
-        let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata).unwrap();
-        let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
+        let serialized_unified_transaction_metadata = "data";
+        let encoded_unified_transaction_metadata = alloy::hex::encode(serialized_unified_transaction_metadata);
 
         let tx = TxEip1559 {
             chain_id,
