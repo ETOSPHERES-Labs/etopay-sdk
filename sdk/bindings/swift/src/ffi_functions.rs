@@ -885,15 +885,15 @@ impl CawaenaSdk {
         pin: String,
         address: String,
         amount: f64,
-        tag: Option<Vec<u8>>,
+        tag: Option<Vec<u8>>, // TODO: remove
         data: Option<Vec<u8>>,
-        message: Option<String>,
+        message: Option<String>, // TODO: remove
     ) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
         async move {
             let amount = CryptoAmount::try_from(amount)?;
             let pin = EncryptionPin::try_from_string(pin)?;
-            sdk.send_amount(&pin, &address, amount, tag, data, message).await
+            sdk.send_amount(&pin, &address, amount, data).await
         }
         .await
         .map_err(|err| format!("{:#?}", err))
@@ -1010,9 +1010,9 @@ impl CawaenaSdk {
         &self,
         amount: f64,
         pin: Option<String>,
-        tag: Option<Vec<u8>>,
+        tag: Option<Vec<u8>>, // TODO: remove
         data: Option<Vec<u8>>,
-        message: Option<String>,
+        message: Option<String>, // TODO: remove
     ) -> Result<ViviswapWithdrawal, String> {
         sdk::require_feature!("viviswap-swap", {
             let mut sdk = self.inner.write().await;
@@ -1022,8 +1022,7 @@ impl CawaenaSdk {
                     Some(pin) => Some(EncryptionPin::try_from_string(pin)?),
                     None => None,
                 };
-                sdk.create_withdrawal_with_viviswap(amount, pin.as_ref(), tag, data, message)
-                    .await
+                sdk.create_withdrawal_with_viviswap(amount, pin.as_ref(), data).await
             }
             .await
             .map(Into::into)

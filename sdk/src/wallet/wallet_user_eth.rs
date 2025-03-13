@@ -1,88 +1,34 @@
 use super::error::Result;
 use super::wallet_user::WalletUser;
-use crate::types::currencies::{CryptoAmount, Currency};
+use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use crate::wallet::error::WalletError;
-use alloy::eips::BlockNumberOrTag;
-use alloy::hex::encode;
-use alloy::network::{AnyNetwork, Ethereum, EthereumWallet, TransactionBuilder};
-use alloy::rpc::types::{TransactionInput, TransactionRequest};
-use alloy::signers::k256::ecdsa::SigningKey;
-use alloy::signers::k256::Secp256k1;
+use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
+use alloy::rpc::types::TransactionRequest;
 use alloy::signers::local::coins_bip39::English;
-use alloy::signers::local::{LocalSigner, MnemonicBuilder};
-use alloy::transports::http::Http;
+use alloy::signers::local::MnemonicBuilder;
 use alloy::{
-    consensus::{SignableTransaction, Signed, TxEip1559, TxEnvelope},
-    hex::ToHexExt,
+    consensus::TxEip1559,
     primitives::Address,
     primitives::U256,
     providers::{Provider, ProviderBuilder},
 };
-use alloy_consensus::Transaction;
-use alloy_primitives::{PrimitiveSignature, TxHash};
 use alloy_provider::fillers::{
-    BlobGasFiller, ChainIdFiller, FillProvider, GasFiller, JoinFill, NonceFiller, SimpleNonceManager, WalletFiller,
+    BlobGasFiller, ChainIdFiller, FillProvider, GasFiller, JoinFill, NonceFiller, WalletFiller,
 };
 use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
-use iota_sdk::client::secret::SecretManage;
-use iota_sdk::crypto::keys::bip44::Bip44;
-use iota_sdk::wallet::account::types::InclusionState;
-use iota_sdk::{
-    client::{
-        api::GetAddressesOptions,
-        constants::ETHER_COIN_TYPE,
-        secret::{GenerateAddressOptions, SecretManager},
-    },
-    crypto::keys::bip39::Mnemonic,
-    types::block::{address::Hrp, payload::TaggedDataPayload},
-    wallet::{
-        account::{types::Transaction as IotaWalletTransaction, Account},
-        ClientOptions,
-    },
-};
-use log::{error, info};
-use reqwest::{Client, Url};
+use iota_sdk::{crypto::keys::bip39::Mnemonic, wallet::account::types::Transaction as IotaWalletTransaction};
+use log::info;
+use reqwest::Url;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
 use rust_decimal_macros::dec;
 use std::fmt::Debug;
 use std::ops::{Div, Mul};
-use std::path::Path;
 use std::str::FromStr;
 
-///The name of the application used as the account name in the wallet
-const APP_NAME: &str = "standalone";
-
 const WEI_TO_ETH_DIVISOR: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000_000_000_000_000_000)) }; // SAFETY: the value is non-negative
-
-#[derive(Debug, serde::Deserialize, serde::Serialize, PartialEq)]
-pub struct UnifiedTransactionMetadata {
-    tag: Option<Vec<u8>>,
-    data: Option<Vec<u8>>,
-    message: Option<String>,
-}
-
-impl UnifiedTransactionMetadata {
-    fn from_iota_tag_and_metadata(
-        tag: Option<TaggedDataPayload>,
-        metadata: Option<String>,
-    ) -> UnifiedTransactionMetadata {
-        match tag {
-            Some(t) => UnifiedTransactionMetadata {
-                tag: Some(t.tag().to_vec()),
-                data: Some(t.data().to_vec()),
-                message: metadata,
-            },
-            None => UnifiedTransactionMetadata {
-                tag: None,
-                data: None,
-                message: metadata,
-            },
-        }
-    }
-}
 
 // Type alias for the crazy long type used as Provider with the default fillers (Gas, Nonce,
 // ChainId) and Wallet
@@ -163,102 +109,8 @@ impl WalletImplEth {
     }
 
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub async fn new(mnemonic: Mnemonic, path: &Path, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
-        // #[cfg(test)]
-        // pub async fn new_with_mocked_provider(
-        //     mnemonic: Mnemonic,
-        //     path: &Path,
-        //     http_provider: RootProvider<Http<Client>>,
-        //     node_url: String,
-        //     chain_id: u64,
-        // ) -> Result<Self> {
-        // let node_urls: &[&str] = &[&node_url];
-        //
-        // info!("Used node_urls: {:?}", node_urls);
-        // info!("Eth eth_node_url: {:?}", node_urls);
-        // let client_options = ClientOptions::new()
-        //     .with_local_pow(false)
-        //     .with_fallback_to_local_pow(true)
-        //     .with_nodes(node_urls)?;
-        //
-        // // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
-        // #[cfg(not(target_arch = "wasm32"))]
-        // if let Err(e) = std::fs::create_dir_all(path) {
-        //     error!("Could not create the wallet directory: {e:?}");
-        // }
-        //
-        // let account_manager = {
-        //     let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
-        //     iota_sdk::wallet::Wallet::builder()
-        //         .with_client_options(client_options)
-        //         .with_coin_type(Currency::Eth.coin_type())
-        //         .with_secret_manager(secret_manager)
-        //         .with_storage_path(path) // we still need this since the account stores stuff in jammdb
-        //         .finish()
-        //         .await?
-        // };
-        //
-        // let account = account_manager.get_account(APP_NAME).await;
-        //
-        // if let Err(account_error) = account {
-        //     info!("{:?}", account_error);
-        //     info!("Creating a new account with alias {APP_NAME}");
-        //     account_manager
-        //         .create_account()
-        //         .with_alias(String::from(APP_NAME))
-        //         .finish()
-        //         .await?;
-        // }
-        //
-        // info!("Wallet creation successful");
-        //
-        // Ok(WalletImplEth {
-        //     account_manager,
-        //     node_url,
-        //     chain_id,
-        //     http_provider,
-        // })
-        //     todo!()
-        // }
-
-        //
-        // info!("Used node_urls: {:?}", node_urls);
-        // let client_options = ClientOptions::new()
-        //     .with_local_pow(false)
-        //     .with_fallback_to_local_pow(true)
-        //     .with_nodes(&node_urls)?;
-        //
-        // // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
-        // #[cfg(not(target_arch = "wasm32"))]
-        // if let Err(e) = std::fs::create_dir_all(path) {
-        //     error!("Could not create the wallet directory: {e:?}");
-        // }
-        //
-        // let account_manager = {
-        //     let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
-        //     iota_sdk::wallet::Wallet::builder()
-        //         .with_client_options(client_options)
-        //         .with_coin_type(Currency::Eth.coin_type())
-        //         .with_secret_manager(secret_manager)
-        //         .with_storage_path(path) // we still need this since the account stores stuff in jammdb
-        //         .finish()
-        //         .await?
-        // };
-        //
-        // let account = account_manager.get_account(APP_NAME).await;
-        //
-        // if let Err(account_error) = account {
-        //     info!("{:?}", account_error);
-        //     info!("Creating a new account with alias {APP_NAME}");
-        //     account_manager
-        //         .create_account()
-        //         .with_alias(String::from(APP_NAME))
-        //         .finish()
-        //         .await?;
-        // }
-
-        // use mnemonic to create a Signer
-        // Access mnemonic phrase with password.
+    pub async fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
+        // Ase mnemonic to create a Signer
         // Child key at derivation path: m/44'/60'/0'/0/{index}.
         let wallet = MnemonicBuilder::<English>::default()
             .phrase(mnemonic.as_ref().to_string())
@@ -267,96 +119,22 @@ impl WalletImplEth {
             // .password(password)
             .build()?;
 
-        // let w = wallet.into_wallet();
-
         // construct the ProviderBuilder
         let url =
             Url::parse(&node_urls[0]).map_err(|e| WalletError::Parse(format!("could not parse the url: {e:?}")))?;
-        // let http_provider = ProviderBuilder::<_, _, Ethereum>::default().on_http(url.clone());
+
+        // build a Provider that has the default fillers for GasEstimation, Nonce providing and chain_id fetcher
         let http_provider = ProviderBuilder::<_, _, Ethereum>::new()
-            // .filler(GasFiller)
-            // // .filler(SimpleNonceManager::default())
-            // .filler(ChainIdFiller::new(Some(chain_id)))
             .wallet(wallet.clone())
             .on_http(url);
 
         info!("Wallet creation successful");
 
         Ok(WalletImplEth {
-            // wallet,
             chain_id,
-            // node_url,
             provider: http_provider,
         })
     }
-
-    // async fn sign_transaction(&self, transaction: TxEip1559, sender_addr_raw: String) -> Result<Signed<TxEip1559>> {
-    //     // Prepare transaction body for signing
-    //     let mut buf = vec![];
-    //     transaction.encode_for_signing(&mut buf);
-    //     let encoded_transaction: &[u8] = &buf;
-    //
-    //     let bip44_chain = Bip44::new(ETHER_COIN_TYPE)
-    //         .with_account(0)
-    //         .with_change(false as _)
-    //         .with_address_index(0);
-    //
-    //     let secret_manager = self.account_manager.get_secret_manager().write().await;
-    //
-    //     // Next: sign message with external signer
-    //     let (public_key, recoverable_signature) = secret_manager
-    //         .sign_secp256k1_ecdsa(encoded_transaction, bip44_chain)
-    //         .await?;
-    //
-    //     // Validation: recover address and compare it with sender address
-    //     let recovered_sender_addr_raw = recoverable_signature
-    //         .recover_evm_address(encoded_transaction)
-    //         .ok_or(WalletError::SignatureAddressRecoveryError(
-    //             "Could not recover evm address from recoverable signature".to_string(),
-    //         ))?
-    //         .as_ref()
-    //         .encode_hex_with_prefix();
-    //
-    //     if recovered_sender_addr_raw != sender_addr_raw {
-    //         let error_msg = format!("{} != {}", recovered_sender_addr_raw, sender_addr_raw);
-    //         return Err(WalletError::RecoveredAddressDoesNotMatchSenderAddress(error_msg));
-    //     }
-    //
-    //     // Validation: retrieve address from public key and compare it with generated address
-    //     let public_key_addr_raw = public_key.evm_address().as_ref().encode_hex_with_prefix();
-    //     if public_key_addr_raw != sender_addr_raw {
-    //         let error_msg = format!("{} != {}", public_key_addr_raw, sender_addr_raw);
-    //         return Err(WalletError::PublicKeyAddressDoesNotMatchSenderAddress(error_msg));
-    //     }
-    //
-    //     // Next: Read parity (v)
-    //     let recoverable_signature_as_bytes = recoverable_signature.to_bytes();
-    //     let parity = match recoverable_signature_as_bytes[64] {
-    //         0x00 => false,
-    //         0x01 => true,
-    //         _ => return Err(WalletError::InvalidParityByte()),
-    //     };
-    //
-    //     // Next: Extract signature
-    //     // ECDSA signature is 512 bits (64 bytes)
-    //     let recoverable_signature_as_bytes = recoverable_signature.as_ref().to_bytes();
-    //
-    //     // Next: Create signature with r, s and v
-    //     let signature = PrimitiveSignature::from_bytes_and_parity(&recoverable_signature_as_bytes, parity);
-    //
-    //     // Next: Sign transaction
-    //     let signed_transaction = transaction.clone().into_signed(signature);
-    //
-    //     // Validation: recover address and compare it with generated address
-    //     let signer_addr = signed_transaction.recover_signer()?;
-    //
-    //     if signer_addr.encode_hex_with_prefix() != sender_addr_raw {
-    //         let error_msg = format!("{} != {}", signer_addr.encode_hex_with_prefix(), sender_addr_raw);
-    //         return Err(WalletError::SignerAddressDoesNotMatchSenderAddress(error_msg));
-    //     }
-    //
-    //     Ok(signed_transaction)
-    // }
     //
     // #[allow(clippy::too_many_arguments)]
     // async fn build_transaction(
@@ -399,75 +177,6 @@ impl WalletImplEth {
     //     };
     //
     //     Ok(tx)
-    // }
-    //
-    // /// Gets nonce (latest transaction count) for Eth transaction
-    // ///
-    // /// # Returns
-    // ///
-    // /// Returns latest transaction count as a `u64` if successful, or an `Error` if it fails.
-    // ///
-    // /// # Errors
-    // ///
-    // /// This function can return an error if it fails to synchronize the wallet or encounters any other issues.
-    // async fn get_next_nonce(&self, addr: Address) -> Result<u64> {
-    //     let nonce = self.http_provider.get_transaction_count(addr).await?;
-    //
-    //     Ok(nonce)
-    // }
-    //
-    // async fn get_wallet_addr(&self) -> Result<Address> {
-    //     let wallet_addr_raw = self.get_wallet_addr_raw().await?;
-    //     let wallet_addr = Address::from_str(&wallet_addr_raw)
-    //         .map_err(|e| WalletError::Parse(format!("could not parse the address: {e:?}")))?;
-    //
-    //     Ok(wallet_addr)
-    // }
-    //
-    // async fn get_wallet_addr_raw(&self) -> Result<String> {
-    //     let wallet_addr_raw = self.get_address().await?;
-    //     Ok(wallet_addr_raw)
-    // }
-    //
-    // // async fn fetch_block_date(&self, block_number: BlockNumberOrTag) -> Result<Option<u64>> {
-    // //     let block = self
-    // //         .http_provider
-    // //         .get_block_by_number(block_number, alloy::network::primitives::BlockTransactionsKind::Full)
-    // //         .await?;
-    // //     let date = match block {
-    // //         Some(b) => Some(b.header.timestamp),
-    // //         None => None,
-    // //     };
-    // //
-    // //     Ok(date)
-    // // }
-    //
-    // async fn verify_transaction_success(&self, tx_hash: TxHash) -> Result<Option<bool>> {
-    //     let receipt = self.http_provider.get_transaction_receipt(tx_hash).await?;
-    //
-    //     let status = match receipt {
-    //         Some(r) => Some(r.inner.is_success()),
-    //         None => None,
-    //     };
-    //
-    //     Ok(status)
-    // }
-    //
-    // fn map_transaction_success_to_inclusion_state(tx_status: Option<bool>) -> InclusionState {
-    //     match tx_status {
-    //         Some(true) => InclusionState::Confirmed,
-    //         Some(false) => InclusionState::Conflicting,
-    //         None => InclusionState::Pending,
-    //     }
-    // }
-    //
-    // async fn is_transaction_incoming(&self, receiver_addr: Option<Address>) -> Result<bool> {
-    //     let wallet_addr = self.get_wallet_addr().await?;
-    //     Ok(Self::compare_addresses(wallet_addr, receiver_addr))
-    // }
-    //
-    // fn compare_addresses(address: Address, receiver: Option<Address>) -> bool {
-    //     receiver.is_some_and(|r| address == r)
     // }
 
     fn convert_wei_to_eth(value_wei: CryptoAmount) -> CryptoAmount {
@@ -512,32 +221,6 @@ impl WalletImplEth {
 #[cfg_attr(test, mockall::automock)]
 impl WalletUser for WalletImplEth {
     async fn get_address(&self) -> Result<String> {
-        // let options = GenerateAddressOptions::default();
-        // log::debug!(
-        //     "[EVM ADDRESS GENERATION] generating address, internal: {}",
-        //     options.internal
-        // );
-        // let account: Account = self.account_manager.get_account(APP_NAME).await?;
-        // let secret_manager = account.get_secret_manager();
-        // let secret_manager_lock = secret_manager.read().await;
-        // let range = 0..1;
-        //
-        // let addresses = secret_manager_lock
-        //     .generate_evm_addresses(GetAddressesOptions {
-        //         coin_type: ETHER_COIN_TYPE,
-        //         account_index: 0,
-        //         range,
-        //         options: Some(options),
-        //         bech32_hrp: Hrp::from_str_unchecked("eth"),
-        //     })
-        //     .await?;
-        //
-        // if addresses.is_empty() {
-        //     return Err(WalletError::EmptyWalletAddress);
-        // }
-        //
-        // Ok(addresses[0].clone())
-
         Ok(self.provider.default_signer_address().to_string())
     }
 
@@ -558,61 +241,25 @@ impl WalletUser for WalletImplEth {
         &self,
         address: &str,
         amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
+        message: Option<Vec<u8>>,
     ) -> Result<IotaWalletTransaction> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn send_amount_eth(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<String> {
-        // let addr_from = self.get_wallet_addr().await?;
-        // let addr_to = Address::from_str(address)?;
-        //
-        // let wallet_addr_raw = self.get_wallet_addr_raw().await?;
-        // let amount_wei = Self::convert_eth_to_wei(amount);
-        // let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
-        //
-        // let mut transaction = self
-        //     .build_transaction(
-        //         addr_from,
-        //         addr_to,
-        //         amount_wei_u256,
-        //         0,
-        //         0,
-        //         0,
-        //         self.chain_id,
-        //         tag,
-        //         message,
-        //     )
-        //     .await?;
-        //
-        // // Estimate gas cost
-        // let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
-        // transaction.gas_limit = gas_cost.gas_limit;
-        // transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
-        // transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
-        //
-        // // Sign transaction
-        // let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
-        // let transaction_envelope = TxEnvelope::from(signed_transaction);
-        //
-        // // Send transaction
-        // let pending_tx = self.http_provider.send_tx_envelope(transaction_envelope).await?;
-        // Ok(pending_tx.tx_hash().to_string())
+    async fn send_amount_eth(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
         let addr_to = Address::from_str(address)?;
         let amount_wei = Self::convert_eth_to_wei(amount);
         let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
 
-        let tx = TransactionRequest::default()
+        let mut tx = TransactionRequest::default()
             .with_to(addr_to)
             .with_chain_id(self.chain_id)
             .with_value(amount_wei_u256);
+
+        // attach optional data to the transaction
+        if let Some(data) = data {
+            tx.set_input(data.to_owned());
+        }
 
         // Send the transaction, the nonce is automatically managed by the provider.
         let pending_tx = self.provider.send_transaction(tx.clone()).await?;
@@ -633,35 +280,6 @@ impl WalletUser for WalletImplEth {
 
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
         unimplemented!("use send_transaction_eth");
-    }
-
-    // todo: unlock method for other protocols by passing interface instead of hardcoded list of fields (eip 1559 at the moment)
-    async fn send_transaction_eth(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
-        // let addr_from = self.get_wallet_addr().await?;
-        // let addr_to = Address::from_str(address)?;
-        //
-        // let wallet_addr_raw = self.get_wallet_addr_raw().await?;
-        // let amount_wei = Self::convert_eth_to_wei(amount);
-        // let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
-        //
-        // let mut transaction = self
-        //     .build_transaction(addr_from, addr_to, amount_wei_u256, 0, 0, 0, self.chain_id, None, None)
-        //     .await?;
-        //
-        // // Estimate gas cost
-        // let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
-        // transaction.gas_limit = gas_cost.gas_limit;
-        // transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
-        // transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
-        //
-        // // Sign transaction
-        // let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
-        // let transaction_envelope = TxEnvelope::from(signed_transaction);
-        //
-        // // Send transaction
-        // let pending_tx = self.http_provider.send_tx_envelope(transaction_envelope).await?;
-        // Ok(pending_tx.tx_hash().to_string())
-        todo!()
     }
 
     async fn sync_wallet(&self) -> Result<()> {
@@ -795,7 +413,7 @@ mod tests {
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet = WalletImplEth::new(mnemonic.into(), Path::new(&cleanup.path_prefix), node_url, chain_id)
+        let wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id)
             .await
             .expect("should initialize wallet");
         (wallet, cleanup)

@@ -13,7 +13,6 @@ use crate::types::{
 use crate::wallet::error::WalletError;
 use api_types::api::networks::ApiNetworkType;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
-use iota_sdk::types::block::payload::TaggedDataPayload;
 use log::{debug, info};
 
 impl Sdk {
@@ -179,7 +178,11 @@ impl Sdk {
                 chain_id: _,
             } => {
                 let tx_id = wallet
-                    .send_transaction_eth(purchase_id, &tx_details.system_address, amount)
+                    .send_amount_eth(
+                        &tx_details.system_address,
+                        amount,
+                        Some(purchase_id.to_string().into_bytes()),
+                    )
                     .await?;
 
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -227,9 +230,7 @@ impl Sdk {
         pin: &EncryptionPin,
         address: &str,
         amount: CryptoAmount,
-        tag: Option<Vec<u8>>,
         data: Option<Vec<u8>>,
-        message: Option<String>,
     ) -> Result<()> {
         info!("Sending amount {amount:?} to receiver {address}");
         self.verify_pin(pin).await?;
@@ -250,19 +251,15 @@ impl Sdk {
             .await?;
 
         // create the transaction payload which holds a tag and associated data
-        let tag: Box<[u8]> = tag.unwrap_or_default().into_boxed_slice();
-        let data: Box<[u8]> = data.unwrap_or_default().into_boxed_slice();
-        let tagged_data_payload = Some(TaggedDataPayload::new(tag, data).map_err(WalletError::Block)?);
 
         match network.network_type {
             NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,
             } => {
-                let tx_id = wallet
-                    .send_amount_eth(address, amount, tagged_data_payload, message)
-                    .await?;
+                let tx_id = wallet.send_amount_eth(address, amount, data).await?;
 
+                // store the created transaction in the repo
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
                 let user = repo.get(&active_user.username)?;
                 let mut wallet_transactions = user.wallet_transactions;
@@ -270,9 +267,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
             }
             NetworkType::Stardust { node_urls: _ } => {
-                wallet
-                    .send_amount(address, amount, tagged_data_payload, message)
-                    .await?;
+                wallet.send_amount(address, amount, data).await?;
             }
         }
 

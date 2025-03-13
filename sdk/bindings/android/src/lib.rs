@@ -807,15 +807,15 @@ mod ffi {
         pin: String,
         address: String,
         amount: f64,
-        tag: Option<Vec<u8>>,
+        tag: Option<Vec<u8>>, // TODO: remove
         data: Option<Vec<u8>>,
-        message: Option<String>,
+        message: Option<String>, // TODO: remove
     ) -> Result<(), String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
             let amount = CryptoAmount::try_from(amount)?;
             let pin = EncryptionPin::try_from_string(pin)?;
-            sdk.send_amount(&pin, &address, amount, tag, data, message).await
+            sdk.send_amount(&pin, &address, amount, data).await
         });
         result.map_err(|e| format!("{e:#?}"))
     }
@@ -911,9 +911,9 @@ mod ffi {
     pub fn withdrawViviswap(
         amount: f64,
         pin: Option<String>,
-        tag: Option<Vec<u8>>,
+        tag: Option<Vec<u8>>, // TODO remove
         data: Option<Vec<u8>>,
-        message: Option<String>,
+        message: Option<String>, // TODO remove
     ) -> Result<String, String> {
         sdk::require_feature!("viviswap-swap", {
             let result = runtime().block_on(async move {
@@ -926,8 +926,7 @@ mod ffi {
                     None => None,
                 };
 
-                sdk.create_withdrawal_with_viviswap(amount, pin.as_ref(), tag, data, message)
-                    .await
+                sdk.create_withdrawal_with_viviswap(amount, pin.as_ref(), data).await
             });
             match result {
                 Ok(value) => serde_json::to_string(&value).map_err(|e| format!("{e:#?}")),

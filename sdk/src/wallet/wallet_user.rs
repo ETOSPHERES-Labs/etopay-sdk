@@ -64,13 +64,7 @@ pub trait WalletUser: Debug {
     /// # Errors
     ///
     /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
-    async fn send_amount(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<Transaction>;
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, message: Option<Vec<u8>>) -> Result<Transaction>;
 
     /// Send eth amount to receiver
     ///
@@ -88,13 +82,7 @@ pub trait WalletUser: Debug {
     ///
     /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
     #[allow(clippy::too_many_arguments)]
-    async fn send_amount_eth(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<String>;
+    async fn send_amount_eth(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String>;
 
     /// Send a transaction with one output.
     ///
@@ -112,24 +100,6 @@ pub trait WalletUser: Debug {
     ///
     /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String>;
-
-    /// Send a transaction with one output.
-    ///
-    /// # Arguments
-    ///
-    /// * `index` - The index of the transaction.
-    /// * `address` - The address to send the amount.
-    /// * `amount` - The amount to send (Ether)
-    ///
-    /// # Returns
-    ///
-    /// Returns the sent transaction id if successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
-    #[allow(clippy::too_many_arguments)]
-    async fn send_transaction_eth(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String>;
 
     /// Synchronizes the wallet with the network.
     ///
@@ -281,21 +251,19 @@ impl WalletUser for WalletImplStardust {
         Ok(available_balance_iota)
     }
 
-    async fn send_amount(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<Transaction> {
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<Transaction> {
         self.sync_wallet().await?;
+
+        // hard-coded tag
+        let tag: Box<[u8]> = "data".to_string().into_bytes().into_boxed_slice();
+        let data: Box<[u8]> = data.unwrap_or_default().into_boxed_slice();
+        let tagged_data_payload = Some(TaggedDataPayload::new(tag, data).map_err(WalletError::Block)?);
 
         let account = self.account_manager.get_account(APP_NAME).await?;
 
         let options = TransactionOptions {
             allow_micro_amount: true,
-            tagged_data_payload: tag,
-            note: message,
+            tagged_data_payload,
             ..Default::default()
         };
 
@@ -304,13 +272,7 @@ impl WalletUser for WalletImplStardust {
         Ok(transaction)
     }
 
-    async fn send_amount_eth(
-        &self,
-        _address: &str,
-        _amount: CryptoAmount,
-        _tag: Option<TaggedDataPayload>,
-        _message: Option<String>,
-    ) -> Result<String> {
+    async fn send_amount_eth(&self, _address: &str, _amount: CryptoAmount, _data: Option<Vec<u8>>) -> Result<String> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -325,11 +287,6 @@ impl WalletUser for WalletImplStardust {
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
         let transaction = prepare_and_send_transaction(self, index, address, amount).await?;
         Ok(transaction.transaction_id.to_string())
-    }
-
-    #[allow(clippy::too_many_arguments)]
-    async fn send_transaction_eth(&self, _index: &str, _address: &str, _amount: CryptoAmount) -> Result<String> {
-        Err(WalletError::WalletFeatureNotImplemented)
     }
 
     async fn sync_wallet(&self) -> Result<()> {

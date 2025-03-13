@@ -124,6 +124,7 @@ pub enum WalletError {
     #[error("Recovered signer address is different than sender address: {0}")]
     SignerAddressDoesNotMatchSenderAddress(String),
 
+    /// Error creating a LocalSigner from the provided mnemonic
     #[error("LocalSignerError: {0}")]
     LocalSignerError(#[from] alloy::signers::local::LocalSignerError),
 
