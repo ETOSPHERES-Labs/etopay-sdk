@@ -5,7 +5,7 @@ use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoLi
 use crate::wallet::error::WalletError;
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
-use alloy::rpc::types::TransactionRequest;
+use alloy::rpc::types::{TransactionInput, TransactionRequest};
 use alloy::signers::local::coins_bip39::English;
 use alloy::signers::local::MnemonicBuilder;
 use alloy::{
@@ -139,49 +139,6 @@ impl WalletImplEth {
             provider: http_provider,
         })
     }
-    //
-    // #[allow(clippy::too_many_arguments)]
-    // async fn build_transaction(
-    //     &self,
-    //     from_addr: Address,
-    //     to_addr: Address,
-    //     value: U256,
-    //     gas_limit: u64,
-    //     max_fee_per_gas: u128,
-    //     max_priority_fee_per_gas: u128,
-    //     chain_id: u64,
-    //     tag: Option<TaggedDataPayload>,
-    //     metadata: Option<String>,
-    // ) -> Result<TxEip1559> {
-    //     let nonce = self.get_next_nonce(from_addr).await?;
-    //
-    //     let input: TransactionInput = match tag.clone() {
-    //         Some(_) => {
-    //             let unified_transaction_metadata =
-    //                 UnifiedTransactionMetadata::from_iota_tag_and_metadata(tag, metadata);
-    //             let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata)
-    //                 .map_err(WalletError::UnifiedTransactionMetadataSerializationError)?;
-    //             let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
-    //             let bytes = encoded_unified_transaction_metadata.into();
-    //             TransactionInput::new(bytes)
-    //         }
-    //         None => TransactionInput::default(),
-    //     };
-    //
-    //     let tx = TxEip1559 {
-    //         chain_id,
-    //         nonce,
-    //         gas_limit,
-    //         max_fee_per_gas,
-    //         max_priority_fee_per_gas,
-    //         to: alloy_primitives::TxKind::Call(to_addr),
-    //         value,
-    //         access_list: Default::default(),
-    //         input: input.into_input().unwrap_or_default(),
-    //     };
-    //
-    //     Ok(tx)
-    // }
 
     fn convert_wei_to_eth(value_wei: CryptoAmount) -> CryptoAmount {
         value_wei.div(WEI_TO_ETH_DIVISOR)
@@ -359,35 +316,34 @@ impl WalletUser for WalletImplEth {
     }
 
     async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
-        // let from = self.get_address().await?;
-        //
-        // let to = transaction
-        //     .to
-        //     .to()
-        //     .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
-        //
-        // let tx = TransactionRequest::default()
-        //     .from(Address::from_str(&from)?)
-        //     .to(*to)
-        //     .input(TransactionInput::new(transaction.input))
-        //     .access_list(transaction.access_list)
-        //     .value(transaction.value);
-        //
-        // // Returns the estimated gas cost for the underlying transaction to be executed
-        // let gas_limit = self.http_provider.estimate_gas(&tx).await?;
-        //
-        // // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
-        // let eip1559_estimation = self.http_provider.estimate_eip1559_fees(None).await?;
-        //
-        // let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
-        // let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
-        //
-        // Ok(GasCostEstimation {
-        //     max_fee_per_gas,
-        //     max_priority_fee_per_gas,
-        //     gas_limit,
-        // })
-        todo!()
+        let from = self.get_address().await?;
+
+        let to = transaction
+            .to
+            .to()
+            .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
+
+        let tx = TransactionRequest::default()
+            .from(Address::from_str(&from)?)
+            .to(*to)
+            .input(TransactionInput::new(transaction.input))
+            .access_list(transaction.access_list)
+            .value(transaction.value);
+
+        // Returns the estimated gas cost for the underlying transaction to be executed
+        let gas_limit = self.provider.estimate_gas(tx).await?;
+
+        // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
+        let eip1559_estimation = self.provider.estimate_eip1559_fees().await?;
+
+        let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
+        let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
+
+        Ok(GasCostEstimation {
+            max_fee_per_gas,
+            max_priority_fee_per_gas,
+            gas_limit,
+        })
     }
 }
 
