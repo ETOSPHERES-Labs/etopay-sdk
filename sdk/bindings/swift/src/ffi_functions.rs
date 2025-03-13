@@ -76,18 +76,7 @@ impl CawaenaSdk {
     /// * Ok - Serialized string of a Vec<Network>>
     /// * Err - if there is an error fetching the networks.
     pub async fn get_networks(&self) -> Result<Vec<Network>, String> {
-        // let mut sdk = self.inner.write().await;
-        // async move {
-        //     let pin = EncryptionPin::try_from_string(pin)?;
-        //     sdk.get_wallet_tx_list(&pin, start, limit)
-        //         .await
-        //         .map(|l| l.transactions.into_iter().map(|tx| tx.into()).collect())
-        // }
-        // .await
-        // .map_err(|err| format!("{:#?}", err))
-
         let mut sdk = self.inner.write().await;
-
         async move {
             sdk.get_networks()
                 .await
