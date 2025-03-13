@@ -43,7 +43,7 @@ public class MigrateWalletFromMnemonic04 {
 
             Network iotaNetwork = networksList.get(0);
             // set the network configuration for the wallet
-            sdk.setNetwork(utils.IOTA_NETWORK_ID);
+            sdk.setNetwork(iotaNetwork);
 
         } catch (Exception e) {
             throw new RuntimeException("Migrate wallet from mnemonic example failed", e);
