@@ -41,7 +41,7 @@ public class CreatePurchaseRequest08 {
 
             Network iotaNetwork = networksList.get(0);
             // set the network configuration for the wallet
-            sdk.setNetwork(iotaNetwork);
+            sdk.setNetwork(iotaNetwork.id);
 
             // generate receiver address
             String address = sdk.generateNewAddress(utils.PIN);

@@ -34,7 +34,7 @@ public class GetExchangeRate14 {
 
             Network iotaNetwork = networksList.get(0);
             // set the network configuration for the wallet
-            sdk.setNetwork(iotaNetwork);
+            sdk.setNetwork(iotaNetwork.id)
 
             // get exchange rate
             double exchange_rate = sdk.getExchangeRate();
