@@ -39,7 +39,7 @@ jobs:
       - name: Build wasm sdk
         run: |
           cd sdk/bindings/wasm
-          wasm-pack build --release --scope cawaena --target web --out-dir out/web/pkg --out-name cawaena-sdk-web
+          wasm-pack build --release --scope cawaena --target nodejs --out-dir out/web/pkg --out-name cawaena-sdk-node
 
       - name: Publish to npm
         run: |
