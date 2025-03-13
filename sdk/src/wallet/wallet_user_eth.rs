@@ -5,7 +5,12 @@ use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoLi
 use crate::wallet::error::WalletError;
 use alloy::eips::BlockNumberOrTag;
 use alloy::hex::encode;
+use alloy::network::{AnyNetwork, Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::{TransactionInput, TransactionRequest};
+use alloy::signers::k256::ecdsa::SigningKey;
+use alloy::signers::k256::Secp256k1;
+use alloy::signers::local::coins_bip39::English;
+use alloy::signers::local::{LocalSigner, MnemonicBuilder};
 use alloy::transports::http::Http;
 use alloy::{
     consensus::{SignableTransaction, Signed, TxEip1559, TxEnvelope},
@@ -16,7 +21,10 @@ use alloy::{
 };
 use alloy_consensus::Transaction;
 use alloy_primitives::{PrimitiveSignature, TxHash};
-use alloy_provider::RootProvider;
+use alloy_provider::fillers::{
+    BlobGasFiller, ChainIdFiller, FillProvider, GasFiller, JoinFill, NonceFiller, SimpleNonceManager, WalletFiller,
+};
+use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManage;
 use iota_sdk::crypto::keys::bip44::Bip44;
@@ -76,18 +84,24 @@ impl UnifiedTransactionMetadata {
     }
 }
 
+// Type alias for the crazy long type used as Provider with the default fillers (Gas, Nonce,
+// ChainId) and Wallet
+type ProviderType = FillProvider<
+    JoinFill<
+        JoinFill<Identity, JoinFill<GasFiller, JoinFill<BlobGasFiller, JoinFill<NonceFiller, ChainIdFiller>>>>,
+        WalletFiller<EthereumWallet>,
+    >,
+    RootProvider,
+>;
+
 /// [`WalletUser`] implementation for ETH
 #[derive(Debug)]
 pub struct WalletImplEth {
-    /// State for the account manager to be passed to calling functions
-    account_manager: iota_sdk::wallet::Wallet,
-
-    // /// Store a copy of the node urls.
-    node_urls: Vec<String>,
+    // wallet: LocalSigner<SigningKey>,
     chain_id: u64,
 
-    /// Rpc client
-    http_provider: RootProvider<Http<Client>>,
+    // / Rpc client
+    provider: ProviderType,
 }
 
 impl WalletImplEth {
@@ -99,286 +113,362 @@ impl WalletImplEth {
         node_urls: Vec<String>,
         chain_id: u64,
     ) -> Result<Self> {
-        let str_node_urls: Vec<&str> = node_urls.iter().map(String::as_str).collect();
-
-        info!("Used node_urls: {:?}", str_node_urls);
-        info!("Eth eth_node_url: {:?}", str_node_urls);
-        let client_options = ClientOptions::new()
-            .with_local_pow(false)
-            .with_fallback_to_local_pow(true)
-            .with_nodes(&str_node_urls)?;
-
-        // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
-        #[cfg(not(target_arch = "wasm32"))]
-        if let Err(e) = std::fs::create_dir_all(path) {
-            error!("Could not create the wallet directory: {e:?}");
-        }
-
-        let account_manager = {
-            let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
-            iota_sdk::wallet::Wallet::builder()
-                .with_client_options(client_options)
-                .with_coin_type(Currency::Eth.coin_type())
-                .with_secret_manager(secret_manager)
-                .with_storage_path(path) // we still need this since the account stores stuff in jammdb
-                .finish()
-                .await?
-        };
-
-        let account = account_manager.get_account(APP_NAME).await;
-
-        if let Err(account_error) = account {
-            info!("{:?}", account_error);
-            info!("Creating a new account with alias {APP_NAME}");
-            account_manager
-                .create_account()
-                .with_alias(String::from(APP_NAME))
-                .finish()
-                .await?;
-        }
-
-        info!("Wallet creation successful");
-
-        Ok(WalletImplEth {
-            account_manager,
-            node_urls,
-            chain_id,
-            http_provider,
-        })
+        // let str_node_urls: Vec<&str> = node_urls.iter().map(String::as_str).collect();
+        //
+        // info!("Used node_urls: {:?}", str_node_urls);
+        // info!("Eth eth_node_url: {:?}", str_node_urls);
+        // let client_options = ClientOptions::new()
+        //     .with_local_pow(false)
+        //     .with_fallback_to_local_pow(true)
+        //     .with_nodes(&str_node_urls)?;
+        //
+        // // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
+        // #[cfg(not(target_arch = "wasm32"))]
+        // if let Err(e) = std::fs::create_dir_all(path) {
+        //     error!("Could not create the wallet directory: {e:?}");
+        // }
+        //
+        // let account_manager = {
+        //     let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
+        //     iota_sdk::wallet::Wallet::builder()
+        //         .with_client_options(client_options)
+        //         .with_coin_type(Currency::Eth.coin_type())
+        //         .with_secret_manager(secret_manager)
+        //         .with_storage_path(path) // we still need this since the account stores stuff in jammdb
+        //         .finish()
+        //         .await?
+        // };
+        //
+        // let account = account_manager.get_account(APP_NAME).await;
+        //
+        // if let Err(account_error) = account {
+        //     info!("{:?}", account_error);
+        //     info!("Creating a new account with alias {APP_NAME}");
+        //     account_manager
+        //         .create_account()
+        //         .with_alias(String::from(APP_NAME))
+        //         .finish()
+        //         .await?;
+        // }
+        //
+        // info!("Wallet creation successful");
+        //
+        // Ok(WalletImplEth {
+        //     account_manager,
+        //     node_urls,
+        //     chain_id,
+        //     http_provider,
+        // })
+        todo!()
     }
 
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
     pub async fn new(mnemonic: Mnemonic, path: &Path, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
-        let str_node_urls: Vec<&str> = node_urls.iter().map(String::as_str).collect();
+        // #[cfg(test)]
+        // pub async fn new_with_mocked_provider(
+        //     mnemonic: Mnemonic,
+        //     path: &Path,
+        //     http_provider: RootProvider<Http<Client>>,
+        //     node_url: String,
+        //     chain_id: u64,
+        // ) -> Result<Self> {
+        // let node_urls: &[&str] = &[&node_url];
+        //
+        // info!("Used node_urls: {:?}", node_urls);
+        // info!("Eth eth_node_url: {:?}", node_urls);
+        // let client_options = ClientOptions::new()
+        //     .with_local_pow(false)
+        //     .with_fallback_to_local_pow(true)
+        //     .with_nodes(node_urls)?;
+        //
+        // // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
+        // #[cfg(not(target_arch = "wasm32"))]
+        // if let Err(e) = std::fs::create_dir_all(path) {
+        //     error!("Could not create the wallet directory: {e:?}");
+        // }
+        //
+        // let account_manager = {
+        //     let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
+        //     iota_sdk::wallet::Wallet::builder()
+        //         .with_client_options(client_options)
+        //         .with_coin_type(Currency::Eth.coin_type())
+        //         .with_secret_manager(secret_manager)
+        //         .with_storage_path(path) // we still need this since the account stores stuff in jammdb
+        //         .finish()
+        //         .await?
+        // };
+        //
+        // let account = account_manager.get_account(APP_NAME).await;
+        //
+        // if let Err(account_error) = account {
+        //     info!("{:?}", account_error);
+        //     info!("Creating a new account with alias {APP_NAME}");
+        //     account_manager
+        //         .create_account()
+        //         .with_alias(String::from(APP_NAME))
+        //         .finish()
+        //         .await?;
+        // }
+        //
+        // info!("Wallet creation successful");
+        //
+        // Ok(WalletImplEth {
+        //     account_manager,
+        //     node_url,
+        //     chain_id,
+        //     http_provider,
+        // })
+        //     todo!()
+        // }
 
-        info!("Used node_urls: {:?}", str_node_urls);
-        let client_options = ClientOptions::new()
-            .with_local_pow(false)
-            .with_fallback_to_local_pow(true)
-            .with_nodes(&str_node_urls)?;
+        //
+        // info!("Used node_urls: {:?}", node_urls);
+        // let client_options = ClientOptions::new()
+        //     .with_local_pow(false)
+        //     .with_fallback_to_local_pow(true)
+        //     .with_nodes(&node_urls)?;
+        //
+        // // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
+        // #[cfg(not(target_arch = "wasm32"))]
+        // if let Err(e) = std::fs::create_dir_all(path) {
+        //     error!("Could not create the wallet directory: {e:?}");
+        // }
+        //
+        // let account_manager = {
+        //     let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
+        //     iota_sdk::wallet::Wallet::builder()
+        //         .with_client_options(client_options)
+        //         .with_coin_type(Currency::Eth.coin_type())
+        //         .with_secret_manager(secret_manager)
+        //         .with_storage_path(path) // we still need this since the account stores stuff in jammdb
+        //         .finish()
+        //         .await?
+        // };
+        //
+        // let account = account_manager.get_account(APP_NAME).await;
+        //
+        // if let Err(account_error) = account {
+        //     info!("{:?}", account_error);
+        //     info!("Creating a new account with alias {APP_NAME}");
+        //     account_manager
+        //         .create_account()
+        //         .with_alias(String::from(APP_NAME))
+        //         .finish()
+        //         .await?;
+        // }
 
-        // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
-        #[cfg(not(target_arch = "wasm32"))]
-        if let Err(e) = std::fs::create_dir_all(path) {
-            error!("Could not create the wallet directory: {e:?}");
-        }
+        // use mnemonic to create a Signer
+        // Access mnemonic phrase with password.
+        // Child key at derivation path: m/44'/60'/0'/0/{index}.
+        let wallet = MnemonicBuilder::<English>::default()
+            .phrase(mnemonic.as_ref().to_string())
+            .index(0)?
+            // // Use this if your mnemonic is encrypted.
+            // .password(password)
+            .build()?;
 
-        let account_manager = {
-            let secret_manager = SecretManager::try_from_mnemonic(mnemonic)?;
-            iota_sdk::wallet::Wallet::builder()
-                .with_client_options(client_options)
-                .with_coin_type(Currency::Eth.coin_type())
-                .with_secret_manager(secret_manager)
-                .with_storage_path(path) // we still need this since the account stores stuff in jammdb
-                .finish()
-                .await?
-        };
+        // let w = wallet.into_wallet();
 
-        let account = account_manager.get_account(APP_NAME).await;
-
-        if let Err(account_error) = account {
-            info!("{:?}", account_error);
-            info!("Creating a new account with alias {APP_NAME}");
-            account_manager
-                .create_account()
-                .with_alias(String::from(APP_NAME))
-                .finish()
-                .await?;
-        }
-
+        // construct the ProviderBuilder
         let url =
-            Url::parse(str_node_urls[0]).map_err(|e| WalletError::Parse(format!("could not parse the url: {e:?}")))?;
-        let http_provider = ProviderBuilder::new().on_http(url);
+            Url::parse(&node_urls[0]).map_err(|e| WalletError::Parse(format!("could not parse the url: {e:?}")))?;
+        // let http_provider = ProviderBuilder::<_, _, Ethereum>::default().on_http(url.clone());
+        let http_provider = ProviderBuilder::<_, _, Ethereum>::new()
+            // .filler(GasFiller)
+            // // .filler(SimpleNonceManager::default())
+            // .filler(ChainIdFiller::new(Some(chain_id)))
+            .wallet(wallet.clone())
+            .on_http(url);
 
         info!("Wallet creation successful");
 
         Ok(WalletImplEth {
-            account_manager,
+            // wallet,
             chain_id,
-            node_urls,
-            http_provider,
+            // node_url,
+            provider: http_provider,
         })
     }
 
-    async fn sign_transaction(&self, transaction: TxEip1559, sender_addr_raw: String) -> Result<Signed<TxEip1559>> {
-        // Prepare transaction body for signing
-        let mut buf = vec![];
-        transaction.encode_for_signing(&mut buf);
-        let encoded_transaction: &[u8] = &buf;
-
-        let bip44_chain = Bip44::new(ETHER_COIN_TYPE)
-            .with_account(0)
-            .with_change(false as _)
-            .with_address_index(0);
-
-        let secret_manager = self.account_manager.get_secret_manager().write().await;
-
-        // Next: sign message with external signer
-        let (public_key, recoverable_signature) = secret_manager
-            .sign_secp256k1_ecdsa(encoded_transaction, bip44_chain)
-            .await?;
-
-        // Validation: recover address and compare it with sender address
-        let recovered_sender_addr_raw = recoverable_signature
-            .recover_evm_address(encoded_transaction)
-            .ok_or(WalletError::SignatureAddressRecoveryError(
-                "Could not recover evm address from recoverable signature".to_string(),
-            ))?
-            .as_ref()
-            .encode_hex_with_prefix();
-
-        if recovered_sender_addr_raw != sender_addr_raw {
-            let error_msg = format!("{} != {}", recovered_sender_addr_raw, sender_addr_raw);
-            return Err(WalletError::RecoveredAddressDoesNotMatchSenderAddress(error_msg));
-        }
-
-        // Validation: retrieve address from public key and compare it with generated address
-        let public_key_addr_raw = public_key.evm_address().as_ref().encode_hex_with_prefix();
-        if public_key_addr_raw != sender_addr_raw {
-            let error_msg = format!("{} != {}", public_key_addr_raw, sender_addr_raw);
-            return Err(WalletError::PublicKeyAddressDoesNotMatchSenderAddress(error_msg));
-        }
-
-        // Next: Read parity (v)
-        let recoverable_signature_as_bytes = recoverable_signature.to_bytes();
-        let parity = match recoverable_signature_as_bytes[64] {
-            0x00 => false,
-            0x01 => true,
-            _ => return Err(WalletError::InvalidParityByte()),
-        };
-
-        // Next: Extract signature
-        // ECDSA signature is 512 bits (64 bytes)
-        let recoverable_signature_as_bytes = recoverable_signature.as_ref().to_bytes();
-
-        // Next: Create signature with r, s and v
-        let signature = PrimitiveSignature::from_bytes_and_parity(&recoverable_signature_as_bytes, parity);
-
-        // Next: Sign transaction
-        let signed_transaction = transaction.clone().into_signed(signature);
-
-        // Validation: recover address and compare it with generated address
-        let signer_addr = signed_transaction.recover_signer()?;
-
-        if signer_addr.encode_hex_with_prefix() != sender_addr_raw {
-            let error_msg = format!("{} != {}", signer_addr.encode_hex_with_prefix(), sender_addr_raw);
-            return Err(WalletError::SignerAddressDoesNotMatchSenderAddress(error_msg));
-        }
-
-        Ok(signed_transaction)
-    }
-
-    #[allow(clippy::too_many_arguments)]
-    async fn build_transaction(
-        &self,
-        from_addr: Address,
-        to_addr: Address,
-        value: U256,
-        gas_limit: u64,
-        max_fee_per_gas: u128,
-        max_priority_fee_per_gas: u128,
-        chain_id: u64,
-        tag: Option<TaggedDataPayload>,
-        metadata: Option<String>,
-    ) -> Result<TxEip1559> {
-        let nonce = self.get_next_nonce(from_addr).await?;
-
-        let input: TransactionInput = match tag.clone() {
-            Some(_) => {
-                let unified_transaction_metadata =
-                    UnifiedTransactionMetadata::from_iota_tag_and_metadata(tag, metadata);
-                let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata)
-                    .map_err(WalletError::UnifiedTransactionMetadataSerializationError)?;
-                let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
-                let bytes = encoded_unified_transaction_metadata.into();
-                TransactionInput::new(bytes)
-            }
-            None => TransactionInput::default(),
-        };
-
-        let tx = TxEip1559 {
-            chain_id,
-            nonce,
-            gas_limit,
-            max_fee_per_gas,
-            max_priority_fee_per_gas,
-            to: alloy_primitives::TxKind::Call(to_addr),
-            value,
-            access_list: Default::default(),
-            input: input.into_input().unwrap_or_default(),
-        };
-
-        Ok(tx)
-    }
-
-    /// Gets nonce (latest transaction count) for Eth transaction
-    ///
-    /// # Returns
-    ///
-    /// Returns latest transaction count as a `u64` if successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet or encounters any other issues.
-    async fn get_next_nonce(&self, addr: Address) -> Result<u64> {
-        let nonce = self.http_provider.get_transaction_count(addr).await?;
-
-        Ok(nonce)
-    }
-
-    async fn get_wallet_addr(&self) -> Result<Address> {
-        let wallet_addr_raw = self.get_wallet_addr_raw().await?;
-        let wallet_addr = Address::from_str(&wallet_addr_raw)
-            .map_err(|e| WalletError::Parse(format!("could not parse the address: {e:?}")))?;
-
-        Ok(wallet_addr)
-    }
-
-    async fn get_wallet_addr_raw(&self) -> Result<String> {
-        let wallet_addr_raw = self.get_address().await?;
-        Ok(wallet_addr_raw)
-    }
-
-    async fn fetch_block_date(&self, block_number: BlockNumberOrTag) -> Result<Option<u64>> {
-        let block = self
-            .http_provider
-            .get_block_by_number(block_number, alloy::network::primitives::BlockTransactionsKind::Full)
-            .await?;
-        let date = match block {
-            Some(b) => Some(b.header.timestamp),
-            None => None,
-        };
-
-        Ok(date)
-    }
-
-    async fn verify_transaction_success(&self, tx_hash: TxHash) -> Result<Option<bool>> {
-        let receipt = self.http_provider.get_transaction_receipt(tx_hash).await?;
-
-        let status = match receipt {
-            Some(r) => Some(r.inner.is_success()),
-            None => None,
-        };
-
-        Ok(status)
-    }
-
-    fn map_transaction_success_to_inclusion_state(tx_status: Option<bool>) -> InclusionState {
-        match tx_status {
-            Some(true) => InclusionState::Confirmed,
-            Some(false) => InclusionState::Conflicting,
-            None => InclusionState::Pending,
-        }
-    }
-
-    async fn is_transaction_incoming(&self, receiver_addr: Option<Address>) -> Result<bool> {
-        let wallet_addr = self.get_wallet_addr().await?;
-        Ok(Self::compare_addresses(wallet_addr, receiver_addr))
-    }
-
-    fn compare_addresses(address: Address, receiver: Option<Address>) -> bool {
-        receiver.is_some_and(|r| address == r)
-    }
+    // async fn sign_transaction(&self, transaction: TxEip1559, sender_addr_raw: String) -> Result<Signed<TxEip1559>> {
+    //     // Prepare transaction body for signing
+    //     let mut buf = vec![];
+    //     transaction.encode_for_signing(&mut buf);
+    //     let encoded_transaction: &[u8] = &buf;
+    //
+    //     let bip44_chain = Bip44::new(ETHER_COIN_TYPE)
+    //         .with_account(0)
+    //         .with_change(false as _)
+    //         .with_address_index(0);
+    //
+    //     let secret_manager = self.account_manager.get_secret_manager().write().await;
+    //
+    //     // Next: sign message with external signer
+    //     let (public_key, recoverable_signature) = secret_manager
+    //         .sign_secp256k1_ecdsa(encoded_transaction, bip44_chain)
+    //         .await?;
+    //
+    //     // Validation: recover address and compare it with sender address
+    //     let recovered_sender_addr_raw = recoverable_signature
+    //         .recover_evm_address(encoded_transaction)
+    //         .ok_or(WalletError::SignatureAddressRecoveryError(
+    //             "Could not recover evm address from recoverable signature".to_string(),
+    //         ))?
+    //         .as_ref()
+    //         .encode_hex_with_prefix();
+    //
+    //     if recovered_sender_addr_raw != sender_addr_raw {
+    //         let error_msg = format!("{} != {}", recovered_sender_addr_raw, sender_addr_raw);
+    //         return Err(WalletError::RecoveredAddressDoesNotMatchSenderAddress(error_msg));
+    //     }
+    //
+    //     // Validation: retrieve address from public key and compare it with generated address
+    //     let public_key_addr_raw = public_key.evm_address().as_ref().encode_hex_with_prefix();
+    //     if public_key_addr_raw != sender_addr_raw {
+    //         let error_msg = format!("{} != {}", public_key_addr_raw, sender_addr_raw);
+    //         return Err(WalletError::PublicKeyAddressDoesNotMatchSenderAddress(error_msg));
+    //     }
+    //
+    //     // Next: Read parity (v)
+    //     let recoverable_signature_as_bytes = recoverable_signature.to_bytes();
+    //     let parity = match recoverable_signature_as_bytes[64] {
+    //         0x00 => false,
+    //         0x01 => true,
+    //         _ => return Err(WalletError::InvalidParityByte()),
+    //     };
+    //
+    //     // Next: Extract signature
+    //     // ECDSA signature is 512 bits (64 bytes)
+    //     let recoverable_signature_as_bytes = recoverable_signature.as_ref().to_bytes();
+    //
+    //     // Next: Create signature with r, s and v
+    //     let signature = PrimitiveSignature::from_bytes_and_parity(&recoverable_signature_as_bytes, parity);
+    //
+    //     // Next: Sign transaction
+    //     let signed_transaction = transaction.clone().into_signed(signature);
+    //
+    //     // Validation: recover address and compare it with generated address
+    //     let signer_addr = signed_transaction.recover_signer()?;
+    //
+    //     if signer_addr.encode_hex_with_prefix() != sender_addr_raw {
+    //         let error_msg = format!("{} != {}", signer_addr.encode_hex_with_prefix(), sender_addr_raw);
+    //         return Err(WalletError::SignerAddressDoesNotMatchSenderAddress(error_msg));
+    //     }
+    //
+    //     Ok(signed_transaction)
+    // }
+    //
+    // #[allow(clippy::too_many_arguments)]
+    // async fn build_transaction(
+    //     &self,
+    //     from_addr: Address,
+    //     to_addr: Address,
+    //     value: U256,
+    //     gas_limit: u64,
+    //     max_fee_per_gas: u128,
+    //     max_priority_fee_per_gas: u128,
+    //     chain_id: u64,
+    //     tag: Option<TaggedDataPayload>,
+    //     metadata: Option<String>,
+    // ) -> Result<TxEip1559> {
+    //     let nonce = self.get_next_nonce(from_addr).await?;
+    //
+    //     let input: TransactionInput = match tag.clone() {
+    //         Some(_) => {
+    //             let unified_transaction_metadata =
+    //                 UnifiedTransactionMetadata::from_iota_tag_and_metadata(tag, metadata);
+    //             let serialized_unified_transaction_metadata = serde_json::to_string(&unified_transaction_metadata)
+    //                 .map_err(WalletError::UnifiedTransactionMetadataSerializationError)?;
+    //             let encoded_unified_transaction_metadata = encode(serialized_unified_transaction_metadata);
+    //             let bytes = encoded_unified_transaction_metadata.into();
+    //             TransactionInput::new(bytes)
+    //         }
+    //         None => TransactionInput::default(),
+    //     };
+    //
+    //     let tx = TxEip1559 {
+    //         chain_id,
+    //         nonce,
+    //         gas_limit,
+    //         max_fee_per_gas,
+    //         max_priority_fee_per_gas,
+    //         to: alloy_primitives::TxKind::Call(to_addr),
+    //         value,
+    //         access_list: Default::default(),
+    //         input: input.into_input().unwrap_or_default(),
+    //     };
+    //
+    //     Ok(tx)
+    // }
+    //
+    // /// Gets nonce (latest transaction count) for Eth transaction
+    // ///
+    // /// # Returns
+    // ///
+    // /// Returns latest transaction count as a `u64` if successful, or an `Error` if it fails.
+    // ///
+    // /// # Errors
+    // ///
+    // /// This function can return an error if it fails to synchronize the wallet or encounters any other issues.
+    // async fn get_next_nonce(&self, addr: Address) -> Result<u64> {
+    //     let nonce = self.http_provider.get_transaction_count(addr).await?;
+    //
+    //     Ok(nonce)
+    // }
+    //
+    // async fn get_wallet_addr(&self) -> Result<Address> {
+    //     let wallet_addr_raw = self.get_wallet_addr_raw().await?;
+    //     let wallet_addr = Address::from_str(&wallet_addr_raw)
+    //         .map_err(|e| WalletError::Parse(format!("could not parse the address: {e:?}")))?;
+    //
+    //     Ok(wallet_addr)
+    // }
+    //
+    // async fn get_wallet_addr_raw(&self) -> Result<String> {
+    //     let wallet_addr_raw = self.get_address().await?;
+    //     Ok(wallet_addr_raw)
+    // }
+    //
+    // // async fn fetch_block_date(&self, block_number: BlockNumberOrTag) -> Result<Option<u64>> {
+    // //     let block = self
+    // //         .http_provider
+    // //         .get_block_by_number(block_number, alloy::network::primitives::BlockTransactionsKind::Full)
+    // //         .await?;
+    // //     let date = match block {
+    // //         Some(b) => Some(b.header.timestamp),
+    // //         None => None,
+    // //     };
+    // //
+    // //     Ok(date)
+    // // }
+    //
+    // async fn verify_transaction_success(&self, tx_hash: TxHash) -> Result<Option<bool>> {
+    //     let receipt = self.http_provider.get_transaction_receipt(tx_hash).await?;
+    //
+    //     let status = match receipt {
+    //         Some(r) => Some(r.inner.is_success()),
+    //         None => None,
+    //     };
+    //
+    //     Ok(status)
+    // }
+    //
+    // fn map_transaction_success_to_inclusion_state(tx_status: Option<bool>) -> InclusionState {
+    //     match tx_status {
+    //         Some(true) => InclusionState::Confirmed,
+    //         Some(false) => InclusionState::Conflicting,
+    //         None => InclusionState::Pending,
+    //     }
+    // }
+    //
+    // async fn is_transaction_incoming(&self, receiver_addr: Option<Address>) -> Result<bool> {
+    //     let wallet_addr = self.get_wallet_addr().await?;
+    //     Ok(Self::compare_addresses(wallet_addr, receiver_addr))
+    // }
+    //
+    // fn compare_addresses(address: Address, receiver: Option<Address>) -> bool {
+    //     receiver.is_some_and(|r| address == r)
+    // }
 
     fn convert_wei_to_eth(value_wei: CryptoAmount) -> CryptoAmount {
         value_wei.div(WEI_TO_ETH_DIVISOR)
@@ -422,42 +512,44 @@ impl WalletImplEth {
 #[cfg_attr(test, mockall::automock)]
 impl WalletUser for WalletImplEth {
     async fn get_address(&self) -> Result<String> {
-        let options = GenerateAddressOptions::default();
-        log::debug!(
-            "[EVM ADDRESS GENERATION] generating address, internal: {}",
-            options.internal
-        );
-        let account: Account = self.account_manager.get_account(APP_NAME).await?;
-        let secret_manager = account.get_secret_manager();
-        let secret_manager_lock = secret_manager.read().await;
-        let range = 0..1;
+        // let options = GenerateAddressOptions::default();
+        // log::debug!(
+        //     "[EVM ADDRESS GENERATION] generating address, internal: {}",
+        //     options.internal
+        // );
+        // let account: Account = self.account_manager.get_account(APP_NAME).await?;
+        // let secret_manager = account.get_secret_manager();
+        // let secret_manager_lock = secret_manager.read().await;
+        // let range = 0..1;
+        //
+        // let addresses = secret_manager_lock
+        //     .generate_evm_addresses(GetAddressesOptions {
+        //         coin_type: ETHER_COIN_TYPE,
+        //         account_index: 0,
+        //         range,
+        //         options: Some(options),
+        //         bech32_hrp: Hrp::from_str_unchecked("eth"),
+        //     })
+        //     .await?;
+        //
+        // if addresses.is_empty() {
+        //     return Err(WalletError::EmptyWalletAddress);
+        // }
+        //
+        // Ok(addresses[0].clone())
 
-        let addresses = secret_manager_lock
-            .generate_evm_addresses(GetAddressesOptions {
-                coin_type: ETHER_COIN_TYPE,
-                account_index: 0,
-                range,
-                options: Some(options),
-                bech32_hrp: Hrp::from_str_unchecked("eth"),
-            })
-            .await?;
-
-        if addresses.is_empty() {
-            return Err(WalletError::EmptyWalletAddress);
-        }
-
-        Ok(addresses[0].clone())
+        Ok(self.provider.default_signer_address().to_string())
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
-        let wallet_addr = self.get_wallet_addr().await?;
-        let balance: alloy_primitives::Uint<256, 4> = self
-            .http_provider
-            .get_balance(wallet_addr)
-            .await
-            .map_err(|e| WalletError::Rpc(format!("{e:?}")))?;
+        let mut total = U256::ZERO;
+        for addr in self.provider.signer_addresses() {
+            let balance = self.provider.get_balance(addr).await?;
+            log::info!("Balance for address {} = {}", addr, balance);
+            total += balance;
+        }
 
-        let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(balance)?;
+        let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(total)?;
         let balance_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
         Ok(balance_eth_crypto_amount)
     }
@@ -479,40 +571,64 @@ impl WalletUser for WalletImplEth {
         tag: Option<TaggedDataPayload>,
         message: Option<String>,
     ) -> Result<String> {
-        let addr_from = self.get_wallet_addr().await?;
+        // let addr_from = self.get_wallet_addr().await?;
+        // let addr_to = Address::from_str(address)?;
+        //
+        // let wallet_addr_raw = self.get_wallet_addr_raw().await?;
+        // let amount_wei = Self::convert_eth_to_wei(amount);
+        // let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
+        //
+        // let mut transaction = self
+        //     .build_transaction(
+        //         addr_from,
+        //         addr_to,
+        //         amount_wei_u256,
+        //         0,
+        //         0,
+        //         0,
+        //         self.chain_id,
+        //         tag,
+        //         message,
+        //     )
+        //     .await?;
+        //
+        // // Estimate gas cost
+        // let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
+        // transaction.gas_limit = gas_cost.gas_limit;
+        // transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
+        // transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
+        //
+        // // Sign transaction
+        // let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
+        // let transaction_envelope = TxEnvelope::from(signed_transaction);
+        //
+        // // Send transaction
+        // let pending_tx = self.http_provider.send_tx_envelope(transaction_envelope).await?;
+        // Ok(pending_tx.tx_hash().to_string())
         let addr_to = Address::from_str(address)?;
-
-        let wallet_addr_raw = self.get_wallet_addr_raw().await?;
         let amount_wei = Self::convert_eth_to_wei(amount);
         let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
 
-        let mut transaction = self
-            .build_transaction(
-                addr_from,
-                addr_to,
-                amount_wei_u256,
-                0,
-                0,
-                0,
-                self.chain_id,
-                tag,
-                message,
-            )
-            .await?;
+        let tx = TransactionRequest::default()
+            .with_to(addr_to)
+            .with_chain_id(self.chain_id)
+            .with_value(amount_wei_u256);
 
-        // Estimate gas cost
-        let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
-        transaction.gas_limit = gas_cost.gas_limit;
-        transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
-        transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
+        // Send the transaction, the nonce is automatically managed by the provider.
+        let pending_tx = self.provider.send_transaction(tx.clone()).await?;
 
-        // Sign transaction
-        let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
-        let transaction_envelope = TxEnvelope::from(signed_transaction);
+        info!("Pending transaction... {}", pending_tx.tx_hash());
 
-        // Send transaction
-        let pending_tx = self.http_provider.send_tx_envelope(transaction_envelope).await?;
-        Ok(pending_tx.tx_hash().to_string())
+        // Wait for the transaction to be included and get the receipt.
+        // Note: this might take some time so we should probably do it in the background in the future
+        let receipt = pending_tx.get_receipt().await.unwrap();
+
+        info!(
+            "Transaction included in block {}",
+            receipt.block_number.expect("Failed to get block number")
+        );
+
+        Ok(receipt.transaction_hash.to_string())
     }
 
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
@@ -521,30 +637,31 @@ impl WalletUser for WalletImplEth {
 
     // todo: unlock method for other protocols by passing interface instead of hardcoded list of fields (eip 1559 at the moment)
     async fn send_transaction_eth(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
-        let addr_from = self.get_wallet_addr().await?;
-        let addr_to = Address::from_str(address)?;
-
-        let wallet_addr_raw = self.get_wallet_addr_raw().await?;
-        let amount_wei = Self::convert_eth_to_wei(amount);
-        let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
-
-        let mut transaction = self
-            .build_transaction(addr_from, addr_to, amount_wei_u256, 0, 0, 0, self.chain_id, None, None)
-            .await?;
-
-        // Estimate gas cost
-        let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
-        transaction.gas_limit = gas_cost.gas_limit;
-        transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
-        transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
-
-        // Sign transaction
-        let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
-        let transaction_envelope = TxEnvelope::from(signed_transaction);
-
-        // Send transaction
-        let pending_tx = self.http_provider.send_tx_envelope(transaction_envelope).await?;
-        Ok(pending_tx.tx_hash().to_string())
+        // let addr_from = self.get_wallet_addr().await?;
+        // let addr_to = Address::from_str(address)?;
+        //
+        // let wallet_addr_raw = self.get_wallet_addr_raw().await?;
+        // let amount_wei = Self::convert_eth_to_wei(amount);
+        // let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
+        //
+        // let mut transaction = self
+        //     .build_transaction(addr_from, addr_to, amount_wei_u256, 0, 0, 0, self.chain_id, None, None)
+        //     .await?;
+        //
+        // // Estimate gas cost
+        // let gas_cost = self.estimate_gas_cost_eip1559(transaction.clone()).await?;
+        // transaction.gas_limit = gas_cost.gas_limit;
+        // transaction.max_fee_per_gas = gas_cost.max_fee_per_gas;
+        // transaction.max_priority_fee_per_gas = gas_cost.max_priority_fee_per_gas;
+        //
+        // // Sign transaction
+        // let signed_transaction = self.sign_transaction(transaction, wallet_addr_raw).await?;
+        // let transaction_envelope = TxEnvelope::from(signed_transaction);
+        //
+        // // Send transaction
+        // let pending_tx = self.http_provider.send_tx_envelope(transaction_envelope).await?;
+        // Ok(pending_tx.tx_hash().to_string())
+        todo!()
     }
 
     async fn sync_wallet(&self) -> Result<()> {
@@ -581,75 +698,77 @@ impl WalletUser for WalletImplEth {
     }
 
     async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
-        let account = self.account_manager.get_account(APP_NAME).await?;
-        let wallet_addr = self.get_wallet_addr().await?;
-        let transaction_hash = TxHash::from_str(transaction_id)?;
-        let transaction = self.http_provider.get_transaction_by_hash(transaction_hash).await?;
-
-        match transaction {
-            Some(tx) => {
-                let block_number = tx.block_number;
-                let is_transaction_incoming = self.is_transaction_incoming(tx.to()).await?;
-                let value = tx.value();
-
-                let date = match block_number {
-                    Some(b) => self.fetch_block_date(b.into()).await?,
-                    None => None,
-                };
-
-                let is_transaction_successful = self.verify_transaction_success(transaction_hash).await?;
-
-                let status = self::WalletImplEth::map_transaction_success_to_inclusion_state(is_transaction_successful);
-
-                let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(tx.value())?;
-                let value_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
-
-                let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
-
-                Ok(WalletTxInfo {
-                    date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
-                    block_id: block_number.map(|n| n.to_string()),
-                    transaction_id: transaction_id.to_string(),
-                    incoming: is_transaction_incoming,
-                    amount: value_eth_f64,
-                    network: "ETH".to_string(), // TODO use the network type instead of hardcoded
-                    status: format!("{:?}", status),
-                    explorer_url: self.node_urls.first().cloned(), // TODO get the explorer url from the network
-                })
-            }
-            None => Err(WalletError::TransactionNotFound),
-        }
+        // let account = self.account_manager.get_account(APP_NAME).await?;
+        // let wallet_addr = self.get_wallet_addr().await?;
+        // let transaction_hash = TxHash::from_str(transaction_id)?;
+        // let transaction = self.http_provider.get_transaction_by_hash(transaction_hash).await?;
+        //
+        // match transaction {
+        //     Some(tx) => {
+        //         let block_number = tx.block_number;
+        //         let is_transaction_incoming = self.is_transaction_incoming(tx.to()).await?;
+        //         let value = tx.value();
+        //
+        //         let date = match block_number {
+        //             Some(b) => self.fetch_block_date(b.into()).await?,
+        //             None => None,
+        //         };
+        //
+        //         let is_transaction_successful = self.verify_transaction_success(transaction_hash).await?;
+        //
+        //         let status = self::WalletImplEth::map_transaction_success_to_inclusion_state(is_transaction_successful);
+        //
+        //         let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(tx.value())?;
+        //         let value_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
+        //
+        //         let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+        //
+        //         Ok(WalletTxInfo {
+        //             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
+        //             block_id: block_number.map(|n| n.to_string()),
+        //             transaction_id: transaction_id.to_string(),
+        //             incoming: is_transaction_incoming,
+        //             amount: value_eth_f64,
+        //             network: "ETH".to_string(),
+        //             status: format!("{:?}", status),
+        //             explorer_url: Some(self.node_url.clone()),
+        //         })
+        //     }
+        //     None => Err(WalletError::TransactionNotFound),
+        // }
+        todo!()
     }
 
     async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
-        let from = self.get_address().await?;
-
-        let to = transaction
-            .to
-            .to()
-            .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
-
-        let tx = TransactionRequest::default()
-            .from(Address::from_str(&from)?)
-            .to(*to)
-            .input(TransactionInput::new(transaction.input))
-            .access_list(transaction.access_list)
-            .value(transaction.value);
-
-        // Returns the estimated gas cost for the underlying transaction to be executed
-        let gas_limit = self.http_provider.estimate_gas(&tx).await?;
-
-        // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
-        let eip1559_estimation = self.http_provider.estimate_eip1559_fees(None).await?;
-
-        let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
-        let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
-
-        Ok(GasCostEstimation {
-            max_fee_per_gas,
-            max_priority_fee_per_gas,
-            gas_limit,
-        })
+        // let from = self.get_address().await?;
+        //
+        // let to = transaction
+        //     .to
+        //     .to()
+        //     .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
+        //
+        // let tx = TransactionRequest::default()
+        //     .from(Address::from_str(&from)?)
+        //     .to(*to)
+        //     .input(TransactionInput::new(transaction.input))
+        //     .access_list(transaction.access_list)
+        //     .value(transaction.value);
+        //
+        // // Returns the estimated gas cost for the underlying transaction to be executed
+        // let gas_limit = self.http_provider.estimate_gas(&tx).await?;
+        //
+        // // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
+        // let eip1559_estimation = self.http_provider.estimate_eip1559_fees(None).await?;
+        //
+        // let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
+        // let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
+        //
+        // Ok(GasCostEstimation {
+        //     max_fee_per_gas,
+        //     max_priority_fee_per_gas,
+        //     gas_limit,
+        // })
+        todo!()
     }
 }
 
