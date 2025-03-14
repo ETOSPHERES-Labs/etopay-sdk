@@ -25,7 +25,7 @@ Task {
 
         // Fetch networks from backend
         let networks = try await sdk.getNetworks()
-        let iotaNetwork = networks[0]
+        let iotaNetwork = networks.get(index: 0)!
         try await sdk.setNetwork(iotaNetwork.id)
         print("retrieved available networks and set the network for the wallet")
 
