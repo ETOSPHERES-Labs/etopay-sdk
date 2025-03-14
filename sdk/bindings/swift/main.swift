@@ -6,58 +6,6 @@ import Foundation
 extension RustString: @unchecked Sendable {}
 extension RustString: Error {}
 
-// Ensure that Order conform to the Vectorizable protocol so we can brige Vec<Order>
-extension Order: Vectorizable {
-    public typealias SelfRef = Order
-    public typealias SelfRefMut = Order
-
-    public static func vecOfSelfNew() -> UnsafeMutableRawPointer {
-        return UnsafeMutableRawPointer.allocate(
-            byteCount: MemoryLayout<Order>.stride, alignment: MemoryLayout<Order>.alignment)
-    }
-
-    public static func vecOfSelfFree(vecPtr: UnsafeMutableRawPointer) {
-        vecPtr.deallocate()
-    }
-
-    public static func vecOfSelfPush(vecPtr: UnsafeMutableRawPointer, value: Order) {
-        let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
-        valuePtr.initialize(to: value)
-    }
-
-    public static func vecOfSelfPop(vecPtr: UnsafeMutableRawPointer) -> Order? {
-        let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
-        defer { valuePtr.deinitialize(count: 1) }
-        return valuePtr.pointee
-    }
-
-    public static func vecOfSelfGet(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Order.SelfRef?
-    {
-        guard index == 0 else { return nil }
-        let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
-        return valuePtr.pointee
-    }
-
-    public static func vecOfSelfGetMut(vecPtr: UnsafeMutableRawPointer, index: UInt) -> Order
-        .SelfRefMut?
-    {
-        guard index == 0 else { return nil }
-        let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
-        return valuePtr.pointee
-    }
-
-    public static func vecOfSelfAsPtr(vecPtr: UnsafeMutableRawPointer) -> UnsafePointer<
-        Order.SelfRef
-    > {
-        let valuePtr = vecPtr.bindMemory(to: Order.self, capacity: 1)
-        return UnsafePointer(valuePtr)
-    }
-
-    public static func vecOfSelfLen(vecPtr: UnsafeMutableRawPointer) -> UInt {
-        return 1
-    }
-}
-
 // Ensure that TxInfo conform to the Vectorizable protocol so we can brige Vec<TxInfo>
 extension TxInfo: Vectorizable {
     public typealias SelfRef = TxInfo

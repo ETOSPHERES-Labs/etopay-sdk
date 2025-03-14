@@ -168,9 +168,9 @@ impl From<sdk::types::viviswap::ViviswapWithdrawal> for ffi::ViviswapWithdrawal 
 
 convert_simple_struct!(sdk::types::PaymentDetail, ffi::PaymentDetail, id, address, is_verified,);
 
-impl From<sdk::types::Order> for ffi::Order {
+impl From<sdk::types::Order> for crate::ffi_functions::Order {
     fn from(value: sdk::types::Order) -> Self {
-        ffi::Order {
+        crate::ffi_functions::Order {
             id: value.id,
             is_payed_out: value.is_payed_out,
             is_approved: value.is_approved,

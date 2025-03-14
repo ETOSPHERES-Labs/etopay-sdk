@@ -15,7 +15,7 @@
 
 use crate::ffi::{
     CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, NewCaseIdResponse,
-    NewViviswapUser, Order, PurchaseDetails, TxInfo, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
+    NewViviswapUser, PurchaseDetails, TxInfo, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
     ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
 };
 use sdk::core::{Config, Sdk};
@@ -1299,12 +1299,132 @@ impl KycAmlaQuestion {
         self.question.clone()
     }
     pub fn min_answers(&self) -> i32 {
-        self.min_answers.clone()
+        self.min_answers
     }
     pub fn max_answers(&self) -> i32 {
-        self.max_answers.clone()
+        self.max_answers
     }
     pub fn possible_answers(&self) -> Vec<String> {
         self.possible_answers.clone()
+    }
+}
+
+pub struct Order {
+    pub id: String,
+    pub is_payed_out: bool,
+    pub is_approved: bool,
+    pub is_canceled: bool,
+    pub fees_amount_eur: f32,
+    pub crypto_fees: f32,
+    pub contract_id: String,
+    pub incoming_payment_method_id: String,
+    pub incoming_payment_method_currency: String,
+    pub incoming_amount: f32,
+    pub incoming_course: f32,
+    pub outgoing_payment_method_id: String,
+    pub outgoing_payment_method_currency: String,
+    pub outgoing_amount: f32,
+    pub outgoing_course: f32,
+    pub refund_amount: Option<f32>,
+    pub refund_course: Option<f32>,
+    pub refund_payment_method_id: String,
+    pub status: i32,
+    pub creation_date: String,
+    pub incoming_payment_detail: String,
+    pub outgoing_payment_detail: String,
+    pub refund_payment_detail: String,
+}
+
+impl Order {
+    pub fn id(&self) -> String {
+        self.id.clone()
+    }
+
+    pub fn is_payed_out(&self) -> bool {
+        self.is_payed_out
+    }
+
+    pub fn is_approved(&self) -> bool {
+        self.is_approved
+    }
+
+    pub fn is_canceled(&self) -> bool {
+        self.is_canceled
+    }
+
+    pub fn fees_amount_eur(&self) -> f32 {
+        self.fees_amount_eur
+    }
+
+    pub fn crypto_fees(&self) -> f32 {
+        self.crypto_fees
+    }
+
+    pub fn contract_id(&self) -> String {
+        self.contract_id.clone()
+    }
+
+    pub fn incoming_payment_method_id(&self) -> String {
+        self.incoming_payment_method_id.clone()
+    }
+
+    pub fn incoming_payment_method_currency(&self) -> String {
+        self.incoming_payment_method_currency.clone()
+    }
+
+    pub fn incoming_amount(&self) -> f32 {
+        self.incoming_amount
+    }
+
+    pub fn incoming_course(&self) -> f32 {
+        self.incoming_course
+    }
+
+    pub fn outgoing_payment_method_id(&self) -> String {
+        self.outgoing_payment_method_id.clone()
+    }
+
+    pub fn outgoing_payment_method_currency(&self) -> String {
+        self.outgoing_payment_method_currency.clone()
+    }
+
+    pub fn outgoing_amount(&self) -> f32 {
+        self.outgoing_amount
+    }
+
+    pub fn outgoing_course(&self) -> f32 {
+        self.outgoing_course
+    }
+
+    pub fn refund_amount(&self) -> Option<f32> {
+        self.refund_amount
+    }
+
+    pub fn refund_course(&self) -> Option<f32> {
+        self.refund_course
+    }
+
+    pub fn refund_payment_method_id(&self) -> String {
+        self.refund_payment_method_id.clone()
+    }
+
+    pub fn status(&self) -> i32 {
+        self.status
+    }
+
+    pub fn creation_date(&self) -> String {
+        self.creation_date.clone()
+    }
+
+    pub fn incoming_payment_detail(&self) -> String {
+        self.incoming_payment_detail.clone()
+    }
+
+    pub fn outgoing_payment_detail(&self) -> String {
+        self.outgoing_payment_detail.clone()
+    }
+
+    pub fn refund_payment_detail(&self) -> String {
+        self.refund_payment_detail.clone()
     }
 }

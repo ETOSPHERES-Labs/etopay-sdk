@@ -135,33 +135,6 @@ pub mod ffi {
     }
 
     #[swift_bridge(swift_repr = "struct")]
-    pub struct Order {
-        pub id: String,
-        pub is_payed_out: bool,
-        pub is_approved: bool,
-        pub is_canceled: bool,
-        pub fees_amount_eur: f32,
-        pub crypto_fees: f32,
-        pub contract_id: String,
-        pub incoming_payment_method_id: String,
-        pub incoming_payment_method_currency: String,
-        pub incoming_amount: f32,
-        pub incoming_course: f32,
-        pub outgoing_payment_method_id: String,
-        pub outgoing_payment_method_currency: String,
-        pub outgoing_amount: f32,
-        pub outgoing_course: f32,
-        pub refund_amount: Option<f32>,
-        pub refund_course: Option<f32>,
-        pub refund_payment_method_id: String,
-        pub status: i32,
-        pub creation_date: String,
-        pub incoming_payment_detail: String,
-        pub outgoing_payment_detail: String,
-        pub refund_payment_detail: String,
-    }
-
-    #[swift_bridge(swift_repr = "struct")]
     pub struct TxInfo {
         pub date: String,
         pub sender: String,
@@ -237,6 +210,34 @@ pub mod ffi {
         fn min_answers(&self) -> i32;
         fn max_answers(&self) -> i32;
         fn possible_answers(&self) -> Vec<String>;
+    }
+
+    extern "Rust" {
+        type Order;
+
+        fn id(&self) -> String;
+        fn is_payed_out(&self) -> bool;
+        fn is_approved(&self) -> bool;
+        fn is_canceled(&self) -> bool;
+        fn fees_amount_eur(&self) -> f32;
+        fn crypto_fees(&self) -> f32;
+        fn contract_id(&self) -> String;
+        fn incoming_payment_method_id(&self) -> String;
+        fn incoming_payment_method_currency(&self) -> String;
+        fn incoming_amount(&self) -> f32;
+        fn incoming_course(&self) -> f32;
+        fn outgoing_payment_method_id(&self) -> String;
+        fn outgoing_payment_method_currency(&self) -> String;
+        fn outgoing_amount(&self) -> f32;
+        fn outgoing_course(&self) -> f32;
+        fn refund_amount(&self) -> Option<f32>;
+        fn refund_course(&self) -> Option<f32>;
+        fn refund_payment_method_id(&self) -> String;
+        fn status(&self) -> i32;
+        fn creation_date(&self) -> String;
+        fn incoming_payment_detail(&self) -> String;
+        fn outgoing_payment_detail(&self) -> String;
+        fn refund_payment_detail(&self) -> String;
     }
 
     // Export Rust functions with the above shared types for Swift.
