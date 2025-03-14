@@ -951,15 +951,7 @@
 <a href="#950" id="950">950</a>
 <a href="#951" id="951">951</a>
 <a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a>
-<a href="#954" id="954">954</a>
-<a href="#955" id="955">955</a>
-<a href="#956" id="956">956</a>
-<a href="#957" id="957">957</a>
-<a href="#958" id="958">958</a>
-<a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::backend::viviswap::{
+<a href="#953" id="953">953</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::backend::viviswap::{
     delete_viviswap_detail, get_viviswap_details, get_viviswap_order, get_viviswap_orders, get_viviswap_payment_method,
     set_viviswap_contract, set_viviswap_detail,
 };
@@ -1398,9 +1390,7 @@
         <span class="kw-2">&amp;mut </span><span class="self">self</span>,
         amount: CryptoAmount,
         pin: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>EncryptionPin&gt;,
-        tag: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
         data: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
-        message: <span class="prelude-ty">Option</span>&lt;String&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ViviswapWithdrawal&gt; {
         <span class="macro">info!</span>(<span class="string">"Creating withdrawal with viviswap"</span>);
         <span class="comment">// load user entity
@@ -1461,7 +1451,7 @@
         <span class="kw">match </span>withdrawal_details {
             ViviswapApiContractDetails::Crypto(crypto_details) =&gt; {
                 <span class="kw">if let </span><span class="prelude-val">Some</span>(pin) = pin {
-                    <span class="self">self</span>.send_amount(pin, <span class="kw-2">&amp;</span>crypto_details.deposit_address, amount, tag, data, message)
+                    <span class="self">self</span>.send_amount(pin, <span class="kw-2">&amp;</span>crypto_details.deposit_address, amount, data)
                         .<span class="kw">await</span><span class="question-mark">?</span>;
                 }
                 <span class="prelude-val">Ok</span>(ViviswapWithdrawal {
@@ -1867,13 +1857,7 @@
 
         <span class="comment">// Call the function you want to test
         </span><span class="kw">let </span>result = sdk
-            .create_withdrawal_with_viviswap(
-                <span class="macro">dec!</span>(<span class="number">50.0</span>).try_into().unwrap(),
-                <span class="prelude-val">None</span>,
-                <span class="prelude-val">Some</span>(Vec::from([<span class="number">8</span>, <span class="number">16</span>])),
-                <span class="prelude-val">Some</span>(Vec::from([<span class="number">8</span>, <span class="number">16</span>])),
-                <span class="prelude-val">Some</span>(String::from(<span class="string">"test message"</span>)),
-            )
+            .create_withdrawal_with_viviswap(<span class="macro">dec!</span>(<span class="number">50.0</span>).try_into().unwrap(), <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(Vec::from([<span class="number">8</span>, <span class="number">16</span>])))
             .<span class="kw">await</span>;
 
         <span class="comment">// Assert
