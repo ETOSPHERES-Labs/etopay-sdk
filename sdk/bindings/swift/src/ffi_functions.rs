@@ -15,8 +15,8 @@
 
 use crate::ffi::{
     CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, KycAmlaQuestion,
-    KycOpenDocument, NewCaseIdResponse, NewViviswapUser, Order, PurchaseDetails, TxInfo, ViviswapAddressDetail,
-    ViviswapDeposit, ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
+    NewCaseIdResponse, NewViviswapUser, Order, PurchaseDetails, TxInfo, ViviswapAddressDetail, ViviswapDeposit,
+    ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
@@ -1254,5 +1254,27 @@ impl CawaenaSdk {
     /// The sdk build information as a string.
     pub fn get_build_info(&self) -> String {
         Sdk::get_build_info()
+    }
+}
+
+pub struct KycOpenDocument {
+    pub id: String,
+    pub is_back_image_required: bool,
+    pub document_type: String,
+    pub description: String,
+}
+
+impl KycOpenDocument {
+    pub fn id(&self) -> String {
+        self.id.clone()
+    }
+    pub fn is_back_image_required(&self) -> bool {
+        self.is_back_image_required
+    }
+    pub fn document_type(&self) -> String {
+        self.document_type.clone()
+    }
+    pub fn description(&self) -> String {
+        self.description.clone()
     }
 }

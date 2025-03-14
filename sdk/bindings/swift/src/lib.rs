@@ -100,14 +100,6 @@ pub mod ffi {
     }
 
     #[swift_bridge(swift_repr = "struct")]
-    pub struct KycOpenDocument {
-        pub id: String,
-        pub is_back_image_required: bool,
-        pub document_type: String,
-        pub description: String,
-    }
-
-    #[swift_bridge(swift_repr = "struct")]
     pub struct ViviswapAddressDetail {
         pub id: String,
         pub address: String,
@@ -235,6 +227,15 @@ pub mod ffi {
     #[swift_bridge(swift_repr = "struct")]
     pub struct IdentityPersonalDocumentData {
         pub video: File,
+    }
+
+    extern "Rust" {
+        type KycOpenDocument;
+
+        fn id(&self) -> String;
+        fn is_back_image_required(&self) -> bool;
+        fn document_type(&self) -> String;
+        fn description(&self) -> String;
     }
 
     // Export Rust functions with the above shared types for Swift.

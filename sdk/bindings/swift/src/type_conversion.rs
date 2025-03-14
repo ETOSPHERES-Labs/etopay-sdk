@@ -108,9 +108,9 @@ convert_simple_struct!(
     max_answers,
 );
 
-impl From<sdk::types::KycOpenDocument> for ffi::KycOpenDocument {
+impl From<sdk::types::KycOpenDocument> for crate::ffi_functions::KycOpenDocument {
     fn from(value: sdk::types::KycOpenDocument) -> Self {
-        ffi::KycOpenDocument {
+        crate::ffi_functions::KycOpenDocument {
             id: value.id,
             is_back_image_required: value.is_back_image_required,
             document_type: value.r#type,
