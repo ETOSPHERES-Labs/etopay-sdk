@@ -59,42 +59,12 @@ pub trait WalletUser: Debug {
     /// * `message` - The transactions message. Optional.
     ///
     ///
-    /// Returns a `Result` containing the sent transaction if successful, or an `Error` if it fails.
+    /// Returns a `Result` containing the sent transaction ID if successful, or an `Error` if it fails.
     ///
     /// # Errors
     ///
     /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
-    async fn send_amount(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<Transaction>;
-
-    /// Send eth amount to receiver
-    ///
-    /// # Arguments
-    ///
-    /// * `address` - The address of the receiver.
-    /// * `amount` - The amount to send (Ether).
-    /// * `tag` - The transactions tag. Optional.
-    /// * `message` - The transactions message. Optional.
-    ///
-    ///
-    /// Returns a `Result` containing the sent transaction id if successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
-    #[allow(clippy::too_many_arguments)]
-    async fn send_amount_eth(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<String>;
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, message: Option<Vec<u8>>) -> Result<String>;
 
     /// Send a transaction with one output.
     ///
@@ -112,43 +82,6 @@ pub trait WalletUser: Debug {
     ///
     /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String>;
-
-    /// Send a transaction with one output.
-    ///
-    /// # Arguments
-    ///
-    /// * `index` - The index of the transaction.
-    /// * `address` - The address to send the amount.
-    /// * `amount` - The amount to send (Ether)
-    ///
-    /// # Returns
-    ///
-    /// Returns the sent transaction id if successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
-    #[allow(clippy::too_many_arguments)]
-    async fn send_transaction_eth(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String>;
-
-    /// Synchronizes the wallet with the network.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` if the synchronization is successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet or encounters any other issues.
-    async fn sync_wallet(&self) -> Result<()>;
-
-    /// Synchronizes given wallet transactions with the network.
-    /// If the transaction information cannot be retrieved from the network, the input transaction will remain unchanged.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())`.
-    async fn sync_transactions(&self, transactions: &mut [WalletTxInfo], start: usize, limit: usize) -> Result<()>;
 
     /// Gets the list of transactions
     ///
@@ -247,6 +180,18 @@ impl WalletImplStardust {
 
         Ok(WalletImplStardust { account_manager })
     }
+
+    async fn sync_wallet(&self) -> Result<()> {
+        let account = self.account_manager.get_account(APP_NAME).await?;
+
+        let options = SyncOptions {
+            force_syncing: true,
+            ..Default::default()
+        };
+        account.sync(Some(options)).await?;
+
+        Ok(())
+    }
 }
 
 /// The minimum amount of IOTA to consider an output as non-dust output. Everything below this is dust.
@@ -281,67 +226,34 @@ impl WalletUser for WalletImplStardust {
         Ok(available_balance_iota)
     }
 
-    async fn send_amount(
-        &self,
-        address: &str,
-        amount: CryptoAmount,
-        tag: Option<TaggedDataPayload>,
-        message: Option<String>,
-    ) -> Result<Transaction> {
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
         self.sync_wallet().await?;
+
+        // hard-coded tag
+        let tag: Box<[u8]> = "data".to_string().into_bytes().into_boxed_slice();
+        let data: Box<[u8]> = data.unwrap_or_default().into_boxed_slice();
+        let tagged_data_payload = Some(TaggedDataPayload::new(tag, data).map_err(WalletError::Block)?);
 
         let account = self.account_manager.get_account(APP_NAME).await?;
 
         let options = TransactionOptions {
             allow_micro_amount: true,
-            tagged_data_payload: tag,
-            note: message,
+            tagged_data_payload,
             ..Default::default()
         };
 
         let amount_glow: u64 = (amount.inner() * dec!(1_000_000)).round().try_into()?;
         let transaction = account.send(amount_glow, address, options).await?;
-        Ok(transaction)
-    }
-
-    async fn send_amount_eth(
-        &self,
-        _address: &str,
-        _amount: CryptoAmount,
-        _tag: Option<TaggedDataPayload>,
-        _message: Option<String>,
-    ) -> Result<String> {
-        Err(WalletError::WalletFeatureNotImplemented)
+        Ok(transaction.transaction_id.to_string())
     }
 
     async fn estimate_gas_cost_eip1559(&self, _transaction: TxEip1559) -> Result<GasCostEstimation> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn sync_transactions(&self, _transactions: &mut [WalletTxInfo], _start: usize, _limit: usize) -> Result<()> {
-        Err(WalletError::WalletFeatureNotImplemented)
-    }
-
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
         let transaction = prepare_and_send_transaction(self, index, address, amount).await?;
         Ok(transaction.transaction_id.to_string())
-    }
-
-    #[allow(clippy::too_many_arguments)]
-    async fn send_transaction_eth(&self, _index: &str, _address: &str, _amount: CryptoAmount) -> Result<String> {
-        Err(WalletError::WalletFeatureNotImplemented)
-    }
-
-    async fn sync_wallet(&self) -> Result<()> {
-        let account = self.account_manager.get_account(APP_NAME).await?;
-
-        let options = SyncOptions {
-            force_syncing: true,
-            ..Default::default()
-        };
-        account.sync(Some(options)).await?;
-
-        Ok(())
     }
 
     // Gets the list of transactions
@@ -429,12 +341,8 @@ mod tests {
     use crate::core::Config;
     use crate::testing_utils::MNEMONIC;
     use crate::types::{self, currencies::Currency};
-    use iota_sdk::{
-        crypto::keys::bip39::Mnemonic,
-        types::block::payload::{transaction::TransactionEssence, Payload},
-    };
+    use iota_sdk::{crypto::keys::bip39::Mnemonic, types::block::payload::transaction::TransactionEssence};
     use rstest::rstest;
-    use rust_decimal::prelude::ToPrimitive;
     use rust_decimal_macros::dec;
     use testing::CleanUp;
 
@@ -636,32 +544,14 @@ mod tests {
         println!("Address: {address}, balance: {balance:?}");
 
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
-        let tag: Box<[u8]> = "test tag".to_string().into_bytes().into_boxed_slice();
-        let data: Box<[u8]> = (amount.inner() * dec!(1_000_000))
-            .round()
-            .to_u64()
-            .unwrap()
-            .to_be_bytes()
-            .into();
-        let tagged_data_payload = Some(TaggedDataPayload::new(tag.clone(), data.clone()).unwrap());
-        let message = Some(String::from("test message"));
+        let message = Some(String::from("test message").into_bytes());
 
         // Act
-        let result = wallet_user
-            .send_amount(&address, amount, tagged_data_payload.clone(), message.clone())
-            .await;
+        let result = wallet_user.send_amount(&address, amount, message.clone()).await;
 
         // Assert
         let transaction = result.unwrap();
-
-        assert_eq!(
-            transaction.payload.essence().as_regular().payload(),
-            Some(Payload::TaggedData(Box::new(
-                TaggedDataPayload::new(tag, data).unwrap()
-            )))
-            .as_ref()
-        );
-        assert_eq!(transaction.note, message);
+        assert!(!transaction.is_empty());
     }
 
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
@@ -676,13 +566,11 @@ mod tests {
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
         // Act
-        let result = wallet_user.send_amount(&address, amount, None, None).await;
+        let result = wallet_user.send_amount(&address, amount, None).await;
 
         // Assert
         let transaction = result.unwrap();
-
-        assert_eq!(transaction.payload.essence().as_regular().payload(), None);
-        assert_eq!(transaction.note, None);
+        assert!(!transaction.is_empty());
     }
 
     #[tokio::test]
@@ -696,7 +584,7 @@ mod tests {
         let amount = CryptoAmount::try_from(dec!(96854.0)).unwrap();
 
         // Act
-        let transaction = wallet_user.send_amount(&address, amount, None, None).await;
+        let transaction = wallet_user.send_amount(&address, amount, None).await;
 
         // Assert
         assert!(

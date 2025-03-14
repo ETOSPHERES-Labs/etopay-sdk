@@ -437,9 +437,7 @@ impl Sdk {
         &mut self,
         amount: CryptoAmount,
         pin: Option<&EncryptionPin>,
-        tag: Option<Vec<u8>>,
         data: Option<Vec<u8>>,
-        message: Option<String>,
     ) -> Result<ViviswapWithdrawal> {
         info!("Creating withdrawal with viviswap");
         // load user entity
@@ -500,7 +498,7 @@ impl Sdk {
         match withdrawal_details {
             ViviswapApiContractDetails::Crypto(crypto_details) => {
                 if let Some(pin) = pin {
-                    self.send_amount(pin, &crypto_details.deposit_address, amount, tag, data, message)
+                    self.send_amount(pin, &crypto_details.deposit_address, amount, data)
                         .await?;
                 }
                 Ok(ViviswapWithdrawal {
@@ -906,13 +904,7 @@ mod tests {
 
         // Call the function you want to test
         let result = sdk
-            .create_withdrawal_with_viviswap(
-                dec!(50.0).try_into().unwrap(),
-                None,
-                Some(Vec::from([8, 16])),
-                Some(Vec::from([8, 16])),
-                Some(String::from("test message")),
-            )
+            .create_withdrawal_with_viviswap(dec!(50.0).try_into().unwrap(), None, Some(Vec::from([8, 16])))
             .await;
 
         // Assert

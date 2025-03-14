@@ -545,7 +545,7 @@ impl WalletManager for WalletManagerImpl {
 
         let bo = match network.network_type {
             NetworkType::Evm { node_urls, chain_id } => {
-                let wallet = WalletImplEth::new(mnemonic, &path, node_urls, chain_id).await?;
+                let wallet = WalletImplEth::new(mnemonic, node_urls, chain_id).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             NetworkType::Stardust { node_urls } => {

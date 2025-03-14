@@ -13,7 +13,6 @@ use crate::types::{
 use crate::wallet::error::WalletError;
 use api_types::api::networks::ApiNetworkType;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
-use iota_sdk::types::block::payload::TaggedDataPayload;
 use log::{debug, info};
 
 impl Sdk {
@@ -179,7 +178,11 @@ impl Sdk {
                 chain_id: _,
             } => {
                 let tx_id = wallet
-                    .send_transaction_eth(purchase_id, &tx_details.system_address, amount)
+                    .send_amount(
+                        &tx_details.system_address,
+                        amount,
+                        Some(purchase_id.to_string().into_bytes()),
+                    )
                     .await?;
 
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -227,9 +230,7 @@ impl Sdk {
         pin: &EncryptionPin,
         address: &str,
         amount: CryptoAmount,
-        tag: Option<Vec<u8>>,
         data: Option<Vec<u8>>,
-        message: Option<String>,
     ) -> Result<()> {
         info!("Sending amount {amount:?} to receiver {address}");
         self.verify_pin(pin).await?;
@@ -250,19 +251,15 @@ impl Sdk {
             .await?;
 
         // create the transaction payload which holds a tag and associated data
-        let tag: Box<[u8]> = tag.unwrap_or_default().into_boxed_slice();
-        let data: Box<[u8]> = data.unwrap_or_default().into_boxed_slice();
-        let tagged_data_payload = Some(TaggedDataPayload::new(tag, data).map_err(WalletError::Block)?);
 
         match network.network_type {
             NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,
             } => {
-                let tx_id = wallet
-                    .send_amount_eth(address, amount, tagged_data_payload, message)
-                    .await?;
+                let tx_id = wallet.send_amount(address, amount, data).await?;
 
+                // store the created transaction in the repo
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
                 let user = repo.get(&active_user.username)?;
                 let mut wallet_transactions = user.wallet_transactions;
@@ -270,9 +267,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
             }
             NetworkType::Stardust { node_urls: _ } => {
-                wallet
-                    .send_amount(address, amount, tagged_data_payload, message)
-                    .await?;
+                wallet.send_amount(address, amount, data).await?;
             }
         }
 
@@ -353,146 +348,9 @@ mod tests {
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use iota_sdk::wallet::account::types::InclusionState;
-    use iota_sdk::{
-        types::{
-            block::{
-                address::{
-                    dto::{AddressDto, Ed25519AddressDto},
-                    Ed25519Address,
-                },
-                input::{
-                    dto::{InputDto, UtxoInputDto},
-                    UtxoInput,
-                },
-                output::{
-                    dto::{BasicOutputDto, OutputDto},
-                    unlock_condition::{
-                        dto::{AddressUnlockConditionDto, UnlockConditionDto},
-                        AddressUnlockCondition,
-                    },
-                    BasicOutput,
-                },
-                payload::{
-                    dto::{PayloadDto, TaggedDataPayloadDto, TransactionPayloadDto},
-                    transaction::{
-                        dto::{RegularTransactionEssenceDto, TransactionEssenceDto},
-                        RegularTransactionEssence, TransactionId,
-                    },
-                    TransactionPayload,
-                },
-                signature::{
-                    dto::{Ed25519SignatureDto, SignatureDto},
-                    Ed25519Signature,
-                },
-                unlock::{
-                    dto::{SignatureUnlockDto, UnlockDto},
-                    SignatureUnlock,
-                },
-            },
-            TryFromDto,
-        },
-        wallet::account::types::Transaction,
-    };
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
-
-    fn example_wallet_transaction() -> Transaction {
-        /* transaction payload for reference
-        Transaction { payload: TransactionPayload { essence: Regular(RegularTransactionEssence { network_id: dec!(7784367046153662236), inputs: [UtxoInput(0x36989ba6c4e23fe4c62837551bd1b6e5548ddd0e33c6ae84cf6bc669fbd98ae90000)], inputs_commitment: InputsCommitment(0xb2bb637c62f9a8a46483fcaa532c0a4b63de82d379a10892fdfa82c0dceae5d0), outputs: [BasicOutput { amount: dec!(1000000), native_tokens: NativeTokens([]), unlock_conditions: UnlockConditions([AddressUnlockCondition(Ed25519Address(0x64549c8ac945b5c0acde3e29b13793b17e1303d081de7afb12169f5ee06c456e))]), features: Features([]) }], payload: OptionalPayload(None) }), unlocks: Unlocks([SignatureUnlock(Ed25519Signature { public_key: 0x128a7167d30c6928aedef86ec19c0793cabfeec51c1fedb3d852924922775c43, signature: 0x34f6335cc3d892c0bef52531c75a92c041cc8c8aa44665ba46be17968090ded0c27332f2ff7097fd0b3851c55ae441e7c7be791012301151775fa520346a3804 })]) }, block_id: Some(BlockId(0x95e78bc63f2f1707e761e37533facb939902f6bde49f02e57d3f74347bd83e4d)), inclusion_state: Pending, timestamp: dec!(1705321862422), transaction_id: TransactionId(0x5e30005197a27ac0829b2ea9183b9a98d1f1e386fcc1774050f94ff42604de99), network_id: dec!(7784367046153662236), incoming: false, note: None, inputs: [OutputWithMetadataResponse { metadata: OutputMetadata { block_id: BlockId(0x9e76d69b26748650b54dccbf4ae2b88cea16b3d48dfea0393931be8ed7c5f678), output_id: OutputId(0x36989ba6c4e23fe4c62837551bd1b6e5548ddd0e33c6ae84cf6bc669fbd98ae90000), is_spent: false, milestone_index_spent: None, milestone_timestamp_spent: None, transaction_id_spent: None, milestone_index_booked: dec!(1497442), milestone_timestamp_booked: dec!(1705321430), ledger_index: 1497527 }, output: Basic(BasicOutputDto { kind: dec!(3), amount: "1000000", native_tokens: [], unlock_conditions: [Address(AddressUnlockConditionDto { kind: dec!(0), address: Ed25519(Ed25519AddressDto { kind: dec!(0), pub_key_hash: "0x64549c8ac945b5c0acde3e29b13793b17e1303d081de7afb12169f5ee06c456e" }) })], features: [] }) }] }
-
-         */
-        let network_id_u64 = 7784367046153662236u64;
-        let network_id = network_id_u64.to_string();
-        let pub_key_hash = String::from("0x64549c8ac945b5c0acde3e29b13793b17e1303d081de7afb12169f5ee06c456e");
-        let pub_key = String::from("0x128a7167d30c6928aedef86ec19c0793cabfeec51c1fedb3d852924922775c43");
-        let signature = String::from("0x34f6335cc3d892c0bef52531c75a92c041cc8c8aa44665ba46be17968090ded0c27332f2ff7097fd0b3851c55ae441e7c7be791012301151775fa520346a3804");
-        let transaction_id_input = "0x36989ba6c4e23fe4c62837551bd1b6e5548ddd0e33c6ae84cf6bc669fbd98ae9".to_string();
-        let utxo_input_dto = UtxoInputDto {
-            kind: UtxoInput::KIND,
-            transaction_id: transaction_id_input,
-            transaction_output_index: 0u16,
-        };
-        let input = InputDto::Utxo(utxo_input_dto);
-        let inputs = vec![input];
-        let inputs_commitment = String::from("0xb2bb637c62f9a8a46483fcaa532c0a4b63de82d379a10892fdfa82c0dceae5d0");
-
-        let ed25519_address_dto = Ed25519AddressDto {
-            kind: Ed25519Address::KIND,
-            pub_key_hash,
-        };
-
-        let address_dto = AddressDto::Ed25519(ed25519_address_dto);
-
-        let address_unlock_conditions_dto = AddressUnlockConditionDto {
-            kind: AddressUnlockCondition::KIND,
-            address: address_dto,
-        };
-
-        let unlock_conditions_dto = UnlockConditionDto::Address(address_unlock_conditions_dto);
-
-        let basic_output_dto = BasicOutputDto {
-            kind: BasicOutput::KIND,
-            amount: "25000000".to_string(),
-            native_tokens: vec![],
-            unlock_conditions: vec![unlock_conditions_dto],
-            features: vec![],
-        };
-
-        let output = OutputDto::Basic(basic_output_dto);
-
-        let ed25519_signature_dto = Ed25519SignatureDto {
-            kind: Ed25519Signature::KIND,
-            public_key: pub_key,
-            signature,
-        };
-
-        let signature_dto = SignatureDto::Ed25519(Box::new(ed25519_signature_dto));
-
-        let signature_unlock_dto = SignatureUnlockDto {
-            kind: SignatureUnlock::KIND,
-            signature: signature_dto,
-        };
-
-        let unlock = UnlockDto::Signature(signature_unlock_dto);
-
-        let essence = TransactionEssenceDto::Regular(RegularTransactionEssenceDto {
-            kind: RegularTransactionEssence::KIND,
-            network_id: network_id.clone(),
-            inputs,
-            inputs_commitment,
-            outputs: vec![output],
-            payload: Some(PayloadDto::TaggedData(Box::new(TaggedDataPayloadDto {
-                kind: TransactionPayload::KIND,
-                tag: "test tag".to_string().into_bytes().into_boxed_slice(),
-                data: 968547501u64.to_be_bytes().into(),
-            }))),
-        });
-
-        let transaction_payload_dto = TransactionPayloadDto {
-            kind: TransactionPayload::KIND,
-            essence,
-            unlocks: vec![unlock],
-        };
-
-        let transaction_id: [u8; 32] = [0; 32];
-
-        let transaction_id = TransactionId::new(transaction_id);
-
-        let payload = TransactionPayload::try_from_dto(transaction_payload_dto).unwrap();
-
-        Transaction {
-            payload,
-            block_id: None,
-            inclusion_state: iota_sdk::wallet::account::types::InclusionState::Pending,
-            timestamp: 0u128,
-            transaction_id,
-            network_id: network_id_u64,
-            incoming: false,
-            note: Some(String::from("test message")),
-            inputs: vec![],
-        }
-    }
 
     fn examples_wallet_tx_list() -> GetTxsDetailsResponse {
         let main_address = "atoi1qzt0nhsf38nh6rs4p6zs5knqp6psgha9wsv74uajqgjmwc75ugupx3y7x0r".to_string();
@@ -809,7 +667,7 @@ mod tests {
                     mock_wallet
                         .expect_send_amount()
                         .times(1)
-                        .returning(move |_, _, _, _| Ok(example_wallet_transaction()));
+                        .returning(move |_, _, _| Ok(String::from("transaction id")));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 
@@ -830,9 +688,7 @@ mod tests {
                 &EncryptionPin::try_from_string("1234").unwrap(),
                 "smrq1...",
                 amount,
-                Some(Vec::from([8, 16])),
-                Some(Vec::from([8, 16])),
-                Some(String::from("test message")),
+                Some(String::from("test message").into_bytes()),
             )
             .await;
 
@@ -880,9 +736,9 @@ mod tests {
         mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
             let mut mock_wallet = MockWalletUser::new();
             mock_wallet
-                .expect_send_amount_eth()
+                .expect_send_amount()
                 .times(1)
-                .returning(move |_, _, _, _| Ok(String::from("tx_id")));
+                .returning(move |_, _, _| Ok(String::from("tx_id")));
 
             let value = wallet_transaction.clone();
             mock_wallet
@@ -905,9 +761,7 @@ mod tests {
                 &EncryptionPin::try_from_string("1234").unwrap(),
                 "0xb0b...",
                 amount,
-                Some(Vec::from([8, 16])),
-                Some(Vec::from([8, 16])),
-                Some(String::from("test message")),
+                Some(String::from("test message").into_bytes()),
             )
             .await;
 
