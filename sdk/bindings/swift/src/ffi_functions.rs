@@ -84,11 +84,6 @@ impl CawaenaSdk {
         }
         .await
         .map_err(|err| format!("{:#?}", err))
-
-        // sdk.get_networks()
-        //     .await
-        //     .map(|n| n.into_iter().map(|network| network.into()).collect())
-        //     .map_err(|err| format!("{:#?}", err))
     }
 
     /// Selects the network for the Cawaena SDK.
