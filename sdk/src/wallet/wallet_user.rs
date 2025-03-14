@@ -83,17 +83,6 @@ pub trait WalletUser: Debug {
     /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String>;
 
-    /// Synchronizes the wallet with the network.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())` if the synchronization is successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet or encounters any other issues.
-    async fn sync_wallet(&self) -> Result<()>;
-
     /// Gets the list of transactions
     ///
     /// # Arguments
@@ -191,6 +180,18 @@ impl WalletImplStardust {
 
         Ok(WalletImplStardust { account_manager })
     }
+
+    async fn sync_wallet(&self) -> Result<()> {
+        let account = self.account_manager.get_account(APP_NAME).await?;
+
+        let options = SyncOptions {
+            force_syncing: true,
+            ..Default::default()
+        };
+        account.sync(Some(options)).await?;
+
+        Ok(())
+    }
 }
 
 /// The minimum amount of IOTA to consider an output as non-dust output. Everything below this is dust.
@@ -253,18 +254,6 @@ impl WalletUser for WalletImplStardust {
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
         let transaction = prepare_and_send_transaction(self, index, address, amount).await?;
         Ok(transaction.transaction_id.to_string())
-    }
-
-    async fn sync_wallet(&self) -> Result<()> {
-        let account = self.account_manager.get_account(APP_NAME).await?;
-
-        let options = SyncOptions {
-            force_syncing: true,
-            ..Default::default()
-        };
-        account.sync(Some(options)).await?;
-
-        Ok(())
     }
 
     // Gets the list of transactions

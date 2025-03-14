@@ -172,10 +172,6 @@ impl WalletUser for WalletImplEth {
         unimplemented!("use send_amount");
     }
 
-    async fn sync_wallet(&self) -> Result<()> {
-        unimplemented!("not relevant for EVM interface");
-    }
-
     // The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
