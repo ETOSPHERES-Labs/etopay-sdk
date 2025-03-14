@@ -128,6 +128,10 @@ pub enum WalletError {
     #[error("LocalSignerError: {0}")]
     LocalSignerError(#[from] alloy::signers::local::LocalSignerError),
 
+    /// Error waiting for transaction to be included
+    #[error("PendingTransactionError: {0}")]
+    PendingTransactionError(#[from] alloy::providers::PendingTransactionError),
+
     /// Could not convert hex to address
     #[error("Invalid hex value: {0}")]
     FromHexError(#[from] alloy_primitives::hex::FromHexError),

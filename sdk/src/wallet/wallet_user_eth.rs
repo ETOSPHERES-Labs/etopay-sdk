@@ -125,7 +125,7 @@ impl WalletImplEth {
 #[cfg_attr(test, mockall::automock)]
 impl WalletUser for WalletImplEth {
     async fn get_address(&self) -> Result<String> {
-        Ok(self.provider.default_signer_address().to_string())
+        Ok(self.provider.default_signer_address().to_string().to_lowercase())
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
@@ -163,7 +163,7 @@ impl WalletUser for WalletImplEth {
 
         // Wait for the transaction to be included and get the receipt.
         // Note: this might take some time so we should probably do it in the background in the future
-        let receipt = pending_tx.get_receipt().await.unwrap();
+        let receipt = pending_tx.get_receipt().await?;
 
         info!(
             "Transaction included in block {}",
@@ -456,41 +456,20 @@ mod tests {
         let from = wallet_user.get_address().await.unwrap();
         let to = String::from("0xb0b0000000000000000000000000000000000000");
 
-        let mocked_rpc_get_transaction_count = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionCount",
-                "params": [
-                    from,
-                    "latest"
-                ],
-            })))
-            .with_status(200)
-            .with_body(format!(
-                r#"{{
-                    "jsonrpc": "2.0",
-                    "id": 1,
-                    "result": "{}"
-                }}"#,
-                mocked_transaction_count
-            ))
-            .create();
-
         let mocked_rpc_estimate_gas = server
             .mock("POST", "/")
             .match_header("content-type", "application/json")
             .match_body(mockito::Matcher::PartialJson(json!({
                 "jsonrpc": "2.0",
-                "id": 1,
+                "id": 0,
                 "method": "eth_estimateGas",
-                "params": [{"from":format!("{}", from),"to":format!("{}", to),"value":format!("{}", "0x56bc75e2d63100000"),"input":"0x37623232373436313637323233613562333832633331333635643263323236343631373436313232336135623338326333313336356432633232366436353733373336313637363532323361323237343635373337343230366436353733373336313637363532323764","accessList":[]},"pending"],
+                "params": [{"from": from,"to":to,"value":"0x56bc75e2d63100000","input":"0x74657374206d657373616765", "chainId": "0x7a69"},"pending"],
             })))
             .with_status(200)
             .with_body(
                 r#"{
                     "jsonrpc": "2.0",
+                    "id": 0,
                     "result": 24009
                 }"#,
             )
@@ -501,12 +480,14 @@ mod tests {
             .match_header("content-type", "application/json")
             .match_body(mockito::Matcher::PartialJson(json!({
                 "jsonrpc": "2.0",
+                "id": 1,
                 "method": "eth_feeHistory",
             })))
             .with_status(200)
             .with_body(
                 r#"{
                 "jsonrpc": "2.0",
+                "id": 1,
                 "result": {
                     "baseFeePerGas": [1000000000, 875000000],
                     "gasUsedRatio": [0.0],
@@ -518,6 +499,29 @@ mod tests {
             )
             .create();
 
+        let mocked_rpc_get_transaction_count = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "id": 2,
+                "method": "eth_getTransactionCount",
+                "params": [
+                    from,
+                    "pending"
+                ],
+            })))
+            .with_status(200)
+            .with_body(format!(
+                r#"{{
+                    "jsonrpc": "2.0",
+                    "id": 2,
+                    "result": "{}"
+                }}"#,
+                mocked_transaction_count
+            ))
+            .create();
+
         let mocked_transaction_hash = "0x969dc1d6a97464e62fb1dab451b03d24111c278bf6f4d2e2b3910205a8682ed2";
         let mocked_rpc_send_raw_transaction = server
             .mock("POST", "/")
@@ -527,18 +531,71 @@ mod tests {
                 "method": "eth_sendRawTransaction",
                 "id": 3,
                 "params": [
-                    "0x02f8dc827a6905018477359401825dc994b0b000000000000000000000000000000000000089056bc75e2d63100000b86a37623232373436313637323233613562333832633331333635643263323236343631373436313232336135623338326333313336356432633232366436353733373336313637363532323361323237343635373337343230366436353733373336313637363532323764c080a014837e78ab7f4b04f358ecca39638934afd707e85f038d3d1333e556936215aea04b8bb1b31609fd14e56ea73df3fcdd695bd6122f8c60ab8412b2418613ee92db"
+                    "0x02f87d827a6905018477359401825dc994b0b000000000000000000000000000000000000089056bc75e2d631000008c74657374206d657373616765c080a011114978927798fee734d1f11ad8b9b985755fa60f4036aa6320c08fa897372aa0291cb036983e0bcd059aa667d78904e6484e13b401f8c35cb7c125e6be947157"
                 ],
             })))
             .with_status(200)
             .with_body(format!(
                 r#"{{
                     "jsonrpc": "2.0",
-                    "id": 1,
+                    "id": 3,
                     "result": "{}"
                 }}"#,
                 mocked_transaction_hash
             ))
+            .create();
+
+        let mocked_rpc_block_number = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "method": "eth_blockNumber",
+                "id": 4,
+                "params": [ ],
+            })))
+            .with_status(200)
+            .with_body(
+                r#"{{
+                    "jsonrpc": "2.0",
+                    "id": 4,
+                    "result": "0x1505e9c"
+                }}"#,
+            )
+            .create();
+
+        let mocked_rpc_get_transaction_receipt_response_json = json!({
+            "jsonrpc": "2.0",
+            "id": 5,
+            "result": {
+                "transactionHash": mocked_transaction_hash,
+                "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
+                "blockNumber": "0x107d7b0",
+                "contractAddress": null,
+                "cumulativeGasUsed": "0x19aac9a",
+                "effectiveGasPrice": "0xb9029a7ea",
+                "from": from,
+                "gasUsed": "0x27fb4",
+                "logs": [],
+                "logsBloom": "0x00000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000010000000000800020000000000000200000000040000000000800104008000000000000000000000800000000001200000000000000000000000000000000000000000000000020000000020010000800000000000000000000000000000000000000000000000000000000000000120000020800000000000000100084000000000000000000000000000000000000000000000002000000000000001000000000400000000000000000000000000000000010000000000000000000000000000000000000000000000000000090000000",
+                "status": "0x1",
+                "to": to,
+                "transactionIndex": "0xfc",
+                "type": "0x2"
+            }
+        });
+
+        let mocked_rpc_get_receipt = server
+            .mock("POST", "/")
+            .match_header("content-type", "application/json")
+            .match_body(mockito::Matcher::PartialJson(json!({
+                "jsonrpc": "2.0",
+                "method": "eth_getTransactionReceipt",
+                "params": [ mocked_transaction_hash ],
+            })))
+            .with_status(200)
+            .with_body(serde_json::to_vec(&mocked_rpc_get_transaction_receipt_response_json).unwrap())
+            .expect(2)
             .create();
 
         let metadata = String::from("test message").into_bytes();
@@ -547,10 +604,12 @@ mod tests {
         let transaction_id = wallet_user.send_amount(&to, amount_to_send, Some(metadata)).await;
 
         // Assert
-        mocked_rpc_get_transaction_count.assert();
-        mocked_rpc_estimate_gas.assert();
         mocked_rpc_eth_fee_history.assert();
+        mocked_rpc_estimate_gas.assert();
+        mocked_rpc_get_transaction_count.assert();
         mocked_rpc_send_raw_transaction.assert();
+        mocked_rpc_block_number.assert();
+        mocked_rpc_get_receipt.assert();
         transaction_id.unwrap();
     }
 
@@ -609,17 +668,17 @@ mod tests {
         let dummy_block_number = "0x107d7b0";
 
         let mocked_rpc_get_transaction_by_hash_response_json = json!({
-            "id": "1",
+            "id": "0",
             "jsonrpc": "2.0",
             "result": {
                 "accessList": [],
                 "blockHash": "0xe6262c1924326d12b88aaa35a95a0c7cdd11f2d20ebae84618484120bd037c34",
-                "blockNumber": "0x107d7b0",
+                "blockNumber": dummy_block_number,
                 "chainId": "0x1",
                 "from": "0x901c7c311d39e0b26257219765e71e8db3107a81",
                 "gas": "0x31d74",
                 "gasPrice": "0xb9029a7ea",
-                "hash": "0xcd718a69d478340dc28fdf6bf8056374a52dc95841b44083163ced8dfe29310c",
+                "hash": dummy_transaction_hash,
                 "input": "0x3593564c000000000000000000000000000000000000000000000000000000000000006000000000000000000000000000000000000000000000000000000000000000a000000000000000000000000000000000000000000000000000000000646701fb000000000000000000000000000000000000000000000000000000000000000100000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000a968163f0a57b400000000000000000000000000000000000000000000000000000000000010326d79400000000000000000000000000000000000000000000000000000000000000a00000000000000000000000000000000000000000000000000000000000000001000000000000000000000000000000000000000000000000000000000000002bb7135877cd5d40aa3b086ac6f21c51bbafbbb41f002710dac17f958d2ee523a2206206994597c13d831ec7000000000000000000000000000000000000000000",
                 "maxFeePerGas": "0xf22a22912",
                 "maxPriorityFeePerGas": "0x5f5e100",
@@ -639,10 +698,9 @@ mod tests {
             .match_header("content-type", "application/json")
             .match_body(mockito::Matcher::PartialJson(json!({
                 "jsonrpc": "2.0",
+                "id": 0,
                 "method": "eth_getTransactionByHash",
-                "params": [
-                    dummy_transaction_hash,
-                ],
+                "params": [ dummy_transaction_hash, ],
             })))
             .with_status(200)
             .with_body(serde_json::to_vec(&mocked_rpc_get_transaction_by_hash_response_json).unwrap())
@@ -681,10 +739,8 @@ mod tests {
             .match_body(mockito::Matcher::PartialJson(json!({
                 "jsonrpc": "2.0",
                 "method": "eth_getBlockByNumber",
-                "params": [
-                    dummy_block_number,
-                    true
-                ],
+                "id": 1,
+                "params": [ dummy_block_number ],
             })))
             .with_status(200)
             .with_body(serde_json::to_vec(&mocked_rpc_get_block_by_number_response_json).unwrap())
@@ -717,12 +773,11 @@ mod tests {
             .match_body(mockito::Matcher::PartialJson(json!({
                 "jsonrpc": "2.0",
                 "method": "eth_getTransactionReceipt",
-                "params": [
-                    dummy_transaction_hash
-                ],
+                "params": [ dummy_transaction_hash ],
             })))
             .with_status(200)
             .with_body(serde_json::to_vec(&mocked_rpc_get_transaction_receipt_response_json).unwrap())
+            .expect(2)
             .create();
 
         // Act
@@ -776,7 +831,7 @@ mod tests {
                 "jsonrpc": "2.0",
                 "id": 0,
                 "method": "eth_estimateGas",
-                "params": [{"from":format!("{}", from),"to":format!("{}", to),"value":format!("{}", "0x1")},"pending"],
+                "params": [{"from": from,"to": to,"value": "0x1"},"pending"],
             })))
             .with_status(200)
             .with_body(
