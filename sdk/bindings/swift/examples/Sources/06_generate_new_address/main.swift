@@ -31,9 +31,14 @@ Task {
 
         // Fetch networks from backend
         let networks = try await sdk.getNetworks()
+        print("networks")
         print(networks)
+        print("reflection networks")
         print(Mirror(reflecting: networks))
-        let iotaNetwork = networks.get(index: 0)!
+        let iotaNetwork = networks.get(index: 0)
+        print("reflection iota networks")
+        print(Mirror(reflecting: iotaNetwork))
+
         try await sdk.setNetwork(iotaNetwork.id)
         print("retrieved available networks and set the network for the wallet")
 
