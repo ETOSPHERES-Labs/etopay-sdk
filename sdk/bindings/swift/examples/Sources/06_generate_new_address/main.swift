@@ -35,7 +35,7 @@ Task {
         print(networks)
         print("reflection networks")
         print(Mirror(reflecting: networks))
-        let iotaNetwork = networks.get(index: 0)
+        //let iotaNetwork = networks.get(index: 0)
         //print("reflection iota networks")
         //print(Mirror(reflecting: iotaNetwork))
 
