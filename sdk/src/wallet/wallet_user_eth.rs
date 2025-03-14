@@ -165,10 +165,7 @@ impl WalletUser for WalletImplEth {
         // Note: this might take some time so we should probably do it in the background in the future
         let receipt = pending_tx.get_receipt().await?;
 
-        info!(
-            "Transaction included in block {}",
-            receipt.block_number.expect("Failed to get block number")
-        );
+        info!("Transaction included in block {:?}", receipt.block_number);
 
         Ok(receipt.transaction_hash.to_string())
     }
@@ -322,12 +319,9 @@ mod tests {
         node_url: String,
         chain_id: u64,
     ) -> WalletImplEth {
-        // let (_, cleanup) = Config::new_test_with_cleanup();
-        let wallet = WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id)
+        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id)
             .await
-            .expect("could not initialize WalletImplEth");
-
-        wallet
+            .expect("could not initialize WalletImplEth")
     }
 
     #[tokio::test]

@@ -51,9 +51,7 @@ async fn it_should_send_amount() {
     let amount = dec!(2.0).try_into().unwrap();
 
     // Act
-    let result = sdk
-        .send_amount(&user.pin, &recipient_address, amount, None, None, None)
-        .await;
+    let result = sdk.send_amount(&user.pin, &recipient_address, amount, None).await;
 
     //Assert
     result.unwrap();
