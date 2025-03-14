@@ -15,7 +15,7 @@
 
 use crate::ffi::{
     CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, NewCaseIdResponse,
-    NewViviswapUser, PurchaseDetails, TxInfo, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
+    NewViviswapUser, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
     ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
 };
 use sdk::core::{Config, Sdk};
@@ -1426,5 +1426,65 @@ impl Order {
 
     pub fn refund_payment_detail(&self) -> String {
         self.refund_payment_detail.clone()
+    }
+}
+
+pub struct TxInfo {
+    pub date: String,
+    pub sender: String,
+    pub receiver: String,
+    pub reference_id: String,
+    pub application_metadata: String,
+    pub amount: f64,
+    pub currency: String,
+    pub status: TxStatus,
+    pub transaction_hash: String,
+    pub course: f64,
+    pub invalid_reasons: Vec<String>,
+}
+
+impl TxInfo {
+    pub fn date(&self) -> String {
+        self.date.clone()
+    }
+
+    pub fn sender(&self) -> String {
+        self.sender.clone()
+    }
+
+    pub fn receiver(&self) -> String {
+        self.receiver.clone()
+    }
+
+    pub fn reference_id(&self) -> String {
+        self.reference_id.clone()
+    }
+
+    pub fn application_metadata(&self) -> String {
+        self.application_metadata.clone()
+    }
+
+    pub fn amount(&self) -> f64 {
+        self.amount
+    }
+
+    pub fn currency(&self) -> String {
+        self.currency.clone()
+    }
+
+    pub fn status(&self) -> TxStatus {
+        self.status
+    }
+
+    pub fn transaction_hash(&self) -> String {
+        self.transaction_hash.clone()
+    }
+
+    pub fn course(&self) -> f64 {
+        self.course
+    }
+
+    pub fn invalid_reasons(&self) -> Vec<String> {
+        self.invalid_reasons.clone()
     }
 }

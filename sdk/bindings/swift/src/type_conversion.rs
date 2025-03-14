@@ -198,7 +198,7 @@ impl From<sdk::types::Order> for crate::ffi_functions::Order {
     }
 }
 
-impl From<sdk::types::transactions::TxInfo> for ffi::TxInfo {
+impl From<sdk::types::transactions::TxInfo> for crate::ffi_functions::TxInfo {
     fn from(value: sdk::types::transactions::TxInfo) -> Self {
         let invalid_reasons = match value.clone().status {
             sdk::types::ApiTxStatus::WaitingForVerification(r) => r,
@@ -206,7 +206,7 @@ impl From<sdk::types::transactions::TxInfo> for ffi::TxInfo {
             _ => Vec::new(),
         };
 
-        ffi::TxInfo {
+        crate::ffi_functions::TxInfo {
             date: value.date.unwrap_or("".to_string()),
             sender: value.sender,
             receiver: value.receiver,

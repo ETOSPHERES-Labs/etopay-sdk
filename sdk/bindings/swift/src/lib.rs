@@ -135,21 +135,6 @@ pub mod ffi {
     }
 
     #[swift_bridge(swift_repr = "struct")]
-    pub struct TxInfo {
-        pub date: String,
-        pub sender: String,
-        pub receiver: String,
-        pub reference_id: String,
-        pub application_metadata: String,
-        pub amount: f64,
-        pub currency: String,
-        pub status: TxStatus,
-        pub transaction_hash: String,
-        pub course: f64,
-        pub invalid_reasons: Vec<String>,
-    }
-
-    #[swift_bridge(swift_repr = "struct")]
     pub struct WalletTxInfo {
         pub date: String,
         pub block_id: String,
@@ -238,6 +223,22 @@ pub mod ffi {
         fn incoming_payment_detail(&self) -> String;
         fn outgoing_payment_detail(&self) -> String;
         fn refund_payment_detail(&self) -> String;
+    }
+
+    extern "Rust" {
+        type TxInfo;
+
+        fn date(&self) -> String;
+        fn sender(&self) -> String;
+        fn receiver(&self) -> String;
+        fn reference_id(&self) -> String;
+        fn application_metadata(&self) -> String;
+        fn amount(&self) -> f64;
+        fn currency(&self) -> String;
+        fn status(&self) -> TxStatus;
+        fn transaction_hash(&self) -> String;
+        fn course(&self) -> f64;
+        fn invalid_reasons(&self) -> Vec<String>;
     }
 
     // Export Rust functions with the above shared types for Swift.
