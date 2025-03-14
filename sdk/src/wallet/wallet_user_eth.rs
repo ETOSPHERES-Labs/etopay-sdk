@@ -169,33 +169,11 @@ impl WalletUser for WalletImplEth {
     }
 
     async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
-        unimplemented!("use send_transaction_eth");
+        unimplemented!("use send_amount");
     }
 
     async fn sync_wallet(&self) -> Result<()> {
-        unimplemented!("dead interface");
-    }
-
-    async fn sync_transactions(&self, transactions: &mut [WalletTxInfo], start: usize, limit: usize) -> Result<()> {
-        for i in start..start + limit {
-            if let Some(transaction) = transactions.get_mut(i) {
-                let synchronized_transaction = self.get_wallet_tx(&transaction.transaction_id).await;
-                match synchronized_transaction {
-                    Ok(stx) => *transaction = stx,
-                    Err(e) => {
-                        // On error, return historical (cached) transaction data
-                        log::debug!(
-                        "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
-                        transaction.clone(), e
-                        );
-                    }
-                }
-            } else {
-                break;
-            }
-        }
-
-        Ok(())
+        unimplemented!("not relevant for EVM interface");
     }
 
     // The network does not provide information about historical transactions

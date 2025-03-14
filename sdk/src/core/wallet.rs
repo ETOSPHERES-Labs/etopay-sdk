@@ -506,7 +506,17 @@ impl Sdk {
                 // then synchronize selected transactions (by fetching their current status from the network),
                 // and finally, save the refreshed list back to the wallet
                 let mut wallet_transactions = user.wallet_transactions;
-                wallet.sync_transactions(&mut wallet_transactions, start, limit).await?;
+
+                for transaction in wallet_transactions.iter_mut().skip(start).take(limit) {
+                    let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_id).await;
+                    match synchronized_transaction {
+                        Ok(stx) => *transaction = stx,
+                        Err(e) => {
+                            // On error, return historical (cached) transaction data
+                            log::debug!("[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}", transaction.clone(), e);
+                        }
+                    }
+                }
 
                 let Some(repo) = &mut self.repo else {
                     return Err(crate::Error::UserRepoNotInitialized);

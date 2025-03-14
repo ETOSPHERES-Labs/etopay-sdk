@@ -94,14 +94,6 @@ pub trait WalletUser: Debug {
     /// This function can return an error if it fails to synchronize the wallet or encounters any other issues.
     async fn sync_wallet(&self) -> Result<()>;
 
-    /// Synchronizes given wallet transactions with the network.
-    /// If the transaction information cannot be retrieved from the network, the input transaction will remain unchanged.
-    ///
-    /// # Returns
-    ///
-    /// Returns `Ok(())`.
-    async fn sync_transactions(&self, transactions: &mut [WalletTxInfo], start: usize, limit: usize) -> Result<()>;
-
     /// Gets the list of transactions
     ///
     /// # Arguments
@@ -255,10 +247,6 @@ impl WalletUser for WalletImplStardust {
     }
 
     async fn estimate_gas_cost_eip1559(&self, _transaction: TxEip1559) -> Result<GasCostEstimation> {
-        Err(WalletError::WalletFeatureNotImplemented)
-    }
-
-    async fn sync_transactions(&self, _transactions: &mut [WalletTxInfo], _start: usize, _limit: usize) -> Result<()> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
