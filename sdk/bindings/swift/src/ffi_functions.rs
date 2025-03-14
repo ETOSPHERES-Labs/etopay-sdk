@@ -16,7 +16,7 @@
 use crate::ffi::{
     CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, NewCaseIdResponse,
     NewViviswapUser, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
-    ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
+    ViviswapPartiallyKycDetails, ViviswapWithdrawal,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
@@ -1486,5 +1486,50 @@ impl TxInfo {
 
     pub fn invalid_reasons(&self) -> Vec<String> {
         self.invalid_reasons.clone()
+    }
+}
+
+pub struct WalletTxInfo {
+    pub date: String,
+    pub block_id: String,
+    pub transaction_id: String,
+    pub incoming: bool,
+    pub amount: f64,
+    pub network: String,
+    pub status: String,
+    pub explorer_url: String,
+}
+
+impl WalletTxInfo {
+    pub fn date(&self) -> String {
+        self.date.clone()
+    }
+
+    pub fn block_id(&self) -> String {
+        self.block_id.clone()
+    }
+
+    pub fn transaction_id(&self) -> String {
+        self.transaction_id.clone()
+    }
+
+    pub fn incoming(&self) -> bool {
+        self.incoming
+    }
+
+    pub fn amount(&self) -> f64 {
+        self.amount
+    }
+
+    pub fn network(&self) -> String {
+        self.network.clone()
+    }
+
+    pub fn status(&self) -> String {
+        self.status.clone()
+    }
+
+    pub fn explorer_url(&self) -> String {
+        self.explorer_url.clone()
     }
 }

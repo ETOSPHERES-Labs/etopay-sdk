@@ -134,18 +134,6 @@ pub mod ffi {
         pub is_verified: Option<bool>,
     }
 
-    #[swift_bridge(swift_repr = "struct")]
-    pub struct WalletTxInfo {
-        pub date: String,
-        pub block_id: String,
-        pub transaction_id: String,
-        pub incoming: bool,
-        pub amount: f64,
-        pub network: String,
-        pub status: String,
-        pub explorer_url: String,
-    }
-
     pub enum Currency {
         Iota,
         Eth,
@@ -239,6 +227,19 @@ pub mod ffi {
         fn transaction_hash(&self) -> String;
         fn course(&self) -> f64;
         fn invalid_reasons(&self) -> Vec<String>;
+    }
+
+    extern "Rust" {
+        type WalletTxInfo;
+
+        fn date(&self) -> String;
+        fn block_id(&self) -> String;
+        fn transaction_id(&self) -> String;
+        fn incoming(&self) -> bool;
+        fn amount(&self) -> f64;
+        fn network(&self) -> String;
+        fn status(&self) -> String;
+        fn explorer_url(&self) -> String;
     }
 
     // Export Rust functions with the above shared types for Swift.
