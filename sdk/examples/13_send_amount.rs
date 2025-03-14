@@ -22,12 +22,17 @@ async fn main() {
 
     // Generate new address
     let recipient_address = sdk.generate_new_address(&user.pin).await.unwrap();
-    println!("address: {recipient_address}");
+    let balance = sdk.get_balance(&user.pin).await.unwrap();
+    println!("address: {recipient_address}, balance: {balance:?}");
 
     // Send amount
     let amount = dec!(2.0).try_into().unwrap();
-    sdk.send_amount(&user.pin, &recipient_address, amount, None, None, None)
-    sdk.send_amount(&user.pin, &recipient_address, amount, None)
-        .await
-        .unwrap();
+    sdk.send_amount(
+        &user.pin,
+        &recipient_address,
+        amount,
+        Some("test".to_string().into_bytes()),
+    )
+    .await
+    .unwrap();
 }
