@@ -94,20 +94,18 @@ impl WalletImplEth {
     fn convert_alloy_256_to_crypto_amount(v: alloy_primitives::Uint<256, 4>) -> Result<CryptoAmount> {
         let value_i128 = v.to::<i128>();
         let value_decimal = Decimal::from_i128(value_i128);
-        match value_decimal {
-            Some(result_decimal) => {
-                let crypto_amount = CryptoAmount::try_from(result_decimal);
-                match crypto_amount {
-                    Ok(result_crypto_amount) => Ok(result_crypto_amount),
-                    Err(_) => Err(WalletError::ConversionError(format!(
-                        "could not convert decimal to crypto amount: {result_decimal:?}"
-                    ))),
-                }
-            }
-            None => Err(WalletError::ConversionError(format!(
+
+        let Some(result_decimal) = value_decimal else {
+            return Err(WalletError::ConversionError(format!(
                 "could not convert alloy 256 to decimal: {v:?}"
-            ))),
-        }
+            )));
+        };
+
+        CryptoAmount::try_from(result_decimal).map_err(|e| {
+            WalletError::ConversionError(format!(
+                "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
+            ))
+        })
     }
 
     fn convert_crypto_amount_to_u256(v: CryptoAmount) -> Result<alloy_primitives::U256> {

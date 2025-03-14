@@ -104,26 +104,6 @@ pub enum WalletError {
     #[error("BackendApi errors: {0}")]
     BackendApi(#[from] ApiError),
 
-    /// Sender recovered from signature does not match sender address
-    #[error("Recovered address does not match sender address: {0}")]
-    RecoveredAddressDoesNotMatchSenderAddress(String),
-
-    /// Could not recover evm address from signature
-    #[error("Could not recover evm address from signature")]
-    SignatureAddressRecoveryError(String),
-
-    /// Invalid recoverable v byte
-    #[error("Invalid recoverable v byte (expected value 0 or 1)")]
-    InvalidParityByte(),
-
-    /// Address extracted from public key does not match sender address
-    #[error("Address extracted from public key does not match sender address: {0}")]
-    PublicKeyAddressDoesNotMatchSenderAddress(String),
-
-    /// Recovered signer address is different than sender address
-    #[error("Recovered signer address is different than sender address: {0}")]
-    SignerAddressDoesNotMatchSenderAddress(String),
-
     /// Error creating a LocalSigner from the provided mnemonic
     #[error("LocalSignerError: {0}")]
     LocalSignerError(#[from] alloy::signers::local::LocalSignerError),
@@ -136,17 +116,9 @@ pub enum WalletError {
     #[error("Invalid hex value: {0}")]
     FromHexError(#[from] alloy_primitives::hex::FromHexError),
 
-    /// Could create signature from bytes and parity
-    #[error("Create signature error: {0}")]
-    CreateSignatureFromBytesAndParityError(#[from] alloy_primitives::SignatureError),
-
     /// Alloy transport error
     #[error("Alloy transport RPC error: {0}")]
     AlloyTransportRpcError(#[from] alloy_json_rpc::RpcError<alloy_transport::TransportErrorKind>),
-
-    /// Alloy parse error
-    #[error("AlloyParseError: {0}")]
-    AlloyParseError(#[from] alloy_primitives::ruint::ParseError),
 
     /// Error raises if transaction does not exist
     #[error("TransactionNotFound")]
@@ -155,10 +127,6 @@ pub enum WalletError {
     /// Error raises if value cannot be converted
     #[error("Unable to convert: {0}")]
     ConversionError(String),
-
-    /// Error occurs when serialization of UnifiedTransactionMetadata fails
-    #[error("UnifiedTransactionMetadataSerializationError: {0}")]
-    UnifiedTransactionMetadataSerializationError(#[from] serde_json::Error),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {
