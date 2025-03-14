@@ -300,9 +300,6 @@ mod tests {
     use serde_json::json;
     use testing::CleanUp;
 
-    // Dummy address
-    pub const RECEIVER_ADDR_RAW: &str = "0xb0b0000000000000000000000000000000000000";
-
     // Account #0: 0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266 (10000 ETH)
     // Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
     pub const HARDHAT_MNEMONIC: &str = "test test test test test test test test test test test junk";
@@ -442,121 +439,6 @@ mod tests {
 
         // Assert
         assert_eq!(balance, CryptoAmount::from(10000))
-    }
-
-    /// TODO: is this a duplicate of the next test?
-    #[tokio::test]
-    async fn test_send_transaction_eth() {
-        //Arrange
-        let mut server = mockito::Server::new_async().await;
-        let url = server.url();
-        let node_url = Url::parse(&url).unwrap();
-        let chain_id = 31337;
-
-        let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
-
-        let mocked_transaction_count = 5;
-        let index = "1";
-        let amount_to_send = CryptoAmount::from(100);
-        let from = wallet_user.get_address().await.unwrap();
-        let to = String::from("0xb0b0000000000000000000000000000000000000");
-
-        let mocked_rpc_get_transaction_count = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_getTransactionCount",
-                "params": [
-                    from,
-                    "latest"
-                ],
-            })))
-            .with_status(200)
-            .with_body(format!(
-                r#"{{
-                    "jsonrpc": "2.0",
-                    "id": 1,
-                    "result": "{}"
-                }}"#,
-                mocked_transaction_count
-            ))
-            .create();
-
-        let mocked_rpc_estimate_gas = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "id": 1,
-                "method": "eth_estimateGas",
-                "params": [{"from":format!("{}", from),"to":format!("{}", to),"value":format!("{}", "0x56bc75e2d63100000"),"input":"0x","accessList":[]},"pending"],
-            })))
-            .with_status(200)
-            .with_body(
-                r#"{
-                    "jsonrpc": "2.0",
-                    "result": 24009
-                }"#,
-            )
-            .create();
-
-        let mocked_rpc_eth_fee_history = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_feeHistory",
-            })))
-            .with_status(200)
-            .with_body(
-                r#"{
-                "jsonrpc": "2.0",
-                "result": {
-                    "baseFeePerGas": [1000000000, 875000000],
-                    "gasUsedRatio": [0.0],
-                    "oldestBlock": 0,
-                    "reward": [[0]]
-                }
-            }
-            "#,
-            )
-            .create();
-
-        let mocked_transaction_hash = "0x969dc1d6a97464e62fb1dab451b03d24111c278bf6f4d2e2b3910205a8682ed2";
-        let mocked_rpc_send_raw_transaction = server
-            .mock("POST", "/")
-            .match_header("content-type", "application/json")
-            .match_body(mockito::Matcher::PartialJson(json!({
-                "jsonrpc": "2.0",
-                "method": "eth_sendRawTransaction",
-                "id": 3,
-                "params": [
-                    "0x02f871827a6905018477359401825dc994b0b000000000000000000000000000000000000089056bc75e2d6310000080c001a0b97a8495837eb1ade4b01d5e1789e66927aacaaa2e62ba3d8ab844d575187573a07cca5b3851847758c1bbf70d7682ce2ab82e53f9b1b56202c57f71c50971e5ee"
-                ],
-            })))
-            .with_status(200)
-            .with_body(format!(
-                r#"{{
-                    "jsonrpc": "2.0",
-                    "id": 1,
-                    "result": "{}"
-                }}"#,
-                mocked_transaction_hash
-            ))
-            .create();
-
-        // Act
-        let transaction_id = wallet_user
-            .send_amount(&to, amount_to_send, Some(index.to_string().into_bytes()))
-            .await;
-
-        // Assert
-        mocked_rpc_get_transaction_count.assert();
-        mocked_rpc_estimate_gas.assert();
-        mocked_rpc_eth_fee_history.assert();
-        mocked_rpc_send_raw_transaction.assert();
-        transaction_id.unwrap();
     }
 
     #[tokio::test]
@@ -866,13 +748,7 @@ mod tests {
         let to = String::from("0xb0b0000000000000000000000000000000000000");
         let value = U256::from(1);
         let chain_id = 31337;
-
-        let readable_tag = "temperature";
-        let readable_data = "20";
-        let readable_metadata = "still too warm".to_string();
-
-        let serialized_unified_transaction_metadata = "data";
-        let encoded_unified_transaction_metadata = alloy::hex::encode(serialized_unified_transaction_metadata);
+        let transaction_data = "data";
 
         let tx = TxEip1559 {
             chain_id,
@@ -883,7 +759,7 @@ mod tests {
             to: alloy_primitives::TxKind::Call(Address::from_str(&to).unwrap()),
             value,
             access_list: Default::default(),
-            input: encoded_unified_transaction_metadata.into(),
+            input: alloy::hex::encode(transaction_data).into(),
         };
 
         let expected_estimation = GasCostEstimation {
