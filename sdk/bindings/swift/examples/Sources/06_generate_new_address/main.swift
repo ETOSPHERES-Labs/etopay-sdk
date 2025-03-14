@@ -36,8 +36,8 @@ Task {
         print("reflection networks")
         print(Mirror(reflecting: networks))
         let iotaNetwork = networks.get(index: 0)
-        print("reflection iota networks")
-        print(Mirror(reflecting: iotaNetwork))
+        //print("reflection iota networks")
+        //print(Mirror(reflecting: iotaNetwork))
 
         //try await sdk.setNetwork(iotaNetwork.id)
         try await sdk.setNetwork("67a1f08edf55756bae21e7eb") // to see the reflection
