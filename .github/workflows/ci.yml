@@ -179,7 +179,7 @@ jobs:
       - name: Build wasm sdk for nodejs
         run: |
           cd sdk/bindings/wasm
-          wasm-pack build --release --scope eto --target nodejs --out-dir out/web/pkg --out-name cryptpay-sdk-node
+          wasm-pack build --release --scope cawaena --target nodejs --out-dir out/web/pkg --out-name cryptpay-sdk-node
           wasm-pack pack out/web
           cd examples/webapp
           echo -e "RUST_LOG=info\nTRACING_ENV=dev" > ../.env
