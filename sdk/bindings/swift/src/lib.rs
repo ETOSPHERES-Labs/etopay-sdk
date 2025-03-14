@@ -90,16 +90,6 @@ pub mod ffi {
     }
 
     #[swift_bridge(swift_repr = "struct")]
-    pub struct KycAmlaQuestion {
-        pub id: String,
-        pub question: String,
-        pub possible_answers: Vec<String>,
-        pub is_free_text: bool,
-        pub min_answers: i32,
-        pub max_answers: i32,
-    }
-
-    #[swift_bridge(swift_repr = "struct")]
     pub struct ViviswapAddressDetail {
         pub id: String,
         pub address: String,
@@ -236,6 +226,17 @@ pub mod ffi {
         fn is_back_image_required(&self) -> bool;
         fn document_type(&self) -> String;
         fn description(&self) -> String;
+    }
+
+    extern "Rust" {
+        type KycAmlaQuestion;
+
+        fn id(&self) -> String;
+        fn is_free_text(&self) -> bool;
+        fn question(&self) -> String;
+        fn min_answers(&self) -> i32;
+        fn max_answers(&self) -> i32;
+        fn possible_answers(&self) -> Vec<String>;
     }
 
     // Export Rust functions with the above shared types for Swift.

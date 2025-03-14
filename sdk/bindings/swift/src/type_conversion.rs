@@ -99,7 +99,7 @@ impl From<sdk::types::viviswap::ViviswapPartiallyKycDetails> for ffi::ViviswapPa
 
 convert_simple_struct!(
     sdk::types::KycAmlaQuestion,
-    ffi::KycAmlaQuestion,
+    crate::ffi_functions::KycAmlaQuestion,
     id,
     question,
     possible_answers,

@@ -14,9 +14,9 @@
 //! The conversion of types between Swift and Rust is done in the `type_conversion.rs` module.
 
 use crate::ffi::{
-    CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, KycAmlaQuestion,
-    NewCaseIdResponse, NewViviswapUser, Order, PurchaseDetails, TxInfo, ViviswapAddressDetail, ViviswapDeposit,
-    ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
+    CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, NewCaseIdResponse,
+    NewViviswapUser, Order, PurchaseDetails, TxInfo, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
+    ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxInfo,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
@@ -1276,5 +1276,35 @@ impl KycOpenDocument {
     }
     pub fn description(&self) -> String {
         self.description.clone()
+    }
+}
+
+pub struct KycAmlaQuestion {
+    pub id: String,
+    pub question: String,
+    pub possible_answers: Vec<String>,
+    pub is_free_text: bool,
+    pub min_answers: i32,
+    pub max_answers: i32,
+}
+
+impl KycAmlaQuestion {
+    pub fn id(&self) -> String {
+        self.id.clone()
+    }
+    pub fn is_free_text(&self) -> bool {
+        self.is_free_text
+    }
+    pub fn question(&self) -> String {
+        self.question.clone()
+    }
+    pub fn min_answers(&self) -> i32 {
+        self.min_answers.clone()
+    }
+    pub fn max_answers(&self) -> i32 {
+        self.max_answers.clone()
+    }
+    pub fn possible_answers(&self) -> Vec<String> {
+        self.possible_answers.clone()
     }
 }
