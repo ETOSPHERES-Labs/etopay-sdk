@@ -19,9 +19,6 @@ export async function initSdk() {
     }
     `);
 
-    await sdk.getNetworks();
-    sdk.setNetwork("67a1f08edf55756bae21e7eb");
-
     await sdk.refreshAccessToken(process.env.ACCESS_TOKEN);
     return sdk; // Return the initialized SDK instance
 }

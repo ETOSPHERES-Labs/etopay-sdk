@@ -1,5 +1,5 @@
 import * as wasm from "../pkg/cawaena_sdk_wasm";
-import { initSdk, IOTA_NETWORK_ID } from './utils';
+import { initSdk } from './utils';
 
 async function main() {
     let username = "satoshi";
