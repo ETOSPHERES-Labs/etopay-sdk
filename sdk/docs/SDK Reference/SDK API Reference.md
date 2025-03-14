@@ -1179,13 +1179,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Create address detail for viviswap user | `amount` - The amount of the withdrawal, `pin` - The optional PIN for verification, `tag` - Optional tag which can be assigned to the transaction, `data` - Optional data which can be assigned to the tag, `message` - Optional transaction message | Returns `ViviswapWithdrawal` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
+| Create address detail for viviswap user | `amount` - The amount of the withdrawal, `pin` - The optional PIN for verification, `data` - Optional data which can be assigned to the transaction | Returns `ViviswapWithdrawal` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
 
 === "Rust"
     [create_withdrawal_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_withdrawal_with_viviswap)
 
 === "Java"
-    [withdrawWithViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D,byte%5B%5D,java.lang.String))
+    [withdrawWithViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D))
 
 === "Typescript"
     [createWithdrawalWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createWithdrawalWithViviswap)
@@ -1194,7 +1194,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     Not available yet!
 
     ```swift
-    public func withdrawWithViviswap(amount: Float, pin: String, tag: [UInt8], data: [UInt8], message: String) throws -> ViviswapWithdrawal 
+    public func withdrawWithViviswap(amount: Float, pin: String, data: [UInt8]) throws -> ViviswapWithdrawal
     ```
 
 #### ViviswapWithdrawal
@@ -1614,13 +1614,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Send amount to the receiver address. | `pin` - The PIN of the user, `address` - The receiver's address, `amount` - The amount to send, `tag` - Optional tag which can be assigned to the transaction, `data` - Optional data which can be assigned to the tag, `message` - Optional transaction message | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Send amount to the receiver address. | `pin` - The PIN of the user, `address` - The receiver's address, `amount` - The amount to send, `data` - Optional data which can be assigned to the transaction | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
     [send_amount](../rust-docs/doc/sdk/core/struct.Sdk.html#method.send_amount)
 
 === "Java"
-    [sendAmount](../javadoc/com/etogruppe/CryptpaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D,byte%5B%5D,java.lang.String))
+    [sendAmount](../javadoc/com/etogruppe/CryptpaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D))
 
 === "Typescript"
     [sendAmount](../jstsdocs/classes/CryptpaySdk.html#sendAmount)
@@ -1629,7 +1629,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
     Not available yet!
 
     ```swift
-    public func sendAmount(pin: String, address: String, amount: Double, tag: [UInt8], data: [UInt8], message: String) throws
+    public func sendAmount(pin: String, address: String, amount: Double, data: [UInt8]) throws
     ```
 
 ### Get Purchase list

@@ -20,7 +20,8 @@ async function main() {
     let balance_before = await sdk.getWalletBalance(pin);
     console.log("balance before sending amount", balance_before);
 
-    await sdk.sendAmount(pin, recipient_address, 1.0);
+	const data = new TextEncoder().encode("wasm example");
+    await sdk.sendAmount(pin, recipient_address, 1.0, data);
 
     let balance_after = await sdk.getWalletBalance(pin);
     console.log("balance after sending amount", balance_after);

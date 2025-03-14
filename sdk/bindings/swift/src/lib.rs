@@ -378,9 +378,7 @@ pub mod ffi {
             pin: String,
             address: String,
             amount: f64,
-            tag: Option<Vec<u8>>,
             data: Option<Vec<u8>>,
-            message: Option<String>,
         ) -> Result<(), String>;
         #[swift_bridge(swift_name = "updateIbanViviswap")]
         async fn update_iban_viviswap(&self, pin: String, address: String) -> Result<ViviswapAddressDetail, String>;
@@ -395,9 +393,7 @@ pub mod ffi {
             &self,
             amount: f64,
             pin: Option<String>,
-            tag: Option<Vec<u8>>,
             data: Option<Vec<u8>>,
-            message: Option<String>,
         ) -> Result<ViviswapWithdrawal, String>;
         #[swift_bridge(swift_name = "getSwapDetails")]
         async fn get_swap_details(&self, order_id: String) -> Result<Order, String>;

@@ -38,7 +38,9 @@ Task {
         print("balance: \(balance)")
 
         // Send amount
-        try await sdk.sendAmount(env.pin, address.toString(), 1, nil, nil, "swift bindings test")
+        let message = "swift bindings test"
+        let bytes: [UInt8] = Array(message.utf8)
+        try await sdk.sendAmount(env.pin, address.toString(), 1, bytes)
         print("sent amount of 1")
 
         // Get new balance

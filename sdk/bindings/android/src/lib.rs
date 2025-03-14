@@ -799,18 +799,9 @@ mod ffi {
     /// @param pin The pin for verification
     /// @param address The address of the receiver
     /// @param amount The amount to send in the selected currency
-    /// @param tag The transactions tag. Pass NULL to not specify a tag.
-    /// @param data The data associated with the tag. Pass NULL to not specify any data.
-    /// @param message The transactions message. Pass NULL to not specify a message.
+    /// @param data The data associated with the transaction. Pass NULL to not specify any data.
     #[public_name = "sendAmount"]
-    pub fn sendAmount(
-        pin: String,
-        address: String,
-        amount: f64,
-        tag: Option<Vec<u8>>, // TODO: remove
-        data: Option<Vec<u8>>,
-        message: Option<String>, // TODO: remove
-    ) -> Result<(), String> {
+    pub fn sendAmount(pin: String, address: String, amount: f64, data: Option<Vec<u8>>) -> Result<(), String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
             let amount = CryptoAmount::try_from(amount)?;
@@ -902,19 +893,11 @@ mod ffi {
     ///
     /// @param amount The amount to withdraw from the wallet
     /// @param pin The pin for verification. Pass NULL to not specify a pin.
-    /// @param tag The transactions tag. Pass NULL to not specify a tag.
-    /// @param data The data associated with the tag. Pass NULL to not specify any data.
-    /// @param message The transactions message. Pass NULL to not specify a message.
+    /// @param data The data associated with the transaction. Pass NULL to not specify any data.
     ///
     /// @return The details of the created payment contract as a serialized JSON string.
     #[public_name = "withdrawWithViviswap"]
-    pub fn withdrawViviswap(
-        amount: f64,
-        pin: Option<String>,
-        tag: Option<Vec<u8>>, // TODO remove
-        data: Option<Vec<u8>>,
-        message: Option<String>, // TODO remove
-    ) -> Result<String, String> {
+    pub fn withdrawViviswap(amount: f64, pin: Option<String>, data: Option<Vec<u8>>) -> Result<String, String> {
         sdk::require_feature!("viviswap-swap", {
             let result = runtime().block_on(async move {
                 let mut sdk = get_or_init_sdk().write().await;

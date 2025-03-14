@@ -31,7 +31,7 @@ public class SendAmount13 {
             System.out.println("balance: " + balance);
 
             // send amount
-            sdk.sendAmount(utils.PIN, address.toString(), 1, null, null, "java bindings test");
+            sdk.sendAmount(utils.PIN, address.toString(), 1, "java bindings test".getBytes());
             System.out.println("send amount of 1");
 
             // get new balance

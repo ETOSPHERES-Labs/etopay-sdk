@@ -482,10 +482,8 @@ impl CryptpaySdk {
     ///
     /// @param {string} pin - The pin for verification
     /// @param {string} address - The address of the receiver
-    /// @param {string} amount - The amount to send in the selected currency
-    /// @param {string} tag - The transactions tag. Optional.
-    /// @param {string} data - The associated data with the tag. Optional.
-    /// @param {string} message - The transactions message. Optional.
+    /// @param {number} amount - The amount to send in the selected currency
+    /// @param {Uint8Array | undefined} data - The data associated with the transaction. Optional.
     /// @returns {Promise<void>}
     #[wasm_bindgen(skip_jsdoc, js_name = "sendAmount")]
     pub async fn send_amount(
@@ -493,9 +491,7 @@ impl CryptpaySdk {
         pin: String,
         address: String,
         amount: f64,
-        tag: Option<Vec<u8>>, // TODO: remove
         data: Option<Vec<u8>>,
-        message: Option<String>, // TODO: remove
     ) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
         async move {
@@ -669,11 +665,9 @@ impl CryptpaySdk {
 
     /// Creates a payment contract for withdrawing money from wallet using viviswap [Crypto --> EUR] and if the pin is provided automatically triggers a withdrawal
     ///
-    /// @param {string} amount - The amount to withdraw from the wallet
+    /// @param {number} amount - The amount to withdraw from the wallet
     /// @param {string | undefined} pin - The pin for verification. Optional.
-    /// @param {Uint8Array | undefined} tag - The transactions tag. Optional.
-    /// @param {Uint8Array | undefined} data - The associated data with the tag. Optional.
-    /// @param {string | undefined} message - The transactions message. Optional.
+    /// @param {Uint8Array | undefined} data - The associated data with the transaction. Optional.
     ///
     /// @returns {Promise<ViviswapWithdrawal>} The details of the created payment contract
     #[cfg_attr(not(feature = "viviswap-swap"), allow(unused_variables))]
@@ -682,9 +676,7 @@ impl CryptpaySdk {
         &self,
         amount: f64,
         pin: Option<String>,
-        tag: Option<Vec<u8>>, // TODO remove
         data: Option<Vec<u8>>,
-        message: Option<String>, // TODO remove
     ) -> Result<ViviswapWithdrawal, String> {
         sdk::require_feature!("viviswap-swap", {
             let mut sdk = self.inner.write().await;

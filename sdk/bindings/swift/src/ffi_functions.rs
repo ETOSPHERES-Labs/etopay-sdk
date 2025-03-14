@@ -872,9 +872,7 @@ impl CawaenaSdk {
     /// * `pin` - The PIN of the user.
     /// * `address` - The receiver's address.
     /// * `amount` - The amount to send.
-    /// * `tag` - The transactions tag.
-    /// * `data` - The associated data with the tag.
-    /// * `message` - The transactions message.
+    /// * `data` - The associated data with the transaction.
     ///
     /// # Returns
     ///
@@ -885,9 +883,7 @@ impl CawaenaSdk {
         pin: String,
         address: String,
         amount: f64,
-        tag: Option<Vec<u8>>, // TODO: remove
         data: Option<Vec<u8>>,
-        message: Option<String>, // TODO: remove
     ) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
         async move {
@@ -997,9 +993,7 @@ impl CawaenaSdk {
     ///
     /// * `amount` - The amount of the withdrawal.
     /// * `pin` - The optional PIN for verification.
-    /// * `tag` - The transactions tag.
-    /// * `data` - The associated data with the tag.
-    /// * `message` - The transactions message.
+    /// * `data` - The associated data for the transaction.
     ///
     /// # Returns
     ///
@@ -1010,9 +1004,7 @@ impl CawaenaSdk {
         &self,
         amount: f64,
         pin: Option<String>,
-        tag: Option<Vec<u8>>, // TODO: remove
         data: Option<Vec<u8>>,
-        message: Option<String>, // TODO: remove
     ) -> Result<ViviswapWithdrawal, String> {
         sdk::require_feature!("viviswap-swap", {
             let mut sdk = self.inner.write().await;
