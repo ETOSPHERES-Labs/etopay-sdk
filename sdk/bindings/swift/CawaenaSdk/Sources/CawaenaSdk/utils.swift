@@ -1,4 +1,5 @@
-import Foundation
+import CawaenaSdkBin
+import SystemConfiguration
 
 // Extend the converted Rust strings into Swift strings (RustString) to print them as error strings
 extension RustString: @unchecked Sendable {}
