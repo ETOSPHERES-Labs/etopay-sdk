@@ -42,7 +42,7 @@ impl Sdk {
         purchase_type: &str,
     ) -> Result<String> {
         info!("Creating a new purchase request");
-        let Some(active_user) = &self.active_user else {
+        let Some(_active_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 
@@ -87,7 +87,7 @@ impl Sdk {
     /// Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction details.
     pub async fn get_purchase_details(&self, purchase_id: &str) -> Result<PurchaseDetails> {
         info!("Getting purchase details with id {purchase_id}");
-        let Some(active_user) = &self.active_user else {
+        let Some(_active_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 

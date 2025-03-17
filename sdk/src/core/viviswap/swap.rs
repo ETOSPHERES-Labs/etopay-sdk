@@ -104,7 +104,7 @@ impl Sdk {
     ) -> Result<ViviswapAddressDetail> {
         debug!("Ensuring payment detail for viviswap");
         // load user entity
-        let user = self.get_user().await?;
+        let _user = self.get_user().await?;
         let access_token = self
             .access_token
             .as_ref()
@@ -520,7 +520,7 @@ impl Sdk {
     /// * Viviswap API error.
     // MARK8:get_swap_list
     pub async fn get_swap_list(&self, start: u32, limit: u32) -> Result<OrderList> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserRepoNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -545,7 +545,7 @@ impl Sdk {
     /// Returns a `Result` containing the swap order details or an error.
     // MARK9:get_swap_details
     pub async fn get_swap_details(&self, order_id: String) -> Result<Order> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserRepoNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;

@@ -487,7 +487,7 @@ impl Sdk {
         official_document: IdentityOfficialDocumentData,
         personal_document: IdentityPersonalDocumentData,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -537,7 +537,7 @@ impl Sdk {
         has_no_official_document: bool,
         document_residence_proof: Option<File>,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -604,7 +604,7 @@ impl Sdk {
     /// - [[`crate::Error::UserNotInitialized)`]] - If the user is not initialized.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
     pub async fn get_viviswap_kyc_amla_open_questions(&self) -> Result<Vec<KycAmlaQuestion>> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let access_token = self
@@ -637,7 +637,7 @@ impl Sdk {
         answers: Vec<String>,
         freetext_answer: Option<String>,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -674,7 +674,7 @@ impl Sdk {
     /// - [`crate::Error::UserNotInitialized)`] - If the user is not initialized.
     /// - [`crate::Error::ViviswapApiError`] - If there is an error in the viviswap API.
     pub async fn get_viviswap_kyc_open_documents(&self) -> Result<Vec<KycOpenDocument>> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 
@@ -711,7 +711,7 @@ impl Sdk {
         front_image: Option<File>,
         back_image: Option<File>,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;

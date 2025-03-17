@@ -58,7 +58,7 @@ impl Sdk {
     /// - [`crate::Error::UserNotInitialized)`] if the user fails to initialize.
     pub async fn get_kyc_details_for_postident(&self) -> Result<CaseDetailsResponse> {
         info!("Fetching KYC details for postident");
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let access_token = self
@@ -85,7 +85,7 @@ impl Sdk {
     /// Returns `Ok(())` if the case status is updated successfully.
     pub async fn update_kyc_status_for_postident(&self, case_id: &str) -> Result<()> {
         info!("updating KYC details for postident");
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 

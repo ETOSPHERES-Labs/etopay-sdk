@@ -14,7 +14,7 @@ impl Sdk {
     // MARK10:get_exchange_rate
     pub async fn get_exchange_rate(&self) -> Result<Decimal> {
         info!("Fetching exchange rate from viviswap");
-        let user = self.get_user().await?;
+        let _user = self.get_user().await?;
 
         let access_token = self
             .access_token

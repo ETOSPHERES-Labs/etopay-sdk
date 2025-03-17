@@ -220,7 +220,7 @@ impl Sdk {
 
     /// Set the user preferred network
     pub async fn set_preferred_network(&mut self, network_id: Option<String>) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let access_token = self
@@ -234,7 +234,7 @@ impl Sdk {
 
     /// Get the user preferred network
     pub async fn get_preferred_network(&self) -> Result<Option<String>> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let access_token = self
