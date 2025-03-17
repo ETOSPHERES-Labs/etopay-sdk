@@ -30,8 +30,8 @@ Task {
         print("created new wallet")
 
         // Fetch networks from backend
-        let _ = try await sdk.getNetworks()
-        try await sdk.setNetwork("67a1f08edf55756bae21e7eb") 
+        let networks = try await sdk.getNetworks()
+        try await sdk.setNetwork(networks[0].id())
         print("retrieved available networks and set the network for the wallet")
 
         // Get wallet tx list
