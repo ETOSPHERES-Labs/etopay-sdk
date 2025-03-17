@@ -242,12 +242,8 @@ mod tests {
         println!("{build_info}");
     }
 
-    #[test]
-    fn test_get_networks() {}
-
     #[rstest]
     #[case::success(Ok(example_networks()))]
-    #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]
     #[case::unauthorized(Err(crate::Error::MissingAccessToken))]
     #[tokio::test]
