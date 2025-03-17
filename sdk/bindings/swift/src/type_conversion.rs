@@ -237,9 +237,9 @@ impl From<sdk::types::transactions::WalletTxInfo> for crate::ffi_functions::Wall
     }
 }
 
-impl From<sdk::types::networks::Network> for ffi::Network {
+impl From<sdk::types::networks::Network> for crate::ffi_functions::Network {
     fn from(value: sdk::types::networks::Network) -> Self {
-        ffi::Network {
+        crate::ffi_functions::Network {
             id: value.id,
             name: value.name,
         }

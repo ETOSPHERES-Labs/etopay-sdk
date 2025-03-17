@@ -1535,3 +1535,18 @@ impl WalletTxInfo {
         self.explorer_url.clone()
     }
 }
+
+pub struct Network {
+    pub id: String,
+    pub name: String,
+}
+
+impl Network {
+    pub fn id(&self) -> String {
+        self.id.clone()
+    }
+
+    pub fn name(&self) -> String {
+        self.name.clone()
+    }
+}

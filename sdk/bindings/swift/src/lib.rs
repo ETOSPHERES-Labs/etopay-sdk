@@ -242,6 +242,13 @@ pub mod ffi {
         fn explorer_url(&self) -> String;
     }
 
+    extern "Rust" {
+        type Network;
+
+        fn id(&self) -> String;
+        fn name(&self) -> String;
+    }
+
     // Export Rust functions with the above shared types for Swift.
     extern "Rust" {
         type CawaenaSdk;
