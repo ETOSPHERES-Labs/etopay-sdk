@@ -40,7 +40,6 @@ pub async fn check_kyc_status(
     let response = client
         .get(&url)
         .bearer_auth(access_token.as_str())
-        .header("X-APP-USERNAME", username)
         .header("X-APP-NAME", &config.auth_provider)
         .send()
         .await?;
@@ -69,7 +68,7 @@ pub async fn check_kyc_status(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME};
+    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
 
     fn example_kyc_status_response() -> KycStatusResponse {
         KycStatusResponse {
@@ -100,7 +99,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/kyc/check-status")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");

@@ -64,8 +64,7 @@ impl Sdk {
             return Err(crate::Error::Viviswap(ViviswapError::UserStateExisting));
         };
 
-        let new_viviswap_user =
-            create_viviswap_user(config, access_token, &user.username, mail, terms_accepted).await?;
+        let new_viviswap_user = create_viviswap_user(config, access_token, mail, terms_accepted).await?;
 
         user.viviswap_state = Some(ViviswapState::new());
 
@@ -99,7 +98,7 @@ impl Sdk {
 
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
 
-        let kyc_status = get_viviswap_kyc_status(config, access_token, &user.username).await?;
+        let kyc_status = get_viviswap_kyc_status(config, access_token).await?;
         debug!("KYC Status response: {kyc_status:#?}");
 
         let username = user.username;
@@ -254,7 +253,6 @@ impl Sdk {
             set_viviswap_kyc_general_details(
                 config,
                 access_token,
-                &user.username,
                 *is_individual,
                 *is_pep,
                 *is_us_citizen,
@@ -266,7 +264,7 @@ impl Sdk {
         }
 
         // submit viviswap personal kyc details
-        set_viviswap_kyc_personal_details(config, access_token, &user.username, full_name, date_of_birth).await?;
+        set_viviswap_kyc_personal_details(config, access_token, full_name, date_of_birth).await?;
 
         // get new verification status of viviswap user
         self.get_kyc_details_for_viviswap().await?;
@@ -501,7 +499,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_identity_details(
             config,
             access_token,
-            &user.username,
             official_document,
             personal_document,
         )
@@ -575,7 +572,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_residence_details(
             config,
             access_token,
-            &user.username,
             api_types::api::viviswap::kyc::SetResidenceDataRequest {
                 country_code,
                 region,
@@ -617,10 +613,9 @@ impl Sdk {
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
 
-        let amla_questions =
-            backend::viviswap::get_viviswap_kyc_amla_open_questions(config, access_token, &user.username)
-                .await
-                .map(|v| v.questions)?;
+        let amla_questions = backend::viviswap::get_viviswap_kyc_amla_open_questions(config, access_token)
+            .await
+            .map(|v| v.questions)?;
         Ok(amla_questions)
     }
 
@@ -654,7 +649,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_amla_answer(
             config,
             access_token,
-            &user.username,
             api_types::api::viviswap::kyc::AnswerData {
                 question_id,
                 answers,
@@ -690,11 +684,9 @@ impl Sdk {
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
 
-        Ok(
-            backend::viviswap::get_viviswap_kyc_open_documents(config, access_token, &user.username)
-                .await
-                .map(|v| v.documents)?,
-        )
+        Ok(backend::viviswap::get_viviswap_kyc_open_documents(config, access_token)
+            .await
+            .map(|v| v.documents)?)
     }
 
     /// Set / upload an open KYC document
@@ -731,7 +723,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_document(
             config,
             access_token,
-            &user.username,
             api_types::api::viviswap::kyc::SetDocumentDataRequest {
                 document_id,
                 expiration_date,

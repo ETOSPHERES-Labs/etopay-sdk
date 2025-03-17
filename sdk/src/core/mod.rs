@@ -127,16 +127,11 @@ impl Sdk {
     /// Get supported networks from backend
     async fn get_networks_backend(&self) -> Result<Vec<Network>> {
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        let username = &self
-            .active_user
-            .as_ref()
-            .ok_or(crate::Error::UserNotInitialized)?
-            .username;
         let access_token = self
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
-        let backend_networks = get_networks(config, username, access_token).await?;
+        let backend_networks = get_networks(config, access_token).await?;
         let networks: Vec<Network> = backend_networks.iter().map(|n| Network::from(n.clone())).collect();
 
         Ok(networks)
@@ -192,7 +187,7 @@ mod tests {
     use rstest::rstest;
 
     use crate::{
-        testing_utils::{example_api_networks, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN},
+        testing_utils::{example_api_networks, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN},
         wallet_manager::MockWalletManager,
     };
 
@@ -278,7 +273,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/config/networks")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_header("content-type", "application/json")

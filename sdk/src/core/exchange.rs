@@ -23,7 +23,7 @@ impl Sdk {
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
         let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
         let currency = Currency::try_from(network.currency)?;
-        let exchange_rate = get_viviswap_exchange_rate(config, access_token, &user.username, currency).await?;
+        let exchange_rate = get_viviswap_exchange_rate(config, access_token, currency).await?;
         Ok(exchange_rate)
     }
 }
@@ -36,8 +36,8 @@ mod tests {
         core::Sdk,
         error::Result,
         testing_utils::{
-            example_exchange_rate_response, example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME,
-            HEADER_X_APP_USERNAME, TOKEN, USERNAME,
+            example_exchange_rate_response, example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
+            USERNAME,
         },
         types::users::KycType,
         wallet_manager::MockWalletManager,
@@ -77,7 +77,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/viviswap/courses")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .match_query(Matcher::Exact("currency=Iota".to_string()))
                         .with_status(200)

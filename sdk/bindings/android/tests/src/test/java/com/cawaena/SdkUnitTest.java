@@ -105,7 +105,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/kyc/check-status"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -120,7 +119,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/config/networks"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -142,7 +140,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -150,7 +147,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -168,7 +164,6 @@ public class SdkUnitTest {
         final String body = "{" + "\"address\":\"${json-unit.any-string}\"" + "}";
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/address"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withQueryParam("network_id", equalTo(IOTA_NETWORK_ID))
                 .withRequestBody(equalToJson(body))
@@ -188,7 +183,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/kyc/check-status"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -208,7 +202,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/postident/get-new-case-id"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -232,7 +225,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/postident/get-case-details"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -252,7 +244,6 @@ public class SdkUnitTest {
     public void IshouldUpdateKycPostident() throws Exception {
         wireMockRule.stubFor(post(urlEqualTo("/api/postident/update-case-status"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse().withStatus(202)));
         sdk.updateKycStatusForPostident(this.CASE_ID);
@@ -264,7 +255,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -272,7 +262,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -294,7 +283,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -302,7 +290,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -323,7 +310,6 @@ public class SdkUnitTest {
     public void OshouldDeleteWallet() throws Exception {
         wireMockRule.stubFor(delete(urlPathEqualTo("/api/user/shares"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -349,7 +335,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -357,7 +342,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
                 .willReturn(aResponse()
@@ -382,7 +366,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(post(urlEqualTo("/api/transactions/create"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withQueryParam("option", equalTo("C2C"))
                 .withRequestBody(equalToJson(reqBody))
@@ -415,7 +398,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/transactions/details"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withQueryParam("index", equalTo(this.PURCHASE_ID))
                 .willReturn(aResponse()
@@ -445,7 +427,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(post(urlPathEqualTo("/api/transactions/commit"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(body))
                 .willReturn(aResponse()
@@ -471,7 +452,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(post(urlPathEqualTo("/api/viviswap/users"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(reqBody))
                 .willReturn(aResponse()
@@ -502,7 +482,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/viviswap/kyc/status"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -544,7 +523,6 @@ public class SdkUnitTest {
         // content or anything
         wireMockRule.stubFor(post(urlPathEqualTo("/api/viviswap/kyc/identity"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -561,7 +539,6 @@ public class SdkUnitTest {
         // content or anything
         wireMockRule.stubFor(post(urlPathEqualTo("/api/viviswap/kyc/residence"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -602,7 +579,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/viviswap/kyc/questions"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -618,7 +594,6 @@ public class SdkUnitTest {
         // content or anything
         wireMockRule.stubFor(post(urlPathEqualTo("/api/viviswap/kyc/questions"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -653,7 +628,6 @@ public class SdkUnitTest {
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/viviswap/kyc/documents"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -669,7 +643,6 @@ public class SdkUnitTest {
         // content or anything
         wireMockRule.stubFor(post(urlPathEqualTo("/api/viviswap/kyc/documents"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)));
@@ -694,7 +667,6 @@ public class SdkUnitTest {
                 """;
         wireMockRule.stubFor(get(urlPathEqualTo("/api/user/network"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)
@@ -708,7 +680,6 @@ public class SdkUnitTest {
     public void ZIshouldSetPreferredNetwork() throws Exception {
         wireMockRule.stubFor(put(urlPathEqualTo("/api/user/network"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(202)));
@@ -724,7 +695,6 @@ public class SdkUnitTest {
                 """;
         wireMockRule.stubFor(get(urlPathEqualTo("/api/user/network"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-USERNAME", equalTo(USERNAME))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .willReturn(aResponse()
                         .withStatus(200)

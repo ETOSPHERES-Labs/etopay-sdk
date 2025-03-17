@@ -115,7 +115,7 @@ impl Sdk {
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
-        crate::backend::user::delete_user_account(config, access_token, username).await?;
+        crate::backend::user::delete_user_account(config, access_token).await?;
 
         // Delete the user in the repo
         repo.delete(username)?;
@@ -228,7 +228,7 @@ impl Sdk {
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        backend::user::set_preferred_network(config, access_token, &user.username, network_id).await?;
+        backend::user::set_preferred_network(config, access_token, network_id).await?;
         Ok(())
     }
 
@@ -242,7 +242,7 @@ impl Sdk {
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        let preferred_network = backend::user::get_preferred_network(config, access_token, &user.username).await?;
+        let preferred_network = backend::user::get_preferred_network(config, access_token).await?;
         Ok(preferred_network)
     }
 }
@@ -251,9 +251,7 @@ impl Sdk {
 mod tests {
     use super::*;
     use crate::core::core_testing_utils::handle_error_test_cases;
-    use crate::testing_utils::{
-        example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME,
-    };
+    use crate::testing_utils::{example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
     use crate::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     use api_types::api::kyc::KycStatusResponse;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
@@ -381,7 +379,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("DELETE", "/api/user")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(202) // Accepted
                         .expect(1)
@@ -441,7 +438,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/kyc/check-status")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_body(body)
@@ -502,7 +498,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/kyc/check-status")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_body(body)
@@ -552,7 +547,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("PUT", "/api/user/network")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(202)
                         .expect(1)
@@ -604,7 +598,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/user/network")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_header("content-type", "application/json")

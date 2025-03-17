@@ -20,18 +20,17 @@ use reqwest::StatusCode;
 /// # Returns
 ///
 /// Returns a `Result` containing the `NewCaseIdResponse` if successful, or an `Error` if an error occurs.
-pub async fn get_new_case_id(config: &Config, access_token: &AccessToken, username: &str) -> Result<NewCaseIdResponse> {
+pub async fn get_new_case_id(config: &Config, access_token: &AccessToken) -> Result<NewCaseIdResponse> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/postident/get-new-case-id");
     info!("Used url: {url:#?}");
-    info!("Get new case id for {username}");
+    info!("Get new case id");
 
     let client = reqwest::Client::new();
     let response = client
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Response: {response:#?}");
@@ -67,22 +66,17 @@ pub async fn get_new_case_id(config: &Config, access_token: &AccessToken, userna
 /// # Returns
 ///
 /// Returns a `Result` containing the `CaseDetailsResponse` if successful, or an `Error` if an error occurs.
-pub async fn get_case_details(
-    config: &Config,
-    access_token: &AccessToken,
-    username: &str,
-) -> Result<CaseDetailsResponse> {
+pub async fn get_case_details(config: &Config, access_token: &AccessToken) -> Result<CaseDetailsResponse> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/postident/get-case-details");
     info!("Used url: {url:#?}");
-    info!("Get new case id for {username}");
+    info!("Get new case id");
 
     let client = reqwest::Client::new();
     let response = client
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Response: {response:#?}");
@@ -118,12 +112,7 @@ pub async fn get_case_details(
 /// # Returns
 ///
 /// Returns `Ok(())` if the case status is successfully updated, or an `Error` if an error occurs.
-pub async fn update_case_status(
-    config: &Config,
-    username: &str,
-    access_token: &AccessToken,
-    case_id: &str,
-) -> Result<()> {
+pub async fn update_case_status(config: &Config, access_token: &AccessToken, case_id: &str) -> Result<()> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/postident/update-case-status");
     info!("Used url: {url:#?}");
@@ -138,7 +127,6 @@ pub async fn update_case_status(
         .post(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .json(&request)
         .send()
         .await?;
@@ -167,8 +155,7 @@ pub async fn update_case_status(
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_case_details, example_new_case_id, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME,
-        TOKEN, USERNAME,
+        example_case_details, example_new_case_id, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
     };
     use mockito::Matcher;
 
@@ -194,7 +181,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/postident/get-new-case-id")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -205,7 +191,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_new_case_id(&config, &TOKEN, USERNAME).await;
+        let response = get_new_case_id(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -241,7 +227,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/postident/get-case-details")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -252,7 +237,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_case_details(&config, &TOKEN, USERNAME).await;
+        let response = get_case_details(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -291,7 +276,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/postident/update-case-status")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
             .with_status(status_code)
@@ -299,7 +283,7 @@ mod tests {
             .create();
 
         // Act
-        let response = update_case_status(&config, USERNAME, &TOKEN, case_id).await;
+        let response = update_case_status(&config, &TOKEN, case_id).await;
 
         // Assert
         match expected {
