@@ -235,7 +235,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
         with:
-          targets: aarch64-apple-ios,aarch64-apple-ios-sim,x86_64-apple-ios,aarch64-apple-darwin,x86_64-apple-darwin
+          targets: aarch64-apple-darwin,x86_64-apple-darwin
 
       - uses: Swatinem/rust-cache@v2
       - name: Install Protoc
@@ -253,14 +253,15 @@ jobs:
           cd sdk/bindings/swift
           make compile_swift_main
 
-      - name: Upload Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: cawaena-sdk-swift
-          path: sdk/bindings/swift/CawaenaSdk
-          if-no-files-found: error
-          retention-days: 7
-          overwrite: true
+      - name: Build XCFramework for Mac
+        run: |
+          cd sdk/bindings/swift
+          make xcframework_mac
+
+      - name: Compile Swift Examples
+        run: |
+          cd sdk/bindings/swift/examples
+          xcrun swift build
 
   android-bindings-tests:
     runs-on: ubuntu-latest
