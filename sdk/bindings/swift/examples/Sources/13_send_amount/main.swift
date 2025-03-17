@@ -44,8 +44,15 @@ Task {
 
         // Send amount
         let message = "swift bindings test"
+
+        // convert to a RustVec by copying over all values
+        let rustVec = RustVec<UInt8>.init()
+        for byte in message.utf8 {
+            rustVec.push(value: byte)
+        }
+
         let bytes: [UInt8] = Array(message.utf8)
-        try await sdk.sendAmount(env.pin, address.toString(), 1, bytes)
+        try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
         print("sent amount of 1")
 
         // Get new balance
