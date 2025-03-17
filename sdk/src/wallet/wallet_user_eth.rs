@@ -117,7 +117,6 @@ impl WalletImplEth {
     }
 }
 
-#[allow(unused_variables)] // allow unused parameters until everything is implemented
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[cfg_attr(test, mockall::automock)]
@@ -168,14 +167,14 @@ impl WalletUser for WalletImplEth {
         Ok(receipt.transaction_hash.to_string())
     }
 
-    async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
+    async fn send_transaction(&self, _index: &str, _address: &str, _amount: CryptoAmount) -> Result<String> {
         unimplemented!("use send_amount");
     }
 
     // The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
-    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList> {
+    async fn get_wallet_tx_list(&self, _start: usize, _limit: usize) -> Result<WalletTxInfoList> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -200,7 +199,6 @@ impl WalletUser for WalletImplEth {
         let my_address = self.get_address().await?;
 
         let is_transaction_incoming = tx.to().is_some_and(|to| to.to_string() == my_address);
-        let value = tx.value();
 
         let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
         let status = match receipt.map(|r| r.inner.is_success()) {
@@ -209,7 +207,6 @@ impl WalletUser for WalletImplEth {
             None => InclusionState::Pending,
         };
 
-        let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
         let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(tx.value())?;
         let value_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
 
@@ -743,7 +740,6 @@ mod tests {
             })))
             .with_status(200)
             .with_body(serde_json::to_vec(&mocked_rpc_get_transaction_receipt_response_json).unwrap())
-            .expect(2)
             .create();
 
         // Act
