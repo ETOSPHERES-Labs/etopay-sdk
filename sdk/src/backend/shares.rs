@@ -50,7 +50,6 @@ pub async fn upload_backup_share(
         .put(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .json(&body)
         .send()
         .await?;
@@ -110,7 +109,6 @@ pub async fn upload_recovery_share(
         .put(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .json(&body)
         .send()
         .await?;
@@ -167,7 +165,6 @@ pub async fn download_backup_share(
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Download backup share response: {response:#?}");
@@ -228,7 +225,6 @@ pub async fn download_recovery_share(
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Download recovery share response: {response:#?}");
@@ -283,7 +279,6 @@ pub async fn delete_shares(config: &Config, access_token: &AccessToken, username
         .delete(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Delete shares response: {response:#?}");
@@ -310,8 +305,7 @@ pub async fn delete_shares(config: &Config, access_token: &AccessToken, username
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        set_config, AUTH_PROVIDER, ENCRYPTED_SHARE, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, NOT_ENCRYPTED_SHARE,
-        TOKEN, USERNAME,
+        set_config, AUTH_PROVIDER, ENCRYPTED_SHARE, HEADER_X_APP_NAME, NOT_ENCRYPTED_SHARE, TOKEN, USERNAME,
     };
     use mockito::Matcher;
     use secrecy::ExposeSecret;
@@ -351,7 +345,6 @@ mod tests {
         let mut mock_server = srv
             .mock("PUT", "/api/user/shares/backup")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
             .with_status(status_code);
@@ -401,7 +394,6 @@ mod tests {
         let mock_server = srv
             .mock("PUT", "/api/user/shares/recovery")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
             .with_status(status_code)
@@ -444,7 +436,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/user/shares/backup")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -494,7 +485,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/user/shares/recovery")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -542,7 +532,6 @@ mod tests {
         let mock_server = srv
             .mock("DELETE", "/api/user/shares")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .expect(1)
             .with_status(status_code)

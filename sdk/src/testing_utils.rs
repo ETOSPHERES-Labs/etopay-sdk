@@ -38,7 +38,6 @@ use testing::CleanUp;
 
 pub const USERNAME: &str = "test_user";
 pub const HEADER_X_APP_NAME: &str = "X-APP-NAME";
-pub const HEADER_X_APP_USERNAME: &str = "X-APP-USERNAME";
 pub const AUTH_PROVIDER: &str = "standalone";
 pub const ADDRESS: &str = "smrq1..";
 pub static TOKEN: LazyLock<AccessToken> = LazyLock::new(|| AccessToken::try_from_string("test_token").unwrap());

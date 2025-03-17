@@ -42,7 +42,7 @@ impl Sdk {
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        let response = get_new_case_id(config, access_token, &active_user.username).await?;
+        let response = get_new_case_id(config, access_token).await?;
 
         Ok(response)
     }
@@ -58,16 +58,15 @@ impl Sdk {
     /// - [`crate::Error::UserNotInitialized)`] if the user fails to initialize.
     pub async fn get_kyc_details_for_postident(&self) -> Result<CaseDetailsResponse> {
         info!("Fetching KYC details for postident");
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
-        let username = &user.username;
         let access_token = self
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        let case_details = get_case_details(config, access_token, username).await?;
+        let case_details = get_case_details(config, access_token).await?;
         Ok(case_details)
     }
 
@@ -86,10 +85,9 @@ impl Sdk {
     /// Returns `Ok(())` if the case status is updated successfully.
     pub async fn update_kyc_status_for_postident(&self, case_id: &str) -> Result<()> {
         info!("updating KYC details for postident");
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
-        let username = &user.username;
 
         let access_token = self
             .access_token
@@ -97,7 +95,7 @@ impl Sdk {
             .ok_or(crate::error::Error::MissingAccessToken)?;
 
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        update_case_status(config, username, access_token, case_id).await?;
+        update_case_status(config, access_token, case_id).await?;
 
         Ok(())
     }
@@ -109,7 +107,7 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_case_details, example_get_user, example_new_case_id, set_config, AUTH_PROVIDER, CASE_ID,
-        HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME,
+        HEADER_X_APP_NAME, TOKEN, USERNAME,
     };
     use crate::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     use api_types::api::postident::{NewCaseIdResponse, UpdateCaseStatusRequest};
@@ -156,7 +154,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/postident/get-new-case-id")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_header("content-type", "application/json")
@@ -257,7 +254,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/postident/get-case-details")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_header("content-type", "application/json")
@@ -317,7 +313,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("POST", "/api/postident/update-case-status")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(202)
                         .with_header("content-type", "application/json")

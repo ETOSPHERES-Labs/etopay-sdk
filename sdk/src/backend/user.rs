@@ -24,18 +24,17 @@ use reqwest::StatusCode;
 /// # Errors
 ///
 /// Returns an `Err` variant of [`ApiError`] if there is an error deleting the user account.
-pub async fn delete_user_account(config: &Config, access_token: &AccessToken, username: &str) -> Result<()> {
+pub async fn delete_user_account(config: &Config, access_token: &AccessToken) -> Result<()> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/user");
     info!("Used url: {url:#?}");
-    info!("Deleting user account for {username}");
+    info!("Deleting user account");
 
     let client = reqwest::Client::new();
     let response = client
         .delete(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Response: {response:#?}");
@@ -77,13 +76,12 @@ pub async fn delete_user_account(config: &Config, access_token: &AccessToken, us
 pub async fn set_preferred_network(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     network_id: Option<String>,
 ) -> Result<()> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/user/network");
     info!("Used url: {url:#?}");
-    info!("Setting preferred network for {username}");
+    info!("Setting preferred network");
 
     let body = SetPreferredNetworkRequest { network_id };
 
@@ -92,7 +90,6 @@ pub async fn set_preferred_network(
         .put(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .json(&body)
         .send()
         .await?;
@@ -131,22 +128,17 @@ pub async fn set_preferred_network(
 /// # Errors
 ///
 /// Returns an `Err` variant of [`ApiError`] if there is an error getting the preferred network (id).
-pub async fn get_preferred_network(
-    config: &Config,
-    access_token: &AccessToken,
-    username: &str,
-) -> Result<Option<String>> {
+pub async fn get_preferred_network(config: &Config, access_token: &AccessToken) -> Result<Option<String>> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/user/network");
     info!("Used url: {url:#?}");
-    info!("Getting preferred network for {username}");
+    info!("Getting preferred network");
 
     let client = reqwest::Client::new();
     let response = client
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Response: {response:#?}");
@@ -171,7 +163,7 @@ pub async fn get_preferred_network(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME};
+    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN};
 
     #[rstest::rstest]
     #[case(202, Ok(()))]
@@ -192,14 +184,13 @@ mod tests {
         let mock_server = srv
             .mock("DELETE", "/api/user")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .expect(1)
             .create();
 
         // Act
-        let response = delete_user_account(&config, &TOKEN, USERNAME).await;
+        let response = delete_user_account(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -230,7 +221,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/user/network")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -241,7 +231,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_preferred_network(&config, &TOKEN, USERNAME).await;
+        let response = get_preferred_network(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -274,20 +264,13 @@ mod tests {
         let mock_server = srv
             .mock("PUT", "/api/user/network")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .expect(1)
             .create();
 
         // Act
-        let response = set_preferred_network(
-            &config,
-            &TOKEN,
-            USERNAME,
-            Some(String::from("67a1f08edf55756bae21e7eb")),
-        )
-        .await;
+        let response = set_preferred_network(&config, &TOKEN, Some(String::from("67a1f08edf55756bae21e7eb"))).await;
 
         // Assert
         match expected {

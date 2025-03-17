@@ -60,7 +60,6 @@ struct CommitTransactionRequest {
 pub async fn create_new_transaction(
     config: &Config,
     access_token: &AccessToken,
-    sender: &str,
     receiver: &str,
     network_id: String,
     amount: CryptoAmount,
@@ -76,14 +75,13 @@ pub async fn create_new_transaction(
         application_metadata: metadata,
     };
     info!("Used url: {url:#?}");
-    info!("Create new transaction from {sender} to {receiver} with the amount of {amount:?}");
+    info!("Create new transaction to {receiver} with the amount of {amount:?}");
 
     let client = reqwest::Client::new();
     let response = client
         .post(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", sender) // sended should be the username also
         .json(&body)
         .send()
         .await?;
@@ -125,13 +123,7 @@ pub async fn create_new_transaction(
 /// # Errors
 ///
 /// Returns an `Error::Unauthorized` if the request is unauthorized, or an `Error::UnhandledError` if an unhandled error occurs.
-pub async fn commit_transaction(
-    config: &Config,
-    access_token: &AccessToken,
-    username: &str,
-    index: &str,
-    tx_id: &str,
-) -> Result<()> {
+pub async fn commit_transaction(config: &Config, access_token: &AccessToken, index: &str, tx_id: &str) -> Result<()> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/transactions/commit");
     let body = CommitTransactionRequest {
@@ -146,7 +138,6 @@ pub async fn commit_transaction(
         .post(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .json(&body)
         .send()
         .await?;
@@ -188,7 +179,6 @@ pub async fn commit_transaction(
 pub async fn get_transaction_details(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     index: &str,
 ) -> Result<GetTransactionDetailsResponse> {
     let base_url = &config.backend_url;
@@ -201,7 +191,6 @@ pub async fn get_transaction_details(
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .query(&query)
         .send()
         .await?;
@@ -244,7 +233,6 @@ pub async fn get_transaction_details(
 pub async fn get_transactions_list(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     start: u32,
     limit: u32,
 ) -> Result<GetTxsDetailsResponse> {
@@ -265,7 +253,6 @@ pub async fn get_transactions_list(
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .query(&query)
         .send()
         .await?;
@@ -294,8 +281,8 @@ pub async fn get_transactions_list(
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME,
-        HEADER_X_APP_USERNAME, LIMIT, RECEIVER, START, TOKEN, TX_INDEX, USERNAME,
+        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME, LIMIT, RECEIVER,
+        START, TOKEN, TX_INDEX,
     };
     use mockito::Matcher;
 
@@ -332,7 +319,6 @@ mod tests {
         let mut mock_server = srv
             .mock("POST", "/api/transactions/create")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .match_body(Matcher::Exact(request_body))
@@ -347,7 +333,6 @@ mod tests {
         let response = create_new_transaction(
             &config,
             &TOKEN,
-            USERNAME,
             RECEIVER,
             String::from("67a1f08edf55756bae21e7eb"),
             AMOUNT,
@@ -392,7 +377,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/transactions/commit")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .with_status(status_code)
@@ -400,7 +384,7 @@ mod tests {
             .create();
 
         // Act
-        let response = commit_transaction(&config, &TOKEN, USERNAME, TX_INDEX, TX_INDEX).await;
+        let response = commit_transaction(&config, &TOKEN, TX_INDEX, TX_INDEX).await;
 
         // Assert
         match expected {
@@ -436,7 +420,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/transactions/details")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .match_query(Matcher::Exact(format!("index={TX_INDEX}")))
@@ -448,7 +431,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_transaction_details(&config, &TOKEN, USERNAME, TX_INDEX).await;
+        let response = get_transaction_details(&config, &TOKEN, TX_INDEX).await;
 
         // Assert
         match expected {
@@ -484,7 +467,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/transactions/txs-details")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .match_query(Matcher::Exact(format!("is_sender=false&start={START}&limit={LIMIT}")))
@@ -496,7 +478,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_transactions_list(&config, &TOKEN, USERNAME, START, LIMIT).await;
+        let response = get_transactions_list(&config, &TOKEN, START, LIMIT).await;
 
         // Assert
         match expected {

@@ -37,13 +37,7 @@ struct ViviswapBackendCall {
 }
 
 impl ViviswapBackendCall {
-    pub fn new(
-        config: &Config,
-        access_token: &AccessToken,
-        username: &str,
-        method: reqwest::Method,
-        url_path: &str,
-    ) -> Self {
+    pub fn new(config: &Config, access_token: &AccessToken, method: reqwest::Method, url_path: &str) -> Self {
         let url = format!("{}{url_path}", config.backend_url);
         info!("Used url: {url:#?}");
 
@@ -51,8 +45,7 @@ impl ViviswapBackendCall {
         let request_builder = client
             .request(method.clone(), &url)
             .bearer_auth(access_token.as_str())
-            .header("X-APP-NAME", &config.auth_provider)
-            .header("X-APP-USERNAME", username);
+            .header("X-APP-NAME", &config.auth_provider);
 
         Self {
             request_builder,
@@ -145,18 +138,17 @@ impl ViviswapBackendCall {
 pub async fn create_viviswap_user(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     mail: &str,
     terms_accepted: bool,
 ) -> Result<UserDataResponse> {
-    info!("Create new viviswap user for {username}");
+    info!("Create new viviswap user");
 
     let request = UserDataRequest {
         mail: mail.to_string(),
         terms_accepted,
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/users")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/users")
         .with_body(&request)
         .execute_parse()
         .await
@@ -177,14 +169,10 @@ pub async fn create_viviswap_user(
 /// # Errors
 ///
 /// This function can return an `Error` if the request fails or if the response status is unauthorized.
-pub async fn get_viviswap_kyc_status(
-    config: &Config,
-    access_token: &AccessToken,
-    username: &str,
-) -> Result<KycDetailsResponse> {
-    info!("Get viviswap kyc status for {username}");
+pub async fn get_viviswap_kyc_status(config: &Config, access_token: &AccessToken) -> Result<KycDetailsResponse> {
+    info!("Get viviswap kyc status");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/kyc/status")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/kyc/status")
         .execute_parse()
         .await
 }
@@ -214,7 +202,6 @@ pub async fn get_viviswap_kyc_status(
 pub async fn set_viviswap_kyc_general_details(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     is_individual: bool,
     is_pep: bool,
     is_us_citizen: bool,
@@ -222,7 +209,7 @@ pub async fn set_viviswap_kyc_general_details(
     country_of_residence: &str,
     nationality: &str,
 ) -> Result<()> {
-    info!("Set viviswap kyc general details for user {username}");
+    info!("Set viviswap kyc general details ");
 
     let request = SetGeneralDataRequest {
         is_individual,
@@ -233,7 +220,7 @@ pub async fn set_viviswap_kyc_general_details(
         nationality: nationality.into(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/kyc/general")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/kyc/general")
         .with_body(&request)
         .execute()
         .await
@@ -259,18 +246,17 @@ pub async fn set_viviswap_kyc_general_details(
 pub async fn set_viviswap_kyc_personal_details(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     full_name: &str,
     date_of_birth: &str,
 ) -> Result<()> {
-    info!("Set viviswap kyc personal details for user {username}");
+    info!("Set viviswap kyc personal details ");
 
     let request = SetPersonalDataRequest {
         full_name: full_name.into(),
         date_of_birth: date_of_birth.into(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/kyc/personal")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/kyc/personal")
         .with_body(&request)
         .execute()
         .await
@@ -296,18 +282,17 @@ pub async fn set_viviswap_kyc_personal_details(
 pub async fn set_viviswap_kyc_identity_details(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     official_document: IdentityOfficialDocumentData,
     personal_document: IdentityPersonalDocumentData,
 ) -> Result<()> {
-    info!("Set viviswap kyc identity details for user {username}");
+    info!("Set viviswap kyc identity details ");
 
     let request = SetIdentityDataRequest {
         official_document,
         personal_document,
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/kyc/identity")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/kyc/identity")
         .with_body(&request)
         .execute()
         .await
@@ -333,12 +318,11 @@ pub async fn set_viviswap_kyc_identity_details(
 pub async fn set_viviswap_kyc_residence_details(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     residence_details: SetResidenceDataRequest,
 ) -> Result<()> {
-    info!("Set viviswap kyc residence details for user {username}");
+    info!("Set viviswap kyc residence details ");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/kyc/residence")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/kyc/residence")
         .with_body(&residence_details)
         .execute()
         .await
@@ -365,11 +349,10 @@ pub async fn set_viviswap_kyc_residence_details(
 pub async fn get_viviswap_kyc_amla_open_questions(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
 ) -> Result<GetKycAmlaQuestionsResponse> {
-    info!("Set viviswap kyc open amla questions for user {username}");
+    info!("Set viviswap kyc open amla questions ");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/kyc/questions")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/kyc/questions")
         .execute_parse()
         .await
 }
@@ -394,12 +377,11 @@ pub async fn get_viviswap_kyc_amla_open_questions(
 pub async fn set_viviswap_kyc_amla_answer(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     answer: AnswerData,
 ) -> Result<()> {
-    info!("Set viviswap kyc amla question answer for user {username}");
+    info!("Set viviswap kyc amla question answer ");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/kyc/questions")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/kyc/questions")
         .with_body(&answer)
         .execute()
         .await
@@ -426,11 +408,10 @@ pub async fn set_viviswap_kyc_amla_answer(
 pub async fn get_viviswap_kyc_open_documents(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
 ) -> Result<GetKycDocumentsResponse> {
-    info!("Set viviswap kyc open documents for user {username}");
+    info!("Set viviswap kyc open documents ");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/kyc/documents")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/kyc/documents")
         .execute_parse()
         .await
 }
@@ -455,12 +436,11 @@ pub async fn get_viviswap_kyc_open_documents(
 pub async fn set_viviswap_kyc_document(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     document: SetDocumentDataRequest,
 ) -> Result<()> {
-    info!("Set viviswap kyc document for user {username}");
+    info!("Set viviswap kyc document ");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/kyc/documents")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/kyc/documents")
         .with_body(&document)
         .execute()
         .await
@@ -486,18 +466,17 @@ pub async fn set_viviswap_kyc_document(
 pub async fn delete_viviswap_detail(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     payment_method_key: SwapPaymentDetailKey,
     payment_detail_id: &str,
 ) -> Result<()> {
-    info!("Delete viviswap detail for user:{username} payment-method:{payment_method_key:?} and detail_id:{payment_detail_id}");
+    info!("Delete viviswap detail for user,  payment-method:{payment_method_key:?} and detail_id:{payment_detail_id}");
 
     let query = DeleteDetailRequestQueries {
         payment_method_key,
         payment_detail_id: payment_detail_id.to_string(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::DELETE, "/viviswap/details")
+    ViviswapBackendCall::new(config, access_token, Method::DELETE, "/viviswap/details")
         .with_query(&query)
         .execute()
         .await
@@ -523,18 +502,17 @@ pub async fn delete_viviswap_detail(
 pub async fn set_viviswap_detail(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     payment_method_key: SwapPaymentDetailKey,
     address: &str,
 ) -> Result<SetPaymentDetailResponse> {
-    info!("Set viviswap detail for user {username} and payment-method {payment_method_key:?}");
+    info!("Set viviswap detail  and payment-method {payment_method_key:?}");
 
     let query = SetDetailRequestQueries { payment_method_key };
 
     let request = SetDetailRequestBody {
         address: String::from(address),
     };
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/details")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/details")
         .with_query(&query)
         .with_body(&request)
         .execute_parse()
@@ -560,14 +538,13 @@ pub async fn set_viviswap_detail(
 pub async fn get_viviswap_details(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     payment_method_key: SwapPaymentDetailKey,
 ) -> Result<GetPaymentDetailsResponse> {
-    info!("Get viviswap details for user {username} and payment-method {payment_method_key:?}");
+    info!("Get viviswap details  and payment-method {payment_method_key:?}");
 
     let query = GetPaymentDetailsRequestQueries { payment_method_key };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/details")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/details")
         .with_query(&query)
         .execute_parse()
         .await
@@ -597,14 +574,13 @@ pub async fn get_viviswap_details(
 pub async fn set_viviswap_contract(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     amount: CryptoAmount,
     incoming_payment_method_id: String,
     incoming_payment_detail_id: Option<String>,
     outgoing_payment_method_id: String,
     outgoing_payment_detail_id: String,
 ) -> Result<ViviswapContractCreationResponse> {
-    info!("Set viviswap contract for user {username}");
+    info!("Set viviswap contract ");
 
     let request = ContractRequestBody {
         amount: Option::Some(amount.inner()),
@@ -614,7 +590,7 @@ pub async fn set_viviswap_contract(
         outgoing_payment_detail_id,
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, "/viviswap/contracts")
+    ViviswapBackendCall::new(config, access_token, Method::POST, "/viviswap/contracts")
         .with_body(&request)
         .execute_parse()
         .await
@@ -638,7 +614,6 @@ pub async fn set_viviswap_contract(
 pub async fn get_viviswap_exchange_rate(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     currency: Currency,
 ) -> Result<Decimal> {
     info!("get_viviswap_exchange_rate for currency = {:?}", currency);
@@ -647,11 +622,10 @@ pub async fn get_viviswap_exchange_rate(
         currency: currency.into(),
     };
 
-    let response: GetCourseResponse =
-        ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/courses")
-            .with_query(&query)
-            .execute_parse()
-            .await?;
+    let response: GetCourseResponse = ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/courses")
+        .with_query(&query)
+        .execute_parse()
+        .await?;
 
     Ok(response.course.course)
 }
@@ -674,11 +648,10 @@ pub async fn get_viviswap_exchange_rate(
 pub async fn get_viviswap_payment_method(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
 ) -> Result<ViviPaymentMethodsResponse> {
     info!("get_viviswap_payment_method");
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/methods")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/methods")
         .execute_parse()
         .await
 }
@@ -699,19 +672,14 @@ pub async fn get_viviswap_payment_method(
 /// # Errors
 ///
 /// This function can return an `Error` if the request fails or if the response status is unauthorized.
-pub async fn get_viviswap_order(
-    config: &Config,
-    access_token: &AccessToken,
-    username: &str,
-    order_id: &str,
-) -> Result<Order> {
-    info!("Get viviswap order details for user {username}");
+pub async fn get_viviswap_order(config: &Config, access_token: &AccessToken, order_id: &str) -> Result<Order> {
+    info!("Get viviswap order details ");
 
     let query = GetOrderQuery {
         id: order_id.to_string(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/orders")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/orders")
         .with_query(&query)
         .execute_parse()
         .await
@@ -737,18 +705,17 @@ pub async fn get_viviswap_order(
 pub async fn get_viviswap_orders(
     config: &Config,
     access_token: &AccessToken,
-    username: &str,
     start: u32,
     limit: u32,
 ) -> Result<OrderList> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/viviswap/orders");
     info!("Used url: {url:#?}");
-    info!("Get viviswap list of order details for user {username}");
+    info!("Get viviswap list of order details ");
 
     let query = GetOrdersQuery { start, limit };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, "/viviswap/orders")
+    ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/orders")
         .with_query(&query)
         .execute_parse()
         .await
@@ -760,8 +727,8 @@ mod tests {
     use crate::testing_utils::{
         example_bank_details, example_contract_response, example_exchange_rate_response,
         example_get_payment_details_response, example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER,
-        HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, PAYMENT_DETAIL_ID, PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY,
-        PAYMENT_METHOD_KEY_SERIALIZED, TOKEN, USERNAME,
+        HEADER_X_APP_NAME, PAYMENT_DETAIL_ID, PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY, PAYMENT_METHOD_KEY_SERIALIZED,
+        TOKEN, USERNAME,
     };
     use api_types::api::viviswap::{
         detail::PaymentDetail,
@@ -895,7 +862,6 @@ mod tests {
         let mut mock_server = srv
             .mock("POST", "/api/viviswap/users")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .match_body(Matcher::Exact(request_body))
@@ -907,8 +873,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response =
-            create_viviswap_user(&config, &TOKEN, USERNAME, format!("{USERNAME}@mail.com").as_str(), true).await;
+        let response = create_viviswap_user(&config, &TOKEN, format!("{USERNAME}@mail.com").as_str(), true).await;
 
         // Assert
         match expected {
@@ -943,7 +908,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/kyc/status")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -954,7 +918,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_kyc_status(&config, &TOKEN, USERNAME).await;
+        let response = get_viviswap_kyc_status(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -997,7 +961,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/viviswap/kyc/general")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .with_status(status_code)
@@ -1005,8 +968,7 @@ mod tests {
             .create();
 
         // Act
-        let response =
-            set_viviswap_kyc_general_details(&config, &TOKEN, USERNAME, true, false, false, true, "DE", "DE").await;
+        let response = set_viviswap_kyc_general_details(&config, &TOKEN, true, false, false, true, "DE", "DE").await;
 
         // Assert
         match expected {
@@ -1043,7 +1005,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/viviswap/kyc/personal")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
             .match_body(Matcher::Exact(request_body))
@@ -1052,8 +1013,7 @@ mod tests {
             .create();
 
         // Act
-        let response =
-            set_viviswap_kyc_personal_details(&config, &TOKEN, USERNAME, "Satoshi Satoshi", "1990-01-01").await;
+        let response = set_viviswap_kyc_personal_details(&config, &TOKEN, "Satoshi Satoshi", "1990-01-01").await;
 
         // Assert
         match expected {
@@ -1084,7 +1044,6 @@ mod tests {
         let mock_server = srv
             .mock("DELETE", "/api/viviswap/details")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(format!(
                 "payment_method_key={PAYMENT_METHOD_KEY_SERIALIZED}&payment_detail_id={PAYMENT_DETAIL_ID}"
@@ -1094,7 +1053,7 @@ mod tests {
             .create();
 
         // Act
-        let response = delete_viviswap_detail(&config, &TOKEN, USERNAME, PAYMENT_METHOD_KEY, PAYMENT_DETAIL_ID).await;
+        let response = delete_viviswap_detail(&config, &TOKEN, PAYMENT_METHOD_KEY, PAYMENT_DETAIL_ID).await;
 
         // Assert
         match expected {
@@ -1136,7 +1095,6 @@ mod tests {
         let mut mock_server = srv
             .mock("POST", "/api/viviswap/details")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .match_query(Matcher::Exact(format!(
@@ -1150,7 +1108,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = set_viviswap_detail(&config, &TOKEN, USERNAME, PAYMENT_METHOD_KEY, ADDRESS).await;
+        let response = set_viviswap_detail(&config, &TOKEN, PAYMENT_METHOD_KEY, ADDRESS).await;
 
         // Assert
         match expected {
@@ -1188,7 +1146,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/details")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(format!(
                 "payment_method_key={PAYMENT_METHOD_KEY_SERIALIZED}"
@@ -1201,7 +1158,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_details(&config, &TOKEN, USERNAME, PAYMENT_METHOD_KEY).await;
+        let response = get_viviswap_details(&config, &TOKEN, PAYMENT_METHOD_KEY).await;
 
         // Assert
         match expected {
@@ -1251,7 +1208,6 @@ mod tests {
         let mut mock_server = srv
             .mock("POST", "/api/viviswap/contracts")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .with_status(status_code);
@@ -1265,7 +1221,6 @@ mod tests {
         let response = set_viviswap_contract(
             &config,
             &TOKEN,
-            USERNAME,
             dec!(15.0).try_into().unwrap(),
             PAYMENT_METHOD_ID.into(),
             Some(PAYMENT_DETAIL_ID.into()),
@@ -1307,7 +1262,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/courses")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact("currency=Iota".to_string()))
             .with_status(status_code);
@@ -1318,7 +1272,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_exchange_rate(&config, &TOKEN, USERNAME, Currency::Iota).await;
+        let response = get_viviswap_exchange_rate(&config, &TOKEN, Currency::Iota).await;
 
         // Assert
         match expected {
@@ -1357,7 +1311,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/methods")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code);
         // Conditionally add the response body only for the 200 status code
@@ -1367,7 +1320,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_payment_method(&config, &TOKEN, USERNAME).await;
+        let response = get_viviswap_payment_method(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -1402,7 +1355,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/orders")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_query(Matcher::Exact("id=order-id".into()))
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code);
@@ -1413,7 +1365,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_order(&config, &TOKEN, USERNAME, "order-id").await;
+        let response = get_viviswap_order(&config, &TOKEN, "order-id").await;
 
         // Assert
         match expected {
@@ -1449,7 +1401,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/orders")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_query(Matcher::Exact("start=1&limit=1".into()))
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code);
@@ -1460,7 +1411,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_orders(&config, &TOKEN, USERNAME, 1u32, 1u32).await;
+        let response = get_viviswap_orders(&config, &TOKEN, 1u32, 1u32).await;
 
         // Assert
         match expected {
@@ -1500,7 +1451,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/viviswap/kyc/identity")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
             .match_body(Matcher::Exact(request_body))
@@ -1509,8 +1459,7 @@ mod tests {
             .create();
 
         // Act
-        let response =
-            set_viviswap_kyc_identity_details(&config, &TOKEN, USERNAME, official_document, personal_document).await;
+        let response = set_viviswap_kyc_identity_details(&config, &TOKEN, official_document, personal_document).await;
 
         // Assert
         match expected {
@@ -1544,7 +1493,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/viviswap/kyc/residence")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
             .match_body(Matcher::Exact(request_body))
@@ -1553,7 +1501,7 @@ mod tests {
             .create();
 
         // Act
-        let response = set_viviswap_kyc_residence_details(&config, &TOKEN, USERNAME, mock_request).await;
+        let response = set_viviswap_kyc_residence_details(&config, &TOKEN, mock_request).await;
 
         // Assert
         match expected {
@@ -1590,7 +1538,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/kyc/questions")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code);
         // Conditionally add the response body only for the 200 status code
@@ -1600,7 +1547,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_kyc_amla_open_questions(&config, &TOKEN, USERNAME).await;
+        let response = get_viviswap_kyc_amla_open_questions(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -1636,7 +1583,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/viviswap/kyc/questions")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
             .match_body(Matcher::Exact(request_body))
@@ -1645,7 +1591,7 @@ mod tests {
             .create();
 
         // Act
-        let response = set_viviswap_kyc_amla_answer(&config, &TOKEN, USERNAME, mock_request).await;
+        let response = set_viviswap_kyc_amla_answer(&config, &TOKEN, mock_request).await;
 
         // Assert
         match expected {
@@ -1682,7 +1628,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/viviswap/kyc/documents")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code);
         // Conditionally add the response body only for the 200 status code
@@ -1692,7 +1637,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_kyc_open_documents(&config, &TOKEN, USERNAME).await;
+        let response = get_viviswap_kyc_open_documents(&config, &TOKEN).await;
 
         // Assert
         match expected {
@@ -1728,7 +1673,6 @@ mod tests {
         let mock_server = srv
             .mock("POST", "/api/viviswap/kyc/documents")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
             .match_body(Matcher::Exact(request_body))
@@ -1737,7 +1681,7 @@ mod tests {
             .create();
 
         // Act
-        let response = set_viviswap_kyc_document(&config, &TOKEN, USERNAME, mock_request).await;
+        let response = set_viviswap_kyc_document(&config, &TOKEN, mock_request).await;
 
         // Assert
         match expected {

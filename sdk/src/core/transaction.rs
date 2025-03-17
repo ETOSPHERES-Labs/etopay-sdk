@@ -42,12 +42,11 @@ impl Sdk {
         purchase_type: &str,
     ) -> Result<String> {
         info!("Creating a new purchase request");
-        let Some(active_user) = &self.active_user else {
+        let Some(_active_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        let sender = &active_user.username;
         let access_token = self
             .access_token
             .as_ref()
@@ -67,8 +66,7 @@ impl Sdk {
             purchase_model: purchase_model.to_string(),
             app_data: app_data.into(),
         };
-        let response =
-            create_new_transaction(config, access_token, sender, receiver, network.id, amount, metadata).await?;
+        let response = create_new_transaction(config, access_token, receiver, network.id, amount, metadata).await?;
         let purchase_id = response.index;
         debug!("Created purchase request with id: {purchase_id}");
         Ok(purchase_id)
@@ -89,18 +87,17 @@ impl Sdk {
     /// Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction details.
     pub async fn get_purchase_details(&self, purchase_id: &str) -> Result<PurchaseDetails> {
         info!("Getting purchase details with id {purchase_id}");
-        let Some(active_user) = &self.active_user else {
+        let Some(_active_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 
-        let username = &active_user.username;
         let access_token = self
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
 
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        let response = get_transaction_details(config, access_token, username, purchase_id).await?;
+        let response = get_transaction_details(config, access_token, purchase_id).await?;
 
         let details = PurchaseDetails {
             system_address: response.system_address,
@@ -137,13 +134,12 @@ impl Sdk {
             return Err(crate::Error::UserNotInitialized);
         };
 
-        let username = &active_user.username;
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let access_token = self
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
-        let tx_details = get_transaction_details(config, access_token, username, purchase_id).await?;
+        let tx_details = get_transaction_details(config, access_token, purchase_id).await?;
 
         debug!("Tx details: {:?}", tx_details);
 
@@ -201,7 +197,7 @@ impl Sdk {
 
         debug!("Transaction id on network: {tx_id}");
 
-        commit_transaction(config, access_token, username, purchase_id, &tx_id).await?;
+        commit_transaction(config, access_token, purchase_id, &tx_id).await?;
 
         Ok(())
     }
@@ -298,7 +294,7 @@ impl Sdk {
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
-        let txs_list = get_transactions_list(config, access_token, &user.username, start, limit).await?;
+        let txs_list = get_transactions_list(config, access_token, start, limit).await?;
         log::debug!("Txs list for user {}: {:?}", user.username, txs_list);
 
         Ok(TxList {
@@ -330,8 +326,8 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_network, example_get_user, example_network_id, example_networks, example_tx_details,
-        example_tx_metadata, example_wallet_borrow, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME,
-        HEADER_X_APP_USERNAME, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
+        example_tx_metadata, example_wallet_borrow, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, PURCHASE_ID, TOKEN,
+        TX_INDEX, USERNAME,
     };
     use crate::types::currencies::Currency;
     use crate::types::transactions::WalletTxInfo;
@@ -418,7 +414,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("POST", "/api/transactions/create")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(201)
                         .with_header("content-type", "application/json")
@@ -505,7 +500,6 @@ mod tests {
                 mock_server_details = Some(
                     srv.mock("GET", "/api/transactions/details?index=123")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_body(&body)
@@ -516,7 +510,6 @@ mod tests {
                 mock_server_commit = Some(
                     srv.mock("POST", "/api/transactions/commit")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(202)
                         .expect(1)
@@ -547,7 +540,6 @@ mod tests {
                 mock_server_details = Some(
                     srv.mock("GET", "/api/transactions/details?index=123")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_body(&body)
@@ -604,7 +596,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/transactions/details?index=123")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_body(&body)
@@ -799,7 +790,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("GET", "/api/transactions/txs-details")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .match_query(Matcher::Exact(format!("is_sender=false&start={start}&limit={limit}")))
                         .with_status(200)

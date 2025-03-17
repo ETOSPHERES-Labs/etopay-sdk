@@ -24,7 +24,6 @@ use reqwest::StatusCode;
 /// * [`ApiError::UnexpectedResponse`] if an unhandled error occurs.
 pub async fn put_user_address(
     config: &Config,
-    username: &str,
     access_token: &AccessToken,
     network_id: String,
     address: &str,
@@ -46,7 +45,6 @@ pub async fn put_user_address(
         .put(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .query(&query)
         .json(&body)
         .send()
@@ -89,7 +87,7 @@ pub async fn put_user_address(
 /// Returns an `Err` variant with the following possible values:
 /// * [`ApiError::MissingAccessToken`] if the request is unauthorized.
 /// * [`ApiError::UnexpectedResponse`] if an unhandled error occurs.
-pub async fn get_networks(config: &Config, username: &str, access_token: &AccessToken) -> Result<Vec<ApiNetwork>> {
+pub async fn get_networks(config: &Config, access_token: &AccessToken) -> Result<Vec<ApiNetwork>> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/config/networks");
 
@@ -101,7 +99,6 @@ pub async fn get_networks(config: &Config, username: &str, access_token: &Access
         .get(&url)
         .bearer_auth(access_token.as_str())
         .header("X-APP-NAME", &config.auth_provider)
-        .header("X-APP-USERNAME", username)
         .send()
         .await?;
     debug!("Response: {response:#?}");
@@ -132,8 +129,7 @@ mod tests {
     use super::*;
     use crate::{
         testing_utils::{
-            example_api_network, example_network_id, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME,
-            HEADER_X_APP_USERNAME, TOKEN, USERNAME,
+            example_api_network, example_network_id, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
         },
         types::currencies::Currency,
     };
@@ -165,7 +161,6 @@ mod tests {
         let mock = srv
             .mock("PUT", "/api/user/address")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
             .match_query(Matcher::Exact(format!("network_id={}", iota_network_id)))
@@ -176,14 +171,7 @@ mod tests {
             .create();
 
         // Act
-        let response = put_user_address(
-            &config,
-            USERNAME,
-            &TOKEN,
-            String::from("67a1f08edf55756bae21e7eb"),
-            ADDRESS,
-        )
-        .await;
+        let response = put_user_address(&config, &TOKEN, String::from("67a1f08edf55756bae21e7eb"), ADDRESS).await;
 
         // Assert
         match expected {
@@ -219,7 +207,6 @@ mod tests {
         let mut mock_server = srv
             .mock("GET", "/api/config/networks")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header("content-type", "application/json");
@@ -230,7 +217,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_networks(&config, USERNAME, &TOKEN).await;
+        let response = get_networks(&config, &TOKEN).await;
 
         // Assert
         match expected {

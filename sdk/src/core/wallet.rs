@@ -440,7 +440,7 @@ impl Sdk {
 
         // if there is an access token, push the generated address to the backend
         if let Some(access_token) = self.access_token.as_ref() {
-            put_user_address(config, &active_user.username, access_token, network.id, &address).await?;
+            put_user_address(config, access_token, network.id, &address).await?;
         }
         debug!("Generated address: {address}");
         Ok(address)
@@ -567,8 +567,7 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_get_user, example_network_id, example_networks, example_wallet_tx_info, set_config, ADDRESS,
-        AUTH_PROVIDER, BACKUP_PASSWORD, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX,
-        USERNAME,
+        AUTH_PROVIDER, BACKUP_PASSWORD, HEADER_X_APP_NAME, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
     };
     use crate::types::currencies::Currency;
     use crate::types::users::UserEntity;
@@ -1025,7 +1024,6 @@ mod tests {
                 mock_server = Some(
                     srv.mock("PUT", "/api/user/address")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .match_header("content-type", "application/json")
                         .match_query(Matcher::Exact("network_id=67a1f08edf55756bae21e7eb".to_string()))

@@ -64,8 +64,7 @@ impl Sdk {
             return Err(crate::Error::Viviswap(ViviswapError::UserStateExisting));
         };
 
-        let new_viviswap_user =
-            create_viviswap_user(config, access_token, &user.username, mail, terms_accepted).await?;
+        let new_viviswap_user = create_viviswap_user(config, access_token, mail, terms_accepted).await?;
 
         user.viviswap_state = Some(ViviswapState::new());
 
@@ -99,7 +98,7 @@ impl Sdk {
 
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
 
-        let kyc_status = get_viviswap_kyc_status(config, access_token, &user.username).await?;
+        let kyc_status = get_viviswap_kyc_status(config, access_token).await?;
         debug!("KYC Status response: {kyc_status:#?}");
 
         let username = user.username;
@@ -254,7 +253,6 @@ impl Sdk {
             set_viviswap_kyc_general_details(
                 config,
                 access_token,
-                &user.username,
                 *is_individual,
                 *is_pep,
                 *is_us_citizen,
@@ -266,7 +264,7 @@ impl Sdk {
         }
 
         // submit viviswap personal kyc details
-        set_viviswap_kyc_personal_details(config, access_token, &user.username, full_name, date_of_birth).await?;
+        set_viviswap_kyc_personal_details(config, access_token, full_name, date_of_birth).await?;
 
         // get new verification status of viviswap user
         self.get_kyc_details_for_viviswap().await?;
@@ -489,7 +487,7 @@ impl Sdk {
         official_document: IdentityOfficialDocumentData,
         personal_document: IdentityPersonalDocumentData,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -501,7 +499,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_identity_details(
             config,
             access_token,
-            &user.username,
             official_document,
             personal_document,
         )
@@ -540,7 +537,7 @@ impl Sdk {
         has_no_official_document: bool,
         document_residence_proof: Option<File>,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -575,7 +572,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_residence_details(
             config,
             access_token,
-            &user.username,
             api_types::api::viviswap::kyc::SetResidenceDataRequest {
                 country_code,
                 region,
@@ -608,7 +604,7 @@ impl Sdk {
     /// - [[`crate::Error::UserNotInitialized)`]] - If the user is not initialized.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
     pub async fn get_viviswap_kyc_amla_open_questions(&self) -> Result<Vec<KycAmlaQuestion>> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let access_token = self
@@ -617,10 +613,9 @@ impl Sdk {
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
 
-        let amla_questions =
-            backend::viviswap::get_viviswap_kyc_amla_open_questions(config, access_token, &user.username)
-                .await
-                .map(|v| v.questions)?;
+        let amla_questions = backend::viviswap::get_viviswap_kyc_amla_open_questions(config, access_token)
+            .await
+            .map(|v| v.questions)?;
         Ok(amla_questions)
     }
 
@@ -642,7 +637,7 @@ impl Sdk {
         answers: Vec<String>,
         freetext_answer: Option<String>,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -654,7 +649,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_amla_answer(
             config,
             access_token,
-            &user.username,
             api_types::api::viviswap::kyc::AnswerData {
                 question_id,
                 answers,
@@ -680,7 +674,7 @@ impl Sdk {
     /// - [`crate::Error::UserNotInitialized)`] - If the user is not initialized.
     /// - [`crate::Error::ViviswapApiError`] - If there is an error in the viviswap API.
     pub async fn get_viviswap_kyc_open_documents(&self) -> Result<Vec<KycOpenDocument>> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
 
@@ -690,11 +684,9 @@ impl Sdk {
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
 
-        Ok(
-            backend::viviswap::get_viviswap_kyc_open_documents(config, access_token, &user.username)
-                .await
-                .map(|v| v.documents)?,
-        )
+        Ok(backend::viviswap::get_viviswap_kyc_open_documents(config, access_token)
+            .await
+            .map(|v| v.documents)?)
     }
 
     /// Set / upload an open KYC document
@@ -719,7 +711,7 @@ impl Sdk {
         front_image: Option<File>,
         back_image: Option<File>,
     ) -> Result<()> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -731,7 +723,6 @@ impl Sdk {
         backend::viviswap::set_viviswap_kyc_document(
             config,
             access_token,
-            &user.username,
             api_types::api::viviswap::kyc::SetDocumentDataRequest {
                 document_id,
                 expiration_date,

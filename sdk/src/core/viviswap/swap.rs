@@ -59,8 +59,7 @@ impl Sdk {
                 .as_ref()
                 .ok_or(crate::error::Error::MissingAccessToken)?;
             let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-            let details =
-                get_viviswap_details(config, access_token, &user.username, SwapPaymentDetailKey::Sepa).await?;
+            let details = get_viviswap_details(config, access_token, SwapPaymentDetailKey::Sepa).await?;
             // update it internally
             // get the first detail
             if let Some(detail) = details.payment_detail.first() {
@@ -105,7 +104,7 @@ impl Sdk {
     ) -> Result<ViviswapAddressDetail> {
         debug!("Ensuring payment detail for viviswap");
         // load user entity
-        let user = self.get_user().await?;
+        let _user = self.get_user().await?;
         let access_token = self
             .access_token
             .as_ref()
@@ -113,7 +112,7 @@ impl Sdk {
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
 
         // get all viviswap details for specific payment-method
-        let details = get_viviswap_details(config, access_token, &user.username, payment_method_key).await?;
+        let details = get_viviswap_details(config, access_token, payment_method_key).await?;
         debug!("{details:#?}");
         // search for address in existing details
         for detail in &details.payment_detail {
@@ -131,8 +130,7 @@ impl Sdk {
         }
 
         // 1. creates a new detail
-        let new_detail =
-            set_viviswap_detail(config, access_token, &user.username, payment_method_key, &address).await?;
+        let new_detail = set_viviswap_detail(config, access_token, payment_method_key, &address).await?;
 
         // set_viviswap_detail should fill this out, but if not, we need to return an error
         let Some(detail) = new_detail.payment_detail else {
@@ -145,14 +143,7 @@ impl Sdk {
         if let (ViviswapDetailUpdateStrategy::Replace, Some(old_detail)) =
             (some_update_strategy, details.payment_detail.first())
         {
-            delete_viviswap_detail(
-                config,
-                access_token,
-                &user.username,
-                payment_method_key,
-                old_detail.id.as_str(),
-            )
-            .await?
+            delete_viviswap_detail(config, access_token, payment_method_key, old_detail.id.as_str()).await?
         }
 
         // 3. returns the new detail
@@ -282,7 +273,6 @@ impl Sdk {
         let contract_response = set_viviswap_contract(
             config,
             access_token,
-            &user.username,
             CryptoAmount::try_from(dec!(25.0))?, // any random amount works here!
             iban_method_id,
             Option::Some(iban_detail.id),
@@ -391,7 +381,7 @@ impl Sdk {
                     .as_ref()
                     .ok_or(crate::error::Error::MissingAccessToken)?;
                 let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-                let payment_methods = get_viviswap_payment_method(config, access_token, &user.username).await?;
+                let payment_methods = get_viviswap_payment_method(config, access_token).await?;
                 viviswap_state.payment_methods = Some(payment_methods.clone());
                 user.viviswap_state = Some(viviswap_state.clone());
                 repo.update(&user)?;
@@ -474,7 +464,6 @@ impl Sdk {
         let contract_response = set_viviswap_contract(
             config,
             access_token,
-            &user.username,
             amount,
             coin_method_id,
             Option::None,
@@ -531,7 +520,7 @@ impl Sdk {
     /// * Viviswap API error.
     // MARK8:get_swap_list
     pub async fn get_swap_list(&self, start: u32, limit: u32) -> Result<OrderList> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserRepoNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -541,7 +530,7 @@ impl Sdk {
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
-        let orders = get_viviswap_orders(config, access_token, &user.username, start, limit).await?;
+        let orders = get_viviswap_orders(config, access_token, start, limit).await?;
         Ok(orders)
     }
 
@@ -556,7 +545,7 @@ impl Sdk {
     /// Returns a `Result` containing the swap order details or an error.
     // MARK9:get_swap_details
     pub async fn get_swap_details(&self, order_id: String) -> Result<Order> {
-        let Some(user) = &self.active_user else {
+        let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserRepoNotInitialized);
         };
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
@@ -565,7 +554,7 @@ impl Sdk {
             .access_token
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
-        match get_viviswap_order(config, access_token, &user.username, &order_id).await {
+        match get_viviswap_order(config, access_token, &order_id).await {
             Ok(order_detail) => Ok(order_detail),
             Err(_) => Err(crate::Error::Viviswap(ViviswapError::Api(format!(
                 "Swap id:{order_id} not found"
@@ -580,8 +569,8 @@ mod tests {
     use crate::testing_utils::{
         example_bank_details, example_contract_response, example_crypto_details, example_exchange_rate_response,
         example_get_payment_details_response, example_get_user, example_network, example_network_id, example_networks,
-        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME,
-        ORDER_ID, PIN, TOKEN, USERNAME,
+        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, ORDER_ID, PIN, TOKEN,
+        USERNAME,
     };
     use crate::types::networks::Network;
     use crate::types::users::KycType;
@@ -652,7 +641,6 @@ mod tests {
         let mock_server = srv
             .mock("GET", format!("/api/viviswap/orders?id={}", ORDER_ID).as_str())
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)
             .with_body(&body)
@@ -689,7 +677,6 @@ mod tests {
         let mock_server = srv
             .mock("GET", "/api/viviswap/orders?start=2&limit=1")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)
             .with_body(&body)
@@ -732,7 +719,6 @@ mod tests {
         let mock_server = srv
             .mock("GET", "/api/viviswap/orders?start=2&limit=1")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(server_error_status)
             .with_body(&body)
@@ -760,7 +746,6 @@ mod tests {
         let mock_server = srv
             .mock("GET", format!("/api/viviswap/orders?id={}", ORDER_ID).as_str())
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(server_error_status)
             .with_header("content-type", "application/json")
@@ -825,7 +810,6 @@ mod tests {
         let create_viviswap_contract = srv
             .mock("POST", "/api/viviswap/contracts")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)
             .with_body(&body)
@@ -839,7 +823,6 @@ mod tests {
         let get_payment_details = srv
             .mock("GET", payment_method_path) // Use the parametrized payment method path
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)
             .with_body(&body)
@@ -855,7 +838,6 @@ mod tests {
         let put_user_address = srv
             .mock("PUT", "/api/user/address")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(format!("network_id={}", network.id)))
             .match_body(Matcher::Exact(body))
@@ -894,7 +876,6 @@ mod tests {
         let create_viviswap_contract = srv
             .mock("POST", "/api/viviswap/contracts")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)
             .with_body(&body)
@@ -935,7 +916,6 @@ mod tests {
         let get_exchange_rate = srv
             .mock("GET", "/api/viviswap/courses?currency=Iota")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)
             .with_body(&body)
