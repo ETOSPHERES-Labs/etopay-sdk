@@ -3,4 +3,4 @@ include/generated
 CawaenaSdk/.build
 CawaenaSdk/CawaenaSdkBin.xcframework
 CawaenaSdk/Sources/CawaenaSdk/*
-!CawaenaSdk/Sources/CawaenaSdk/vectorizable.swift
+!CawaenaSdk/Sources/CawaenaSdk/utils.swift
