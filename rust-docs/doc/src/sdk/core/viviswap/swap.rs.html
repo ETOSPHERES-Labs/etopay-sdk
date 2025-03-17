@@ -931,27 +931,7 @@
 <a href="#930" id="930">930</a>
 <a href="#931" id="931">931</a>
 <a href="#932" id="932">932</a>
-<a href="#933" id="933">933</a>
-<a href="#934" id="934">934</a>
-<a href="#935" id="935">935</a>
-<a href="#936" id="936">936</a>
-<a href="#937" id="937">937</a>
-<a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a>
-<a href="#944" id="944">944</a>
-<a href="#945" id="945">945</a>
-<a href="#946" id="946">946</a>
-<a href="#947" id="947">947</a>
-<a href="#948" id="948">948</a>
-<a href="#949" id="949">949</a>
-<a href="#950" id="950">950</a>
-<a href="#951" id="951">951</a>
-<a href="#952" id="952">952</a>
-<a href="#953" id="953">953</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::backend::viviswap::{
+<a href="#933" id="933">933</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::backend::viviswap::{
     delete_viviswap_detail, get_viviswap_details, get_viviswap_order, get_viviswap_orders, get_viviswap_payment_method,
     set_viviswap_contract, set_viviswap_detail,
 };
@@ -1012,8 +992,7 @@
                 .as_ref()
                 .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
             <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-            <span class="kw">let </span>details =
-                get_viviswap_details(config, access_token, <span class="kw-2">&amp;</span>user.username, SwapPaymentDetailKey::Sepa).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>details = get_viviswap_details(config, access_token, SwapPaymentDetailKey::Sepa).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="comment">// update it internally
             // get the first detail
             </span><span class="kw">if let </span><span class="prelude-val">Some</span>(detail) = details.payment_detail.first() {
@@ -1058,7 +1037,7 @@
     ) -&gt; <span class="prelude-ty">Result</span>&lt;ViviswapAddressDetail&gt; {
         <span class="macro">debug!</span>(<span class="string">"Ensuring payment detail for viviswap"</span>);
         <span class="comment">// load user entity
-        </span><span class="kw">let </span>user = <span class="self">self</span>.get_user().<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>_user = <span class="self">self</span>.get_user().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
@@ -1066,7 +1045,7 @@
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
 
         <span class="comment">// get all viviswap details for specific payment-method
-        </span><span class="kw">let </span>details = get_viviswap_details(config, access_token, <span class="kw-2">&amp;</span>user.username, payment_method_key).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>details = get_viviswap_details(config, access_token, payment_method_key).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="macro">debug!</span>(<span class="string">"{details:#?}"</span>);
         <span class="comment">// search for address in existing details
         </span><span class="kw">for </span>detail <span class="kw">in </span><span class="kw-2">&amp;</span>details.payment_detail {
@@ -1084,8 +1063,7 @@
         }
 
         <span class="comment">// 1. creates a new detail
-        </span><span class="kw">let </span>new_detail =
-            set_viviswap_detail(config, access_token, <span class="kw-2">&amp;</span>user.username, payment_method_key, <span class="kw-2">&amp;</span>address).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span><span class="kw">let </span>new_detail = set_viviswap_detail(config, access_token, payment_method_key, <span class="kw-2">&amp;</span>address).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// set_viviswap_detail should fill this out, but if not, we need to return an error
         </span><span class="kw">let </span><span class="prelude-val">Some</span>(detail) = new_detail.payment_detail <span class="kw">else </span>{
@@ -1098,14 +1076,7 @@
         </span><span class="kw">if let </span>(ViviswapDetailUpdateStrategy::Replace, <span class="prelude-val">Some</span>(old_detail)) =
             (some_update_strategy, details.payment_detail.first())
         {
-            delete_viviswap_detail(
-                config,
-                access_token,
-                <span class="kw-2">&amp;</span>user.username,
-                payment_method_key,
-                old_detail.id.as_str(),
-            )
-            .<span class="kw">await</span><span class="question-mark">?
+            delete_viviswap_detail(config, access_token, payment_method_key, old_detail.id.as_str()).<span class="kw">await</span><span class="question-mark">?
         </span>}
 
         <span class="comment">// 3. returns the new detail
@@ -1235,7 +1206,6 @@
         <span class="kw">let </span>contract_response = set_viviswap_contract(
             config,
             access_token,
-            <span class="kw-2">&amp;</span>user.username,
             CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">25.0</span>))<span class="question-mark">?</span>, <span class="comment">// any random amount works here!
             </span>iban_method_id,
             Option::Some(iban_detail.id),
@@ -1344,7 +1314,7 @@
                     .as_ref()
                     .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
                 <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-                <span class="kw">let </span>payment_methods = get_viviswap_payment_method(config, access_token, <span class="kw-2">&amp;</span>user.username).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>payment_methods = get_viviswap_payment_method(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
                 viviswap_state.payment_methods = <span class="prelude-val">Some</span>(payment_methods.clone());
                 user.viviswap_state = <span class="prelude-val">Some</span>(viviswap_state.clone());
                 repo.update(<span class="kw-2">&amp;</span>user)<span class="question-mark">?</span>;
@@ -1427,7 +1397,6 @@
         <span class="kw">let </span>contract_response = set_viviswap_contract(
             config,
             access_token,
-            <span class="kw-2">&amp;</span>user.username,
             amount,
             coin_method_id,
             Option::None,
@@ -1484,7 +1453,7 @@
     /// * Viviswap API error.
     </span><span class="comment">// MARK8:get_swap_list
     </span><span class="kw">pub async fn </span>get_swap_list(<span class="kw-2">&amp;</span><span class="self">self</span>, start: u32, limit: u32) -&gt; <span class="prelude-ty">Result</span>&lt;OrderList&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized);
         };
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
@@ -1494,7 +1463,7 @@
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>orders = get_viviswap_orders(config, access_token, <span class="kw-2">&amp;</span>user.username, start, limit).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>orders = get_viviswap_orders(config, access_token, start, limit).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(orders)
     }
 
@@ -1509,7 +1478,7 @@
     /// Returns a `Result` containing the swap order details or an error.
     </span><span class="comment">// MARK9:get_swap_details
     </span><span class="kw">pub async fn </span>get_swap_details(<span class="kw-2">&amp;</span><span class="self">self</span>, order_id: String) -&gt; <span class="prelude-ty">Result</span>&lt;Order&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized);
         };
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
@@ -1518,7 +1487,7 @@
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">match </span>get_viviswap_order(config, access_token, <span class="kw-2">&amp;</span>user.username, <span class="kw-2">&amp;</span>order_id).<span class="kw">await </span>{
+        <span class="kw">match </span>get_viviswap_order(config, access_token, <span class="kw-2">&amp;</span>order_id).<span class="kw">await </span>{
             <span class="prelude-val">Ok</span>(order_detail) =&gt; <span class="prelude-val">Ok</span>(order_detail),
             <span class="prelude-val">Err</span>(<span class="kw">_</span>) =&gt; <span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::Viviswap(ViviswapError::Api(<span class="macro">format!</span>(
                 <span class="string">"Swap id:{order_id} not found"
@@ -1533,8 +1502,8 @@
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
         example_bank_details, example_contract_response, example_crypto_details, example_exchange_rate_response,
         example_get_payment_details_response, example_get_user, example_network, example_network_id, example_networks,
-        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME,
-        ORDER_ID, PIN, TOKEN, USERNAME,
+        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, ORDER_ID, PIN, TOKEN,
+        USERNAME,
     };
     <span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
     <span class="kw">use </span><span class="kw">crate</span>::types::users::KycType;
@@ -1605,7 +1574,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="macro">format!</span>(<span class="string">"/api/viviswap/orders?id={}"</span>, ORDER_ID).as_str())
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(<span class="number">200</span>)
             .with_body(<span class="kw-2">&amp;</span>body)
@@ -1642,7 +1610,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/orders?start=2&amp;limit=1"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(<span class="number">200</span>)
             .with_body(<span class="kw-2">&amp;</span>body)
@@ -1685,7 +1652,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/orders?start=2&amp;limit=1"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(server_error_status)
             .with_body(<span class="kw-2">&amp;</span>body)
@@ -1713,7 +1679,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="macro">format!</span>(<span class="string">"/api/viviswap/orders?id={}"</span>, ORDER_ID).as_str())
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(server_error_status)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
@@ -1778,7 +1743,6 @@
         <span class="kw">let </span>create_viviswap_contract = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/contracts"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(<span class="number">200</span>)
             .with_body(<span class="kw-2">&amp;</span>body)
@@ -1792,7 +1756,6 @@
         <span class="kw">let </span>get_payment_details = srv
             .mock(<span class="string">"GET"</span>, payment_method_path) <span class="comment">// Use the parametrized payment method path
             </span>.match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(<span class="number">200</span>)
             .with_body(<span class="kw-2">&amp;</span>body)
@@ -1808,7 +1771,6 @@
         <span class="kw">let </span>put_user_address = srv
             .mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/address"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(<span class="macro">format!</span>(<span class="string">"network_id={}"</span>, network.id)))
             .match_body(Matcher::Exact(body))
@@ -1847,7 +1809,6 @@
         <span class="kw">let </span>create_viviswap_contract = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/contracts"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(<span class="number">200</span>)
             .with_body(<span class="kw-2">&amp;</span>body)
@@ -1888,7 +1849,6 @@
         <span class="kw">let </span>get_exchange_rate = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/courses?currency=Iota"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(<span class="number">200</span>)
             .with_body(<span class="kw-2">&amp;</span>body)

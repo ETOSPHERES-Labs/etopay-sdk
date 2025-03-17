@@ -341,12 +341,7 @@
 <a href="#340" id="340">340</a>
 <a href="#341" id="341">341</a>
 <a href="#342" id="342">342</a>
-<a href="#343" id="343">343</a>
-<a href="#344" id="344">344</a>
-<a href="#345" id="345">345</a>
-<a href="#346" id="346">346</a>
-<a href="#347" id="347">347</a>
-<a href="#348" id="348">348</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module includes functions for interacting with postident operations.
+<a href="#343" id="343">343</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module includes functions for interacting with postident operations.
 
 </span><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::postident::{get_case_details, get_new_case_id, update_case_status};
@@ -390,7 +385,7 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>response = get_new_case_id(config, access_token, <span class="kw-2">&amp;</span>active_user.username).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>response = get_new_case_id(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(response)
     }
@@ -406,16 +401,15 @@
     /// - [`crate::Error::UserNotInitialized)`] if the user fails to initialize.
     </span><span class="kw">pub async fn </span>get_kyc_details_for_postident(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CaseDetailsResponse&gt; {
         <span class="macro">info!</span>(<span class="string">"Fetching KYC details for postident"</span>);
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
-        <span class="kw">let </span>username = <span class="kw-2">&amp;</span>user.username;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>case_details = get_case_details(config, access_token, username).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>case_details = get_case_details(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(case_details)
     }
 
@@ -434,10 +428,9 @@
     /// Returns `Ok(())` if the case status is updated successfully.
     </span><span class="kw">pub async fn </span>update_kyc_status_for_postident(<span class="kw-2">&amp;</span><span class="self">self</span>, case_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
         <span class="macro">info!</span>(<span class="string">"updating KYC details for postident"</span>);
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
-        <span class="kw">let </span>username = <span class="kw-2">&amp;</span>user.username;
 
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
@@ -445,7 +438,7 @@
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        update_case_status(config, username, access_token, case_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        update_case_status(config, access_token, case_id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -457,7 +450,7 @@
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
         example_case_details, example_get_user, example_new_case_id, set_config, AUTH_PROVIDER, CASE_ID,
-        HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME,
+        HEADER_X_APP_NAME, TOKEN, USERNAME,
     };
     <span class="kw">use crate</span>::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     <span class="kw">use </span>api_types::api::postident::{NewCaseIdResponse, UpdateCaseStatusRequest};
@@ -504,7 +497,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/postident/get-new-case-id"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
@@ -605,7 +597,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/postident/get-case-details"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
@@ -665,7 +656,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"POST"</span>, <span class="string">"/api/postident/update-case-status"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">202</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)

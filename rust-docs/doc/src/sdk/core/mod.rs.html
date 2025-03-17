@@ -299,17 +299,7 @@
 <a href="#298" id="298">298</a>
 <a href="#299" id="299">299</a>
 <a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
+<a href="#301" id="301">301</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
 
 /// Config module.
 </span><span class="kw">pub mod </span>config;
@@ -438,16 +428,11 @@
     <span class="doccomment">/// Get supported networks from backend
     </span><span class="kw">async fn </span>get_networks_backend(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt; {
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>username = <span class="kw-2">&amp;</span><span class="self">self
-            </span>.active_user
-            .as_ref()
-            .ok_or(<span class="kw">crate</span>::Error::UserNotInitialized)<span class="question-mark">?
-            </span>.username;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>backend_networks = get_networks(config, username, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>backend_networks = get_networks(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>networks: Vec&lt;Network&gt; = backend_networks.iter().map(|n| Network::from(n.clone())).collect();
 
         <span class="prelude-val">Ok</span>(networks)
@@ -503,7 +488,7 @@
     <span class="kw">use </span>rstest::rstest;
 
     <span class="kw">use crate</span>::{
-        testing_utils::{example_api_networks, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN},
+        testing_utils::{example_api_networks, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN},
         wallet_manager::MockWalletManager,
     };
 
@@ -558,12 +543,8 @@
         <span class="macro">println!</span>(<span class="string">"{build_info}"</span>);
     }
 
-    <span class="attr">#[test]
-    </span><span class="kw">fn </span>test_get_networks() {}
-
     <span class="attr">#[rstest]
     #[case::success(<span class="prelude-val">Ok</span>(example_networks()))]
-    #[case::user_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
     #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
     #[tokio::test]
@@ -589,7 +570,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/config/networks"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)

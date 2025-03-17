@@ -123,9 +123,7 @@
 <a href="#122" id="122">122</a>
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
-<a href="#125" id="125">125</a>
-<a href="#126" id="126">126</a>
-<a href="#127" id="127">127</a></pre></div><pre class="rust"><code><span class="doccomment">//! Checking kyc status of the user
+<a href="#125" id="125">125</a></pre></div><pre class="rust"><code><span class="doccomment">//! Checking kyc status of the user
 //!
 //! This module provides functionality to check the KYC (Know Your Customer) status of a user.
 //! It includes a function `check_kyc_status` that takes the user's access token, username, and configuration as inGET,
@@ -167,7 +165,6 @@
     <span class="kw">let </span>response = client
         .get(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
@@ -196,7 +193,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME};
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
 
     <span class="kw">fn </span>example_kyc_status_response() -&gt; KycStatusResponse {
         KycStatusResponse {
@@ -227,7 +224,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/kyc/check-status"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);

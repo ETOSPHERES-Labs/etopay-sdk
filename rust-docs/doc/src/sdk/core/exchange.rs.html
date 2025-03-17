@@ -107,8 +107,7 @@
 <a href="#106" id="106">106</a>
 <a href="#107" id="107">107</a>
 <a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
+<a href="#109" id="109">109</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::viviswap::get_viviswap_exchange_rate;
 <span class="kw">use </span><span class="kw">crate</span>::error::Result;
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
@@ -124,7 +123,7 @@
     </span><span class="comment">// MARK10:get_exchange_rate
     </span><span class="kw">pub async fn </span>get_exchange_rate(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Decimal&gt; {
         <span class="macro">info!</span>(<span class="string">"Fetching exchange rate from viviswap"</span>);
-        <span class="kw">let </span>user = <span class="self">self</span>.get_user().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>_user = <span class="self">self</span>.get_user().<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
@@ -133,7 +132,7 @@
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
         <span class="kw">let </span>currency = Currency::try_from(network.currency)<span class="question-mark">?</span>;
-        <span class="kw">let </span>exchange_rate = get_viviswap_exchange_rate(config, access_token, <span class="kw-2">&amp;</span>user.username, currency).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>exchange_rate = get_viviswap_exchange_rate(config, access_token, currency).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(exchange_rate)
     }
 }
@@ -146,8 +145,8 @@
         core::Sdk,
         error::Result,
         testing_utils::{
-            example_exchange_rate_response, example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME,
-            HEADER_X_APP_USERNAME, TOKEN, USERNAME,
+            example_exchange_rate_response, example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
+            USERNAME,
         },
         types::users::KycType,
         wallet_manager::MockWalletManager,
@@ -187,7 +186,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/courses"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .match_query(Matcher::Exact(<span class="string">"currency=Iota"</span>.to_string()))
                         .with_status(<span class="number">200</span>)

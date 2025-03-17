@@ -628,14 +628,7 @@
 <a href="#627" id="627">627</a>
 <a href="#628" id="628">628</a>
 <a href="#629" id="629">629</a>
-<a href="#630" id="630">630</a>
-<a href="#631" id="631">631</a>
-<a href="#632" id="632">632</a>
-<a href="#633" id="633">633</a>
-<a href="#634" id="634">634</a>
-<a href="#635" id="635">635</a>
-<a href="#636" id="636">636</a>
-<a href="#637" id="637">637</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module defines methods for interacting with user-related functionality,
+<a href="#630" id="630">630</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module defines methods for interacting with user-related functionality,
 //! such as getting user state, creating a new user, deleting a user, and more.
 
 </span><span class="kw">use </span><span class="kw">super</span>::Sdk;
@@ -752,7 +745,7 @@
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">crate</span>::backend::user::delete_user_account(config, access_token, username).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">crate</span>::backend::user::delete_user_account(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// Delete the user in the repo
         </span>repo.delete(username)<span class="question-mark">?</span>;
@@ -857,7 +850,7 @@
 
     <span class="doccomment">/// Set the user preferred network
     </span><span class="kw">pub async fn </span>set_preferred_network(<span class="kw-2">&amp;mut </span><span class="self">self</span>, network_id: <span class="prelude-ty">Option</span>&lt;String&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>access_token = <span class="self">self
@@ -865,13 +858,13 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        backend::user::set_preferred_network(config, access_token, <span class="kw-2">&amp;</span>user.username, network_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        backend::user::set_preferred_network(config, access_token, network_id).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Get the user preferred network
     </span><span class="kw">pub async fn </span>get_preferred_network(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="prelude-ty">Option</span>&lt;String&gt;&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>access_token = <span class="self">self
@@ -879,7 +872,7 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>preferred_network = backend::user::get_preferred_network(config, access_token, <span class="kw-2">&amp;</span>user.username).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>preferred_network = backend::user::get_preferred_network(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(preferred_network)
     }
 }
@@ -888,9 +881,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
-    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, TOKEN, USERNAME,
-    };
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
     <span class="kw">use crate</span>::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     <span class="kw">use </span>api_types::api::kyc::KycStatusResponse;
     <span class="kw">use </span>api_types::api::viviswap::detail::SwapPaymentDetailKey;
@@ -1018,7 +1009,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"DELETE"</span>, <span class="string">"/api/user"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">202</span>) <span class="comment">// Accepted
                         </span>.expect(<span class="number">1</span>)
@@ -1078,7 +1068,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/kyc/check-status"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_body(body)
@@ -1139,7 +1128,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/kyc/check-status"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_body(body)
@@ -1189,7 +1177,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/network"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">202</span>)
                         .expect(<span class="number">1</span>)
@@ -1241,7 +1228,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/user/network"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)

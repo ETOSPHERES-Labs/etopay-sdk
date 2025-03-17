@@ -735,16 +735,7 @@
 <a href="#734" id="734">734</a>
 <a href="#735" id="735">735</a>
 <a href="#736" id="736">736</a>
-<a href="#737" id="737">737</a>
-<a href="#738" id="738">738</a>
-<a href="#739" id="739">739</a>
-<a href="#740" id="740">740</a>
-<a href="#741" id="741">741</a>
-<a href="#742" id="742">742</a>
-<a href="#743" id="743">743</a>
-<a href="#744" id="744">744</a>
-<a href="#745" id="745">745</a>
-<a href="#746" id="746">746</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::backend;
+<a href="#737" id="737">737</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">crate</span>::backend;
 <span class="kw">use </span><span class="kw">crate</span>::types::viviswap::{
     ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapState, ViviswapVerificationStatus, ViviswapVerificationStep,
 };
@@ -810,8 +801,7 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::Viviswap(ViviswapError::UserStateExisting));
         };
 
-        <span class="kw">let </span>new_viviswap_user =
-            create_viviswap_user(config, access_token, <span class="kw-2">&amp;</span>user.username, mail, terms_accepted).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>new_viviswap_user = create_viviswap_user(config, access_token, mail, terms_accepted).<span class="kw">await</span><span class="question-mark">?</span>;
 
         user.viviswap_state = <span class="prelude-val">Some</span>(ViviswapState::new());
 
@@ -845,7 +835,7 @@
 
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>kyc_status = get_viviswap_kyc_status(config, access_token, <span class="kw-2">&amp;</span>user.username).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>kyc_status = get_viviswap_kyc_status(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="macro">debug!</span>(<span class="string">"KYC Status response: {kyc_status:#?}"</span>);
 
         <span class="kw">let </span>username = user.username;
@@ -1000,7 +990,6 @@
             set_viviswap_kyc_general_details(
                 config,
                 access_token,
-                <span class="kw-2">&amp;</span>user.username,
                 <span class="kw-2">*</span>is_individual,
                 <span class="kw-2">*</span>is_pep,
                 <span class="kw-2">*</span>is_us_citizen,
@@ -1012,7 +1001,7 @@
         }
 
         <span class="comment">// submit viviswap personal kyc details
-        </span>set_viviswap_kyc_personal_details(config, access_token, <span class="kw-2">&amp;</span>user.username, full_name, date_of_birth).<span class="kw">await</span><span class="question-mark">?</span>;
+        </span>set_viviswap_kyc_personal_details(config, access_token, full_name, date_of_birth).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="comment">// get new verification status of viviswap user
         </span><span class="self">self</span>.get_kyc_details_for_viviswap().<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1235,7 +1224,7 @@
         official_document: IdentityOfficialDocumentData,
         personal_document: IdentityPersonalDocumentData,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
@@ -1247,7 +1236,6 @@
         backend::viviswap::set_viviswap_kyc_identity_details(
             config,
             access_token,
-            <span class="kw-2">&amp;</span>user.username,
             official_document,
             personal_document,
         )
@@ -1286,7 +1274,7 @@
         has_no_official_document: bool,
         document_residence_proof: <span class="prelude-ty">Option</span>&lt;File&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
@@ -1321,7 +1309,6 @@
         backend::viviswap::set_viviswap_kyc_residence_details(
             config,
             access_token,
-            <span class="kw-2">&amp;</span>user.username,
             api_types::api::viviswap::kyc::SetResidenceDataRequest {
                 country_code,
                 region,
@@ -1354,7 +1341,7 @@
     /// - [[`crate::Error::UserNotInitialized)`]] - If the user is not initialized.
     /// - [[`crate::Error::ViviswapApiError`]] - If there is an error in the viviswap API.
     </span><span class="kw">pub async fn </span>get_viviswap_kyc_amla_open_questions(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;KycAmlaQuestion&gt;&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>access_token = <span class="self">self
@@ -1363,10 +1350,9 @@
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>amla_questions =
-            backend::viviswap::get_viviswap_kyc_amla_open_questions(config, access_token, <span class="kw-2">&amp;</span>user.username)
-                .<span class="kw">await
-                </span>.map(|v| v.questions)<span class="question-mark">?</span>;
+        <span class="kw">let </span>amla_questions = backend::viviswap::get_viviswap_kyc_amla_open_questions(config, access_token)
+            .<span class="kw">await
+            </span>.map(|v| v.questions)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(amla_questions)
     }
 
@@ -1388,7 +1374,7 @@
         answers: Vec&lt;String&gt;,
         freetext_answer: <span class="prelude-ty">Option</span>&lt;String&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
@@ -1400,7 +1386,6 @@
         backend::viviswap::set_viviswap_kyc_amla_answer(
             config,
             access_token,
-            <span class="kw-2">&amp;</span>user.username,
             api_types::api::viviswap::kyc::AnswerData {
                 question_id,
                 answers,
@@ -1426,7 +1411,7 @@
     /// - [`crate::Error::UserNotInitialized)`] - If the user is not initialized.
     /// - [`crate::Error::ViviswapApiError`] - If there is an error in the viviswap API.
     </span><span class="kw">pub async fn </span>get_viviswap_kyc_open_documents(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;KycOpenDocument&gt;&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
 
@@ -1436,11 +1421,9 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
 
-        <span class="prelude-val">Ok</span>(
-            backend::viviswap::get_viviswap_kyc_open_documents(config, access_token, <span class="kw-2">&amp;</span>user.username)
-                .<span class="kw">await
-                </span>.map(|v| v.documents)<span class="question-mark">?</span>,
-        )
+        <span class="prelude-val">Ok</span>(backend::viviswap::get_viviswap_kyc_open_documents(config, access_token)
+            .<span class="kw">await
+            </span>.map(|v| v.documents)<span class="question-mark">?</span>)
     }
 
     <span class="doccomment">/// Set / upload an open KYC document
@@ -1465,7 +1448,7 @@
         front_image: <span class="prelude-ty">Option</span>&lt;File&gt;,
         back_image: <span class="prelude-ty">Option</span>&lt;File&gt;,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="kw">let </span><span class="prelude-val">Some</span>(user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
@@ -1477,7 +1460,6 @@
         backend::viviswap::set_viviswap_kyc_document(
             config,
             access_token,
-            <span class="kw-2">&amp;</span>user.username,
             api_types::api::viviswap::kyc::SetDocumentDataRequest {
                 document_id,
                 expiration_date,

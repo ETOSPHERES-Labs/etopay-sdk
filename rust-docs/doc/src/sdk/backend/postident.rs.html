@@ -295,23 +295,7 @@
 <a href="#294" id="294">294</a>
 <a href="#295" id="295">295</a>
 <a href="#296" id="296">296</a>
-<a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a>
-<a href="#302" id="302">302</a>
-<a href="#303" id="303">303</a>
-<a href="#304" id="304">304</a>
-<a href="#305" id="305">305</a>
-<a href="#306" id="306">306</a>
-<a href="#307" id="307">307</a>
-<a href="#308" id="308">308</a>
-<a href="#309" id="309">309</a>
-<a href="#310" id="310">310</a>
-<a href="#311" id="311">311</a>
-<a href="#312" id="312">312</a>
-<a href="#313" id="313">313</a></pre></div><pre class="rust"><code><span class="doccomment">//! Postident
+<a href="#297" id="297">297</a></pre></div><pre class="rust"><code><span class="doccomment">//! Postident
 //!
 //! This module provides functions for interacting with the Postident service.
 //! It includes functions for getting a new case ID, retrieving case details, and updating case status.
@@ -333,18 +317,17 @@
 /// # Returns
 ///
 /// Returns a `Result` containing the `NewCaseIdResponse` if successful, or an `Error` if an error occurs.
-</span><span class="kw">pub async fn </span>get_new_case_id(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken, username: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;NewCaseIdResponse&gt; {
+</span><span class="kw">pub async fn </span>get_new_case_id(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken) -&gt; <span class="prelude-ty">Result</span>&lt;NewCaseIdResponse&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
     <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/postident/get-new-case-id"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
-    <span class="macro">info!</span>(<span class="string">"Get new case id for {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Get new case id"</span>);
 
     <span class="kw">let </span>client = reqwest::Client::new();
     <span class="kw">let </span>response = client
         .get(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">debug!</span>(<span class="string">"Response: {response:#?}"</span>);
@@ -380,22 +363,17 @@
 /// # Returns
 ///
 /// Returns a `Result` containing the `CaseDetailsResponse` if successful, or an `Error` if an error occurs.
-</span><span class="kw">pub async fn </span>get_case_details(
-    config: <span class="kw-2">&amp;</span>Config,
-    access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
-) -&gt; <span class="prelude-ty">Result</span>&lt;CaseDetailsResponse&gt; {
+</span><span class="kw">pub async fn </span>get_case_details(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken) -&gt; <span class="prelude-ty">Result</span>&lt;CaseDetailsResponse&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
     <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/postident/get-case-details"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
-    <span class="macro">info!</span>(<span class="string">"Get new case id for {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Get new case id"</span>);
 
     <span class="kw">let </span>client = reqwest::Client::new();
     <span class="kw">let </span>response = client
         .get(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">debug!</span>(<span class="string">"Response: {response:#?}"</span>);
@@ -431,12 +409,7 @@
 /// # Returns
 ///
 /// Returns `Ok(())` if the case status is successfully updated, or an `Error` if an error occurs.
-</span><span class="kw">pub async fn </span>update_case_status(
-    config: <span class="kw-2">&amp;</span>Config,
-    username: <span class="kw-2">&amp;</span>str,
-    access_token: <span class="kw-2">&amp;</span>AccessToken,
-    case_id: <span class="kw-2">&amp;</span>str,
-) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+</span><span class="kw">pub async fn </span>update_case_status(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken, case_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
     <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/postident/update-case-status"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
@@ -451,7 +424,6 @@
         .post(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .json(<span class="kw-2">&amp;</span>request)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
@@ -480,8 +452,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        example_case_details, example_new_case_id, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME,
-        TOKEN, USERNAME,
+        example_case_details, example_new_case_id, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
     };
     <span class="kw">use </span>mockito::Matcher;
 
@@ -507,7 +478,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/postident/get-new-case-id"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
@@ -518,7 +488,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_new_case_id(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_new_case_id(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -554,7 +524,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/postident/get-case-details"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
@@ -565,7 +534,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_case_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_case_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -604,7 +573,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/postident/update-case-status"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
             .with_status(status_code)
@@ -612,7 +580,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = update_case_status(<span class="kw-2">&amp;</span>config, USERNAME, <span class="kw-2">&amp;</span>TOKEN, case_id).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = update_case_status(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, case_id).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {

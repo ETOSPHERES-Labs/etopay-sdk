@@ -550,18 +550,7 @@
 <a href="#549" id="549">549</a>
 <a href="#550" id="550">550</a>
 <a href="#551" id="551">551</a>
-<a href="#552" id="552">552</a>
-<a href="#553" id="553">553</a>
-<a href="#554" id="554">554</a>
-<a href="#555" id="555">555</a>
-<a href="#556" id="556">556</a>
-<a href="#557" id="557">557</a>
-<a href="#558" id="558">558</a>
-<a href="#559" id="559">559</a>
-<a href="#560" id="560">560</a>
-<a href="#561" id="561">561</a>
-<a href="#562" id="562">562</a>
-<a href="#563" id="563">563</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::{ApiError, <span class="prelude-ty">Result</span>};
+<a href="#552" id="552">552</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::{ApiError, <span class="prelude-ty">Result</span>};
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::AccessToken;
 <span class="kw">use crate</span>::{core::Config, share::Share};
 <span class="kw">use </span>api_types::api::user::GetShareResponse;
@@ -613,7 +602,6 @@
         .put(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .json(<span class="kw-2">&amp;</span>body)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
@@ -673,7 +661,6 @@
         .put(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .json(<span class="kw-2">&amp;</span>body)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
@@ -730,7 +717,6 @@
         .get(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">debug!</span>(<span class="string">"Download backup share response: {response:#?}"</span>);
@@ -791,7 +777,6 @@
         .get(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">debug!</span>(<span class="string">"Download recovery share response: {response:#?}"</span>);
@@ -846,7 +831,6 @@
         .delete(<span class="kw-2">&amp;</span>url)
         .bearer_auth(access_token.as_str())
         .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-        .header(<span class="string">"X-APP-USERNAME"</span>, username)
         .send()
         .<span class="kw">await</span><span class="question-mark">?</span>;
     <span class="macro">debug!</span>(<span class="string">"Delete shares response: {response:#?}"</span>);
@@ -873,8 +857,7 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        set_config, AUTH_PROVIDER, ENCRYPTED_SHARE, HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, NOT_ENCRYPTED_SHARE,
-        TOKEN, USERNAME,
+        set_config, AUTH_PROVIDER, ENCRYPTED_SHARE, HEADER_X_APP_NAME, NOT_ENCRYPTED_SHARE, TOKEN, USERNAME,
     };
     <span class="kw">use </span>mockito::Matcher;
     <span class="kw">use </span>secrecy::ExposeSecret;
@@ -914,7 +897,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/shares/backup"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
             .with_status(status_code);
@@ -964,7 +946,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/shares/recovery"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
             .with_status(status_code)
@@ -1007,7 +988,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/shares/backup"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
@@ -1057,7 +1037,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/shares/recovery"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
@@ -1105,7 +1084,6 @@
         </span><span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"DELETE"</span>, <span class="string">"/api/user/shares"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .expect(<span class="number">1</span>)
             .with_status(status_code)

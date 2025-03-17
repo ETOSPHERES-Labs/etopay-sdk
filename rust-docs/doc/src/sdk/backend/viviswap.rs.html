@@ -1693,63 +1693,7 @@
 <a href="#1692" id="1692">1692</a>
 <a href="#1693" id="1693">1693</a>
 <a href="#1694" id="1694">1694</a>
-<a href="#1695" id="1695">1695</a>
-<a href="#1696" id="1696">1696</a>
-<a href="#1697" id="1697">1697</a>
-<a href="#1698" id="1698">1698</a>
-<a href="#1699" id="1699">1699</a>
-<a href="#1700" id="1700">1700</a>
-<a href="#1701" id="1701">1701</a>
-<a href="#1702" id="1702">1702</a>
-<a href="#1703" id="1703">1703</a>
-<a href="#1704" id="1704">1704</a>
-<a href="#1705" id="1705">1705</a>
-<a href="#1706" id="1706">1706</a>
-<a href="#1707" id="1707">1707</a>
-<a href="#1708" id="1708">1708</a>
-<a href="#1709" id="1709">1709</a>
-<a href="#1710" id="1710">1710</a>
-<a href="#1711" id="1711">1711</a>
-<a href="#1712" id="1712">1712</a>
-<a href="#1713" id="1713">1713</a>
-<a href="#1714" id="1714">1714</a>
-<a href="#1715" id="1715">1715</a>
-<a href="#1716" id="1716">1716</a>
-<a href="#1717" id="1717">1717</a>
-<a href="#1718" id="1718">1718</a>
-<a href="#1719" id="1719">1719</a>
-<a href="#1720" id="1720">1720</a>
-<a href="#1721" id="1721">1721</a>
-<a href="#1722" id="1722">1722</a>
-<a href="#1723" id="1723">1723</a>
-<a href="#1724" id="1724">1724</a>
-<a href="#1725" id="1725">1725</a>
-<a href="#1726" id="1726">1726</a>
-<a href="#1727" id="1727">1727</a>
-<a href="#1728" id="1728">1728</a>
-<a href="#1729" id="1729">1729</a>
-<a href="#1730" id="1730">1730</a>
-<a href="#1731" id="1731">1731</a>
-<a href="#1732" id="1732">1732</a>
-<a href="#1733" id="1733">1733</a>
-<a href="#1734" id="1734">1734</a>
-<a href="#1735" id="1735">1735</a>
-<a href="#1736" id="1736">1736</a>
-<a href="#1737" id="1737">1737</a>
-<a href="#1738" id="1738">1738</a>
-<a href="#1739" id="1739">1739</a>
-<a href="#1740" id="1740">1740</a>
-<a href="#1741" id="1741">1741</a>
-<a href="#1742" id="1742">1742</a>
-<a href="#1743" id="1743">1743</a>
-<a href="#1744" id="1744">1744</a>
-<a href="#1745" id="1745">1745</a>
-<a href="#1746" id="1746">1746</a>
-<a href="#1747" id="1747">1747</a>
-<a href="#1748" id="1748">1748</a>
-<a href="#1749" id="1749">1749</a>
-<a href="#1750" id="1750">1750</a>
-<a href="#1751" id="1751">1751</a></pre></div><pre class="rust"><code><span class="doccomment">//! Viviswap
+<a href="#1695" id="1695">1695</a></pre></div><pre class="rust"><code><span class="doccomment">//! Viviswap
 //!
 //! This module provides functions for interacting with the Viviswap backend API.
 //! It includes functions for creating a new Viviswap user, getting KYC status,
@@ -1788,13 +1732,7 @@
 }
 
 <span class="kw">impl </span>ViviswapBackendCall {
-    <span class="kw">pub fn </span>new(
-        config: <span class="kw-2">&amp;</span>Config,
-        access_token: <span class="kw-2">&amp;</span>AccessToken,
-        username: <span class="kw-2">&amp;</span>str,
-        method: reqwest::Method,
-        url_path: <span class="kw-2">&amp;</span>str,
-    ) -&gt; <span class="self">Self </span>{
+    <span class="kw">pub fn </span>new(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken, method: reqwest::Method, url_path: <span class="kw-2">&amp;</span>str) -&gt; <span class="self">Self </span>{
         <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{}{url_path}"</span>, config.backend_url);
         <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
 
@@ -1802,8 +1740,7 @@
         <span class="kw">let </span>request_builder = client
             .request(method.clone(), <span class="kw-2">&amp;</span>url)
             .bearer_auth(access_token.as_str())
-            .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider)
-            .header(<span class="string">"X-APP-USERNAME"</span>, username);
+            .header(<span class="string">"X-APP-NAME"</span>, <span class="kw-2">&amp;</span>config.auth_provider);
 
         <span class="self">Self </span>{
             request_builder,
@@ -1896,18 +1833,17 @@
 </span><span class="kw">pub async fn </span>create_viviswap_user(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     mail: <span class="kw-2">&amp;</span>str,
     terms_accepted: bool,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;UserDataResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Create new viviswap user for {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Create new viviswap user"</span>);
 
     <span class="kw">let </span>request = UserDataRequest {
         mail: mail.to_string(),
         terms_accepted,
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/users"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/users"</span>)
         .with_body(<span class="kw-2">&amp;</span>request)
         .execute_parse()
         .<span class="kw">await
@@ -1928,14 +1864,10 @@
 /// # Errors
 ///
 /// This function can return an `Error` if the request fails or if the response status is unauthorized.
-</span><span class="kw">pub async fn </span>get_viviswap_kyc_status(
-    config: <span class="kw-2">&amp;</span>Config,
-    access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
-) -&gt; <span class="prelude-ty">Result</span>&lt;KycDetailsResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Get viviswap kyc status for {username}"</span>);
+</span><span class="kw">pub async fn </span>get_viviswap_kyc_status(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken) -&gt; <span class="prelude-ty">Result</span>&lt;KycDetailsResponse&gt; {
+    <span class="macro">info!</span>(<span class="string">"Get viviswap kyc status"</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/kyc/status"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/kyc/status"</span>)
         .execute_parse()
         .<span class="kw">await
 </span>}
@@ -1965,7 +1897,6 @@
 </span><span class="kw">pub async fn </span>set_viviswap_kyc_general_details(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     is_individual: bool,
     is_pep: bool,
     is_us_citizen: bool,
@@ -1973,7 +1904,7 @@
     country_of_residence: <span class="kw-2">&amp;</span>str,
     nationality: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc general details for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc general details "</span>);
 
     <span class="kw">let </span>request = SetGeneralDataRequest {
         is_individual,
@@ -1984,7 +1915,7 @@
         nationality: nationality.into(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/kyc/general"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/kyc/general"</span>)
         .with_body(<span class="kw-2">&amp;</span>request)
         .execute()
         .<span class="kw">await
@@ -2010,18 +1941,17 @@
 </span><span class="kw">pub async fn </span>set_viviswap_kyc_personal_details(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     full_name: <span class="kw-2">&amp;</span>str,
     date_of_birth: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc personal details for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc personal details "</span>);
 
     <span class="kw">let </span>request = SetPersonalDataRequest {
         full_name: full_name.into(),
         date_of_birth: date_of_birth.into(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/kyc/personal"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/kyc/personal"</span>)
         .with_body(<span class="kw-2">&amp;</span>request)
         .execute()
         .<span class="kw">await
@@ -2047,18 +1977,17 @@
 </span><span class="kw">pub async fn </span>set_viviswap_kyc_identity_details(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     official_document: IdentityOfficialDocumentData,
     personal_document: IdentityPersonalDocumentData,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc identity details for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc identity details "</span>);
 
     <span class="kw">let </span>request = SetIdentityDataRequest {
         official_document,
         personal_document,
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/kyc/identity"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/kyc/identity"</span>)
         .with_body(<span class="kw-2">&amp;</span>request)
         .execute()
         .<span class="kw">await
@@ -2084,12 +2013,11 @@
 </span><span class="kw">pub async fn </span>set_viviswap_kyc_residence_details(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     residence_details: SetResidenceDataRequest,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc residence details for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc residence details "</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/kyc/residence"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/kyc/residence"</span>)
         .with_body(<span class="kw-2">&amp;</span>residence_details)
         .execute()
         .<span class="kw">await
@@ -2116,11 +2044,10 @@
 </span><span class="kw">pub async fn </span>get_viviswap_kyc_amla_open_questions(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;GetKycAmlaQuestionsResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc open amla questions for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc open amla questions "</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/kyc/questions"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/kyc/questions"</span>)
         .execute_parse()
         .<span class="kw">await
 </span>}
@@ -2145,12 +2072,11 @@
 </span><span class="kw">pub async fn </span>set_viviswap_kyc_amla_answer(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     answer: AnswerData,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc amla question answer for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc amla question answer "</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/kyc/questions"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/kyc/questions"</span>)
         .with_body(<span class="kw-2">&amp;</span>answer)
         .execute()
         .<span class="kw">await
@@ -2177,11 +2103,10 @@
 </span><span class="kw">pub async fn </span>get_viviswap_kyc_open_documents(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;GetKycDocumentsResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc open documents for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc open documents "</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/kyc/documents"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/kyc/documents"</span>)
         .execute_parse()
         .<span class="kw">await
 </span>}
@@ -2206,12 +2131,11 @@
 </span><span class="kw">pub async fn </span>set_viviswap_kyc_document(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     document: SetDocumentDataRequest,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc document for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap kyc document "</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/kyc/documents"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/kyc/documents"</span>)
         .with_body(<span class="kw-2">&amp;</span>document)
         .execute()
         .<span class="kw">await
@@ -2237,18 +2161,17 @@
 </span><span class="kw">pub async fn </span>delete_viviswap_detail(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     payment_method_key: SwapPaymentDetailKey,
     payment_detail_id: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-    <span class="macro">info!</span>(<span class="string">"Delete viviswap detail for user:{username} payment-method:{payment_method_key:?} and detail_id:{payment_detail_id}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Delete viviswap detail for user,  payment-method:{payment_method_key:?} and detail_id:{payment_detail_id}"</span>);
 
     <span class="kw">let </span>query = DeleteDetailRequestQueries {
         payment_method_key,
         payment_detail_id: payment_detail_id.to_string(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::DELETE, <span class="string">"/viviswap/details"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::DELETE, <span class="string">"/viviswap/details"</span>)
         .with_query(<span class="kw-2">&amp;</span>query)
         .execute()
         .<span class="kw">await
@@ -2274,18 +2197,17 @@
 </span><span class="kw">pub async fn </span>set_viviswap_detail(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     payment_method_key: SwapPaymentDetailKey,
     address: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;SetPaymentDetailResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap detail for user {username} and payment-method {payment_method_key:?}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap detail  and payment-method {payment_method_key:?}"</span>);
 
     <span class="kw">let </span>query = SetDetailRequestQueries { payment_method_key };
 
     <span class="kw">let </span>request = SetDetailRequestBody {
         address: String::from(address),
     };
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/details"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/details"</span>)
         .with_query(<span class="kw-2">&amp;</span>query)
         .with_body(<span class="kw-2">&amp;</span>request)
         .execute_parse()
@@ -2311,14 +2233,13 @@
 </span><span class="kw">pub async fn </span>get_viviswap_details(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     payment_method_key: SwapPaymentDetailKey,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;GetPaymentDetailsResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Get viviswap details for user {username} and payment-method {payment_method_key:?}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Get viviswap details  and payment-method {payment_method_key:?}"</span>);
 
     <span class="kw">let </span>query = GetPaymentDetailsRequestQueries { payment_method_key };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/details"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/details"</span>)
         .with_query(<span class="kw-2">&amp;</span>query)
         .execute_parse()
         .<span class="kw">await
@@ -2348,14 +2269,13 @@
 </span><span class="kw">pub async fn </span>set_viviswap_contract(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     amount: CryptoAmount,
     incoming_payment_method_id: String,
     incoming_payment_detail_id: <span class="prelude-ty">Option</span>&lt;String&gt;,
     outgoing_payment_method_id: String,
     outgoing_payment_detail_id: String,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ViviswapContractCreationResponse&gt; {
-    <span class="macro">info!</span>(<span class="string">"Set viviswap contract for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Set viviswap contract "</span>);
 
     <span class="kw">let </span>request = ContractRequestBody {
         amount: Option::Some(amount.inner()),
@@ -2365,7 +2285,7 @@
         outgoing_payment_detail_id,
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::POST, <span class="string">"/viviswap/contracts"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::POST, <span class="string">"/viviswap/contracts"</span>)
         .with_body(<span class="kw-2">&amp;</span>request)
         .execute_parse()
         .<span class="kw">await
@@ -2389,7 +2309,6 @@
 </span><span class="kw">pub async fn </span>get_viviswap_exchange_rate(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     currency: Currency,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;Decimal&gt; {
     <span class="macro">info!</span>(<span class="string">"get_viviswap_exchange_rate for currency = {:?}"</span>, currency);
@@ -2398,11 +2317,10 @@
         currency: currency.into(),
     };
 
-    <span class="kw">let </span>response: GetCourseResponse =
-        ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/courses"</span>)
-            .with_query(<span class="kw-2">&amp;</span>query)
-            .execute_parse()
-            .<span class="kw">await</span><span class="question-mark">?</span>;
+    <span class="kw">let </span>response: GetCourseResponse = ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/courses"</span>)
+        .with_query(<span class="kw-2">&amp;</span>query)
+        .execute_parse()
+        .<span class="kw">await</span><span class="question-mark">?</span>;
 
     <span class="prelude-val">Ok</span>(response.course.course)
 }
@@ -2425,11 +2343,10 @@
 </span><span class="kw">pub async fn </span>get_viviswap_payment_method(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;ViviPaymentMethodsResponse&gt; {
     <span class="macro">info!</span>(<span class="string">"get_viviswap_payment_method"</span>);
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/methods"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/methods"</span>)
         .execute_parse()
         .<span class="kw">await
 </span>}
@@ -2450,19 +2367,14 @@
 /// # Errors
 ///
 /// This function can return an `Error` if the request fails or if the response status is unauthorized.
-</span><span class="kw">pub async fn </span>get_viviswap_order(
-    config: <span class="kw-2">&amp;</span>Config,
-    access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
-    order_id: <span class="kw-2">&amp;</span>str,
-) -&gt; <span class="prelude-ty">Result</span>&lt;Order&gt; {
-    <span class="macro">info!</span>(<span class="string">"Get viviswap order details for user {username}"</span>);
+</span><span class="kw">pub async fn </span>get_viviswap_order(config: <span class="kw-2">&amp;</span>Config, access_token: <span class="kw-2">&amp;</span>AccessToken, order_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;Order&gt; {
+    <span class="macro">info!</span>(<span class="string">"Get viviswap order details "</span>);
 
     <span class="kw">let </span>query = GetOrderQuery {
         id: order_id.to_string(),
     };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/orders"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/orders"</span>)
         .with_query(<span class="kw-2">&amp;</span>query)
         .execute_parse()
         .<span class="kw">await
@@ -2488,18 +2400,17 @@
 </span><span class="kw">pub async fn </span>get_viviswap_orders(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    username: <span class="kw-2">&amp;</span>str,
     start: u32,
     limit: u32,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;OrderList&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
     <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/viviswap/orders"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
-    <span class="macro">info!</span>(<span class="string">"Get viviswap list of order details for user {username}"</span>);
+    <span class="macro">info!</span>(<span class="string">"Get viviswap list of order details "</span>);
 
     <span class="kw">let </span>query = GetOrdersQuery { start, limit };
 
-    ViviswapBackendCall::new(config, access_token, username, Method::GET, <span class="string">"/viviswap/orders"</span>)
+    ViviswapBackendCall::new(config, access_token, Method::GET, <span class="string">"/viviswap/orders"</span>)
         .with_query(<span class="kw-2">&amp;</span>query)
         .execute_parse()
         .<span class="kw">await
@@ -2511,8 +2422,8 @@
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
         example_bank_details, example_contract_response, example_exchange_rate_response,
         example_get_payment_details_response, example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER,
-        HEADER_X_APP_NAME, HEADER_X_APP_USERNAME, PAYMENT_DETAIL_ID, PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY,
-        PAYMENT_METHOD_KEY_SERIALIZED, TOKEN, USERNAME,
+        HEADER_X_APP_NAME, PAYMENT_DETAIL_ID, PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY, PAYMENT_METHOD_KEY_SERIALIZED,
+        TOKEN, USERNAME,
     };
     <span class="kw">use </span>api_types::api::viviswap::{
         detail::PaymentDetail,
@@ -2646,7 +2557,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/users"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .match_body(Matcher::Exact(request_body))
@@ -2658,8 +2568,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response =
-            create_viviswap_user(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, <span class="macro">format!</span>(<span class="string">"{USERNAME}@mail.com"</span>).as_str(), <span class="bool-val">true</span>).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = create_viviswap_user(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="macro">format!</span>(<span class="string">"{USERNAME}@mail.com"</span>).as_str(), <span class="bool-val">true</span>).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -2694,7 +2603,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/kyc/status"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code)
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
@@ -2705,7 +2613,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_kyc_status(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_kyc_status(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -2748,7 +2656,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/kyc/general"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .with_status(status_code)
@@ -2756,8 +2663,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response =
-            set_viviswap_kyc_general_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, <span class="bool-val">true</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="bool-val">true</span>, <span class="string">"DE"</span>, <span class="string">"DE"</span>).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_kyc_general_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="bool-val">true</span>, <span class="bool-val">false</span>, <span class="bool-val">false</span>, <span class="bool-val">true</span>, <span class="string">"DE"</span>, <span class="string">"DE"</span>).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -2794,7 +2700,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/kyc/personal"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
             .match_body(Matcher::Exact(request_body))
@@ -2803,8 +2708,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response =
-            set_viviswap_kyc_personal_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, <span class="string">"Satoshi Satoshi"</span>, <span class="string">"1990-01-01"</span>).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_kyc_personal_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="string">"Satoshi Satoshi"</span>, <span class="string">"1990-01-01"</span>).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -2835,7 +2739,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"DELETE"</span>, <span class="string">"/api/viviswap/details"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(<span class="macro">format!</span>(
                 <span class="string">"payment_method_key={PAYMENT_METHOD_KEY_SERIALIZED}&amp;payment_detail_id={PAYMENT_DETAIL_ID}"
@@ -2845,7 +2748,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = delete_viviswap_detail(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, PAYMENT_METHOD_KEY, PAYMENT_DETAIL_ID).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = delete_viviswap_detail(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, PAYMENT_METHOD_KEY, PAYMENT_DETAIL_ID).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -2887,7 +2790,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/details"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .match_query(Matcher::Exact(<span class="macro">format!</span>(
@@ -2901,7 +2803,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = set_viviswap_detail(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, PAYMENT_METHOD_KEY, ADDRESS).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_detail(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, PAYMENT_METHOD_KEY, ADDRESS).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -2939,7 +2841,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/details"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(<span class="macro">format!</span>(
                 <span class="string">"payment_method_key={PAYMENT_METHOD_KEY_SERIALIZED}"
@@ -2952,7 +2853,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, PAYMENT_METHOD_KEY).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, PAYMENT_METHOD_KEY).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3002,7 +2903,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/contracts"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(request_body))
             .with_status(status_code);
@@ -3016,7 +2916,6 @@
         </span><span class="kw">let </span>response = set_viviswap_contract(
             <span class="kw-2">&amp;</span>config,
             <span class="kw-2">&amp;</span>TOKEN,
-            USERNAME,
             <span class="macro">dec!</span>(<span class="number">15.0</span>).try_into().unwrap(),
             PAYMENT_METHOD_ID.into(),
             <span class="prelude-val">Some</span>(PAYMENT_DETAIL_ID.into()),
@@ -3058,7 +2957,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/courses"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_query(Matcher::Exact(<span class="string">"currency=Iota"</span>.to_string()))
             .with_status(status_code);
@@ -3069,7 +2967,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_exchange_rate(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, Currency::Iota).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_exchange_rate(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, Currency::Iota).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3108,7 +3006,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/methods"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code);
         <span class="comment">// Conditionally add the response body only for the 200 status code
@@ -3118,7 +3015,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_payment_method(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_payment_method(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3153,7 +3050,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/orders"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_query(Matcher::Exact(<span class="string">"id=order-id"</span>.into()))
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code);
@@ -3164,7 +3060,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_order(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, <span class="string">"order-id"</span>).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_order(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="string">"order-id"</span>).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3200,7 +3096,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/orders"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_query(Matcher::Exact(<span class="string">"start=1&amp;limit=1"</span>.into()))
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code);
@@ -3211,7 +3106,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_orders(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, <span class="number">1u32</span>, <span class="number">1u32</span>).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_orders(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="number">1u32</span>, <span class="number">1u32</span>).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3251,7 +3146,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/kyc/identity"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
             .match_body(Matcher::Exact(request_body))
@@ -3260,8 +3154,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response =
-            set_viviswap_kyc_identity_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, official_document, personal_document).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_kyc_identity_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, official_document, personal_document).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3295,7 +3188,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/kyc/residence"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
             .match_body(Matcher::Exact(request_body))
@@ -3304,7 +3196,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = set_viviswap_kyc_residence_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, mock_request).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_kyc_residence_details(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, mock_request).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3341,7 +3233,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/kyc/questions"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code);
         <span class="comment">// Conditionally add the response body only for the 200 status code
@@ -3351,7 +3242,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_kyc_amla_open_questions(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_kyc_amla_open_questions(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3387,7 +3278,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/kyc/questions"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
             .match_body(Matcher::Exact(request_body))
@@ -3396,7 +3286,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = set_viviswap_kyc_amla_answer(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, mock_request).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_kyc_amla_answer(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, mock_request).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3433,7 +3323,6 @@
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/kyc/documents"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .with_status(status_code);
         <span class="comment">// Conditionally add the response body only for the 200 status code
@@ -3443,7 +3332,7 @@
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = get_viviswap_kyc_open_documents(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = get_viviswap_kyc_open_documents(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -3479,7 +3368,6 @@
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"POST"</span>, <span class="string">"/api/viviswap/kyc/documents"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header(HEADER_X_APP_USERNAME, USERNAME)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
             .match_body(Matcher::Exact(request_body))
@@ -3488,7 +3376,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = set_viviswap_kyc_document(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, USERNAME, mock_request).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_viviswap_kyc_document(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, mock_request).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {

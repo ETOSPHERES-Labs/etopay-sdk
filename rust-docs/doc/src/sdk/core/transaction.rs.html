@@ -820,17 +820,7 @@
 <a href="#819" id="819">819</a>
 <a href="#820" id="820">820</a>
 <a href="#821" id="821">821</a>
-<a href="#822" id="822">822</a>
-<a href="#823" id="823">823</a>
-<a href="#824" id="824">824</a>
-<a href="#825" id="825">825</a>
-<a href="#826" id="826">826</a>
-<a href="#827" id="827">827</a>
-<a href="#828" id="828">828</a>
-<a href="#829" id="829">829</a>
-<a href="#830" id="830">830</a>
-<a href="#831" id="831">831</a>
-<a href="#832" id="832">832</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
+<a href="#822" id="822">822</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
@@ -874,12 +864,11 @@
         purchase_type: <span class="kw-2">&amp;</span>str,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="macro">info!</span>(<span class="string">"Creating a new purchase request"</span>);
-        <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_active_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
 
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>sender = <span class="kw-2">&amp;</span>active_user.username;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
@@ -899,8 +888,7 @@
             purchase_model: purchase_model.to_string(),
             app_data: app_data.into(),
         };
-        <span class="kw">let </span>response =
-            create_new_transaction(config, access_token, sender, receiver, network.id, amount, metadata).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>response = create_new_transaction(config, access_token, receiver, network.id, amount, metadata).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>purchase_id = response.index;
         <span class="macro">debug!</span>(<span class="string">"Created purchase request with id: {purchase_id}"</span>);
         <span class="prelude-val">Ok</span>(purchase_id)
@@ -921,18 +909,17 @@
     /// Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction details.
     </span><span class="kw">pub async fn </span>get_purchase_details(<span class="kw-2">&amp;</span><span class="self">self</span>, purchase_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;PurchaseDetails&gt; {
         <span class="macro">info!</span>(<span class="string">"Getting purchase details with id {purchase_id}"</span>);
-        <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
+        <span class="kw">let </span><span class="prelude-val">Some</span>(_active_user) = <span class="kw-2">&amp;</span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
 
-        <span class="kw">let </span>username = <span class="kw-2">&amp;</span>active_user.username;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>response = get_transaction_details(config, access_token, username, purchase_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>response = get_transaction_details(config, access_token, purchase_id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span>details = PurchaseDetails {
             system_address: response.system_address,
@@ -969,13 +956,12 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
 
-        <span class="kw">let </span>username = <span class="kw-2">&amp;</span>active_user.username;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>tx_details = get_transaction_details(config, access_token, username, purchase_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>tx_details = get_transaction_details(config, access_token, purchase_id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="macro">debug!</span>(<span class="string">"Tx details: {:?}"</span>, tx_details);
 
@@ -1033,7 +1019,7 @@
 
         <span class="macro">debug!</span>(<span class="string">"Transaction id on network: {tx_id}"</span>);
 
-        commit_transaction(config, access_token, username, purchase_id, <span class="kw-2">&amp;</span>tx_id).<span class="kw">await</span><span class="question-mark">?</span>;
+        commit_transaction(config, access_token, purchase_id, <span class="kw-2">&amp;</span>tx_id).<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="prelude-val">Ok</span>(())
     }
@@ -1130,7 +1116,7 @@
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>txs_list = get_transactions_list(config, access_token, <span class="kw-2">&amp;</span>user.username, start, limit).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>txs_list = get_transactions_list(config, access_token, start, limit).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="macro">log::debug!</span>(<span class="string">"Txs list for user {}: {:?}"</span>, user.username, txs_list);
 
         <span class="prelude-val">Ok</span>(TxList {
@@ -1162,8 +1148,8 @@
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
         example_api_network, example_get_user, example_network_id, example_networks, example_tx_details,
-        example_tx_metadata, example_wallet_borrow, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME,
-        HEADER_X_APP_USERNAME, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
+        example_tx_metadata, example_wallet_borrow, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, PURCHASE_ID, TOKEN,
+        TX_INDEX, USERNAME,
     };
     <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
     <span class="kw">use </span><span class="kw">crate</span>::types::transactions::WalletTxInfo;
@@ -1250,7 +1236,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"POST"</span>, <span class="string">"/api/transactions/create"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">201</span>)
                         .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
@@ -1337,7 +1322,6 @@
                 mock_server_details = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/transactions/details?index=123"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_body(<span class="kw-2">&amp;</span>body)
@@ -1348,7 +1332,6 @@
                 mock_server_commit = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"POST"</span>, <span class="string">"/api/transactions/commit"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">202</span>)
                         .expect(<span class="number">1</span>)
@@ -1379,7 +1362,6 @@
                 mock_server_details = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/transactions/details?index=123"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_body(<span class="kw-2">&amp;</span>body)
@@ -1436,7 +1418,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/transactions/details?index=123"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .with_status(<span class="number">200</span>)
                         .with_body(<span class="kw-2">&amp;</span>body)
@@ -1631,7 +1612,6 @@
                 mock_server = <span class="prelude-val">Some</span>(
                     srv.mock(<span class="string">"GET"</span>, <span class="string">"/api/transactions/txs-details"</span>)
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-                        .match_header(HEADER_X_APP_USERNAME, USERNAME)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .match_query(Matcher::Exact(<span class="macro">format!</span>(<span class="string">"is_sender=false&amp;start={start}&amp;limit={limit}"</span>)))
                         .with_status(<span class="number">200</span>)
