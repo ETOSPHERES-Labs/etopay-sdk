@@ -56,7 +56,7 @@ jobs:
           cd sdk/bindings/android
 
           # get the version from cargo
-          PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "cawaena-sdk-jni") | .version')
+          PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "etopay-sdk-jni") | .version')
 
           # create the version string, only supports SNAPSHOT versions for now (add logic to change if release here)
           PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")
