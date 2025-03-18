@@ -375,7 +375,6 @@ impl WalletUser for WalletImplEthErc20 {
 mod tests {
     use super::*;
     use crate::core::Config;
-    use alloy::primitives::Address;
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rust_decimal::prelude::FromPrimitive;
     use serde_json::json;
@@ -529,6 +528,13 @@ mod tests {
         let amount_to_send = CryptoAmount::from(100);
         let from = wallet_user.get_address().await.unwrap();
         let to = String::from("0xb0b0000000000000000000000000000000000000");
+        let metadata = String::from("test message").into_bytes();
+
+        let intent = TransactionIntent {
+            address_to: to.clone(),
+            amount: amount_to_send,
+            data: Some(metadata),
+        };
 
         let mocked_rpc_estimate_gas = server
             .mock("POST", "/")
@@ -672,10 +678,8 @@ mod tests {
             .expect(2)
             .create();
 
-        let metadata = String::from("test message").into_bytes();
-
         // Act
-        let transaction_id = wallet_user.send_amount(&to, amount_to_send, Some(metadata)).await;
+        let transaction_id = wallet_user.send_amount(&intent).await;
 
         // Assert
         mocked_rpc_eth_fee_history.assert();
@@ -874,20 +878,12 @@ mod tests {
         let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
         let to = String::from("0xb0b0000000000000000000000000000000000000");
-        let value = U256::from(1);
-        let chain_id = 31337;
         let transaction_data = "data";
 
-        let tx = TxEip1559 {
-            chain_id,
-            nonce: 0,
-            gas_limit: 0,
-            max_fee_per_gas: 0,
-            max_priority_fee_per_gas: 0,
-            to: alloy_primitives::TxKind::Call(Address::from_str(&to).unwrap()),
-            value,
-            access_list: Default::default(),
-            input: alloy::hex::encode(transaction_data).into(),
+        let intent = TransactionIntent {
+            address_to: to.clone(),
+            amount: CryptoAmount::from(1),
+            data: Some(transaction_data.to_string().into_bytes()),
         };
 
         let expected_estimation = GasCostEstimation {
@@ -904,7 +900,7 @@ mod tests {
                 "jsonrpc": "2.0",
                 "id": 0,
                 "method": "eth_estimateGas",
-                "params": [{"from": from,"to": to,"value": "0x1"},"pending"],
+                "params": [{"from": from,"to": to,"value": "0xde0b6b3a7640000", "input": "0x64617461"},"pending"],
             })))
             .with_status(200)
             .with_body(
@@ -938,7 +934,7 @@ mod tests {
             .create();
 
         // Act
-        let result = wallet_user.estimate_gas_cost_eip1559(tx).await;
+        let result = wallet_user.estimate_gas_cost(&intent).await;
 
         // Assert
         mocked_rpc_estimate_gas.assert();

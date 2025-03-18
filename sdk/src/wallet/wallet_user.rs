@@ -501,9 +501,9 @@ mod tests {
         let balance = wallet_user.get_balance().await.unwrap();
         println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
-
         let index = String::from("TestMessageFromStandalone");
-        let transaction = prepare_and_send_transaction(&wallet_user, &index, &address, amount)
+
+        let transaction = prepare_and_send_transaction(&wallet_user, &Some(index.into_bytes()), &address, amount)
             .await
             .unwrap();
 
@@ -534,7 +534,7 @@ mod tests {
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
         let index = String::from("TestMessageFromStandalone");
-        let transaction = prepare_and_send_transaction(&wallet_user, &index, &address, amount)
+        let transaction = prepare_and_send_transaction(&wallet_user, &Some(index.into_bytes()), &address, amount)
             .await
             .unwrap();
 
@@ -563,7 +563,7 @@ mod tests {
 
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
     #[tokio::test]
-    async fn it_should_send_amount_with_tag_and_message() {
+    async fn it_should_send_amount_with_data() {
         // Arrange
         let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
 
@@ -573,9 +573,14 @@ mod tests {
 
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
         let message = Some(String::from("test message").into_bytes());
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: message,
+        };
 
         // Act
-        let result = wallet_user.send_amount(&address, amount, message.clone()).await;
+        let result = wallet_user.send_amount(&intent).await;
 
         // Assert
         let transaction = result.unwrap();
@@ -584,7 +589,7 @@ mod tests {
 
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
     #[tokio::test]
-    async fn it_should_send_amount_without_tag_and_message() {
+    async fn it_should_send_amount_without_data() {
         // Arrange
         let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
 
@@ -592,9 +597,14 @@ mod tests {
         let balance = wallet_user.get_balance().await.unwrap();
         println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: None,
+        };
 
         // Act
-        let result = wallet_user.send_amount(&address, amount, None).await;
+        let result = wallet_user.send_amount(&intent).await;
 
         // Assert
         let transaction = result.unwrap();
@@ -610,9 +620,14 @@ mod tests {
         let balance = wallet_user.get_balance().await.unwrap();
         println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(dec!(96854.0)).unwrap();
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: None,
+        };
 
         // Act
-        let transaction = wallet_user.send_amount(&address, amount, None).await;
+        let transaction = wallet_user.send_amount(&intent).await;
 
         // Assert
         assert!(
