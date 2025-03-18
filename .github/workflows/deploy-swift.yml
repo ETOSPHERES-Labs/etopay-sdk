@@ -5,7 +5,7 @@ on:
   workflow_dispatch:
   push:
     branches:
-     - main
+      - main
 
 env:
   CARGO_TERM_COLOR: always
@@ -45,7 +45,7 @@ jobs:
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: cawaena-sdk-swift
+          name: etopay-sdk-swift
           path: sdk/bindings/swift/CawaenaSdk
           if-no-files-found: error
           retention-days: 7
@@ -60,7 +60,7 @@ jobs:
       - name: Checkout target repository
         uses: actions/checkout@v4
         with:
-          repository: ETOSPHERES-Labs/cawaena-sdk-swift
+          repository: ETOSPHERES-Labs/etopay-sdk-swift
           token: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
           path: target-repo
 

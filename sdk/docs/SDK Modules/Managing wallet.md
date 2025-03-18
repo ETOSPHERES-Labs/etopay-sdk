@@ -114,7 +114,7 @@ This does not require any user input except `username`,  `password` and `pin`. B
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
@@ -190,7 +190,7 @@ This just performs the second step of the create fresh wallet process and needs 
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
@@ -279,7 +279,7 @@ To restore the backup, the following are required:
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
@@ -357,7 +357,7 @@ This function just deletes the wallet files and is a one-way function, to be use
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
@@ -450,7 +450,7 @@ In addition to creating, migrating, backups and initialization, the wallet modul
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")

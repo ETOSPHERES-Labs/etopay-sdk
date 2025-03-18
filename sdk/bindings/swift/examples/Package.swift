@@ -14,7 +14,7 @@ let package = Package(
         .package(path: "../CawaenaSdk")  // our Swift package
         // To use the deployed git version use this package declaration and change the product
         // in `targets` to point to `cawaena-swift`.
-        //.package(url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift.git", from: "0.0.1")
+        //.package(url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift.git", from: "0.0.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.

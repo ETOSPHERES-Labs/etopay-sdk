@@ -12,13 +12,13 @@ import PackageDescription
 let package = Package(
     name: "YourProject",
     dependencies: [
-        .package(url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift.git", from: "0.0.1")
+        .package(url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift.git", from: "0.0.1")
     ],
     targets: [
         .executableTarget(
             name: "YourTarget",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "cawaena-sdk-swift")
+                .product(name: "CawaenaSdk", package: "etopay-sdk-swift")
             ]
         )
     ]
@@ -34,7 +34,7 @@ If you’re integrating our Swift package and it includes pre-built binaries (su
 ```swift
 .binaryTarget(
     name: "CawaenaSdkBin",
-    url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift/releases/download/0.0.1/CawaenaSdkBin.xcframework.zip",
+    url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift/releases/download/0.0.1/CawaenaSdkBin.xcframework.zip",
     checksum: "<computed-checksum>"
 )
 ```

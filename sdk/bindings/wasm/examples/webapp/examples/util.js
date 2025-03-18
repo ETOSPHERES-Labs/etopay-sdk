@@ -1,4 +1,4 @@
-import * as wasm from "cawaena-sdk-wasm";
+import * as wasm from "etopay-sdk-wasm";
 const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
 export { sleep }

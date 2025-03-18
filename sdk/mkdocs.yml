@@ -11,7 +11,7 @@ plugins:
       enable_creation_date: true
   - search
   - typedoc:
-      source: "./bindings/wasm/pkg/cawaena_sdk_wasm.d.ts"
+      source: "./bindings/wasm/pkg/etopay_sdk_wasm.d.ts"
       output_dir: "jstsdocs"
       tsconfig: "./bindings/wasm/tsconfig.json"
       options: "./bindings/wasm/typedoc.json"

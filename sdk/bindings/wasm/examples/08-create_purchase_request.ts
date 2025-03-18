@@ -1,5 +1,5 @@
 import { debug } from "util";
-import * as wasm from "../pkg/cawaena_sdk_wasm";
+import * as wasm from "../pkg/etopay_sdk_wasm";
 import { initSdk } from './utils';
 
 async function main() {

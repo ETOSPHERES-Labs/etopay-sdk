@@ -80,5 +80,5 @@ compile_swift_main:
   		-lwalletsdk_cabi\
   		-import-objc-header ./include/bridging-header.h \
 		-framework CoreFoundation -framework SystemConfiguration \
-  		main.swift ./include/generated/SwiftBridgeCore.swift ./include/generated/cawaena-sdk-swift/cawaena-sdk-swift.swift 
+  		main.swift ./include/generated/SwiftBridgeCore.swift ./include/generated/etopay-sdk-swift/etopay-sdk-swift.swift 
 	./main

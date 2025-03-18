@@ -1,4 +1,4 @@
-import * as wasm from "../pkg/cawaena_sdk_wasm";
+import * as wasm from "../pkg/etopay_sdk_wasm";
 import { initSdk } from './utils';
 
 async function main() {
@@ -25,7 +25,7 @@ async function main() {
     let balance_before = await sdk.getWalletBalance(pin);
     console.log("balance before sending amount", balance_before);
 
-	const data = new TextEncoder().encode("wasm example");
+    const data = new TextEncoder().encode("wasm example");
     let tx_id = await sdk.sendAmount(pin, recipient_address, 1.0, data);
     console.log("sent amount with transaction", tx_id);
 
