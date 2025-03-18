@@ -932,27 +932,17 @@
 <a href="#931" id="931">931</a>
 <a href="#932" id="932">932</a>
 <a href="#933" id="933">933</a>
-<a href="#934" id="934">934</a>
-<a href="#935" id="935">935</a>
-<a href="#936" id="936">936</a>
-<a href="#937" id="937">937</a>
-<a href="#938" id="938">938</a>
-<a href="#939" id="939">939</a>
-<a href="#940" id="940">940</a>
-<a href="#941" id="941">941</a>
-<a href="#942" id="942">942</a>
-<a href="#943" id="943">943</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
-<span class="kw">use </span><span class="kw">super</span>::wallet_user::WalletUser;
+<a href="#934" id="934">934</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<span class="kw">use </span><span class="kw">super</span>::wallet_user::{TransactionIntent, WalletUser};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::WalletError;
 <span class="kw">use </span>alloy::eips::BlockNumberOrTag;
 <span class="kw">use </span>alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
-<span class="kw">use </span>alloy::rpc::types::{TransactionInput, TransactionRequest};
+<span class="kw">use </span>alloy::rpc::types::TransactionRequest;
 <span class="kw">use </span>alloy::signers::local::coins_bip39::English;
 <span class="kw">use </span>alloy::signers::local::MnemonicBuilder;
 <span class="kw">use </span>alloy::{
-    consensus::TxEip1559,
     primitives::Address,
     primitives::U256,
     providers::{Provider, ProviderBuilder},
@@ -1058,6 +1048,64 @@
 
         <span class="prelude-val">Ok</span>(value)
     }
+
+    <span class="doccomment">/// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
+    </span><span class="kw">fn </span>prepare_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionRequest&gt; {
+        <span class="kw">let </span>TransactionIntent {
+            address_to,
+            amount,
+            data,
+        } = intent;
+
+        <span class="kw">let </span>addr_to = Address::from_str(address_to)<span class="question-mark">?</span>;
+        <span class="kw">let </span>amount_wei = <span class="self">Self</span>::convert_eth_to_wei(<span class="kw-2">*</span>amount);
+        <span class="kw">let </span>amount_wei_u256 = <span class="self">Self</span>::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span><span class="kw-2">mut </span>tx = TransactionRequest::default()
+            .with_to(addr_to)
+            .with_chain_id(<span class="self">self</span>.chain_id)
+            .with_value(amount_wei_u256);
+
+        <span class="comment">// attach optional data to the transaction
+        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(data) = data {
+            tx.set_input(data.to_owned());
+        }
+
+        <span class="prelude-val">Ok</span>(tx)
+    }
+
+    <span class="doccomment">/// Submit the [`TransactionRequest`] and wait for it to be included in a block.
+    </span><span class="kw">async fn </span>submit_transaction_request(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_request: TransactionRequest) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="comment">// Send the transaction, the nonce is automatically managed by the provider.
+        </span><span class="kw">let </span>pending_tx = <span class="self">self</span>.provider.send_transaction(tx_request).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="macro">info!</span>(<span class="string">"Pending transaction... {}"</span>, pending_tx.tx_hash());
+
+        <span class="comment">// Wait for the transaction to be included and get the receipt.
+        // Note: this might take some time so we should probably do it in the background in the future
+        </span><span class="kw">let </span>receipt = pending_tx.get_receipt().<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="macro">info!</span>(<span class="string">"Transaction included in block {:?}"</span>, receipt.block_number);
+
+        <span class="prelude-val">Ok</span>(receipt.transaction_hash.to_string())
+    }
+
+    <span class="kw">async fn </span>estimate_transaction_request_gas(<span class="kw-2">&amp;</span><span class="self">self</span>, tx_request: TransactionRequest) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
+        <span class="comment">// Returns the estimated gas cost for the underlying transaction to be executed
+        </span><span class="kw">let </span>gas_limit = <span class="self">self</span>.provider.estimate_gas(tx_request).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
+        </span><span class="kw">let </span>eip1559_estimation = <span class="self">self</span>.provider.estimate_eip1559_fees().<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="kw">let </span>max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
+        <span class="kw">let </span>max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
+
+        <span class="prelude-val">Ok</span>(GasCostEstimation {
+            max_fee_per_gas,
+            max_priority_fee_per_gas,
+            gas_limit,
+        })
+    }
 }
 
 <span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
@@ -1081,38 +1129,10 @@
         <span class="prelude-val">Ok</span>(balance_eth_crypto_amount)
     }
 
-    <span class="kw">async fn </span>send_amount(<span class="kw-2">&amp;</span><span class="self">self</span>, address: <span class="kw-2">&amp;</span>str, amount: CryptoAmount, data: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-        <span class="kw">let </span>addr_to = Address::from_str(address)<span class="question-mark">?</span>;
-        <span class="kw">let </span>amount_wei = <span class="self">Self</span>::convert_eth_to_wei(amount);
-        <span class="kw">let </span>amount_wei_u256 = <span class="self">Self</span>::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
-
-        <span class="kw">let </span><span class="kw-2">mut </span>tx = TransactionRequest::default()
-            .with_to(addr_to)
-            .with_chain_id(<span class="self">self</span>.chain_id)
-            .with_value(amount_wei_u256);
-
-        <span class="comment">// attach optional data to the transaction
-        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(data) = data {
-            tx.set_input(data.to_owned());
-        }
-
-        <span class="comment">// Send the transaction, the nonce is automatically managed by the provider.
-        </span><span class="kw">let </span>pending_tx = <span class="self">self</span>.provider.send_transaction(tx.clone()).<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="macro">info!</span>(<span class="string">"Pending transaction... {}"</span>, pending_tx.tx_hash());
-
-        <span class="comment">// Wait for the transaction to be included and get the receipt.
-        // Note: this might take some time so we should probably do it in the background in the future
-        </span><span class="kw">let </span>receipt = pending_tx.get_receipt().<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="macro">info!</span>(<span class="string">"Transaction included in block {:?}"</span>, receipt.block_number);
-
-        <span class="prelude-val">Ok</span>(receipt.transaction_hash.to_string())
-    }
-
-    <span class="kw">async fn </span>send_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, _index: <span class="kw-2">&amp;</span>str, _address: <span class="kw-2">&amp;</span>str, _amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-        <span class="macro">unimplemented!</span>(<span class="string">"use send_amount"</span>);
-    }
+    <span class="kw">async fn </span>send_amount(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="kw">let </span>tx_request = <span class="self">self</span>.prepare_transaction(intent)<span class="question-mark">?</span>;
+        <span class="self">self</span>.submit_transaction_request(tx_request).<span class="kw">await
+    </span>}
 
     <span class="comment">// The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
@@ -1167,36 +1187,10 @@
         })
     }
 
-    <span class="kw">async fn </span>estimate_gas_cost_eip1559(<span class="kw-2">&amp;</span><span class="self">self</span>, transaction: TxEip1559) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
-        <span class="kw">let </span>from = <span class="self">self</span>.get_address().<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="kw">let </span>to = transaction
-            .to
-            .to()
-            .ok_or(WalletError::InvalidTransaction(String::from(<span class="string">"receiver is empty"</span>)))<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>tx = TransactionRequest::default()
-            .from(Address::from_str(<span class="kw-2">&amp;</span>from)<span class="question-mark">?</span>)
-            .to(<span class="kw-2">*</span>to)
-            .input(TransactionInput::new(transaction.input))
-            .access_list(transaction.access_list)
-            .value(transaction.value);
-
-        <span class="comment">// Returns the estimated gas cost for the underlying transaction to be executed
-        </span><span class="kw">let </span>gas_limit = <span class="self">self</span>.provider.estimate_gas(tx).<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="comment">// Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
-        </span><span class="kw">let </span>eip1559_estimation = <span class="self">self</span>.provider.estimate_eip1559_fees().<span class="kw">await</span><span class="question-mark">?</span>;
-
-        <span class="kw">let </span>max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
-        <span class="kw">let </span>max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
-
-        <span class="prelude-val">Ok</span>(GasCostEstimation {
-            max_fee_per_gas,
-            max_priority_fee_per_gas,
-            gas_limit,
-        })
-    }
+    <span class="kw">async fn </span>estimate_gas_cost(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
+        <span class="kw">let </span>tx_request = <span class="self">self</span>.prepare_transaction(intent)<span class="question-mark">?</span>;
+        <span class="self">self</span>.estimate_transaction_request_gas(tx_request).<span class="kw">await
+    </span>}
 }
 
 <span class="macro">alloy::sol!</span>(
@@ -1222,6 +1216,29 @@
 
     <span class="kw">fn </span>get_contract(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Erc20Contract::Erc20ContractInstance&lt;(), <span class="kw-2">&amp;</span>ProviderType&gt; {
         Erc20Contract::new(<span class="self">self</span>.contract_address, <span class="kw-2">&amp;</span><span class="self">self</span>.inner.provider)
+    }
+
+    <span class="doccomment">/// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
+    </span><span class="kw">fn </span>prepare_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;TransactionRequest&gt; {
+        <span class="kw">let </span>TransactionIntent {
+            address_to,
+            amount,
+            data,
+        } = intent;
+
+        <span class="kw">if </span>data.as_ref().is_some_and(|d| !d.is_empty()) {
+            <span class="comment">// We cannot attach data to the smart contract transfer, so log a warning
+            </span><span class="macro">log::warn!</span>(<span class="string">"Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}"</span>);
+        }
+
+        <span class="kw">let </span>addr_to = Address::from_str(address_to)<span class="question-mark">?</span>;
+        <span class="kw">let </span>amount_wei = WalletImplEth::convert_eth_to_wei(<span class="kw-2">*</span>amount);
+        <span class="kw">let </span>amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>contract = <span class="self">self</span>.get_contract();
+
+        <span class="comment">// create a TransactionReqeust encoding the contract call
+        </span><span class="prelude-val">Ok</span>(contract.transfer(addr_to, amount_wei_u256).into_transaction_request())
     }
 }
 
@@ -1252,41 +1269,10 @@
         <span class="prelude-val">Ok</span>(balance_eth_crypto_amount)
     }
 
-    <span class="kw">async fn </span>send_amount(<span class="kw-2">&amp;</span><span class="self">self</span>, address: <span class="kw-2">&amp;</span>str, amount: CryptoAmount, data: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-        <span class="kw">match </span>data {
-            <span class="prelude-val">Some</span>(data) <span class="kw">if </span>!data.is_empty() =&gt; {
-                <span class="comment">// We cannot attach data to the smart contract transfer, so log a warning
-                </span><span class="macro">log::warn!</span>(<span class="string">"Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}"</span>);
-                <span class="comment">// TODO: should we return an error instead?
-            </span>}
-            <span class="kw">_ </span>=&gt; {}
-        }
-
-        <span class="kw">let </span>addr_to = Address::from_str(address)<span class="question-mark">?</span>;
-        <span class="kw">let </span>amount_wei = WalletImplEth::convert_eth_to_wei(amount);
-        <span class="kw">let </span>amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
-
-        <span class="kw">let </span>contract = <span class="self">self</span>.get_contract();
-
-        <span class="comment">// Create the transfer
-        </span><span class="kw">let </span>pending_tx = contract.transfer(addr_to, amount_wei_u256).send().<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="macro">info!</span>(<span class="string">"Pending transaction... {}"</span>, pending_tx.tx_hash());
-
-        <span class="comment">// Wait for the transaction to be included and get the receipt.
-        // Note: this might take some time so we should probably do it in the background in the future
-
-        // we can also do watch()
-        // let tx_hash = pending_tx.watch().await?;
-        // Ok(tx_hash.to_string())
-        </span><span class="kw">let </span>receipt = pending_tx.get_receipt().<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="macro">info!</span>(<span class="string">"Transaction included in block {:?}"</span>, receipt.block_number);
-
-        <span class="prelude-val">Ok</span>(receipt.transaction_hash.to_string())
-    }
-
-    <span class="kw">async fn </span>send_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, _index: <span class="kw-2">&amp;</span>str, _address: <span class="kw-2">&amp;</span>str, _amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-        <span class="macro">unimplemented!</span>(<span class="string">"use send_amount"</span>);
-    }
+    <span class="kw">async fn </span>send_amount(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="kw">let </span>tx_request = <span class="self">self</span>.prepare_transaction(intent)<span class="question-mark">?</span>;
+        <span class="self">self</span>.inner.submit_transaction_request(tx_request).<span class="kw">await
+    </span>}
 
     <span class="comment">// The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
@@ -1301,9 +1287,9 @@
         </span><span class="self">self</span>.inner.get_wallet_tx(transaction_id).<span class="kw">await
     </span>}
 
-    <span class="kw">async fn </span>estimate_gas_cost_eip1559(<span class="kw-2">&amp;</span><span class="self">self</span>, transaction: TxEip1559) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
-        <span class="comment">// TODO: this is probably not accurate, we need to estimate for the Contract call...
-        </span><span class="self">self</span>.inner.estimate_gas_cost_eip1559(transaction).<span class="kw">await
+    <span class="kw">async fn </span>estimate_gas_cost(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
+        <span class="kw">let </span>tx_request = <span class="self">self</span>.prepare_transaction(intent)<span class="question-mark">?</span>;
+        <span class="self">self</span>.inner.estimate_transaction_request_gas(tx_request).<span class="kw">await
     </span>}
 }
 
@@ -1311,7 +1297,6 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::core::Config;
-    <span class="kw">use </span>alloy::primitives::Address;
     <span class="kw">use </span>iota_sdk::crypto::keys::bip39::Mnemonic;
     <span class="kw">use </span>rust_decimal::prelude::FromPrimitive;
     <span class="kw">use </span>serde_json::json;
@@ -1465,6 +1450,13 @@
         <span class="kw">let </span>amount_to_send = CryptoAmount::from(<span class="number">100</span>);
         <span class="kw">let </span>from = wallet_user.get_address().<span class="kw">await</span>.unwrap();
         <span class="kw">let </span>to = String::from(<span class="string">"0xb0b0000000000000000000000000000000000000"</span>);
+        <span class="kw">let </span>metadata = String::from(<span class="string">"test message"</span>).into_bytes();
+
+        <span class="kw">let </span>intent = TransactionIntent {
+            address_to: to.clone(),
+            amount: amount_to_send,
+            data: <span class="prelude-val">Some</span>(metadata),
+        };
 
         <span class="kw">let </span>mocked_rpc_estimate_gas = server
             .mock(<span class="string">"POST"</span>, <span class="string">"/"</span>)
@@ -1608,10 +1600,8 @@
             .expect(<span class="number">2</span>)
             .create();
 
-        <span class="kw">let </span>metadata = String::from(<span class="string">"test message"</span>).into_bytes();
-
         <span class="comment">// Act
-        </span><span class="kw">let </span>transaction_id = wallet_user.send_amount(<span class="kw-2">&amp;</span>to, amount_to_send, <span class="prelude-val">Some</span>(metadata)).<span class="kw">await</span>;
+        </span><span class="kw">let </span>transaction_id = wallet_user.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span>mocked_rpc_eth_fee_history.assert();
@@ -1810,20 +1800,12 @@
         <span class="kw">let </span>wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).<span class="kw">await</span>;
 
         <span class="kw">let </span>to = String::from(<span class="string">"0xb0b0000000000000000000000000000000000000"</span>);
-        <span class="kw">let </span>value = U256::from(<span class="number">1</span>);
-        <span class="kw">let </span>chain_id = <span class="number">31337</span>;
         <span class="kw">let </span>transaction_data = <span class="string">"data"</span>;
 
-        <span class="kw">let </span>tx = TxEip1559 {
-            chain_id,
-            nonce: <span class="number">0</span>,
-            gas_limit: <span class="number">0</span>,
-            max_fee_per_gas: <span class="number">0</span>,
-            max_priority_fee_per_gas: <span class="number">0</span>,
-            to: alloy_primitives::TxKind::Call(Address::from_str(<span class="kw-2">&amp;</span>to).unwrap()),
-            value,
-            access_list: Default::default(),
-            input: alloy::hex::encode(transaction_data).into(),
+        <span class="kw">let </span>intent = TransactionIntent {
+            address_to: to.clone(),
+            amount: CryptoAmount::from(<span class="number">1</span>),
+            data: <span class="prelude-val">Some</span>(transaction_data.to_string().into_bytes()),
         };
 
         <span class="kw">let </span>expected_estimation = GasCostEstimation {
@@ -1840,7 +1822,7 @@
                 <span class="string">"jsonrpc"</span>: <span class="string">"2.0"</span>,
                 <span class="string">"id"</span>: <span class="number">0</span>,
                 <span class="string">"method"</span>: <span class="string">"eth_estimateGas"</span>,
-                <span class="string">"params"</span>: [{<span class="string">"from"</span>: from,<span class="string">"to"</span>: to,<span class="string">"value"</span>: <span class="string">"0x1"</span>},<span class="string">"pending"</span>],
+                <span class="string">"params"</span>: [{<span class="string">"from"</span>: from,<span class="string">"to"</span>: to,<span class="string">"value"</span>: <span class="string">"0xde0b6b3a7640000"</span>, <span class="string">"input"</span>: <span class="string">"0x64617461"</span>},<span class="string">"pending"</span>],
             })))
             .with_status(<span class="number">200</span>)
             .with_body(
@@ -1874,7 +1856,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>result = wallet_user.estimate_gas_cost_eip1559(tx).<span class="kw">await</span>;
+        </span><span class="kw">let </span>result = wallet_user.estimate_gas_cost(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span>mocked_rpc_estimate_gas.assert();
