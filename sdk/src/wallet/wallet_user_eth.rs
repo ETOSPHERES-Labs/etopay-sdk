@@ -123,7 +123,7 @@ impl WalletImplEth {
             data,
         } = intent;
 
-        let addr_to = Address::from_str(&address_to)?;
+        let addr_to = Address::from_str(address_to)?;
         let amount_wei = Self::convert_eth_to_wei(*amount);
         let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
 
@@ -296,16 +296,12 @@ impl WalletImplEthErc20 {
             data,
         } = intent;
 
-        match data {
-            Some(data) if !data.is_empty() => {
-                // We cannot attach data to the smart contract transfer, so log a warning
-                log::warn!("Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}");
-                // TODO: should we return an error instead?
-            }
-            _ => {}
+        if data.as_ref().is_some_and(|d| !d.is_empty()) {
+            // We cannot attach data to the smart contract transfer, so log a warning
+            log::warn!("Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}");
         }
 
-        let addr_to = Address::from_str(&address_to)?;
+        let addr_to = Address::from_str(address_to)?;
         let amount_wei = WalletImplEth::convert_eth_to_wei(*amount);
         let amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)?;
 
