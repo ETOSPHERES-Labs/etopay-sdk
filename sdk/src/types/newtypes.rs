@@ -26,7 +26,7 @@ use aes_gcm::{
 };
 use iota_sdk::crypto::hashes::blake2b::Blake2b256;
 use iota_sdk::crypto::hashes::Digest;
-use rand_core::{OsRng, RngCore};
+use rand::RngCore;
 use serde::{Deserialize, Serialize};
 
 macro_rules! impl_redacted_debug {
@@ -179,7 +179,7 @@ impl EncryptionSalt {
     /// Generate a new random [`EncryptionSalt`].
     pub fn generate() -> Self {
         let mut salt = [0u8; 12];
-        OsRng.fill_bytes(&mut salt);
+        rand::rng().fill_bytes(&mut salt);
         Self(Box::new(salt))
     }
 }

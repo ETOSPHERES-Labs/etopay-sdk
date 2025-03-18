@@ -1,6 +1,10 @@
 [build]
 target = "wasm32-unknown-unknown"
 
+# enable wasm_js backend for the getrandom crate
+[target.wasm32-unknown-unknown]
+rustflags = ['--cfg', 'getrandom_backend="wasm_js"']
+
 [profile.release]
 # Tell `rustc` to optimize for small code size.
 opt-level = "s"

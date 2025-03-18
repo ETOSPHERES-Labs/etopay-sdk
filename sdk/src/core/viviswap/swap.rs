@@ -715,7 +715,7 @@ mod tests {
         };
         let body = serde_json::to_string(&mock_response).unwrap();
 
-        let server_error_status = rand::thread_rng().gen_range(400..410);
+        let server_error_status = rand::rng().random_range(400..410);
         let mock_server = srv
             .mock("GET", "/api/viviswap/orders?start=2&limit=1")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
@@ -742,7 +742,7 @@ mod tests {
         sdk.access_token = Some(TOKEN.clone());
         sdk.active_user = Some(get_active_user());
 
-        let server_error_status = rand::thread_rng().gen_range(400..410);
+        let server_error_status = rand::rng().random_range(400..410);
         let mock_server = srv
             .mock("GET", format!("/api/viviswap/orders?id={}", ORDER_ID).as_str())
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)

@@ -29,7 +29,7 @@ examples=(
 for example in "${examples[@]}"
 do
     echo "------------------------------ Running example: $example -----------------------------------------------------------"
-    npx ts-node "$example"
+    bun "$example"
 done
 
 echo "All examples finished successfully."
