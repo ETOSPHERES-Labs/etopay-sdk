@@ -958,14 +958,22 @@
 <a href="#957" id="957">957</a>
 <a href="#958" id="958">958</a>
 <a href="#959" id="959">959</a>
-<a href="#960" id="960">960</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 //! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
 //! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
 //!
 
 </span><span class="kw">use </span><span class="kw">super</span>::share::Share;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::{WalletImplStardust, WalletUser};
-<span class="kw">use </span><span class="kw">super</span>::wallet_user_eth::WalletImplEth;
+<span class="kw">use </span><span class="kw">super</span>::wallet_user_eth::{WalletImplEth, WalletImplEthErc20};
 <span class="kw">use </span><span class="kw">crate</span>::core::{Config, UserRepoT};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
 <span class="kw">use </span><span class="kw">crate</span>::types::networks::{Network, NetworkType};
@@ -1505,7 +1513,15 @@
 
         <span class="kw">let </span>bo = <span class="kw">match </span>network.network_type {
             NetworkType::Evm { node_urls, chain_id } =&gt; {
-                <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic, node_urls, chain_id).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic, node_urls, chain_id)<span class="question-mark">?</span>;
+                Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
+            }
+            NetworkType::EvmErc20 {
+                node_urls,
+                chain_id,
+                contract_address,
+            } =&gt; {
+                <span class="kw">let </span>wallet = WalletImplEthErc20::new(mnemonic, node_urls, chain_id, contract_address)<span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
             NetworkType::Stardust { node_urls } =&gt; {

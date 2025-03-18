@@ -841,7 +841,107 @@
 <a href="#840" id="840">840</a>
 <a href="#841" id="841">841</a>
 <a href="#842" id="842">842</a>
-<a href="#843" id="843">843</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<a href="#843" id="843">843</a>
+<a href="#844" id="844">844</a>
+<a href="#845" id="845">845</a>
+<a href="#846" id="846">846</a>
+<a href="#847" id="847">847</a>
+<a href="#848" id="848">848</a>
+<a href="#849" id="849">849</a>
+<a href="#850" id="850">850</a>
+<a href="#851" id="851">851</a>
+<a href="#852" id="852">852</a>
+<a href="#853" id="853">853</a>
+<a href="#854" id="854">854</a>
+<a href="#855" id="855">855</a>
+<a href="#856" id="856">856</a>
+<a href="#857" id="857">857</a>
+<a href="#858" id="858">858</a>
+<a href="#859" id="859">859</a>
+<a href="#860" id="860">860</a>
+<a href="#861" id="861">861</a>
+<a href="#862" id="862">862</a>
+<a href="#863" id="863">863</a>
+<a href="#864" id="864">864</a>
+<a href="#865" id="865">865</a>
+<a href="#866" id="866">866</a>
+<a href="#867" id="867">867</a>
+<a href="#868" id="868">868</a>
+<a href="#869" id="869">869</a>
+<a href="#870" id="870">870</a>
+<a href="#871" id="871">871</a>
+<a href="#872" id="872">872</a>
+<a href="#873" id="873">873</a>
+<a href="#874" id="874">874</a>
+<a href="#875" id="875">875</a>
+<a href="#876" id="876">876</a>
+<a href="#877" id="877">877</a>
+<a href="#878" id="878">878</a>
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a>
+<a href="#884" id="884">884</a>
+<a href="#885" id="885">885</a>
+<a href="#886" id="886">886</a>
+<a href="#887" id="887">887</a>
+<a href="#888" id="888">888</a>
+<a href="#889" id="889">889</a>
+<a href="#890" id="890">890</a>
+<a href="#891" id="891">891</a>
+<a href="#892" id="892">892</a>
+<a href="#893" id="893">893</a>
+<a href="#894" id="894">894</a>
+<a href="#895" id="895">895</a>
+<a href="#896" id="896">896</a>
+<a href="#897" id="897">897</a>
+<a href="#898" id="898">898</a>
+<a href="#899" id="899">899</a>
+<a href="#900" id="900">900</a>
+<a href="#901" id="901">901</a>
+<a href="#902" id="902">902</a>
+<a href="#903" id="903">903</a>
+<a href="#904" id="904">904</a>
+<a href="#905" id="905">905</a>
+<a href="#906" id="906">906</a>
+<a href="#907" id="907">907</a>
+<a href="#908" id="908">908</a>
+<a href="#909" id="909">909</a>
+<a href="#910" id="910">910</a>
+<a href="#911" id="911">911</a>
+<a href="#912" id="912">912</a>
+<a href="#913" id="913">913</a>
+<a href="#914" id="914">914</a>
+<a href="#915" id="915">915</a>
+<a href="#916" id="916">916</a>
+<a href="#917" id="917">917</a>
+<a href="#918" id="918">918</a>
+<a href="#919" id="919">919</a>
+<a href="#920" id="920">920</a>
+<a href="#921" id="921">921</a>
+<a href="#922" id="922">922</a>
+<a href="#923" id="923">923</a>
+<a href="#924" id="924">924</a>
+<a href="#925" id="925">925</a>
+<a href="#926" id="926">926</a>
+<a href="#927" id="927">927</a>
+<a href="#928" id="928">928</a>
+<a href="#929" id="929">929</a>
+<a href="#930" id="930">930</a>
+<a href="#931" id="931">931</a>
+<a href="#932" id="932">932</a>
+<a href="#933" id="933">933</a>
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::WalletUser;
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
@@ -899,7 +999,7 @@
 
 <span class="kw">impl </span>WalletImplEth {
     <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    </span><span class="kw">pub async fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// Ase mnemonic to create a Signer
         // Child key at derivation path: m/44'/60'/0'/0/{index}.
         </span><span class="kw">let </span>wallet = MnemonicBuilder::&lt;English&gt;::default()
@@ -960,8 +1060,7 @@
     }
 }
 
-<span class="attr">#[allow(unused_variables)] </span><span class="comment">// allow unused parameters until everything is implemented
-</span><span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
+<span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
 #[cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), async_trait)]
 #[cfg_attr(test, mockall::automock)]
 </span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEth {
@@ -1011,14 +1110,14 @@
         <span class="prelude-val">Ok</span>(receipt.transaction_hash.to_string())
     }
 
-    <span class="kw">async fn </span>send_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, index: <span class="kw-2">&amp;</span>str, address: <span class="kw-2">&amp;</span>str, amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+    <span class="kw">async fn </span>send_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, _index: <span class="kw-2">&amp;</span>str, _address: <span class="kw-2">&amp;</span>str, _amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="macro">unimplemented!</span>(<span class="string">"use send_amount"</span>);
     }
 
     <span class="comment">// The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
-    </span><span class="kw">async fn </span>get_wallet_tx_list(<span class="kw-2">&amp;</span><span class="self">self</span>, start: usize, limit: usize) -&gt; <span class="prelude-ty">Result</span>&lt;WalletTxInfoList&gt; {
+    </span><span class="kw">async fn </span>get_wallet_tx_list(<span class="kw-2">&amp;</span><span class="self">self</span>, _start: usize, _limit: usize) -&gt; <span class="prelude-ty">Result</span>&lt;WalletTxInfoList&gt; {
         <span class="prelude-val">Err</span>(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -1043,7 +1142,6 @@
         <span class="kw">let </span>my_address = <span class="self">self</span>.get_address().<span class="kw">await</span><span class="question-mark">?</span>;
 
         <span class="kw">let </span>is_transaction_incoming = tx.to().is_some_and(|to| to.to_string() == my_address);
-        <span class="kw">let </span>value = tx.value();
 
         <span class="kw">let </span>receipt = <span class="self">self</span>.provider.get_transaction_receipt(transaction_hash).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>status = <span class="kw">match </span>receipt.map(|r| r.inner.is_success()) {
@@ -1052,7 +1150,6 @@
             <span class="prelude-val">None </span>=&gt; InclusionState::Pending,
         };
 
-        <span class="kw">let </span>receipt = <span class="self">self</span>.provider.get_transaction_receipt(transaction_hash).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>balance_wei_crypto_amount = <span class="self">Self</span>::convert_alloy_256_to_crypto_amount(tx.value())<span class="question-mark">?</span>;
         <span class="kw">let </span>value_eth_crypto_amount = <span class="self">Self</span>::convert_wei_to_eth(balance_wei_crypto_amount);
 
@@ -1102,6 +1199,114 @@
     }
 }
 
+<span class="macro">alloy::sol!</span>(
+    <span class="attr">#[sol(rpc)]
+    </span>Erc20Contract,
+    <span class="string">"src/abi/erc20.json"
+</span>);
+
+<span class="doccomment">/// [`WalletUser`] implementation for ETH-ERC20
+</span><span class="attr">#[derive(Debug)]
+</span><span class="kw">pub struct </span>WalletImplEthErc20 {
+    inner: WalletImplEth,
+    contract_address: Address,
+}
+<span class="kw">impl </span>WalletImplEthErc20 {
+    <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
+    </span><span class="kw">pub fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64, contract_address: String) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+        <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
+            inner: WalletImplEth::new(mnemonic, node_urls, chain_id)<span class="question-mark">?</span>,
+            contract_address: contract_address.parse()<span class="question-mark">?</span>,
+        })
+    }
+
+    <span class="kw">fn </span>get_contract(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; Erc20Contract::Erc20ContractInstance&lt;(), <span class="kw-2">&amp;</span>ProviderType&gt; {
+        Erc20Contract::new(<span class="self">self</span>.contract_address, <span class="kw-2">&amp;</span><span class="self">self</span>.inner.provider)
+    }
+}
+
+<span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
+#[cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), async_trait)]
+#[cfg_attr(test, mockall::automock)]
+</span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEthErc20 {
+    <span class="kw">async fn </span>get_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="self">self</span>.inner.get_address().<span class="kw">await
+    </span>}
+
+    <span class="kw">async fn </span>get_balance(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CryptoAmount&gt; {
+        <span class="kw">let </span>contract = <span class="self">self</span>.get_contract();
+
+        <span class="kw">let </span><span class="kw-2">mut </span>total = U256::ZERO;
+        <span class="kw">for </span>addr <span class="kw">in </span><span class="self">self</span>.inner.provider.signer_addresses() {
+            <span class="comment">// call the smart contract here
+            </span><span class="kw">let </span>result = contract.balanceOf(addr).call().<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span>balance = result.balance;
+
+            <span class="macro">log::info!</span>(<span class="string">"Balance for address {} = {}"</span>, addr, balance);
+            total += balance;
+        }
+
+        <span class="comment">// TODO: respect the decimals here
+        </span><span class="kw">let </span>balance_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(total)<span class="question-mark">?</span>;
+        <span class="kw">let </span>balance_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(balance_wei_crypto_amount);
+        <span class="prelude-val">Ok</span>(balance_eth_crypto_amount)
+    }
+
+    <span class="kw">async fn </span>send_amount(<span class="kw-2">&amp;</span><span class="self">self</span>, address: <span class="kw-2">&amp;</span>str, amount: CryptoAmount, data: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="kw">match </span>data {
+            <span class="prelude-val">Some</span>(data) <span class="kw">if </span>!data.is_empty() =&gt; {
+                <span class="comment">// We cannot attach data to the smart contract transfer, so log a warning
+                </span><span class="macro">log::warn!</span>(<span class="string">"Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}"</span>);
+                <span class="comment">// TODO: should we return an error instead?
+            </span>}
+            <span class="kw">_ </span>=&gt; {}
+        }
+
+        <span class="kw">let </span>addr_to = Address::from_str(address)<span class="question-mark">?</span>;
+        <span class="kw">let </span>amount_wei = WalletImplEth::convert_eth_to_wei(amount);
+        <span class="kw">let </span>amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>contract = <span class="self">self</span>.get_contract();
+
+        <span class="comment">// Create the transfer
+        </span><span class="kw">let </span>pending_tx = contract.transfer(addr_to, amount_wei_u256).send().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="macro">info!</span>(<span class="string">"Pending transaction... {}"</span>, pending_tx.tx_hash());
+
+        <span class="comment">// Wait for the transaction to be included and get the receipt.
+        // Note: this might take some time so we should probably do it in the background in the future
+
+        // we can also do watch()
+        // let tx_hash = pending_tx.watch().await?;
+        // Ok(tx_hash.to_string())
+        </span><span class="kw">let </span>receipt = pending_tx.get_receipt().<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="macro">info!</span>(<span class="string">"Transaction included in block {:?}"</span>, receipt.block_number);
+
+        <span class="prelude-val">Ok</span>(receipt.transaction_hash.to_string())
+    }
+
+    <span class="kw">async fn </span>send_transaction(<span class="kw-2">&amp;</span><span class="self">self</span>, _index: <span class="kw-2">&amp;</span>str, _address: <span class="kw-2">&amp;</span>str, _amount: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
+        <span class="macro">unimplemented!</span>(<span class="string">"use send_amount"</span>);
+    }
+
+    <span class="comment">// The network does not provide information about historical transactions
+    // (they can be retrieved manually, but this is a time-consuming process),
+    // so the handling of this method is implemented at the SDK level.
+    </span><span class="kw">async fn </span>get_wallet_tx_list(<span class="kw-2">&amp;</span><span class="self">self</span>, _start: usize, _limit: usize) -&gt; <span class="prelude-ty">Result</span>&lt;WalletTxInfoList&gt; {
+        <span class="prelude-val">Err</span>(WalletError::WalletFeatureNotImplemented)
+    }
+
+    <span class="kw">async fn </span>get_wallet_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, transaction_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;WalletTxInfo&gt; {
+        <span class="comment">// TODO: can we get the receiver of the tokens from the TX too?
+        // For now this is enough to get the gas etc.
+        </span><span class="self">self</span>.inner.get_wallet_tx(transaction_id).<span class="kw">await
+    </span>}
+
+    <span class="kw">async fn </span>estimate_gas_cost_eip1559(<span class="kw-2">&amp;</span><span class="self">self</span>, transaction: TxEip1559) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
+        <span class="comment">// TODO: this is probably not accurate, we need to estimate for the Contract call...
+        </span><span class="self">self</span>.inner.estimate_gas_cost_eip1559(transaction).<span class="kw">await
+    </span>}
+}
+
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
@@ -1122,9 +1327,7 @@
         <span class="kw">let </span>node_url = <span class="macro">vec!</span>[String::from(<span class="string">"https://sepolia.mode.network"</span>)];
         <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id)
-            .<span class="kw">await
-            </span>.expect(<span class="string">"should initialize wallet"</span>);
+        <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id).expect(<span class="string">"should initialize wallet"</span>);
         (wallet, cleanup)
     }
 
@@ -1134,9 +1337,7 @@
         node_url: String,
         chain_id: u64,
     ) -&gt; WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), <span class="macro">vec!</span>[node_url], chain_id)
-            .<span class="kw">await
-            </span>.expect(<span class="string">"could not initialize WalletImplEth"</span>)
+        WalletImplEth::new(mnemonic.into(), <span class="macro">vec!</span>[node_url], chain_id).expect(<span class="string">"could not initialize WalletImplEth"</span>)
     }
 
     <span class="attr">#[tokio::test]
@@ -1586,7 +1787,6 @@
             })))
             .with_status(<span class="number">200</span>)
             .with_body(serde_json::to_vec(<span class="kw-2">&amp;</span>mocked_rpc_get_transaction_receipt_response_json).unwrap())
-            .expect(<span class="number">2</span>)
             .create();
 
         <span class="comment">// Act

@@ -27,7 +27,7 @@
 <p>Returns a <code>Result</code> containing <code>()</code> if successful, or a <a href="../error/enum.Error.html" title="enum sdk::error::Error"><code>crate::Error</code></a> if an error occurs.</p>
 <h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
 <p>Returns <code>Ok(())</code> if the case status is updated successfully.</p>
-</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-2" class="impl"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#18-321">source</a><a href="#impl-Sdk-2" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_purchase_request" class="method"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#36-73">source</a><h4 class="code-header">pub async fn <a href="#method.create_purchase_request" class="fn">create_purchase_request</a>(
+</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-2" class="impl"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#18-325">source</a><a href="#impl-Sdk-2" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_purchase_request" class="method"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#36-73">source</a><h4 class="code-header">pub async fn <a href="#method.create_purchase_request" class="fn">create_purchase_request</a>(
     &amp;self,
     receiver: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.str.html">str</a>,
     amount: <a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct sdk::types::currencies::CryptoAmount">CryptoAmount</a>,
@@ -74,13 +74,13 @@
 <h5 id="errors-5"><a class="doc-anchor" href="#errors-5">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 if there is an error getting the transaction details, or if there is an error committing the transaction.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.send_amount" class="method"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#224-271">source</a><h4 class="code-header">pub async fn <a href="#method.send_amount" class="fn">send_amount</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.send_amount" class="method"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#224-275">source</a><h4 class="code-header">pub async fn <a href="#method.send_amount" class="fn">send_amount</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     address: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.str.html">str</a>,
     amount: <a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct sdk::types::currencies::CryptoAmount">CryptoAmount</a>,
     data: <a class="enum" href="https://doc.rust-lang.org/1.83.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.83.0/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.u8.html">u8</a>&gt;&gt;,
-) -&gt; <a class="type" href="../error/type.Result.html" title="type sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.unit.html">()</a>&gt;</h4></section></summary><div class="docblock"><p>Send amount to receiver address</p>
+) -&gt; <a class="type" href="../error/type.Result.html" title="type sdk::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.83.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</h4></section></summary><div class="docblock"><p>Send amount to receiver address</p>
 <h5 id="arguments-4"><a class="doc-anchor" href="#arguments-4">§</a>Arguments</h5>
 <ul>
 <li><code>pin</code> - The PIN of the user.</li>
@@ -95,7 +95,7 @@ if there is an error getting the transaction details, or if there is an error co
 <h5 id="errors-6"><a class="doc-anchor" href="#errors-6">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 or if there is an error sending the amount.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_tx_list" class="method"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#287-320">source</a><h4 class="code-header">pub async fn <a href="#method.get_tx_list" class="fn">get_tx_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.TxList.html" title="struct sdk::types::transactions::TxList">TxList</a>&gt;</h4></section></summary><div class="docblock"><p>Get transaction list</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_tx_list" class="method"><a class="src rightside" href="../../src/sdk/core/transaction.rs.html#291-324">source</a><h4 class="code-header">pub async fn <a href="#method.get_tx_list" class="fn">get_tx_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.TxList.html" title="struct sdk::types::transactions::TxList">TxList</a>&gt;</h4></section></summary><div class="docblock"><p>Get transaction list</p>
 <h5 id="arguments-5"><a class="doc-anchor" href="#arguments-5">§</a>Arguments</h5>
 <ul>
 <li><code>start</code> - The starting page number.</li>
@@ -443,7 +443,7 @@ that verifies that this person is currently living at the address submitted.</li
 <li>[<code>crate::Error::ViviswapApiError</code>] - If there is an error in the viviswap API.</li>
 <li>[<code>crate::Error::UserNotInitialized)</code>] - If the user is not initialized.</li>
 </ul>
-</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-6" class="impl"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#19-562">source</a><a href="#impl-Sdk-6" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_new_mnemonic" class="method"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#35-53">source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_new_mnemonic" class="fn">create_wallet_from_new_mnemonic</a>(
+</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-6" class="impl"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#19-567">source</a><a href="#impl-Sdk-6" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_new_mnemonic" class="method"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#35-53">source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_new_mnemonic" class="fn">create_wallet_from_new_mnemonic</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type sdk::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.83.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</h4></section></summary><div class="docblock"><p>Create and store a wallet from a new random mnemonic</p>
@@ -623,7 +623,7 @@ the password should be set with [<code>set_wallet_password</code>], otherwise yo
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 <li><a href="../enum.WalletError.html#variant.WalletNotInitialized" title="variant sdk::WalletError::WalletNotInitialized"><code>WalletError::WalletNotInitialized</code></a> - If there is an error initializing the wallet.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx_list" class="method"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#487-537">source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx_list" class="fn">get_wallet_tx_list</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx_list" class="method"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#487-542">source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx_list" class="fn">get_wallet_tx_list</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     start: <a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.usize.html">usize</a>,
@@ -642,7 +642,7 @@ the password should be set with [<code>set_wallet_password</code>], otherwise yo
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 <li><a href="../enum.WalletError.html#variant.WalletNotInitialized" title="variant sdk::WalletError::WalletNotInitialized"><code>WalletError::WalletNotInitialized</code></a> - If there is an error initializing the wallet.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx" class="method"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#555-561">source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx" class="fn">get_wallet_tx</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx" class="method"><a class="src rightside" href="../../src/sdk/core/wallet.rs.html#560-566">source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx" class="fn">get_wallet_tx</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     tx_id: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.83.0/std/primitive.str.html">str</a>,

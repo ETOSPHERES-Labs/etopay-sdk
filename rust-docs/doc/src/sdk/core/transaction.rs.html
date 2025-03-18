@@ -820,7 +820,13 @@
 <a href="#819" id="819">819</a>
 <a href="#820" id="820">820</a>
 <a href="#821" id="821">821</a>
-<a href="#822" id="822">822</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
+<a href="#822" id="822">822</a>
+<a href="#823" id="823">823</a>
+<a href="#824" id="824">824</a>
+<a href="#825" id="825">825</a>
+<a href="#826" id="826">826</a>
+<a href="#827" id="827">827</a>
+<a href="#828" id="828">828</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
@@ -1049,7 +1055,7 @@
         address: <span class="kw-2">&amp;</span>str,
         amount: CryptoAmount,
         data: <span class="prelude-ty">Option</span>&lt;Vec&lt;u8&gt;&gt;,
-    ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="macro">info!</span>(<span class="string">"Sending amount {amount:?} to receiver {address}"</span>);
         <span class="self">self</span>.verify_pin(pin).<span class="kw">await</span><span class="question-mark">?</span>;
 
@@ -1070,7 +1076,12 @@
 
         <span class="comment">// create the transaction payload which holds a tag and associated data
 
-        </span><span class="kw">match </span>network.network_type {
+        </span><span class="kw">let </span>tx_id = <span class="kw">match </span>network.network_type {
+            NetworkType::EvmErc20 {
+                node_urls: <span class="kw">_</span>,
+                chain_id: <span class="kw">_</span>,
+                contract_address: <span class="kw">_</span>,
+            } =&gt; wallet.send_amount(address, amount, data).<span class="kw">await</span><span class="question-mark">?</span>,
             NetworkType::Evm {
                 node_urls: <span class="kw">_</span>,
                 chain_id: <span class="kw">_</span>,
@@ -1083,13 +1094,12 @@
                 <span class="kw">let </span><span class="kw-2">mut </span>wallet_transactions = user.wallet_transactions;
                 wallet_transactions.push(newly_created_transaction);
                 <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>active_user.username, wallet_transactions);
+                tx_id
             }
-            NetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; {
-                wallet.send_amount(address, amount, data).<span class="kw">await</span><span class="question-mark">?</span>;
-            }
-        }
+            NetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; wallet.send_amount(address, amount, data).<span class="kw">await</span><span class="question-mark">?</span>,
+        };
 
-        <span class="prelude-val">Ok</span>(())
+        <span class="prelude-val">Ok</span>(tx_id)
     }
 
     <span class="doccomment">/// Get transaction list
@@ -1507,7 +1517,9 @@
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
-            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; response.unwrap(),
+            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
+                response.unwrap();
+            }
             <span class="prelude-val">Err</span>(<span class="kw-2">ref </span>expected_err) =&gt; {
                 <span class="macro">assert_eq!</span>(response.err().unwrap().to_string(), expected_err.to_string());
             }
@@ -1579,7 +1591,7 @@
             .<span class="kw">await</span>;
 
         <span class="comment">// Assert
-        </span>response.unwrap()
+        </span>response.unwrap();
     }
 
     <span class="attr">#[rstest]
