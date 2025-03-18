@@ -12,6 +12,15 @@ pub enum NetworkType {
         /// chain_id
         chain_id: u64,
     },
+    /// Represents and EVM based ERC20 Smart Contract token
+    EvmErc20 {
+        /// node url
+        node_urls: Vec<String>,
+        /// chain_id
+        chain_id: u64,
+        ///contract address
+        contract_address: String,
+    },
     /// Represents a Stardust network.
     /// Contains the URL for the node.
     Stardust {

@@ -75,6 +75,8 @@ alloy = { version = "0.12", default-features = false, features = [
     "providers",
     "rpc-types",
     "signer-mnemonic",
+	"contract",
+	"sol-types",
 ] }
 alloy-consensus = { version = "0.12", features = ["k256"] }
 alloy-primitives = { version = "0.8", default-features = false }

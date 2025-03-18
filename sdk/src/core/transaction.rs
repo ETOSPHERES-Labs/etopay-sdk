@@ -249,6 +249,14 @@ impl Sdk {
         // create the transaction payload which holds a tag and associated data
 
         match network.network_type {
+            NetworkType::EvmErc20 {
+                node_urls: _,
+                chain_id: _,
+                contract_address: _,
+            } => {
+                let tx_id = wallet.send_amount(address, amount, data).await?;
+                println!("TX ID: {tx_id}");
+            }
             NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,

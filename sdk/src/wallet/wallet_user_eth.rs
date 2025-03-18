@@ -56,7 +56,7 @@ pub struct WalletImplEth {
 
 impl WalletImplEth {
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub async fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
+    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
         // Ase mnemonic to create a Signer
         // Child key at derivation path: m/44'/60'/0'/0/{index}.
         let wallet = MnemonicBuilder::<English>::default()
@@ -256,6 +256,133 @@ impl WalletUser for WalletImplEth {
     }
 }
 
+alloy::sol!(
+    #[sol(rpc)]
+    Erc20Contract,
+    "src/abi/erc20.json"
+);
+
+/// [`WalletUser`] implementation for ETH-ERC20
+#[derive(Debug)]
+pub struct WalletImplEthErc20 {
+    inner: WalletImplEth,
+    contract_address: Address,
+}
+impl WalletImplEthErc20 {
+    /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
+    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64, contract_address: String) -> Result<Self> {
+        Ok(Self {
+            inner: WalletImplEth::new(mnemonic, node_urls, chain_id)?,
+            contract_address: contract_address.parse()?,
+        })
+    }
+
+    fn get_contract(&self) -> Erc20Contract::Erc20ContractInstance<(), &ProviderType> {
+        Erc20Contract::new(self.contract_address, &self.inner.provider)
+    }
+}
+
+#[allow(unused_variables)] // allow unused parameters until everything is implemented
+#[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
+#[cfg_attr(not(target_arch = "wasm32"), async_trait)]
+#[cfg_attr(test, mockall::automock)]
+impl WalletUser for WalletImplEthErc20 {
+    async fn get_address(&self) -> Result<String> {
+        self.inner.get_address().await
+    }
+
+    async fn get_balance(&self) -> Result<CryptoAmount> {
+        let contract = self.get_contract();
+
+        let mut total = U256::ZERO;
+        for addr in self.inner.provider.signer_addresses() {
+            // call the smart contract here
+            let result = contract.balanceOf(addr).call().await?;
+            let balance = result.balance;
+
+            log::info!("Balance for address {} = {}", addr, balance);
+            total += balance;
+        }
+
+        // TODO: respect the decimals here
+        let balance_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(total)?;
+        let balance_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(balance_wei_crypto_amount);
+        Ok(balance_eth_crypto_amount)
+    }
+
+    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
+        let addr_to = Address::from_str(address)?;
+        let amount_wei = WalletImplEth::convert_eth_to_wei(amount);
+        let amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)?;
+
+        let contract = self.get_contract();
+
+        // Create the transfer
+        let pending_tx = contract.transfer(addr_to, amount_wei_u256).send().await?;
+        info!("Pending transaction... {}", pending_tx.tx_hash());
+
+        // Wait for the transaction to be included and get the receipt.
+        // Note: this might take some time so we should probably do it in the background in the future
+
+        // we can also do watch()
+        // let tx_hash = pending_tx.watch().await?;
+        // Ok(tx_hash.to_string())
+        let receipt = pending_tx.get_receipt().await?;
+        info!("Transaction included in block {:?}", receipt.block_number);
+
+        Ok(receipt.transaction_hash.to_string())
+    }
+
+    async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
+        unimplemented!("use send_amount");
+    }
+
+    // The network does not provide information about historical transactions
+    // (they can be retrieved manually, but this is a time-consuming process),
+    // so the handling of this method is implemented at the SDK level.
+    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList> {
+        Err(WalletError::WalletFeatureNotImplemented)
+    }
+
+    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
+        // TODO: can we get the receiver of the tokens from the TX too?
+        // For now this is enough to get the gas etc.
+        self.inner.get_wallet_tx(transaction_id).await
+    }
+
+    async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
+        Err(WalletError::WalletFeatureNotImplemented)
+        // let from = self.get_address().await?;
+        //
+        // let to = transaction
+        //     .to
+        //     .to()
+        //     .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
+        //
+        // let tx = TransactionRequest::default()
+        //     .from(Address::from_str(&from)?)
+        //     .to(*to)
+        //     .input(TransactionInput::new(transaction.input))
+        //     .access_list(transaction.access_list)
+        //     .value(transaction.value);
+        //
+        // // Returns the estimated gas cost for the underlying transaction to be executed
+        // let gas_limit = self.provider.estimate_gas(tx).await?;
+        //
+        // // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
+        // let eip1559_estimation = self.provider.estimate_eip1559_fees().await?;
+        //
+        // let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
+        // let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
+        //
+        // Ok(GasCostEstimation {
+        //     max_fee_per_gas,
+        //     max_priority_fee_per_gas,
+        //     gas_limit,
+        // })
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -276,9 +403,7 @@ mod tests {
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id)
-            .await
-            .expect("should initialize wallet");
+        let wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id).expect("should initialize wallet");
         (wallet, cleanup)
     }
 
@@ -288,9 +413,7 @@ mod tests {
         node_url: String,
         chain_id: u64,
     ) -> WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id)
-            .await
-            .expect("could not initialize WalletImplEth")
+        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id).expect("could not initialize WalletImplEth")
     }
 
     #[tokio::test]

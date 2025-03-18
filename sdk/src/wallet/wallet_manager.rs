@@ -5,7 +5,7 @@
 
 use super::share::Share;
 use super::wallet_user::{WalletImplStardust, WalletUser};
-use super::wallet_user_eth::WalletImplEth;
+use super::wallet_user_eth::{WalletImplEth, WalletImplEthErc20};
 use crate::core::{Config, UserRepoT};
 use crate::types::currencies::Currency;
 use crate::types::networks::{Network, NetworkType};
@@ -545,7 +545,15 @@ impl WalletManager for WalletManagerImpl {
 
         let bo = match network.network_type {
             NetworkType::Evm { node_urls, chain_id } => {
-                let wallet = WalletImplEth::new(mnemonic, node_urls, chain_id).await?;
+                let wallet = WalletImplEth::new(mnemonic, node_urls, chain_id)?;
+                Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
+            }
+            NetworkType::EvmErc20 {
+                node_urls,
+                chain_id,
+                contract_address,
+            } => {
+                let wallet = WalletImplEthErc20::new(mnemonic, node_urls, chain_id, contract_address)?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             NetworkType::Stardust { node_urls } => {

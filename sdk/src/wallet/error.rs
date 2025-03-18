@@ -127,6 +127,10 @@ pub enum WalletError {
     /// Error raises if value cannot be converted
     #[error("Unable to convert: {0}")]
     ConversionError(String),
+
+    /// Error for calling a Smart Contract
+    #[error("Contract error: {0}")]
+    Contract(#[from] alloy::contract::Error),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {
