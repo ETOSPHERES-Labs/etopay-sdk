@@ -1,4 +1,4 @@
-use sdk::{ErrorKind, WalletError};
+use etopay_sdk::{ErrorKind, WalletError};
 use testing::USER_SATOSHI;
 use utils::init_sdk;
 mod utils;
@@ -29,7 +29,7 @@ async fn main() {
             println!("Wallet initialized successfully");
         }
 
-        Err(sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))) => {
+        Err(etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))) => {
             // Wallet requires a password, try again with the password provided
             sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
 
@@ -41,7 +41,7 @@ async fn main() {
             }
         }
 
-        Err(sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::SetRecoveryShare))) => {
+        Err(etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::SetRecoveryShare))) => {
             // Ask user for recovery share
             let share = "<User Input>".parse().unwrap();
 
@@ -55,7 +55,7 @@ async fn main() {
             }
         }
 
-        Err(sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))) => {
+        Err(etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))) => {
             sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
             sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
                 .await

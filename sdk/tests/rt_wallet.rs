@@ -1,5 +1,5 @@
 mod utils;
-use sdk::{
+use etopay_sdk::{
     types::{
         currencies::CryptoAmount,
         newtypes::{AccessToken, EncryptionPin, PlainPassword},
@@ -185,7 +185,7 @@ async fn it_should_fail_get_balance_wrong_pin() {
     // Assert
     let error = result.unwrap_err();
     assert!(
-        matches!(error, sdk::Error::Wallet(WalletError::WrongPinOrPassword)),
+        matches!(error, etopay_sdk::Error::Wallet(WalletError::WrongPinOrPassword)),
         "unexpected error: {error:?}"
     );
 }
@@ -277,7 +277,7 @@ async fn it_should_fail_getting_balance_without_creating_wallet() {
     assert!(
         matches!(
             error,
-            sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))
+            etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))
         ),
         "unexpected error: {error}"
     );
@@ -343,7 +343,7 @@ async fn it_should_initialize_wallet_from_shares_no_access_token() {
     assert!(
         matches!(
             out,
-            Err(sdk::Error::Wallet(WalletError::WalletNotInitialized(
+            Err(etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(
                 ErrorKind::SetRecoveryShare
             )))
         ),

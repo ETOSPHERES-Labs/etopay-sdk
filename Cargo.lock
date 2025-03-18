@@ -1940,14 +1940,61 @@ dependencies = [
 ]
 
 [[package]]
+name = "etopay-sdk"
+version = "0.14.0"
+dependencies = [
+ "aes-gcm",
+ "alloy",
+ "alloy-consensus",
+ "alloy-json-rpc",
+ "alloy-primitives",
+ "alloy-provider",
+ "alloy-transport",
+ "api_types",
+ "async-trait",
+ "base64 0.22.1",
+ "chrono",
+ "dotenvy",
+ "env_logger",
+ "fake",
+ "fern-logger",
+ "fluent-assertions",
+ "iota-sdk",
+ "jammdb",
+ "kdbx-rs",
+ "log",
+ "mockall",
+ "mockito",
+ "rand 0.8.5",
+ "rand_core 0.6.4",
+ "reqwest 0.12.12",
+ "rmp-serde",
+ "rstest",
+ "rstest_reuse",
+ "rust_decimal",
+ "rust_decimal_macros",
+ "rusty_secrets",
+ "secrecy",
+ "serde",
+ "serde_json",
+ "shadow-rs",
+ "testing",
+ "thiserror 2.0.12",
+ "tokio",
+ "walkdir",
+ "web-sys",
+ "zeroize",
+]
+
+[[package]]
 name = "etopay-sdk-jni"
 version = "0.14.0"
 dependencies = [
+ "etopay-sdk",
  "jni",
  "jnigen-build",
  "jnigen-macro",
  "once_cell",
- "sdk",
  "serde",
  "serde_json",
  "tokio",
@@ -1957,7 +2004,7 @@ dependencies = [
 name = "etopay-sdk-swift"
 version = "0.14.0"
 dependencies = [
- "sdk",
+ "etopay-sdk",
  "serde_json",
  "swift-bridge",
  "swift-bridge-build",
@@ -1970,10 +2017,10 @@ version = "0.14.0"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
+ "etopay-sdk",
  "js-sys",
  "log",
  "ring",
- "sdk",
  "serde",
  "tokio",
  "uuid",
@@ -4802,53 +4849,6 @@ checksum = "da046153aa2352493d6cb7da4b6e5c0c057d8a1d0a9aa8560baffdd945acd414"
 dependencies = [
  "ring",
  "untrusted",
-]
-
-[[package]]
-name = "sdk"
-version = "0.14.0"
-dependencies = [
- "aes-gcm",
- "alloy",
- "alloy-consensus",
- "alloy-json-rpc",
- "alloy-primitives",
- "alloy-provider",
- "alloy-transport",
- "api_types",
- "async-trait",
- "base64 0.22.1",
- "chrono",
- "dotenvy",
- "env_logger",
- "fake",
- "fern-logger",
- "fluent-assertions",
- "iota-sdk",
- "jammdb",
- "kdbx-rs",
- "log",
- "mockall",
- "mockito",
- "rand 0.8.5",
- "rand_core 0.6.4",
- "reqwest 0.12.12",
- "rmp-serde",
- "rstest",
- "rstest_reuse",
- "rust_decimal",
- "rust_decimal_macros",
- "rusty_secrets",
- "secrecy",
- "serde",
- "serde_json",
- "shadow-rs",
- "testing",
- "thiserror 2.0.12",
- "tokio",
- "walkdir",
- "web-sys",
- "zeroize",
 ]
 
 [[package]]

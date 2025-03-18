@@ -1,5 +1,5 @@
+use etopay_sdk::types::currencies::CryptoAmount;
 use rust_decimal_macros::dec;
-use sdk::types::currencies::CryptoAmount;
 use testing::USER_SATOSHI;
 mod utils;
 use utils::init_sdk;

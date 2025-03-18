@@ -28,7 +28,7 @@ viviswap-swap = ["sdk/viviswap-swap"]
 jni = { workspace = true }
 jnigen-macro = { path = "../../../tools/jnigen-macro" }
 once_cell = { workspace = true }
-sdk = { package = "sdk", path = "../../" }
+sdk = { package = "etopay-sdk", path = "../../" }
 serde = { workspace = true }
 serde_json = { workspace = true }
 tokio = { workspace = true, features = ["rt-multi-thread"] }
