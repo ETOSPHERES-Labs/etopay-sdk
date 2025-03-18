@@ -2,6 +2,6 @@
 #define BridgingHeader_h
 
 #include "./generated/SwiftBridgeCore.h"
-#include "./generated/cawaena-sdk-swift/cawaena-sdk-swift.h"
+#include "./generated/etopay-sdk-swift/etopay-sdk-swift.h"
 
 #endif
