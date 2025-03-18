@@ -200,10 +200,6 @@ impl WalletUser for WalletImplEth {
         self.submit_transaction_request(tx_request).await
     }
 
-    async fn send_transaction(&self, _intent: &TransactionIntent) -> Result<String> {
-        unimplemented!("use send_amount");
-    }
-
     // The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
@@ -342,10 +338,6 @@ impl WalletUser for WalletImplEthErc20 {
     async fn send_amount(&self, intent: &TransactionIntent) -> Result<String> {
         let tx_request = self.prepare_transaction(intent)?;
         self.inner.submit_transaction_request(tx_request).await
-    }
-
-    async fn send_transaction(&self, _intent: &TransactionIntent) -> Result<String> {
-        unimplemented!("use send_amount");
     }
 
     // The network does not provide information about historical transactions

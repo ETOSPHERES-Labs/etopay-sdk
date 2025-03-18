@@ -176,22 +176,18 @@ impl Sdk {
             data: Some(purchase_id.to_string().into_bytes()),
         };
 
-        let tx_id = match tx_details.network.network_type {
-            ApiNetworkType::Evm {
-                node_urls: _,
-                chain_id: _,
-            } => {
-                let tx_id = wallet.send_amount(&intent).await?;
+        let tx_id = wallet.send_amount(&intent).await?;
 
-                let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
-                let user = repo.get(&active_user.username)?;
-                let mut wallet_transactions = user.wallet_transactions;
-                wallet_transactions.push(newly_created_transaction);
-                let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
-                tx_id
-            }
-            ApiNetworkType::Stardust { node_urls: _ } => wallet.send_transaction(&intent).await?,
-        };
+        // Store tx details for all networks other than Stardust (which stores transactions internally)
+        // TODO: rework this to always store the transactions
+        if let ApiNetworkType::Evm { .. } = tx_details.network.network_type {
+            let tx_id = wallet.send_amount(&intent).await?;
+
+            let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
+            let mut user = repo.get(&active_user.username)?;
+            user.wallet_transactions.push(newly_created_transaction);
+            let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions);
+        }
 
         debug!("Transaction id on network: {tx_id}");
 
@@ -483,7 +479,7 @@ mod tests {
                 mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
                     let mut mock_wallet_user = MockWalletUser::new();
                     mock_wallet_user
-                        .expect_send_transaction()
+                        .expect_send_amount()
                         .once()
                         .returning(|_| Ok("tx_id".to_string()));
 

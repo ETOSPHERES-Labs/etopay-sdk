@@ -6,7 +6,6 @@ use iota_sdk::client::secret::SecretManager;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::types::block::payload::transaction::TransactionId;
 use iota_sdk::types::block::payload::TaggedDataPayload;
-use iota_sdk::wallet::account::types::Transaction;
 use iota_sdk::wallet::account::{Account, SyncOptions, TransactionOptions};
 use iota_sdk::wallet::ClientOptions;
 use log::{error, info};
@@ -76,23 +75,6 @@ pub trait WalletUser: Debug {
     ///
     /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
     async fn send_amount(&self, intent: &TransactionIntent) -> Result<String>;
-
-    /// Send a transaction with one output.
-    ///
-    /// # Arguments
-    ///
-    /// * `index` - The index of the transaction.
-    /// * `address` - The address to send the amount.
-    /// * `amount` - The amount to send.
-    ///
-    /// # Returns
-    ///
-    /// Returns the sent transaction id if successful, or an `Error` if it fails.
-    ///
-    /// # Errors
-    ///
-    /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
-    async fn send_transaction(&self, intent: &TransactionIntent) -> Result<String>;
 
     /// Gets the list of transactions
     ///
@@ -246,6 +228,18 @@ impl WalletUser for WalletImplStardust {
             data,
         } = intent;
 
+        let min_amount = *amount + MIN_DUST_OUTPUT;
+
+        // Check if we have enough balance, otherwise return with err
+        let balance = self.get_balance().await?;
+        println!("{balance:?}, {min_amount:?}");
+        if balance < min_amount {
+            println!("d{balance:?}, {min_amount:?}");
+            return Err(WalletError::InsufficientBalance(String::from("Not enough balance")));
+        }
+
+        println!("Balance < amount + MIN_DUST_OUTPUT = {:?}", *amount + MIN_DUST_OUTPUT);
+
         // hard-coded tag
         let tag: Box<[u8]> = "data".to_string().into_bytes().into_boxed_slice();
         let data: Box<[u8]> = data.to_owned().unwrap_or_default().into_boxed_slice();
@@ -261,11 +255,12 @@ impl WalletUser for WalletImplStardust {
 
         let amount_glow: u64 = (amount.inner() * dec!(1_000_000)).round().try_into()?;
         let transaction = account.send(amount_glow, address_to, options).await?;
-        Ok(transaction.transaction_id.to_string())
-    }
 
-    async fn send_transaction(&self, intent: &TransactionIntent) -> Result<String> {
-        let transaction = prepare_and_send_transaction(self, &intent.data, &intent.address_to, intent.amount).await?;
+        let block_id = account
+            .retry_transaction_until_included(&transaction.transaction_id, None, None)
+            .await?;
+        info!("Transaction successfully included in block: {block_id}!");
+
         Ok(transaction.transaction_id.to_string())
     }
 
@@ -301,6 +296,7 @@ impl WalletUser for WalletImplStardust {
         let transaction_id: TransactionId = tx_id
             .parse()
             .map_err(|e: <TransactionId as FromStr>::Err| WalletError::InvalidTransaction(e.to_string()))?;
+
         // Fetch detailed transaction by its id using your wallet SDK's methods
         if let Some(transaction) = account.get_transaction(&transaction_id).await {
             Ok(transaction.into())
@@ -314,51 +310,13 @@ impl WalletUser for WalletImplStardust {
     }
 }
 
-/// Prepare and send transaction
-async fn prepare_and_send_transaction(
-    user: &WalletImplStardust,
-    index: &Option<Vec<u8>>,
-    address: &str,
-    amount: CryptoAmount,
-) -> Result<Transaction> {
-    // Check if we have enough balance, otherwise return with err
-    let balance = user.get_balance().await?;
-
-    if balance < (amount + MIN_DUST_OUTPUT) {
-        return Err(WalletError::InsufficientBalance(String::from("Not enough balance")));
-    }
-
-    let account = user.account_manager.get_account(APP_NAME).await?;
-
-    // convert to glow
-    let amount_glow: u64 = (amount.inner() * dec!(1_000_000)).round().try_into()?;
-
-    let tag = String::from("data").into_bytes();
-    let data = index.clone().unwrap_or_default();
-    let tagged_data_payload = TaggedDataPayload::new(tag, data)?;
-
-    let options = TransactionOptions {
-        allow_micro_amount: true,
-        tagged_data_payload: Some(tagged_data_payload),
-        ..Default::default()
-    };
-
-    let transaction = account.send(amount_glow, address, options).await?;
-    let block_id = account
-        .retry_transaction_until_included(&transaction.transaction_id, None, None)
-        .await?;
-    info!("Transaction successfully included in block: {block_id}!");
-
-    Ok(transaction)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;
     use crate::core::Config;
     use crate::testing_utils::MNEMONIC;
     use crate::types::{self, currencies::Currency};
-    use iota_sdk::{crypto::keys::bip39::Mnemonic, types::block::payload::transaction::TransactionEssence};
+    use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rstest::rstest;
     use rust_decimal_macros::dec;
     use testing::CleanUp;
@@ -375,37 +333,6 @@ mod tests {
             .await
             .expect("should initialize wallet");
         (wallet, cleanup)
-    }
-
-    #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
-    #[tokio::test]
-    async fn test_serial_send_tx() {
-        // Arrange
-        let mnemonic = "predict wrist plug desert mobile crowd build leg swap impose breeze loyal surge brand hair bronze melody scale hello cereal car item slow bring";
-
-        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
-
-        let address = wallet_user.get_address().await.unwrap(); // tst1qzlzd9q4aygcnuteefaekd2kvatpt3xp673sspr2hcw27zuewxpmugyavz9
-        let index = String::from("TestMessageFromStandalone");
-        let balance = wallet_user.get_balance().await.unwrap();
-        println!("Address: {address}, balance: {balance:?}");
-        let amount = CryptoAmount::try_from(dec!(10.0)).unwrap();
-        // Act
-        let transaction = prepare_and_send_transaction(&wallet_user, &Some(index.into_bytes()), &address, amount).await;
-
-        // Assert
-        let ok_transaction = transaction.unwrap();
-
-        // get output
-        let essence = ok_transaction.payload.essence();
-        let TransactionEssence::Regular(regular_essence) = essence;
-
-        let outputs = regular_essence.outputs();
-        for output in outputs {
-            println!("{output:#?}");
-        }
-
-        println!("{ok_transaction:#?}");
     }
 
     #[rstest]
@@ -440,55 +367,6 @@ mod tests {
         balance.unwrap();
     }
 
-    #[tokio::test]
-    async fn test_send_tx_more_than_balance() {
-        // Arrange
-        let mnemonic = "champion legend palm hollow describe timber coast lonely future holiday head torch race orange ranch gun broccoli average margin glue age awake nurse erase";
-        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
-        let address = wallet_user.get_address().await.unwrap();
-        let index = String::from("TestMessageFromStandalone");
-        let balance = wallet_user.get_balance().await.unwrap();
-        println!("Address: {address}, balance: {balance:?}");
-        let amount = balance + CryptoAmount::try_from(dec!(10.0)).unwrap();
-
-        let intent = TransactionIntent {
-            address_to: address,
-            amount,
-            data: Some(index.into_bytes()),
-        };
-
-        // Act
-        let transaction = wallet_user.send_transaction(&intent).await;
-
-        // Assert
-        assert!(transaction.is_err(), "Wallet user has insufficient balance");
-    }
-
-    #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
-    #[tokio::test]
-    async fn test_send_tx_less_than_balance() {
-        // Arrange
-        let mnemonic = "arch sentence dwarf label unlock grace left orient practice oval sport rubber airport carbon moral can scan clinic false hen fancy repeat hip green";
-        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
-
-        let address = wallet_user.get_address().await.unwrap(); // st1qz46hgjrtjkgxvmqn6q42l832w3mjerdjxfv756hc4fnrlfeh9g07ge7m2w
-        let index = String::from("TestMessageFromStandalone");
-        let balance = wallet_user.get_balance().await.unwrap();
-        println!("Address: {address}, balance: {balance:?}");
-        let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
-
-        let intent = TransactionIntent {
-            address_to: address,
-            amount,
-            data: Some(index.into_bytes()),
-        };
-        // Act
-        let transaction = wallet_user.send_transaction(&intent).await;
-
-        // Assert
-        transaction.unwrap();
-    }
-
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
     #[tokio::test]
     async fn test_serial_get_wallet_tx_list() {
@@ -503,9 +381,13 @@ mod tests {
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
         let index = String::from("TestMessageFromStandalone");
 
-        let transaction = prepare_and_send_transaction(&wallet_user, &Some(index.into_bytes()), &address, amount)
-            .await
-            .unwrap();
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: Some(index.into_bytes()),
+        };
+
+        let transaction = wallet_user.send_amount(&intent).await.unwrap();
 
         let start = 0;
         let limit = 10;
@@ -518,7 +400,7 @@ mod tests {
         let transactions: Vec<types::transactions::WalletTxInfo> = wallet_tx_info_list.transactions.to_vec();
 
         assert_eq!(transactions.len(), 1);
-        assert_eq!(transactions[0], transaction.into());
+        assert_eq!(transactions[0].transaction_id, transaction);
     }
 
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
@@ -532,19 +414,20 @@ mod tests {
         let balance = wallet_user.get_balance().await.unwrap();
         println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
-
         let index = String::from("TestMessageFromStandalone");
-        let transaction = prepare_and_send_transaction(&wallet_user, &Some(index.into_bytes()), &address, amount)
-            .await
-            .unwrap();
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: Some(index.into_bytes()),
+        };
 
-        let transaction_str = transaction.transaction_id.to_string();
+        let transaction = wallet_user.send_amount(&intent).await.unwrap();
 
         // Act
-        let result = wallet_user.get_wallet_tx(&transaction_str).await;
+        let result = wallet_user.get_wallet_tx(&transaction).await;
 
         // Assert
-        assert_eq!(result.unwrap(), transaction.into());
+        assert_eq!(result.unwrap().transaction_id, transaction);
     }
 
     #[tokio::test]
@@ -564,8 +447,9 @@ mod tests {
     #[cfg_attr(coverage, ignore = "Takes too long under code-coverage")]
     #[tokio::test]
     async fn it_should_send_amount_with_data() {
+        let mnemonic = "predict wrist plug desert mobile crowd build leg swap impose breeze loyal surge brand hair bronze melody scale hello cereal car item slow bring";
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
 
         let address = wallet_user.get_address().await.unwrap();
         let balance = wallet_user.get_balance().await.unwrap();
@@ -631,12 +515,7 @@ mod tests {
 
         // Assert
         assert!(
-            matches!(
-                transaction,
-                Err(WalletError::IotaWallet(
-                    iota_sdk::wallet::Error::InsufficientFunds { .. }
-                ))
-            ),
+            matches!(transaction, Err(WalletError::InsufficientBalance(_))),
             "Got: {transaction:?}"
         );
     }
