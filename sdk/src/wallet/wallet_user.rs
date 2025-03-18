@@ -306,7 +306,12 @@ impl WalletUser for WalletImplStardust {
     }
 
     async fn estimate_gas_cost(&self, _intent: &TransactionIntent) -> Result<GasCostEstimation> {
-        Err(WalletError::WalletFeatureNotImplemented)
+        // Stardust is fee-less
+        Ok(GasCostEstimation {
+            gas_limit: 0,
+            max_fee_per_gas: 0,
+            max_priority_fee_per_gas: 0,
+        })
     }
 }
 

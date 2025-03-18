@@ -5,7 +5,7 @@ use crate::backend::transactions::{
 use crate::error::Result;
 use crate::types::currencies::CryptoAmount;
 use crate::types::networks::{Network, NetworkType};
-use crate::types::transactions::PurchaseDetails;
+use crate::types::transactions::{GasCostEstimation, PurchaseDetails};
 use crate::types::{
     newtypes::EncryptionPin,
     transactions::{TxInfo, TxList},
@@ -203,13 +203,11 @@ impl Sdk {
     /// * `pin` - The PIN of the user.
     /// * `address` - The receiver's address.
     /// * `amount` - The amount to send.
-    /// * `tag` - The transactions tag. Optional.
     /// * `data` - The associated data with the tag. Optional.
-    /// * `message` - The transactions message. Optional.
     ///
     /// # Returns
     ///
-    /// Returns `Ok(())` if the amount is sent successfully.
+    /// Returns `Ok(String)` containing the transaction hash if the amount is sent successfully.
     ///
     /// # Errors
     ///
@@ -273,6 +271,60 @@ impl Sdk {
         Ok(tx_id)
     }
 
+    /// Estimate gas for sending amount to receiver
+    ///
+    /// # Arguments
+    ///
+    /// * `pin` - The PIN of the user.
+    /// * `address` - The receiver's address.
+    /// * `amount` - The amount to send.
+    /// * `data` - The associated data with the tag. Optional.
+    ///
+    /// # Returns
+    ///
+    /// Returns the gas estimation.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
+    /// or if there is an error estimating the gas.
+    pub async fn estimate_gas(
+        &mut self,
+        pin: &EncryptionPin,
+        address: &str,
+        amount: CryptoAmount,
+        data: Option<Vec<u8>>,
+    ) -> Result<GasCostEstimation> {
+        info!("Estimating gas for sending amount {amount:?} to receiver {address}");
+        self.verify_pin(pin).await?;
+
+        let Some(repo) = &mut self.repo else {
+            return Err(crate::Error::UserRepoNotInitialized);
+        };
+        let Some(active_user) = &mut self.active_user else {
+            return Err(crate::Error::UserNotInitialized);
+        };
+
+        let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
+        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+
+        let wallet = active_user
+            .wallet_manager
+            .try_get(config, &self.access_token, repo, network.clone(), pin)
+            .await?;
+
+        // create the transaction payload which holds a tag and associated data
+        let intent = TransactionIntent {
+            address_to: address.to_string(),
+            amount,
+            data,
+        };
+
+        let estimate = wallet.estimate_gas_cost(&intent).await?;
+        info!("Estimate: {estimate:?}");
+
+        Ok(estimate)
+    }
     /// Get transaction list
     ///
     /// # Arguments
