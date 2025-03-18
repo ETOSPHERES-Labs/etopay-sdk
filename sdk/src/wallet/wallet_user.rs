@@ -1,7 +1,6 @@
 use super::error::{Result, WalletError};
 use crate::types::currencies::{CryptoAmount, Currency};
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
-use alloy_consensus::TxEip1559;
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManager;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
@@ -21,6 +20,18 @@ const USER_ADDRESS_LIMIT: u32 = 20;
 
 ///The name of the application used as the account name in the wallet
 const APP_NAME: &str = "standalone";
+
+/// The intended transaction to perform. Used to perform the transaction and estimate gas fees.
+pub struct TransactionIntent {
+    /// The address to send to.
+    pub address_to: String,
+
+    /// The amount to send.
+    pub amount: CryptoAmount,
+
+    /// Optional data to attach to the transaction.
+    pub data: Option<Vec<u8>>,
+}
 
 #[cfg_attr(test, mockall::automock)]
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
@@ -64,7 +75,7 @@ pub trait WalletUser: Debug {
     /// # Errors
     ///
     /// This function can return an error if it fails to synchronize the wallet, send the transaction, or encounter any other issues.
-    async fn send_amount(&self, address: &str, amount: CryptoAmount, message: Option<Vec<u8>>) -> Result<String>;
+    async fn send_amount(&self, intent: &TransactionIntent) -> Result<String>;
 
     /// Send a transaction with one output.
     ///
@@ -81,7 +92,7 @@ pub trait WalletUser: Debug {
     /// # Errors
     ///
     /// This function can return an error if it fails to synchronize the wallet, if there is insufficient balance, or encounters any other issues.
-    async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String>;
+    async fn send_transaction(&self, intent: &TransactionIntent) -> Result<String>;
 
     /// Gets the list of transactions
     ///
@@ -123,7 +134,7 @@ pub trait WalletUser: Debug {
     /// # Returns the estimated gas cost for the underlying transaction to be executed (gas limit, max fee per gas and max priority fee per gas)
     ///
     /// This function can return an error if it cannot parse input transaction or retrieve information from the node.
-    async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation>;
+    async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation>;
 }
 
 /// [`WalletUser`] implementation for IOTA and SMR using the stardust protocol
@@ -226,12 +237,18 @@ impl WalletUser for WalletImplStardust {
         Ok(available_balance_iota)
     }
 
-    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
+    async fn send_amount(&self, intent: &TransactionIntent) -> Result<String> {
         self.sync_wallet().await?;
+
+        let TransactionIntent {
+            address_to,
+            amount,
+            data,
+        } = intent;
 
         // hard-coded tag
         let tag: Box<[u8]> = "data".to_string().into_bytes().into_boxed_slice();
-        let data: Box<[u8]> = data.unwrap_or_default().into_boxed_slice();
+        let data: Box<[u8]> = data.to_owned().unwrap_or_default().into_boxed_slice();
         let tagged_data_payload = Some(TaggedDataPayload::new(tag, data).map_err(WalletError::Block)?);
 
         let account = self.account_manager.get_account(APP_NAME).await?;
@@ -243,16 +260,12 @@ impl WalletUser for WalletImplStardust {
         };
 
         let amount_glow: u64 = (amount.inner() * dec!(1_000_000)).round().try_into()?;
-        let transaction = account.send(amount_glow, address, options).await?;
+        let transaction = account.send(amount_glow, address_to, options).await?;
         Ok(transaction.transaction_id.to_string())
     }
 
-    async fn estimate_gas_cost_eip1559(&self, _transaction: TxEip1559) -> Result<GasCostEstimation> {
-        Err(WalletError::WalletFeatureNotImplemented)
-    }
-
-    async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
-        let transaction = prepare_and_send_transaction(self, index, address, amount).await?;
+    async fn send_transaction(&self, intent: &TransactionIntent) -> Result<String> {
+        let transaction = prepare_and_send_transaction(self, &intent.data, &intent.address_to, intent.amount).await?;
         Ok(transaction.transaction_id.to_string())
     }
 
@@ -295,12 +308,16 @@ impl WalletUser for WalletImplStardust {
             Err(WalletError::MissingAccessToken)
         }
     }
+
+    async fn estimate_gas_cost(&self, _intent: &TransactionIntent) -> Result<GasCostEstimation> {
+        Err(WalletError::WalletFeatureNotImplemented)
+    }
 }
 
 /// Prepare and send transaction
 async fn prepare_and_send_transaction(
     user: &WalletImplStardust,
-    index: &str,
+    index: &Option<Vec<u8>>,
     address: &str,
     amount: CryptoAmount,
 ) -> Result<Transaction> {
@@ -316,8 +333,8 @@ async fn prepare_and_send_transaction(
     // convert to glow
     let amount_glow: u64 = (amount.inner() * dec!(1_000_000)).round().try_into()?;
 
-    let tag = String::from(APP_NAME).into_bytes();
-    let data = String::from(index).into_bytes();
+    let tag = String::from("data").into_bytes();
+    let data = index.clone().unwrap_or_default();
     let tagged_data_payload = TaggedDataPayload::new(tag, data)?;
 
     let options = TransactionOptions {
@@ -374,7 +391,7 @@ mod tests {
         println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(dec!(10.0)).unwrap();
         // Act
-        let transaction = prepare_and_send_transaction(&wallet_user, &index, &address, amount).await;
+        let transaction = prepare_and_send_transaction(&wallet_user, &Some(index.into_bytes()), &address, amount).await;
 
         // Assert
         let ok_transaction = transaction.unwrap();
@@ -434,8 +451,14 @@ mod tests {
         println!("Address: {address}, balance: {balance:?}");
         let amount = balance + CryptoAmount::try_from(dec!(10.0)).unwrap();
 
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: Some(index.into_bytes()),
+        };
+
         // Act
-        let transaction = wallet_user.send_transaction(&index, &address, amount).await;
+        let transaction = wallet_user.send_transaction(&intent).await;
 
         // Assert
         assert!(transaction.is_err(), "Wallet user has insufficient balance");
@@ -454,8 +477,13 @@ mod tests {
         println!("Address: {address}, balance: {balance:?}");
         let amount = CryptoAmount::try_from(balance.inner() - dec!(1.0)).unwrap();
 
+        let intent = TransactionIntent {
+            address_to: address,
+            amount,
+            data: Some(index.into_bytes()),
+        };
         // Act
-        let transaction = wallet_user.send_transaction(&index, &address, amount).await;
+        let transaction = wallet_user.send_transaction(&intent).await;
 
         // Assert
         transaction.unwrap();

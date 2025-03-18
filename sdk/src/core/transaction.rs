@@ -11,6 +11,7 @@ use crate::types::{
     transactions::{TxInfo, TxList},
 };
 use crate::wallet::error::WalletError;
+use crate::wallet_user::TransactionIntent;
 use api_types::api::networks::ApiNetworkType;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 use log::{debug, info};
@@ -168,18 +169,19 @@ impl Sdk {
             .await?;
 
         let amount = tx_details.amount.try_into()?;
+
+        let intent = TransactionIntent {
+            address_to: tx_details.system_address.clone(),
+            amount,
+            data: Some(purchase_id.to_string().into_bytes()),
+        };
+
         let tx_id = match tx_details.network.network_type {
             ApiNetworkType::Evm {
                 node_urls: _,
                 chain_id: _,
             } => {
-                let tx_id = wallet
-                    .send_amount(
-                        &tx_details.system_address,
-                        amount,
-                        Some(purchase_id.to_string().into_bytes()),
-                    )
-                    .await?;
+                let tx_id = wallet.send_amount(&intent).await?;
 
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
                 let user = repo.get(&active_user.username)?;
@@ -188,11 +190,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
-            ApiNetworkType::Stardust { node_urls: _ } => {
-                wallet
-                    .send_transaction(purchase_id, &tx_details.system_address, amount)
-                    .await?
-            }
+            ApiNetworkType::Stardust { node_urls: _ } => wallet.send_transaction(&intent).await?,
         };
 
         debug!("Transaction id on network: {tx_id}");
@@ -247,18 +245,23 @@ impl Sdk {
             .await?;
 
         // create the transaction payload which holds a tag and associated data
+        let intent = TransactionIntent {
+            address_to: address.to_string(),
+            amount,
+            data,
+        };
 
         let tx_id = match network.network_type {
             NetworkType::EvmErc20 {
                 node_urls: _,
                 chain_id: _,
                 contract_address: _,
-            } => wallet.send_amount(address, amount, data).await?,
+            } => wallet.send_amount(&intent).await?,
             NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,
             } => {
-                let tx_id = wallet.send_amount(address, amount, data).await?;
+                let tx_id = wallet.send_amount(&intent).await?;
 
                 // store the created transaction in the repo
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -268,7 +271,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
-            NetworkType::Stardust { node_urls: _ } => wallet.send_amount(address, amount, data).await?,
+            NetworkType::Stardust { node_urls: _ } => wallet.send_amount(&intent).await?,
         };
 
         Ok(tx_id)
@@ -482,7 +485,7 @@ mod tests {
                     mock_wallet_user
                         .expect_send_transaction()
                         .once()
-                        .returning(|_, _, _| Ok("tx_id".to_string()));
+                        .returning(|_| Ok("tx_id".to_string()));
 
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
@@ -662,7 +665,7 @@ mod tests {
                     mock_wallet
                         .expect_send_amount()
                         .times(1)
-                        .returning(move |_, _, _| Ok(String::from("transaction id")));
+                        .returning(move |_| Ok(String::from("transaction id")));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 
@@ -735,7 +738,7 @@ mod tests {
             mock_wallet
                 .expect_send_amount()
                 .times(1)
-                .returning(move |_, _, _| Ok(String::from("tx_id")));
+                .returning(move |_| Ok(String::from("tx_id")));
 
             let value = wallet_transaction.clone();
             mock_wallet

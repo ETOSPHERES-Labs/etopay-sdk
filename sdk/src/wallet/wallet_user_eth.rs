@@ -1,15 +1,14 @@
 use super::error::Result;
-use super::wallet_user::WalletUser;
+use super::wallet_user::{TransactionIntent, WalletUser};
 use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use crate::wallet::error::WalletError;
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
-use alloy::rpc::types::{TransactionInput, TransactionRequest};
+use alloy::rpc::types::TransactionRequest;
 use alloy::signers::local::coins_bip39::English;
 use alloy::signers::local::MnemonicBuilder;
 use alloy::{
-    consensus::TxEip1559,
     primitives::Address,
     primitives::U256,
     providers::{Provider, ProviderBuilder},
@@ -115,6 +114,64 @@ impl WalletImplEth {
 
         Ok(value)
     }
+
+    /// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
+    fn prepare_transaction(&self, intent: &TransactionIntent) -> Result<TransactionRequest> {
+        let TransactionIntent {
+            address_to,
+            amount,
+            data,
+        } = intent;
+
+        let addr_to = Address::from_str(&address_to)?;
+        let amount_wei = Self::convert_eth_to_wei(*amount);
+        let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
+
+        let mut tx = TransactionRequest::default()
+            .with_to(addr_to)
+            .with_chain_id(self.chain_id)
+            .with_value(amount_wei_u256);
+
+        // attach optional data to the transaction
+        if let Some(data) = data {
+            tx.set_input(data.to_owned());
+        }
+
+        Ok(tx)
+    }
+
+    /// Submit the [`TransactionRequest`] and wait for it to be included in a block.
+    async fn submit_transaction_request(&self, tx_request: TransactionRequest) -> Result<String> {
+        // Send the transaction, the nonce is automatically managed by the provider.
+        let pending_tx = self.provider.send_transaction(tx_request).await?;
+
+        info!("Pending transaction... {}", pending_tx.tx_hash());
+
+        // Wait for the transaction to be included and get the receipt.
+        // Note: this might take some time so we should probably do it in the background in the future
+        let receipt = pending_tx.get_receipt().await?;
+
+        info!("Transaction included in block {:?}", receipt.block_number);
+
+        Ok(receipt.transaction_hash.to_string())
+    }
+
+    async fn estimate_transaction_request_gas(&self, tx_request: TransactionRequest) -> Result<GasCostEstimation> {
+        // Returns the estimated gas cost for the underlying transaction to be executed
+        let gas_limit = self.provider.estimate_gas(tx_request).await?;
+
+        // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
+        let eip1559_estimation = self.provider.estimate_eip1559_fees().await?;
+
+        let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
+        let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
+
+        Ok(GasCostEstimation {
+            max_fee_per_gas,
+            max_priority_fee_per_gas,
+            gas_limit,
+        })
+    }
 }
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
@@ -138,36 +195,12 @@ impl WalletUser for WalletImplEth {
         Ok(balance_eth_crypto_amount)
     }
 
-    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
-        let addr_to = Address::from_str(address)?;
-        let amount_wei = Self::convert_eth_to_wei(amount);
-        let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
-
-        let mut tx = TransactionRequest::default()
-            .with_to(addr_to)
-            .with_chain_id(self.chain_id)
-            .with_value(amount_wei_u256);
-
-        // attach optional data to the transaction
-        if let Some(data) = data {
-            tx.set_input(data.to_owned());
-        }
-
-        // Send the transaction, the nonce is automatically managed by the provider.
-        let pending_tx = self.provider.send_transaction(tx.clone()).await?;
-
-        info!("Pending transaction... {}", pending_tx.tx_hash());
-
-        // Wait for the transaction to be included and get the receipt.
-        // Note: this might take some time so we should probably do it in the background in the future
-        let receipt = pending_tx.get_receipt().await?;
-
-        info!("Transaction included in block {:?}", receipt.block_number);
-
-        Ok(receipt.transaction_hash.to_string())
+    async fn send_amount(&self, intent: &TransactionIntent) -> Result<String> {
+        let tx_request = self.prepare_transaction(intent)?;
+        self.submit_transaction_request(tx_request).await
     }
 
-    async fn send_transaction(&self, _index: &str, _address: &str, _amount: CryptoAmount) -> Result<String> {
+    async fn send_transaction(&self, _intent: &TransactionIntent) -> Result<String> {
         unimplemented!("use send_amount");
     }
 
@@ -224,35 +257,9 @@ impl WalletUser for WalletImplEth {
         })
     }
 
-    async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
-        let from = self.get_address().await?;
-
-        let to = transaction
-            .to
-            .to()
-            .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
-
-        let tx = TransactionRequest::default()
-            .from(Address::from_str(&from)?)
-            .to(*to)
-            .input(TransactionInput::new(transaction.input))
-            .access_list(transaction.access_list)
-            .value(transaction.value);
-
-        // Returns the estimated gas cost for the underlying transaction to be executed
-        let gas_limit = self.provider.estimate_gas(tx).await?;
-
-        // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
-        let eip1559_estimation = self.provider.estimate_eip1559_fees().await?;
-
-        let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
-        let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
-
-        Ok(GasCostEstimation {
-            max_fee_per_gas,
-            max_priority_fee_per_gas,
-            gas_limit,
-        })
+    async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
+        let tx_request = self.prepare_transaction(intent)?;
+        self.estimate_transaction_request_gas(tx_request).await
     }
 }
 
@@ -279,6 +286,33 @@ impl WalletImplEthErc20 {
 
     fn get_contract(&self) -> Erc20Contract::Erc20ContractInstance<(), &ProviderType> {
         Erc20Contract::new(self.contract_address, &self.inner.provider)
+    }
+
+    /// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
+    fn prepare_transaction(&self, intent: &TransactionIntent) -> Result<TransactionRequest> {
+        let TransactionIntent {
+            address_to,
+            amount,
+            data,
+        } = intent;
+
+        match data {
+            Some(data) if !data.is_empty() => {
+                // We cannot attach data to the smart contract transfer, so log a warning
+                log::warn!("Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}");
+                // TODO: should we return an error instead?
+            }
+            _ => {}
+        }
+
+        let addr_to = Address::from_str(&address_to)?;
+        let amount_wei = WalletImplEth::convert_eth_to_wei(*amount);
+        let amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)?;
+
+        let contract = self.get_contract();
+
+        // create a TransactionReqeust encoding the contract call
+        Ok(contract.transfer(addr_to, amount_wei_u256).into_transaction_request())
     }
 }
 
@@ -309,39 +343,12 @@ impl WalletUser for WalletImplEthErc20 {
         Ok(balance_eth_crypto_amount)
     }
 
-    async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
-        match data {
-            Some(data) if !data.is_empty() => {
-                // We cannot attach data to the smart contract transfer, so log a warning
-                log::warn!("Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}");
-                // TODO: should we return an error instead?
-            }
-            _ => {}
-        }
-
-        let addr_to = Address::from_str(address)?;
-        let amount_wei = WalletImplEth::convert_eth_to_wei(amount);
-        let amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)?;
-
-        let contract = self.get_contract();
-
-        // Create the transfer
-        let pending_tx = contract.transfer(addr_to, amount_wei_u256).send().await?;
-        info!("Pending transaction... {}", pending_tx.tx_hash());
-
-        // Wait for the transaction to be included and get the receipt.
-        // Note: this might take some time so we should probably do it in the background in the future
-
-        // we can also do watch()
-        // let tx_hash = pending_tx.watch().await?;
-        // Ok(tx_hash.to_string())
-        let receipt = pending_tx.get_receipt().await?;
-        info!("Transaction included in block {:?}", receipt.block_number);
-
-        Ok(receipt.transaction_hash.to_string())
+    async fn send_amount(&self, intent: &TransactionIntent) -> Result<String> {
+        let tx_request = self.prepare_transaction(intent)?;
+        self.inner.submit_transaction_request(tx_request).await
     }
 
-    async fn send_transaction(&self, _index: &str, _address: &str, _amount: CryptoAmount) -> Result<String> {
+    async fn send_transaction(&self, _intent: &TransactionIntent) -> Result<String> {
         unimplemented!("use send_amount");
     }
 
@@ -358,9 +365,9 @@ impl WalletUser for WalletImplEthErc20 {
         self.inner.get_wallet_tx(transaction_id).await
     }
 
-    async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
-        // TODO: this is probably not accurate, we need to estimate for the Contract call...
-        self.inner.estimate_gas_cost_eip1559(transaction).await
+    async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
+        let tx_request = self.prepare_transaction(intent)?;
+        self.inner.estimate_transaction_request_gas(tx_request).await
     }
 }
 
