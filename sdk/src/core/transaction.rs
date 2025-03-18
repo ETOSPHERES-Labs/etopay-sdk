@@ -227,7 +227,7 @@ impl Sdk {
         address: &str,
         amount: CryptoAmount,
         data: Option<Vec<u8>>,
-    ) -> Result<()> {
+    ) -> Result<String> {
         info!("Sending amount {amount:?} to receiver {address}");
         self.verify_pin(pin).await?;
 
@@ -248,15 +248,12 @@ impl Sdk {
 
         // create the transaction payload which holds a tag and associated data
 
-        match network.network_type {
+        let tx_id = match network.network_type {
             NetworkType::EvmErc20 {
                 node_urls: _,
                 chain_id: _,
                 contract_address: _,
-            } => {
-                let tx_id = wallet.send_amount(address, amount, data).await?;
-                println!("TX ID: {tx_id}");
-            }
+            } => wallet.send_amount(address, amount, data).await?,
             NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,
@@ -269,13 +266,12 @@ impl Sdk {
                 let mut wallet_transactions = user.wallet_transactions;
                 wallet_transactions.push(newly_created_transaction);
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
+                tx_id
             }
-            NetworkType::Stardust { node_urls: _ } => {
-                wallet.send_amount(address, amount, data).await?;
-            }
-        }
+            NetworkType::Stardust { node_urls: _ } => wallet.send_amount(address, amount, data).await?,
+        };
 
-        Ok(())
+        Ok(tx_id)
     }
 
     /// Get transaction list
@@ -693,7 +689,9 @@ mod tests {
 
         // Assert
         match expected {
-            Ok(_) => response.unwrap(),
+            Ok(_) => {
+                response.unwrap();
+            }
             Err(ref expected_err) => {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());
             }
@@ -765,7 +763,7 @@ mod tests {
             .await;
 
         // Assert
-        response.unwrap()
+        response.unwrap();
     }
 
     #[rstest]
