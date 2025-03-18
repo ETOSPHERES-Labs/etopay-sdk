@@ -232,13 +232,9 @@ impl WalletUser for WalletImplStardust {
 
         // Check if we have enough balance, otherwise return with err
         let balance = self.get_balance().await?;
-        println!("{balance:?}, {min_amount:?}");
         if balance < min_amount {
-            println!("d{balance:?}, {min_amount:?}");
             return Err(WalletError::InsufficientBalance(String::from("Not enough balance")));
         }
-
-        println!("Balance < amount + MIN_DUST_OUTPUT = {:?}", *amount + MIN_DUST_OUTPUT);
 
         // hard-coded tag
         let tag: Box<[u8]> = "data".to_string().into_bytes().into_boxed_slice();
