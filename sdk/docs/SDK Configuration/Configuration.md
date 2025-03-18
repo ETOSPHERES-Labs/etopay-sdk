@@ -116,7 +116,7 @@ For all platforms, except for when using the TypeScript/Javascript bindings, it 
 
 ### Logging in the SDK and validating configuration
 
-Whenever the SDK is configured, the logger is automatically initialized. For all platforms except TypeScript/Javascript, whenever a valid log level is specified in the `log_level` field, the logger is initialized to append log messages to a `cryptpay_sdk.log` file in the specified `storage_path` folder. The different log levels that can be set for the logger are: `trace`, `debug`, `info`, `warn`, `error` and allow for fine-tuning the amount of log messages that are generated. A value of `off` can also be specified to disable logging completely. It is important and recommended to enable the logger since this information can be exported and analyzed during testing and integration, which can help diagnose any issues.
+Whenever the SDK is configured, the logger is automatically initialized. For all platforms except TypeScript/Javascript, whenever a valid log level is specified in the `log_level` field, the logger is initialized to append log messages to a `etopay_sdk.log` file in the specified `storage_path` folder. The different log levels that can be set for the logger are: `trace`, `debug`, `info`, `warn`, `error` and allow for fine-tuning the amount of log messages that are generated. A value of `off` can also be specified to disable logging completely. It is important and recommended to enable the logger since this information can be exported and analyzed during testing and integration, which can help diagnose any issues.
 
 
 ## Complete example
