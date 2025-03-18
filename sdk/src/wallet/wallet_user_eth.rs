@@ -282,7 +282,6 @@ impl WalletImplEthErc20 {
     }
 }
 
-#[allow(unused_variables)] // allow unused parameters until everything is implemented
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[cfg_attr(test, mockall::automock)]
@@ -311,6 +310,15 @@ impl WalletUser for WalletImplEthErc20 {
     }
 
     async fn send_amount(&self, address: &str, amount: CryptoAmount, data: Option<Vec<u8>>) -> Result<String> {
+        match data {
+            Some(data) if !data.is_empty() => {
+                // We cannot attach data to the smart contract transfer, so log a warning
+                log::warn!("Trying to attach data to an ERC20 Token transfer which will be ignored: {data:?}");
+                // TODO: should we return an error instead?
+            }
+            _ => {}
+        }
+
         let addr_to = Address::from_str(address)?;
         let amount_wei = WalletImplEth::convert_eth_to_wei(amount);
         let amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)?;
@@ -333,14 +341,14 @@ impl WalletUser for WalletImplEthErc20 {
         Ok(receipt.transaction_hash.to_string())
     }
 
-    async fn send_transaction(&self, index: &str, address: &str, amount: CryptoAmount) -> Result<String> {
+    async fn send_transaction(&self, _index: &str, _address: &str, _amount: CryptoAmount) -> Result<String> {
         unimplemented!("use send_amount");
     }
 
     // The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
-    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList> {
+    async fn get_wallet_tx_list(&self, _start: usize, _limit: usize) -> Result<WalletTxInfoList> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -351,35 +359,8 @@ impl WalletUser for WalletImplEthErc20 {
     }
 
     async fn estimate_gas_cost_eip1559(&self, transaction: TxEip1559) -> Result<GasCostEstimation> {
-        Err(WalletError::WalletFeatureNotImplemented)
-        // let from = self.get_address().await?;
-        //
-        // let to = transaction
-        //     .to
-        //     .to()
-        //     .ok_or(WalletError::InvalidTransaction(String::from("receiver is empty")))?;
-        //
-        // let tx = TransactionRequest::default()
-        //     .from(Address::from_str(&from)?)
-        //     .to(*to)
-        //     .input(TransactionInput::new(transaction.input))
-        //     .access_list(transaction.access_list)
-        //     .value(transaction.value);
-        //
-        // // Returns the estimated gas cost for the underlying transaction to be executed
-        // let gas_limit = self.provider.estimate_gas(tx).await?;
-        //
-        // // Estimates the EIP1559 `maxFeePerGas` and `maxPriorityFeePerGas` fields in wei.
-        // let eip1559_estimation = self.provider.estimate_eip1559_fees().await?;
-        //
-        // let max_priority_fee_per_gas = eip1559_estimation.max_priority_fee_per_gas;
-        // let max_fee_per_gas = eip1559_estimation.max_fee_per_gas;
-        //
-        // Ok(GasCostEstimation {
-        //     max_fee_per_gas,
-        //     max_priority_fee_per_gas,
-        //     gas_limit,
-        // })
+        // TODO: this is probably not accurate, we need to estimate for the Contract call...
+        self.inner.estimate_gas_cost_eip1559(transaction).await
     }
 }
 
