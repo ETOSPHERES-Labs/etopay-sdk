@@ -52,8 +52,8 @@ Task {
         }
 
         let bytes: [UInt8] = Array(message.utf8)
-        try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
-        print("sent amount of 1")
+        let tx_id = try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
+        print("sent amount of 1 on transaction \(tx_id.toString())")
 
         // Get new balance
         let new_balance = try await sdk.getWalletBalance(env.pin)

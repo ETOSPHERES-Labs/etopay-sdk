@@ -878,7 +878,7 @@ impl CawaenaSdk {
     ///
     /// # Returns
     ///
-    /// * Ok - empty if the amount is sent successfully.
+    /// * Ok - transaction id if the amount is sent successfully.
     /// * Err - if the user or wallet is not initialized, there is an error verifying the PIN, or there is an error sending the amount.
     pub async fn send_amount(
         &self,
@@ -886,7 +886,7 @@ impl CawaenaSdk {
         address: String,
         amount: f64,
         data: Option<Vec<u8>>,
-    ) -> Result<(), String> {
+    ) -> Result<String, String> {
         let mut sdk = self.inner.write().await;
         async move {
             let amount = CryptoAmount::try_from(amount)?;

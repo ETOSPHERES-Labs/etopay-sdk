@@ -498,6 +498,11 @@ impl Sdk {
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
         let tx_list = match network.network_type {
+            crate::types::networks::NetworkType::EvmErc20 {
+                node_urls: _,
+                chain_id: _,
+                contract_address: _,
+            } => wallet.get_wallet_tx_list(start, limit).await?,
             crate::types::networks::NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,

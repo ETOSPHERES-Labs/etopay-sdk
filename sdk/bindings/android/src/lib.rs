@@ -800,8 +800,9 @@ mod ffi {
     /// @param address The address of the receiver
     /// @param amount The amount to send in the selected currency
     /// @param data The data associated with the transaction. Pass NULL to not specify any data.
+    /// @return The transaction id.
     #[public_name = "sendAmount"]
-    pub fn sendAmount(pin: String, address: String, amount: f64, data: Option<Vec<u8>>) -> Result<(), String> {
+    pub fn sendAmount(pin: String, address: String, amount: f64, data: Option<Vec<u8>>) -> Result<String, String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
             let amount = CryptoAmount::try_from(amount)?;

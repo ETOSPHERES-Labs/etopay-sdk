@@ -485,7 +485,7 @@ impl CryptpaySdk {
     /// @param {string} address - The address of the receiver
     /// @param {number} amount - The amount to send in the selected currency
     /// @param {Uint8Array | undefined} data - The data associated with the transaction. Optional.
-    /// @returns {Promise<void>}
+    /// @returns {Promise<string>} the transaction id.
     #[wasm_bindgen(skip_jsdoc, js_name = "sendAmount")]
     pub async fn send_amount(
         &self,
@@ -493,7 +493,7 @@ impl CryptpaySdk {
         address: String,
         amount: f64,
         data: Option<Vec<u8>>,
-    ) -> Result<(), String> {
+    ) -> Result<String, String> {
         let mut sdk = self.inner.write().await;
         async move {
             let amount = CryptoAmount::try_from(amount)?;
