@@ -5,12 +5,13 @@ use crate::backend::transactions::{
 use crate::error::Result;
 use crate::types::currencies::CryptoAmount;
 use crate::types::networks::{Network, NetworkType};
-use crate::types::transactions::PurchaseDetails;
+use crate::types::transactions::{GasCostEstimation, PurchaseDetails};
 use crate::types::{
     newtypes::EncryptionPin,
     transactions::{TxInfo, TxList},
 };
 use crate::wallet::error::WalletError;
+use crate::wallet_user::TransactionIntent;
 use api_types::api::networks::ApiNetworkType;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 use log::{debug, info};
@@ -168,32 +169,25 @@ impl Sdk {
             .await?;
 
         let amount = tx_details.amount.try_into()?;
-        let tx_id = match tx_details.network.network_type {
-            ApiNetworkType::Evm {
-                node_urls: _,
-                chain_id: _,
-            } => {
-                let tx_id = wallet
-                    .send_amount(
-                        &tx_details.system_address,
-                        amount,
-                        Some(purchase_id.to_string().into_bytes()),
-                    )
-                    .await?;
 
-                let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
-                let user = repo.get(&active_user.username)?;
-                let mut wallet_transactions = user.wallet_transactions;
-                wallet_transactions.push(newly_created_transaction);
-                let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
-                tx_id
-            }
-            ApiNetworkType::Stardust { node_urls: _ } => {
-                wallet
-                    .send_transaction(purchase_id, &tx_details.system_address, amount)
-                    .await?
-            }
+        let intent = TransactionIntent {
+            address_to: tx_details.system_address.clone(),
+            amount,
+            data: Some(purchase_id.to_string().into_bytes()),
         };
+
+        let tx_id = wallet.send_amount(&intent).await?;
+
+        // Store tx details for all networks other than Stardust (which stores transactions internally)
+        // TODO: rework this to always store the transactions
+        if let ApiNetworkType::Evm { .. } = tx_details.network.network_type {
+            let tx_id = wallet.send_amount(&intent).await?;
+
+            let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
+            let mut user = repo.get(&active_user.username)?;
+            user.wallet_transactions.push(newly_created_transaction);
+            let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions);
+        }
 
         debug!("Transaction id on network: {tx_id}");
 
@@ -209,13 +203,11 @@ impl Sdk {
     /// * `pin` - The PIN of the user.
     /// * `address` - The receiver's address.
     /// * `amount` - The amount to send.
-    /// * `tag` - The transactions tag. Optional.
     /// * `data` - The associated data with the tag. Optional.
-    /// * `message` - The transactions message. Optional.
     ///
     /// # Returns
     ///
-    /// Returns `Ok(())` if the amount is sent successfully.
+    /// Returns `Ok(String)` containing the transaction hash if the amount is sent successfully.
     ///
     /// # Errors
     ///
@@ -247,18 +239,23 @@ impl Sdk {
             .await?;
 
         // create the transaction payload which holds a tag and associated data
+        let intent = TransactionIntent {
+            address_to: address.to_string(),
+            amount,
+            data,
+        };
 
         let tx_id = match network.network_type {
             NetworkType::EvmErc20 {
                 node_urls: _,
                 chain_id: _,
                 contract_address: _,
-            } => wallet.send_amount(address, amount, data).await?,
+            } => wallet.send_amount(&intent).await?,
             NetworkType::Evm {
                 node_urls: _,
                 chain_id: _,
             } => {
-                let tx_id = wallet.send_amount(address, amount, data).await?;
+                let tx_id = wallet.send_amount(&intent).await?;
 
                 // store the created transaction in the repo
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
@@ -268,12 +265,66 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
-            NetworkType::Stardust { node_urls: _ } => wallet.send_amount(address, amount, data).await?,
+            NetworkType::Stardust { node_urls: _ } => wallet.send_amount(&intent).await?,
         };
 
         Ok(tx_id)
     }
 
+    /// Estimate gas for sending amount to receiver
+    ///
+    /// # Arguments
+    ///
+    /// * `pin` - The PIN of the user.
+    /// * `address` - The receiver's address.
+    /// * `amount` - The amount to send.
+    /// * `data` - The associated data with the tag. Optional.
+    ///
+    /// # Returns
+    ///
+    /// Returns the gas estimation.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
+    /// or if there is an error estimating the gas.
+    pub async fn estimate_gas(
+        &mut self,
+        pin: &EncryptionPin,
+        address: &str,
+        amount: CryptoAmount,
+        data: Option<Vec<u8>>,
+    ) -> Result<GasCostEstimation> {
+        info!("Estimating gas for sending amount {amount:?} to receiver {address}");
+        self.verify_pin(pin).await?;
+
+        let Some(repo) = &mut self.repo else {
+            return Err(crate::Error::UserRepoNotInitialized);
+        };
+        let Some(active_user) = &mut self.active_user else {
+            return Err(crate::Error::UserNotInitialized);
+        };
+
+        let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
+        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+
+        let wallet = active_user
+            .wallet_manager
+            .try_get(config, &self.access_token, repo, network.clone(), pin)
+            .await?;
+
+        // create the transaction payload which holds a tag and associated data
+        let intent = TransactionIntent {
+            address_to: address.to_string(),
+            amount,
+            data,
+        };
+
+        let estimate = wallet.estimate_gas_cost(&intent).await?;
+        info!("Estimate: {estimate:?}");
+
+        Ok(estimate)
+    }
     /// Get transaction list
     ///
     /// # Arguments
@@ -480,9 +531,9 @@ mod tests {
                 mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
                     let mut mock_wallet_user = MockWalletUser::new();
                     mock_wallet_user
-                        .expect_send_transaction()
+                        .expect_send_amount()
                         .once()
-                        .returning(|_, _, _| Ok("tx_id".to_string()));
+                        .returning(|_| Ok("tx_id".to_string()));
 
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
@@ -662,7 +713,7 @@ mod tests {
                     mock_wallet
                         .expect_send_amount()
                         .times(1)
-                        .returning(move |_, _, _| Ok(String::from("transaction id")));
+                        .returning(move |_| Ok(String::from("transaction id")));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 
@@ -735,7 +786,7 @@ mod tests {
             mock_wallet
                 .expect_send_amount()
                 .times(1)
-                .returning(move |_, _, _| Ok(String::from("tx_id")));
+                .returning(move |_| Ok(String::from("tx_id")));
 
             let value = wallet_transaction.clone();
             mock_wallet

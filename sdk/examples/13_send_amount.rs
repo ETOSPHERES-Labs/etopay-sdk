@@ -32,13 +32,17 @@ async fn main() {
 
     // Send amount
     let amount = dec!(2.0).try_into().unwrap();
+    let data = Some("test".to_string().into_bytes());
+    // estimate gas
+    let estimate = sdk
+        .estimate_gas(&user.pin, &recipient_address, amount, data.clone())
+        .await
+        .unwrap();
+
+    println!("Estimated gas: {estimate:?}");
+
     let tx_id = sdk
-        .send_amount(
-            &user.pin,
-            &recipient_address,
-            amount,
-            Some("test".to_string().into_bytes()),
-        )
+        .send_amount(&user.pin, &recipient_address, amount, data)
         .await
         .unwrap();
 
