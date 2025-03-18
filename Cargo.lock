@@ -1966,7 +1966,7 @@ dependencies = [
  "mockall",
  "mockito",
  "rand 0.8.5",
- "rand_core 0.6.4",
+ "rand_core 0.9.1",
  "reqwest 0.12.12",
  "rmp-serde",
  "rstest",
