@@ -44,7 +44,7 @@ aes-gcm = { version = "0.10.3", default-features = false, features = [
     "getrandom",
 ] }
 api_types = { workspace = true }
-async-trait = { version = "0.1.86", default-features = false }
+async-trait = { version = "0.1.88", default-features = false }
 base64 = { workspace = true }
 chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
 iota-sdk = { package = "iota-sdk", git = "https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/iota-sdk", branch = "develop", default-features = false, features = [
