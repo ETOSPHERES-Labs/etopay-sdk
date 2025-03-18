@@ -32,12 +32,15 @@ async fn main() {
 
     // Send amount
     let amount = dec!(2.0).try_into().unwrap();
-    sdk.send_amount(
-        &user.pin,
-        &recipient_address,
-        amount,
-        Some("test".to_string().into_bytes()),
-    )
-    .await
-    .unwrap();
+    let tx_id = sdk
+        .send_amount(
+            &user.pin,
+            &recipient_address,
+            amount,
+            Some("test".to_string().into_bytes()),
+        )
+        .await
+        .unwrap();
+
+    println!("Success with transaction id: {tx_id}");
 }

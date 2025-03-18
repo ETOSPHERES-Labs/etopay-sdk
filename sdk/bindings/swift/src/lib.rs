@@ -391,7 +391,7 @@ pub mod ffi {
             address: String,
             amount: f64,
             data: Option<Vec<u8>>,
-        ) -> Result<(), String>;
+        ) -> Result<String, String>;
         #[swift_bridge(swift_name = "updateIbanViviswap")]
         async fn update_iban_viviswap(&self, pin: String, address: String) -> Result<ViviswapAddressDetail, String>;
         #[swift_bridge(swift_name = "getIbanViviswap")]

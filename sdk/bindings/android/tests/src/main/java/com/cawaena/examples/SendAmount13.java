@@ -51,8 +51,8 @@ public class SendAmount13 {
             System.out.println("balance: " + balance);
 
             // send amount
-            sdk.sendAmount(utils.PIN, address.toString(), 1, "java bindings test".getBytes());
-            System.out.println("send amount of 1");
+            String tx_id = sdk.sendAmount(utils.PIN, address.toString(), 1, "java bindings test".getBytes());
+            System.out.println("send amount of 1 with transaction " + tx_id);
 
             // get new balance
             double new_balance = sdk.getWalletBalance(utils.PIN);

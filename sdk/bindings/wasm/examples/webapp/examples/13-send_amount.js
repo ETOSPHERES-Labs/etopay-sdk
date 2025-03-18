@@ -22,9 +22,11 @@ async function main() {
     console.log("address", recipient_address);
 
     let balance_before = await sdk.getWalletBalance(pin);
-
     console.log("balance before sending amount : ", balance_before);
-    await sdk.sendAmount(pin, recipient_address, 1.0);
+
+    let tx_id = await sdk.sendAmount(pin, recipient_address, 1.0);
+    console.log("sent amount with transaction", tx_id);
+
     let balance_after = await sdk.getWalletBalance(pin);
     console.log("balance after sending amount : ", balance_after);
 }
