@@ -52,7 +52,7 @@ xcframework:
 	$(MAKE) build_sdk_ios
 	$(MAKE) build_sdk_mac
 	$(MAKE) lipo_bundle_ios
-	$(MAKE) lipo_bundle_make
+	$(MAKE) lipo_bundle_mac
 	$(MAKE) move_swift_files
 	@xcodebuild -create-xcframework \
 	-library ../../../target/aarch64-apple-ios/release/libwalletsdk_cabi.a \
