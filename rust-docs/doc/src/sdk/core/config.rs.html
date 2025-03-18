@@ -297,7 +297,7 @@
 <span class="kw">use </span>std::str::FromStr;
 
 <span class="doccomment">/// The default log file used by the sdk to write logs
-</span><span class="kw">const </span>CRYPTPAY_LOGFILE: <span class="kw-2">&amp;</span>str = <span class="string">"cryptpay_sdk.log"</span>;
+</span><span class="kw">const </span>ETOPAY_LOGFILE: <span class="kw-2">&amp;</span>str = <span class="string">"etopay_sdk.log"</span>;
 
 <span class="doccomment">/// Struct to configure the SDK
 </span><span class="attr">#[derive(Debug)]
@@ -405,7 +405,7 @@
         // initialize the logger if we are not on wasm
         </span><span class="attr">#[cfg(not(target_arch = <span class="string">"wasm32"</span>))]
         </span>{
-            <span class="kw">let </span>log_file = config.path_prefix.join(CRYPTPAY_LOGFILE);
+            <span class="kw">let </span>log_file = config.path_prefix.join(ETOPAY_LOGFILE);
             <span class="kw">let </span>log_file_str = log_file
                 .to_str()
                 .ok_or_else(|| <span class="kw">crate</span>::Error::SetConfig(<span class="macro">format!</span>(<span class="string">"config file path is not valid utf-8: {log_file:?}"</span>)))<span class="question-mark">?</span>;
