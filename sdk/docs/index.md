@@ -51,13 +51,6 @@ The documentation is divided into following sections. Simply choose one and get 
 
     [:octicons-arrow-right-24: Reference](./SDK%20Reference/SDK%20API%20Reference.md)
 
-- [:material-note-outline:{ .lg .middle } __Release Notes__](./SDK%20Release%20Notes/Release%20Notes.md){ .md-button}
-
-    ---
-    Stay up-to-date with the latest changes to the ETOPay SDK. This section provides information about the changes in each release.
-
-    [:octicons-arrow-right-24: Releases](./SDK%20Release%20Notes/Release%20Notes.md)
-
 - [:fontawesome-solid-book:{ .lg .middle } __SDK Examples__](./SDK%20Examples/Examples.md){ .md-button}
 
     ---
