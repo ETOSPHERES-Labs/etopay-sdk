@@ -46,7 +46,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: etopay-sdk-swift
-          path: sdk/bindings/swift/CawaenaSdk
+          path: sdk/bindings/swift/ETOPaySdk
           if-no-files-found: error
           retention-days: 7
           overwrite: true
@@ -66,14 +66,14 @@ jobs:
 
       - name: Copy built artifacts to target repository
         run: |
-          cp -R sdk/bindings/swift/CawaenaSdk/Package.swift target-repo/
-          cp -R sdk/bindings/swift/CawaenaSdk/README.md target-repo/
-          cp -R sdk/bindings/swift/CawaenaSdk/Sources target-repo/
+          cp -R sdk/bindings/swift/ETOPaySdk/Package.swift target-repo/
+          cp -R sdk/bindings/swift/ETOPaySdk/README.md target-repo/
+          cp -R sdk/bindings/swift/ETOPaySdk/Sources target-repo/
 
       - name: Configure Git for commit
         run: |
           cd target-repo
-          git config user.email "bot@cawaena.com"
+          git config user.email "bot@etopay.com"
           git config user.name "bot"
 
       - name: Commit and push changes
