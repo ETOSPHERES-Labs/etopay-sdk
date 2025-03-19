@@ -1,32 +1,32 @@
 # Introduction
 
-Welcome to the Cawaena SDK documentation. This comprehensive guide is designed to provide you with all the information you need to install and use the Cawaena SDK effectively.
+Welcome to the ETOPay SDK documentation. This comprehensive guide is designed to provide you with all the information you need to install and use the ETOPay SDK effectively.
 
-The Cawaena SDK provides the logic for interacting with the Cawaena backend correctly. The SDK plans to help developers with a quicker, safer and easier on-boarding in the web3 world, while using the Cawaena infrastructure to support various use-cases around data monetization.
+The ETOPay SDK provides the logic for interacting with the ETOPay backend correctly. The SDK plans to help developers with a quicker, safer and easier on-boarding in the web3 world, while using the ETOPay infrastructure to support various use-cases around data monetization.
 
 The SDK is divided in various modules which come together to ensure an easy and safe way to incorporate the SDK in the application.
 
 For ease of integration, the SDK also generates bindings in various languages for various platforms, especially for mobile platforms, to provide easy integration with native and hybrid mobile app development frameworks.
 
-This documentation is primarily intended for developers who are integrating the Cawaena SDK into their applications. It provides a comprehensive guide to installing and using the SDK, with a focus on practical examples and clear, concise explanations.
+This documentation is primarily intended for developers who are integrating the ETOPay SDK into their applications. It provides a comprehensive guide to installing and using the SDK, with a focus on practical examples and clear, concise explanations.
 
 The documentation is divided into following sections. Simply choose one and get started!
 
 <div class="grid cards" markdown>
 
-- [:fontawesome-solid-feather:{ .lg .middle } __Features__](./Choosing%20Cawaena/Features.md){ .md-button}
+- [:fontawesome-solid-feather:{ .lg .middle } __Features__](./Choosing%20ETOPay/Features.md){ .md-button}
 
     ---
 
-    Know the features before using Cawaena in your applications for a better product-market fit.
+    Know the features before using ETOPay in your applications for a better product-market fit.
 
-    [:octicons-arrow-right-24: Architecture](./Choosing%20Cawaena/Architecture.md)
+    [:octicons-arrow-right-24: Architecture](./Choosing%20ETOPay/Architecture.md)
 
 - [:material-download-box:{ .lg .middle } __Set up the SDK__](./Installing%20the%20SDK/Installation.md){ .md-button}
 
     ---
 
-    This section provides step-by-step instructions on how to install the Cawaena SDK in your development environment.
+    This section provides step-by-step instructions on how to install the ETOPay SDK in your development environment.
 
     [:octicons-arrow-right-24: Install](./Installing%20the%20SDK/Installation.md)
 
@@ -40,7 +40,7 @@ The documentation is divided into following sections. Simply choose one and get 
 - [:fontawesome-solid-cube:{ .lg .middle } __SDK Modules__](./SDK%20Modules/Managing%20user.md){ .md-button}
 
     ---
-    Once you're comfortable with the basics and configuration, this section delves into the core SDK module functions around user and wallet management, kyc onboarding processes, integration with exchanges, helping you leverage the full power of the Cawaena SDK.
+    Once you're comfortable with the basics and configuration, this section delves into the core SDK module functions around user and wallet management, kyc onboarding processes, integration with exchanges, helping you leverage the full power of the ETOPay SDK.
 
     [:octicons-arrow-right-24: Modules](./SDK%20Modules/Managing%20user.md)
 
@@ -54,7 +54,7 @@ The documentation is divided into following sections. Simply choose one and get 
 - [:material-note-outline:{ .lg .middle } __Release Notes__](./SDK%20Release%20Notes/Release%20Notes.md){ .md-button}
 
     ---
-    Stay up-to-date with the latest changes to the Cawaena SDK. This section provides information about the changes in each release.
+    Stay up-to-date with the latest changes to the ETOPay SDK. This section provides information about the changes in each release.
 
     [:octicons-arrow-right-24: Releases](./SDK%20Release%20Notes/Release%20Notes.md)
 
@@ -67,6 +67,6 @@ The documentation is divided into following sections. Simply choose one and get 
 
 </div>
 
-We hope this documentation serves as a valuable resource to explore the capabilities of the Cawaena SDK.
+We hope this documentation serves as a valuable resource to explore the capabilities of the ETOPay SDK.
 
 Made with :heart: by Team Lobster :lobster:

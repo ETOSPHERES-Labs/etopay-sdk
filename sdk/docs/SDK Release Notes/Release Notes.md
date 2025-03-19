@@ -107,7 +107,7 @@
 ## [v0.7.1]
 
 - Viviswap onboarding stabilized
-- Production environment auth provider string was fixed (cawaenaprod → cawaena)
+- Production environment auth provider string was fixed (etopayprod → etopay)
 - `UpdateIBAN` method now deletes old IBAN and inserts the new one, so that the old IBAN can be re-used on other accounts
 
 ## [v0.7.0]

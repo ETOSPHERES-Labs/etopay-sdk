@@ -15,9 +15,9 @@ npm install <path-to-the-tgz-file>
 The package can then be used within your application like so (example using `webpack`):
 
 ```typescript
-import { CawaenaSdk, Environment, Level } from "@eto/etopay-sdk-wasm";
+import { ETOPaySdk, Environment, Level } from "@eto/etopay-sdk-wasm";
 
-const sdk = await new CawaenaSdk();
+const sdk = await new ETOPaySdk();
 sdk.initLogger(Level.Info);
 await sdk.setEnvironment(Environment.Development);
 await sdk.validateConfig();
@@ -27,11 +27,11 @@ or using a named import:
 
 ```typescript
 
-import * as Cawaena from "@eto/etopay-sdk-wasm";
+import * as ETOPay from "@eto/etopay-sdk-wasm";
 
-const sdk = new Cawaena.CawaenaSdk();
-sdk.initLogger(Cawaena.Level.Info);
-await sdk.setEnvironment(Cawaena.Environment.Development);
+const sdk = new ETOPay.ETOPaySdk();
+sdk.initLogger(ETOPay.Level.Info);
+await sdk.setEnvironment(ETOPay.Environment.Development);
 await sdk.validateConfig();
 
 ```

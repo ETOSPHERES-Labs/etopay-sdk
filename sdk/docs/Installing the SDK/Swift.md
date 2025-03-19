@@ -10,9 +10,9 @@ We provide binaries for the following platforms:
 - `aarch64-apple-darwin`: for 64-bit ARM processors on macOS systems (eg. M1).
 - `x86_64-apple-darwin`: for 64-bit Intel processors on macOS systems.
 
-## Using Cawaena with Swift Package Manager
+## Using ETOPay with Swift Package Manager
 
-The Cawaena SDK can also be used as a Swift package. Follow these steps to integrate it into your project:
+The ETOPay SDK can also be used as a Swift package. Follow these steps to integrate it into your project:
 
 Add the repository as a `dependency` in your `Package.swift` file:
 
@@ -22,23 +22,23 @@ import PackageDescription
 let package = Package(
     name: "program",
     dependencies: [
-        .package(url: "https://gitlab.inovel.de/zd0006/cryptpay-swift", from: "0.0.1")
+        .package(url: "https://gitlab.inovel.de/zd0006/etopay-swift", from: "0.0.1")
     ],
     targets: [
         .executableTarget(
             name: "main",
             dependencies: [
-                .product(name: "CryptpaySdk", package: "cryptpay-swift")
+                .product(name: "ETOPaySdk", package: "etopay-swift")
             ]),
     ]
 )
 ```
 
-The `CryptpaySdk` module will then be available for import in your project.
+The `ETOPaySdk` module will then be available for import in your project.
 
-## Using Cawaena with XCode
+## Using ETOPay with XCode
 
-In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/cryptpay-swift`) and select the Cawaena SDK when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
+In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/etopay-swift`) and select the ETOPay SDK when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
 
 ### Access to the binaries on JFrog
 

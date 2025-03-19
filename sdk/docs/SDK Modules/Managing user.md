@@ -14,7 +14,7 @@ User creation in the SDK is compulsory. This user is only a local user which mig
 
 ???+ note
 
-    The user might already exist in the OAuth system, as well as every where else, including Cawaena backend. However, the SDK associates the local user to the system user only when an access token is provided.
+    The user might already exist in the OAuth system, as well as every where else, including ETOPay backend. However, the SDK associates the local user to the system user only when an access token is provided.
 
 The SDK supports multi-user environments and switching between users is fairly simple. Creating a user in the SDK informs the SDK about the user and allows the SDK to manage the user's state locally, whilst syncing it with the backend periodically.
 
@@ -47,7 +47,7 @@ The `username` should always match the `preferred_username` claim on the JWT `ac
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -67,9 +67,9 @@ The `username` should always match the `preferred_username` claim on the JWT `ac
 
     ```swift linenums="1"
     import Foundation
-    import CawaenaSdk
+    import ETOPaySdk
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
 
     do {
@@ -84,7 +84,7 @@ The `username` should always match the `preferred_username` claim on the JWT `ac
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
 
     await sdk.createNewUser("username");
@@ -124,7 +124,7 @@ The access token brings the following safe operations for the SDK:
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -147,9 +147,9 @@ The access token brings the following safe operations for the SDK:
 
     ```swift linenums="1"
     import Foundation
-    import CawaenaSdk
+    import ETOPaySdk
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
 
     do {
@@ -167,7 +167,7 @@ The access token brings the following safe operations for the SDK:
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
 
     await sdk.createNewUser("username");
@@ -206,7 +206,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -234,9 +234,9 @@ Deleting the user is simply deleting the user entity from the local database, wh
 
     ```swift linenums="1"
     import Foundation
-    import CawaenaSdk
+    import ETOPaySdk
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
     
     do {
@@ -259,7 +259,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
 
     await sdk.createNewUser("username");

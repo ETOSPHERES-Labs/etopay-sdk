@@ -32,7 +32,7 @@ The end devices today support pin entry mostly protected by biometric authentica
 
 - The issue of password management is also solved, since now the SDK internally manages the password, while still relying completely on the user to unblock it using the pin. The SDK cannot act in its own interest even if there was a malicious code trying to unblock the wallet! The probability distribution of the pin, being relatively weak, (4 to 6 digit), is improved through the addition of a pseudo random salt, which in combination with a hash function results in an encryption password of significant strength and quasi-random probability distribution. This is used then to encrypt the password for the secret manager.
 
-Thus an attacker would need information on the salt, the encrypted password, pin and the stronghold file to be able to gain access to the wallet functions. This is tough and would need somehow physical access to the end device, and to the end user. Security of end-user and their devices is out of the scope for Cawaena ecosystem.
+Thus an attacker would need information on the salt, the encrypted password, pin and the stronghold file to be able to gain access to the wallet functions. This is tough and would need somehow physical access to the end device, and to the end user. Security of end-user and their devices is out of the scope for ETOPay ecosystem.
 
 ## Creating the wallet
 
@@ -71,7 +71,7 @@ This does not require any user input except `username`,  `password` and `pin`. B
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -94,10 +94,10 @@ This does not require any user input except `username`,  `password` and `pin`. B
 === "Swift"
 
     ```swift linenums="1"
-    import CawaenaSdk
+    import ETOPaySdk
     import Foundation
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
     
     // Generate access token
@@ -116,7 +116,7 @@ This does not require any user input except `username`,  `password` and `pin`. B
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
     
     // Generate access token
@@ -149,7 +149,7 @@ This just performs the second step of the create fresh wallet process and needs 
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -171,10 +171,10 @@ This just performs the second step of the create fresh wallet process and needs 
 === "Swift"
 
     ```swift linenums="1"
-    import CawaenaSdk
+    import ETOPaySdk
     import Foundation
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
     
     // Generate access token
@@ -192,7 +192,7 @@ This just performs the second step of the create fresh wallet process and needs 
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
     
     // Generate access token
@@ -236,7 +236,7 @@ To restore the backup, the following are required:
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -259,10 +259,10 @@ To restore the backup, the following are required:
 === "Swift"
 
     ```swift linenums="1"
-    import CawaenaSdk
+    import ETOPaySdk
     import Foundation
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
     
     // Generate access token
@@ -281,7 +281,7 @@ To restore the backup, the following are required:
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
     
     // Generate access token
@@ -314,7 +314,7 @@ This function just deletes the wallet files and is a one-way function, to be use
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -337,10 +337,10 @@ This function just deletes the wallet files and is a one-way function, to be use
 === "Swift"
 
     ```swift linenums="1"
-    import CawaenaSdk
+    import ETOPaySdk
     import Foundation
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
     
     // Generate access token
@@ -359,7 +359,7 @@ This function just deletes the wallet files and is a one-way function, to be use
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
     
     // Generate access token
@@ -397,7 +397,7 @@ In addition to creating, migrating, backups and initialization, the wallet modul
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -425,10 +425,10 @@ In addition to creating, migrating, backups and initialization, the wallet modul
 === "Swift"
 
     ```swift linenums="1"
-    import CawaenaSdk
+    import ETOPaySdk
     import Foundation
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
     
     // Generate access token
@@ -452,7 +452,7 @@ In addition to creating, migrating, backups and initialization, the wallet modul
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
     
     // Generate access token

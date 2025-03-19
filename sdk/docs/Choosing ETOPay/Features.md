@@ -42,7 +42,7 @@
 
 ## Use-cases
 
-With Cawaena, you can do a lot more than the listed use-cases below. The use-cases just simply show the tip of the iceberg, how you can benefit from integrating Cawaena in your applications:
+With ETOPay, you can do a lot more than the listed use-cases below. The use-cases just simply show the tip of the iceberg, how you can benefit from integrating ETOPay in your applications:
 
 1. Data-Marketplace for buying and selling sensor data, digital content or even NFTs.
 2. A simple cart checkout with multiple payment and currency options
