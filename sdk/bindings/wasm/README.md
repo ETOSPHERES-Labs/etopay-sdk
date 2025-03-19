@@ -1,6 +1,6 @@
-# Cryptpay SDK WASM bindings
+# ETOPay SDK WASM bindings
 
-In order to use the cryptpay sdk in a webapp the browser, this crate provides `wasm` bindings and generation of TypeScript type definitions for all the data type objects used.
+In order to use the etopay sdk in a webapp the browser, this crate provides `wasm` bindings and generation of TypeScript type definitions for all the data type objects used.
 It also has functionality for publishing the bindings together with the generated `wasm` binary to a NPM registry.
 
 ## Design considerations
@@ -26,19 +26,19 @@ This is the current setup:
 The bindings to JavaScript/TypeScript are generated using [`wasm-bindgen`](https://github.com/rustwasm/wasm-bindgen) which also generates TypeScript type definitions.
 To ease development we use [`wasm-pack`](https://github.com/rustwasm/wasm-pack) to handle all the configuration and compiler flags as well as generation of a NPM package (see [Development](#development)).
 
-In code, we export a top-level `CryptpaySdk` object  using the `#[wasm_bindgen]` macro which has all the functions attached like so:
+In code, we export a top-level `ETOPaySdk` object  using the `#[wasm_bindgen]` macro which has all the functions attached like so:
 ```rust
 use std::sync::Arc;
 use tokio::sync::RwLock;
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub struct CryptpaySdk {
+pub struct ETOPaySdk {
     inner: Arc<RwLock<Sdk>>,
 }
 
 #[wasm_bindgen]
-impl CryptpaySdk {
+impl ETOPaySdk {
     #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         // do some initialization
@@ -50,7 +50,7 @@ impl CryptpaySdk {
         }
     }
 
-    /// Method exported on the `CryptpaySdk` object
+    /// Method exported on the `ETOPaySdk` object
     #[wasm_bindgen(js_name = "associatedFunction")]
     pub async fn associated_function(&self, parameter: String) {
         let mut sdk = self.inner.write().await;
@@ -63,7 +63,7 @@ from JavaScript/TypeScript code we can then do something like this (after import
 ```typescript
 async function main() {
     // the function marked `constructor` is executed
-    const sdk = new wasm.CryptpaySdk();
+    const sdk = new wasm.ETOPaySdk();
 
     await sdk.associatedFunction("value");
 }
@@ -80,7 +80,7 @@ and will not run into any runtime panics. See [exporting a struct to js](https:/
 for more details on the internals of `wasm-bindgen`.
 
 > Note that we do not need to use a `StaticCell` or similar to provide one-time initialization of the sdk since we directly
-> embed the creation into the constructor of the `CryptpaySdk` object. Thus the lifetime is directly tied to the
+> embed the creation into the constructor of the `ETOPaySdk` object. Thus the lifetime is directly tied to the
 > variable's lifetime in the JavaScript VM in the browser. `wasm-bindgen` also exposes a `free()` method which can be called
 > to release the memory held by the exported object.
 

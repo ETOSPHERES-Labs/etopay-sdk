@@ -8,7 +8,7 @@ export async function initSdk() {
 
     console.log("Starting SDK initialization...");
 
-    const sdk = new wasm.CryptpaySdk(); // Create an instance of the SDK
+    const sdk = new wasm.ETOPaySdk(); // Create an instance of the SDK
 
     const url = process.env.EXAMPLES_BACKEND_URL;
     await sdk.setConfig(`

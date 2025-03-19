@@ -18,7 +18,7 @@ export async function initSdk(username: string) {
 
     console.log("Starting SDK initialization...");
 
-    const sdk = new wasm.CryptpaySdk();
+    const sdk = new wasm.ETOPaySdk();
 
     // set the backend url if the environment variable is set
     let url: string = (process.env.EXAMPLES_BACKEND_URL as string);
