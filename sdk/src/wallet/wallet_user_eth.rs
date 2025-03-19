@@ -400,7 +400,9 @@ mod tests {
         let addr_raw = wallet_user.get_address().await.unwrap();
 
         // Assert
-        assert!(addr_raw.starts_with("0x"));
+        let parsed = Address::parse_checksummed(addr_raw, None).unwrap();
+        let expected = alloy_primitives::address!("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+        assert_eq!(parsed, expected);
     }
 
     #[tokio::test]
