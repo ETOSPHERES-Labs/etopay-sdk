@@ -29,7 +29,7 @@ impl Sdk {
     ///
     /// # Returns
     ///
-    /// The purchase ID. This is an internal index used to reference the transaction in cryptpay
+    /// The purchase ID. This is an internal index used to reference the transaction in etopay
     ///
     /// # Errors
     ///

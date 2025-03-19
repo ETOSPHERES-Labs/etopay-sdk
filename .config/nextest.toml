@@ -16,5 +16,5 @@ serial-tests = { max-threads = 1 }
 
 # Assign the tests in some packages to the serial-tests group
 [[profile.default.overrides]]
-filter = '(package(sdk) & kind(lib) & test(/\btest_serial_/))'
+filter = '(package(etopay-sdk) & kind(lib) & test(/\btest_serial_/))'
 test-group = 'serial-tests'

@@ -1,4 +1,4 @@
-//! Backend module for connection with cryptpay backend
+//! Backend module for connection with etopay backend
 //!
 //!
 

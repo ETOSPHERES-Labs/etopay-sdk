@@ -1,4 +1,4 @@
-site_name: Cawaena Docs
+site_name: ETOPay Docs
 plugins:
   - privacy:
       enabled: true
@@ -11,11 +11,11 @@ plugins:
       enable_creation_date: true
   - search
   - typedoc:
-      source: "./bindings/wasm/pkg/cawaena_sdk_wasm.d.ts"
+      source: "./bindings/wasm/pkg/etopay_sdk_wasm.d.ts"
       output_dir: "jstsdocs"
       tsconfig: "./bindings/wasm/tsconfig.json"
       options: "./bindings/wasm/typedoc.json"
-      name: "Cawaena Docs"
+      name: "ETOPay Docs"
       title_link: "/SDK%20Reference/SDK%20API%20Reference/"
 
 markdown_extensions:
@@ -100,7 +100,7 @@ extra:
       name: LinkedIn
     - icon: fontawesome/brands/discord
       link: https://discord.gg/ppNGRFsV
-      name: Cawaena Discord channel
+      name: ETOPay Discord channel
   version:
     provider: mike
     default: latest

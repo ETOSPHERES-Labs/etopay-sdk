@@ -1,5 +1,5 @@
 mod utils;
-use sdk::core::Sdk;
+use etopay_sdk::core::Sdk;
 
 #[test]
 fn get_sdk_build_info() {

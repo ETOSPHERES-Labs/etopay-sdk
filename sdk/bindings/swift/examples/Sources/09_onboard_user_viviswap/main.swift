@@ -4,7 +4,7 @@
 // Onboard with viviswap example
 // The user already exists in viviswap db. Therefore, the test will fail here.
 
-import CawaenaSdk
+import ETOPaySdk
 import Foundation
 import utils
 

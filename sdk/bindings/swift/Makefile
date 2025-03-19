@@ -45,8 +45,8 @@ lipo_bundle_mac:
 	../../../target/universal-macos/release/libwalletsdk_cabi.a
 
 move_swift_files:
-	find include/generated -name '*.swift' -exec sed -i '' '1s/^/import CawaenaSdkBin\n/' {} \; 
-	find include/generated -name '*.swift' -exec mv {} CawaenaSdk/Sources/CawaenaSdk/ \;
+	find include/generated -name '*.swift' -exec sed -i '' '1s/^/import ETOPaySdkBin\n/' {} \; 
+	find include/generated -name '*.swift' -exec mv {} ETOPaySdk/Sources/ETOPaySdk/ \;
 
 xcframework:
 	$(MAKE) build_sdk_ios
@@ -61,8 +61,8 @@ xcframework:
 	-headers ./include/ \
 	-library ../../../target/universal-macos/release/libwalletsdk_cabi.a \
 	-headers ./include/ \
-	-output ../../../target/CawaenaSdkBin.xcframework
-	cp -r ../../../target/CawaenaSdkBin.xcframework CawaenaSdk/
+	-output ../../../target/ETOPaySdkBin.xcframework
+	cp -r ../../../target/ETOPaySdkBin.xcframework ETOPaySdk/
 
 xcframework_mac:
 	$(MAKE) build_sdk_mac
@@ -71,8 +71,8 @@ xcframework_mac:
 	@xcodebuild -create-xcframework \
 	-library ../../../target/universal-macos/release/libwalletsdk_cabi.a \
 	-headers ./include/ \
-	-output ../../../target/CawaenaSdkBin.xcframework
-	cp -r ../../../target/CawaenaSdkBin.xcframework CawaenaSdk/
+	-output ../../../target/ETOPaySdkBin.xcframework
+	cp -r ../../../target/ETOPaySdkBin.xcframework ETOPaySdk/
 
 compile_swift_main:
 	cargo build --release
@@ -80,5 +80,5 @@ compile_swift_main:
   		-lwalletsdk_cabi\
   		-import-objc-header ./include/bridging-header.h \
 		-framework CoreFoundation -framework SystemConfiguration \
-  		main.swift ./include/generated/SwiftBridgeCore.swift ./include/generated/cawaena-sdk-swift/cawaena-sdk-swift.swift 
+  		main.swift ./include/generated/SwiftBridgeCore.swift ./include/generated/etopay-sdk-swift/etopay-sdk-swift.swift 
 	./main

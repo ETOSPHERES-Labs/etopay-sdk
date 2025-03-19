@@ -1,7 +1,7 @@
 mod utils;
 use crate::utils::init_sdk;
 
-use sdk::types::viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep};
+use etopay_sdk::types::viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep};
 use std::io::Write;
 use testing::USER_ALICE;
 

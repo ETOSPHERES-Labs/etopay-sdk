@@ -1,11 +1,15 @@
 name: deploy-android
 
 # only run this on push to main (eg. after PR merge)
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+
+# Only manual for now until we register the namespace / scope in Maven
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 env:
   CARGO_TERM_COLOR: always
@@ -56,7 +60,7 @@ jobs:
           cd sdk/bindings/android
 
           # get the version from cargo
-          PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "cawaena-sdk-jni") | .version')
+          PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "etopay-sdk-jni") | .version')
 
           # create the version string, only supports SNAPSHOT versions for now (add logic to change if release here)
           PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")

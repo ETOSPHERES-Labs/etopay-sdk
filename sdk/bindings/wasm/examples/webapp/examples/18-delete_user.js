@@ -1,5 +1,5 @@
 import { initSdk } from './util';
-import * as wasm from "cawaena-sdk-wasm";
+import * as wasm from "etopay-sdk-wasm";
 
 async function main() {
 

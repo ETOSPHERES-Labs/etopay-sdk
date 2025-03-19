@@ -28,7 +28,7 @@ pub fn store_mnemonic(mnemonic: &SecretBox<Mnemonic>, password: &SecretString) -
     info!("Creating kdbx file from mnemonic");
 
     let mut database = Database::default();
-    database.set_name("cryptpay");
+    database.set_name("etopay");
 
     let mut entry = Entry::default();
     entry.set_title("mnemonic");

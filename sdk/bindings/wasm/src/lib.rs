@@ -20,18 +20,18 @@ use std::sync::Arc;
 use tokio::sync::RwLock;
 use wasm_bindgen::prelude::*;
 
-/// Main object that contains all the functionality for interfacing with the CryptpaySdk.
+/// Main object that contains all the functionality for interfacing with the ETOPaySdk.
 #[wasm_bindgen]
-pub struct CryptpaySdk {
+pub struct ETOPaySdk {
     inner: Arc<RwLock<Sdk>>,
 }
 
 #[wasm_bindgen]
-impl CryptpaySdk {
+impl ETOPaySdk {
     #[wasm_bindgen(constructor)]
     #[allow(clippy::new_without_default)] // a default implementation would be useless in this case
-    /// Create a new instance of the `CryptpaySdk`
-    /// @returns {CryptpaySdk} a new `CryptpaySdk` instance.
+    /// Create a new instance of the `ETOPaySdk`
+    /// @returns {ETOPaySdk} a new `ETOPaySdk` instance.
     pub fn new() -> Self {
         #[cfg(feature = "console_error_panic_hook")]
         set_panic_hook();
@@ -66,7 +66,7 @@ impl CryptpaySdk {
             .map_err(|err| format!("{:#?}", err))
     }
 
-    /// Selects the network for the Cryptpay SDK.
+    /// Selects the network for the ETOPay SDK.
     ///
     /// @param {String} network_id.
     /// @returns {Promise<void>}
@@ -93,7 +93,7 @@ impl CryptpaySdk {
         Ok(networks)
     }
 
-    /// Initializes the cryptpay logger
+    /// Initializes the etopay logger
     /// @param {Level} level - The log level.
     /// @returns {void}
     #[wasm_bindgen(skip_jsdoc, js_name = "initLogger")]
@@ -533,7 +533,7 @@ impl CryptpaySdk {
             .map_err(|e| format!("{e:#?}"))
     }
 
-    /// Deletes the user in cryptpay. Hazmat!
+    /// Deletes the user in etopay. Hazmat!
     ///
     /// @param {string} pin - The wallet pin for confirmation. Optional in case there is an active wallet.
     /// @returns {Promise<void>}

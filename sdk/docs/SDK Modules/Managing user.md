@@ -82,7 +82,7 @@ The `username` should always match the `preferred_username` claim on the JWT `ac
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
@@ -165,7 +165,7 @@ The access token brings the following safe operations for the SDK:
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")
@@ -257,7 +257,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
 === "Typescript"
 
     ```typescript linenums="1"
-    import * as wasm from "../pkg/cawaena_sdk_wasm";
+    import * as wasm from "../pkg/etopay_sdk_wasm";
 
     const sdk = await new CawaenaSdk();
     await sdk.setConfig("...")

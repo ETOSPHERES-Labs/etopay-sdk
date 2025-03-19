@@ -1,6 +1,6 @@
-# Cawaena Swift Package
+# ETOPay Swift Package
 
-This repository contains the Swift package for the Cawaena SDK.
+This repository contains the Swift package for the ETOPay SDK.
 
 ## Usage
 
@@ -12,20 +12,20 @@ import PackageDescription
 let package = Package(
     name: "YourProject",
     dependencies: [
-        .package(url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift.git", from: "0.0.1")
+        .package(url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift.git", from: "0.0.1")
     ],
     targets: [
         .executableTarget(
             name: "YourTarget",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "cawaena-sdk-swift")
+                .product(name: "ETOPaySdk", package: "etopay-sdk-swift")
             ]
         )
     ]
 )
 ```
 
-The `CawaenaSdk` module is then available for import in your project.
+The `ETOPaySdk` module is then available for import in your project.
 
 ## Binary Targets
 
@@ -33,8 +33,8 @@ If you’re integrating our Swift package and it includes pre-built binaries (su
 
 ```swift
 .binaryTarget(
-    name: "CawaenaSdkBin",
-    url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift/releases/download/0.0.1/CawaenaSdkBin.xcframework.zip",
+    name: "ETOPaySdkBin",
+    url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift/releases/download/0.0.1/ETOPaySdkBin.xcframework.zip",
     checksum: "<computed-checksum>"
 )
 ```

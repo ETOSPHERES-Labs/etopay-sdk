@@ -1,6 +1,6 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, dead_code)]
 
-use sdk::{
+use etopay_sdk::{
     core::{Config, Sdk},
     types::newtypes::{AccessToken, EncryptionPin, PlainPassword},
 };

@@ -1,7 +1,7 @@
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 #![allow(dead_code)]
 
-use sdk::{
+use etopay_sdk::{
     core::{Config, Sdk},
     types::{
         networks::{Network, NetworkType},

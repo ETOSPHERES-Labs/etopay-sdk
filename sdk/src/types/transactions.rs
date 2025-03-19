@@ -26,7 +26,7 @@ pub struct TxInfo {
     pub sender: String,
     /// receiver of the transaction
     pub receiver: String,
-    /// cryptpay reference id for the transaction
+    /// etopay reference id for the transaction
     pub reference_id: String,
     /// Application specific metadata attached to the tx
     pub application_metadata: Option<ApiApplicationMetadata>,

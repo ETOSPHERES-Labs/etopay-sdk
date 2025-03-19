@@ -24,19 +24,19 @@ use sdk::types::newtypes::{AccessToken, EncryptionPin, PlainPassword};
 use std::sync::Arc;
 use tokio::sync::RwLock;
 
-/// Struct representing the Cawaena SDK with an inner data structure wrapped in an atomic reference count and read-write lock.
+/// Struct representing the ETOPay SDK with an inner data structure wrapped in an atomic reference count and read-write lock.
 /// Utilizes atomic reference counting (`Arc`) and a read-write lock (`RwLock`) to provide thread-safe access to the inner data structure,
-/// allowing multiple threads to concurrently read from or write to the Cawaena SDK while ensuring data integrity and preventing data races.
-pub struct CawaenaSdk {
+/// allowing multiple threads to concurrently read from or write to the ETOPay SDK while ensuring data integrity and preventing data races.
+pub struct ETOPaySdk {
     inner: Arc<RwLock<sdk::core::Sdk>>,
 }
 
-impl CawaenaSdk {
-    /// Create a new instance of the Cawaena Sdk.
+impl ETOPaySdk {
+    /// Create a new instance of the ETOPay Sdk.
     ///
     /// # Returns
     ///
-    /// New `CawaenaSdk` instance with atomic reference count and read write lock
+    /// New `ETOPaySdk` instance with atomic reference count and read write lock
     #[allow(clippy::new_without_default)]
     pub fn new() -> Self {
         Self {
@@ -85,7 +85,7 @@ impl CawaenaSdk {
         .map_err(|err| format!("{:#?}", err))
     }
 
-    /// Selects the network for the Cawaena SDK.
+    /// Selects the network for the ETOPay SDK.
     ///
     /// # Arguments
     ///
@@ -431,7 +431,7 @@ impl CawaenaSdk {
     ///
     /// # Returns
     ///
-    /// * Ok - the purchase ID. This is an internal index used to reference the transaction in cawaena
+    /// * Ok - the purchase ID. This is an internal index used to reference the transaction in etopay
     /// * Err - if the user or wallet is not initialized, or if there is an error creating the transaction.
     pub async fn create_purchase_request(
         &self,

@@ -1,4 +1,4 @@
-module CawaenaSdkBin {
+module ETOPaySdkBin {
     header "bridging-header.h"
     export *
 }

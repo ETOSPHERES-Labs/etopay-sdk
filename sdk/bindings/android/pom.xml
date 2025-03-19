@@ -5,7 +5,7 @@
     <artifactId>wallet</artifactId>
 	<version>VERSION_TO_REPLACE</version>
     <packaging>jar</packaging>
-    <name>cawaena-sdk-jni</name>
+    <name>etopay-sdk-jni</name>
     <description>The SDK java native bindings for use in java based applications and android</description>
     <licenses>
         <license>

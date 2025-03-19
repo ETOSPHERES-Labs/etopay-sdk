@@ -1,4 +1,4 @@
-use sdk::types::newtypes::PlainPassword;
+use etopay_sdk::types::newtypes::PlainPassword;
 mod utils;
 use testing::USER_SATOSHI;
 use utils::init_sdk;

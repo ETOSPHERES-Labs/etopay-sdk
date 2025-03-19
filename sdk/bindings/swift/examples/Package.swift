@@ -11,10 +11,10 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(path: "../CawaenaSdk")  // our Swift package
+        .package(path: "../ETOPaySdk")  // our Swift package
         // To use the deployed git version use this package declaration and change the product
-        // in `targets` to point to `cawaena-swift`.
-        //.package(url: "https://github.com/ETOSPHERES-Labs/cawaena-sdk-swift.git", from: "0.0.1")
+        // in `targets` to point to `etopay-swift`.
+        //.package(url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift.git", from: "0.0.1")
     ],
     targets: [
         // Targets are the basic building blocks of a package, defining a module or a test suite.
@@ -22,7 +22,7 @@ let package = Package(
         .target(
             name: "utils",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk")
+                .product(name: "ETOPaySdk", package: "ETOPaySdk")
             ],
             path: "Sources/utils"
         ),
@@ -30,7 +30,7 @@ let package = Package(
         .executableTarget(
             name: "01_create_new_user",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/01_create_new_user"
@@ -39,7 +39,7 @@ let package = Package(
         .executableTarget(
             name: "02_onboard_user_postident",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/02_onboard_user_postident"
@@ -48,7 +48,7 @@ let package = Package(
         .executableTarget(
             name: "03_create_new_wallet",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/03_create_new_wallet"
@@ -57,7 +57,7 @@ let package = Package(
         .executableTarget(
             name: "04_migrate_wallet_from_mnemonic",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/04_migrate_wallet_from_mnemonic"
@@ -66,7 +66,7 @@ let package = Package(
         .executableTarget(
             name: "05_migrate_wallet_from_backup",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/05_migrate_wallet_from_backup"
@@ -75,7 +75,7 @@ let package = Package(
         .executableTarget(
             name: "06_generate_new_address",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/06_generate_new_address"
@@ -84,7 +84,7 @@ let package = Package(
         .executableTarget(
             name: "07_get_balance",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/07_get_balance"
@@ -93,7 +93,7 @@ let package = Package(
         .executableTarget(
             name: "08_create_purchase_request",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/08_create_purchase_request"
@@ -102,7 +102,7 @@ let package = Package(
         .executableTarget(
             name: "09_onboard_user_viviswap",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/09_onboard_user_viviswap"
@@ -111,7 +111,7 @@ let package = Package(
         .executableTarget(
             name: "10_verify_pin",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/10_verify_pin"
@@ -120,7 +120,7 @@ let package = Package(
         .executableTarget(
             name: "11_reset_pin",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/11_reset_pin"
@@ -129,7 +129,7 @@ let package = Package(
         .executableTarget(
             name: "12_change_password",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/12_change_password"
@@ -138,7 +138,7 @@ let package = Package(
         .executableTarget(
             name: "13_send_amount",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/13_send_amount"
@@ -147,7 +147,7 @@ let package = Package(
         .executableTarget(
             name: "14_get_exchange_rate",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/14_get_exchange_rate"
@@ -156,7 +156,7 @@ let package = Package(
         .executableTarget(
             name: "16_get_tx_list",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/16_get_tx_list"
@@ -165,7 +165,7 @@ let package = Package(
         .executableTarget(
             name: "18_delete_user",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/18_delete_user"
@@ -174,7 +174,7 @@ let package = Package(
         .executableTarget(
             name: "19_get_wallet_tx_list",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/19_get_wallet_tx_list"
@@ -183,7 +183,7 @@ let package = Package(
         .executableTarget(
             name: "20_send_compliment",
             dependencies: [
-                .product(name: "CawaenaSdk", package: "CawaenaSdk"),
+                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
                 "utils",
             ],
             path: "Sources/20_send_compliment"
