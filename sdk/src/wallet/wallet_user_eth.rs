@@ -179,7 +179,7 @@ impl WalletImplEth {
 #[cfg_attr(test, mockall::automock)]
 impl WalletUser for WalletImplEth {
     async fn get_address(&self) -> Result<String> {
-        Ok(self.provider.default_signer_address().to_string().to_lowercase())
+        Ok(self.provider.default_signer_address().to_string())
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
@@ -400,7 +400,9 @@ mod tests {
         let addr_raw = wallet_user.get_address().await.unwrap();
 
         // Assert
-        assert!(addr_raw.starts_with("0x"));
+        let parsed = Address::parse_checksummed(addr_raw, None).unwrap();
+        let expected = alloy_primitives::address!("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
+        assert_eq!(parsed, expected);
     }
 
     #[tokio::test]
@@ -466,7 +468,7 @@ mod tests {
 
         let wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).await;
 
-        let wallet_addr = wallet_user.get_address().await.unwrap();
+        let wallet_addr = wallet_user.get_address().await.unwrap().to_lowercase();
 
         let mocked_balance: i128 = 10_000_000_000_000_000_000_000; // 10^22
         let mocked_balance_in_hex = format!("0x{:X}", mocked_balance);
@@ -514,7 +516,7 @@ mod tests {
 
         let mocked_transaction_count = 5;
         let amount_to_send = CryptoAmount::from(100);
-        let from = wallet_user.get_address().await.unwrap();
+        let from = wallet_user.get_address().await.unwrap().to_lowercase();
         let to = String::from("0xb0b0000000000000000000000000000000000000");
         let metadata = String::from("test message").into_bytes();
 
@@ -856,7 +858,7 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn should_estimate_gas_cost_eip1559() {
+    async fn should_estimate_gas_cost() {
         // Arrange
         let mut server = mockito::Server::new_async().await;
         let url = server.url();
@@ -880,7 +882,7 @@ mod tests {
             max_priority_fee_per_gas: 1,
         };
 
-        let from = wallet_user.get_address().await.unwrap();
+        let from = wallet_user.get_address().await.unwrap().to_lowercase();
         let mocked_rpc_estimate_gas = server
             .mock("POST", "/")
             .match_header("content-type", "application/json")
