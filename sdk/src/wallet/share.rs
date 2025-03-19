@@ -212,7 +212,7 @@ pub struct GeneratedShares {
     pub recovery: Share,
     /// share to store locally
     pub local: Share,
-    /// backup share that is shared with cryptpay backend, encrypted
+    /// backup share that is shared with etopay backend, encrypted
     pub backup: Share,
 }
 
@@ -261,7 +261,7 @@ fn create_shares_from_secret(
         secret.expose_secret(),
         // we specify reproducibility since we want to be able to regenerate the local share from
         // the others, and we need the signatures to match
-        rusty_secrets::dss::ss1::Reproducibility::seeded("cryptpay".to_owned().into_bytes()),
+        rusty_secrets::dss::ss1::Reproducibility::seeded("etopay".to_owned().into_bytes()),
         &None,
     )?;
 

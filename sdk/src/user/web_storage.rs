@@ -4,7 +4,7 @@ use crate::types::users::UserEntity;
 use base64::prelude::*;
 use web_sys::{js_sys, wasm_bindgen::JsValue};
 
-const STORAGE_KEY_PREFIX: &str = "cryptpay.local.user";
+const STORAGE_KEY_PREFIX: &str = "etopay.local.user";
 
 /// An implementation of [`super::UserKvStorage`] that uses the browsers local storage, rmp_serde
 /// and base64-encoding to store user entities.
@@ -29,7 +29,7 @@ impl BrowserLocalStorage {
 
     /// Checks if storage is available and can be written to
     pub fn is_available(&self) -> bool {
-        const STORAGE_TEST_KEY: &str = "cryptpay.test.available";
+        const STORAGE_TEST_KEY: &str = "etopay.test.available";
         const STORAGE_TEST_PAYLOAD: &str = "test_payload";
 
         let Ok(storage) = self.get_storage() else { return false };
