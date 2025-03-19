@@ -932,7 +932,9 @@
 <a href="#931" id="931">931</a>
 <a href="#932" id="932">932</a>
 <a href="#933" id="933">933</a>
-<a href="#934" id="934">934</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<a href="#934" id="934">934</a>
+<a href="#935" id="935">935</a>
+<a href="#936" id="936">936</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::{TransactionIntent, WalletUser};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
@@ -1113,7 +1115,7 @@
 #[cfg_attr(test, mockall::automock)]
 </span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEth {
     <span class="kw">async fn </span>get_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
-        <span class="prelude-val">Ok</span>(<span class="self">self</span>.provider.default_signer_address().to_string().to_lowercase())
+        <span class="prelude-val">Ok</span>(<span class="self">self</span>.provider.default_signer_address().to_string())
     }
 
     <span class="kw">async fn </span>get_balance(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;CryptoAmount&gt; {
@@ -1334,7 +1336,9 @@
         </span><span class="kw">let </span>addr_raw = wallet_user.get_address().<span class="kw">await</span>.unwrap();
 
         <span class="comment">// Assert
-        </span><span class="macro">assert!</span>(addr_raw.starts_with(<span class="string">"0x"</span>));
+        </span><span class="kw">let </span>parsed = Address::parse_checksummed(addr_raw, <span class="prelude-val">None</span>).unwrap();
+        <span class="kw">let </span>expected = <span class="macro">alloy_primitives::address!</span>(<span class="string">"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"</span>);
+        <span class="macro">assert_eq!</span>(parsed, expected);
     }
 
     <span class="attr">#[tokio::test]
@@ -1400,7 +1404,7 @@
 
         <span class="kw">let </span>wallet_user = get_wallet_user_with_mocked_provider(HARDHAT_MNEMONIC, node_url.to_string(), chain_id).<span class="kw">await</span>;
 
-        <span class="kw">let </span>wallet_addr = wallet_user.get_address().<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span>wallet_addr = wallet_user.get_address().<span class="kw">await</span>.unwrap().to_lowercase();
 
         <span class="kw">let </span>mocked_balance: i128 = <span class="number">10_000_000_000_000_000_000_000</span>; <span class="comment">// 10^22
         </span><span class="kw">let </span>mocked_balance_in_hex = <span class="macro">format!</span>(<span class="string">"0x{:X}"</span>, mocked_balance);
@@ -1448,7 +1452,7 @@
 
         <span class="kw">let </span>mocked_transaction_count = <span class="number">5</span>;
         <span class="kw">let </span>amount_to_send = CryptoAmount::from(<span class="number">100</span>);
-        <span class="kw">let </span>from = wallet_user.get_address().<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span>from = wallet_user.get_address().<span class="kw">await</span>.unwrap().to_lowercase();
         <span class="kw">let </span>to = String::from(<span class="string">"0xb0b0000000000000000000000000000000000000"</span>);
         <span class="kw">let </span>metadata = String::from(<span class="string">"test message"</span>).into_bytes();
 
@@ -1790,7 +1794,7 @@
     }
 
     <span class="attr">#[tokio::test]
-    </span><span class="kw">async fn </span>should_estimate_gas_cost_eip1559() {
+    </span><span class="kw">async fn </span>should_estimate_gas_cost() {
         <span class="comment">// Arrange
         </span><span class="kw">let </span><span class="kw-2">mut </span>server = mockito::Server::new_async().<span class="kw">await</span>;
         <span class="kw">let </span>url = server.url();
@@ -1814,7 +1818,7 @@
             max_priority_fee_per_gas: <span class="number">1</span>,
         };
 
-        <span class="kw">let </span>from = wallet_user.get_address().<span class="kw">await</span>.unwrap();
+        <span class="kw">let </span>from = wallet_user.get_address().<span class="kw">await</span>.unwrap().to_lowercase();
         <span class="kw">let </span>mocked_rpc_estimate_gas = server
             .mock(<span class="string">"POST"</span>, <span class="string">"/"</span>)
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
