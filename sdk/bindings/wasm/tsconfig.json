@@ -1,5 +1,5 @@
 {
     "files": [
-        "pkg/cawaena_sdk_wasm.d.ts"
+        "pkg/etopay_sdk_wasm.d.ts"
     ],
 }
