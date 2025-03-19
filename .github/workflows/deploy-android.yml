@@ -1,11 +1,15 @@
 name: deploy-android
 
 # only run this on push to main (eg. after PR merge)
+# on:
+#   workflow_dispatch:
+#   push:
+#     branches:
+#       - main
+
+# Only manual for now until we register the namespace / scope in Maven
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - main
 
 env:
   CARGO_TERM_COLOR: always
