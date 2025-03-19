@@ -14,7 +14,7 @@ group.enter()
 print("We're in Swift about to call our async Rust functions.")
 Task {
     do {
-        let sdk = CawaenaSdk()
+        let sdk = ETOPaySdk()
 
         try await sdk.setConfig(
             """

@@ -3,7 +3,7 @@
 
 // ! Need to do manual verification on postident: https://postident-itu.deutschepost.de/testapp
 
-import CawaenaSdk
+import ETOPaySdk
 import Foundation
 import utils
 

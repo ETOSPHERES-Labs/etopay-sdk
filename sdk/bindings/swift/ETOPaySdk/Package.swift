@@ -2,24 +2,24 @@
 import PackageDescription
 
 let package = Package(
-	name: "CawaenaSdk",
+	name: "ETOPaySdk",
 	platforms: [
 		.iOS(.v13),
 		.macOS(.v11),
 	],
 	products: [
 		.library(
-			name: "CawaenaSdk",
-			targets: ["CawaenaSdk"])
+			name: "ETOPaySdk",
+			targets: ["ETOPaySdk"])
 	],
 	dependencies: [],
 	targets: [
 		.binaryTarget(
-			name: "CawaenaSdkBin",
-			path: "CawaenaSdkBin.xcframework"
+			name: "ETOPaySdkBin",
+			path: "ETOPaySdkBin.xcframework"
 		),
 		.target(
-			name: "CawaenaSdk",
-			dependencies: ["CawaenaSdkBin"]),
+			name: "ETOPaySdk",
+			dependencies: ["ETOPaySdkBin"]),
 	]
 )

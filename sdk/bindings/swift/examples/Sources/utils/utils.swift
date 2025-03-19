@@ -1,4 +1,4 @@
-import CawaenaSdk
+import ETOPaySdk
 import Foundation
 
 // Struct to hold environment variables for examples
@@ -30,14 +30,14 @@ public func getEnvironment() -> Environment {
 }
 
 //  Create sdk instance and set env
-public func initSdk(username: String, password: String) async throws -> CawaenaSdk {
+public func initSdk(username: String, password: String) async throws -> ETOPaySdk {
     // remove user and wallet generated files
     cleanup(atPaths: ["sdk-user.db", "wallets"])
 
     let url = ProcessInfo.processInfo.environment["EXAMPLES_BACKEND_URL"]!
 
-    // initialize the cawaena sdk
-    let sdk = CawaenaSdk()
+    // initialize the etopay sdk
+    let sdk = ETOPaySdk()
 
     // set the sdk config and validate it
     try await sdk.setConfig(

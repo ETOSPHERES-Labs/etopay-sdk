@@ -1,6 +1,6 @@
 # ignore swift auto-generated code
 include/generated
-CawaenaSdk/.build
-CawaenaSdk/CawaenaSdkBin.xcframework
-CawaenaSdk/Sources/CawaenaSdk/*
-!CawaenaSdk/Sources/CawaenaSdk/utils.swift
+ETOPaySdk/.build
+ETOPaySdk/ETOPaySdkBin.xcframework
+ETOPaySdk/Sources/ETOPaySdk/*
+!ETOPaySdk/Sources/ETOPaySdk/utils.swift

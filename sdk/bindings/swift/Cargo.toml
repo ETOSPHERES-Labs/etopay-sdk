@@ -8,7 +8,7 @@ repository.workspace = true
 publish = false
 
 name = "etopay-sdk-swift"
-description = "Swift bindings for Cawaena SDK"
+description = "Swift bindings for ETOPay SDK"
 build = "build.rs"
 
 [lints.rust]
