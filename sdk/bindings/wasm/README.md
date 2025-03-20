@@ -147,9 +147,9 @@ KC_CLIENT_SECRET=
 PASSWORD=
 EXAMPLE_BACKEND_URL=
 ```
-3. Install dependencies: `bun install` or `pnpm install`.
+3. Install dependencies: `bun install`.
 4. Build the package with `nodejs` as target: `wasm-pack build --target nodejs`.
-5. Run individual examples, ex: `ts-node 07-get_balance.ts`. In case there is some error occuring from not finding `ts-node` command, use `npx ts-node 07-get_balance.ts`.
+5. Run individual examples, ex: `bun 07-get_balance.ts`.
 
 In case you want to run all the examples after installing the dependencies and building the package:
 1. Navigate back to sdk directory: `cd sdk`.
