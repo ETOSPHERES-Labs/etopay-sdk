@@ -22,7 +22,7 @@ import PackageDescription
 let package = Package(
     name: "program",
     dependencies: [
-        .package(url: "https://gitlab.inovel.de/zd0006/etopay-swift", from: "0.0.1")
+        .package(url: "https://github.com/ETOSPHERES-Labs/etopay-sdk-swift", from: "0.0.1")
     ],
     targets: [
         .executableTarget(
