@@ -30,7 +30,7 @@ examples=(
 for example in "${examples[@]}"
 do
     echo "------------------------------ Running example: $example -----------------------------------------------------------"
-    cargo run --package sdk --release --example "$example"
+    cargo run --package etopay-sdk --release --example "$example"
 done
 
 echo "All examples finished successfully."
