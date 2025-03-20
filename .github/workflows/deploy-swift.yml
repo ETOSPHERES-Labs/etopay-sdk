@@ -79,7 +79,7 @@ jobs:
       GH_REPO: ETOSPHERES-Labs/etopay-sdk-swift
       GH_TOKEN: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
       # get hash from previous job
-      CHECKSUM: ${{ needs.build-sdk-swift.outputs.has }}
+      CHECKSUM: ${{ needs.build-sdk-swift.outputs.hash }}
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -132,4 +132,4 @@ jobs:
           DEBUG: api
         run: |
           cd target-repo
-          gh release create nightly --prerelease --title "nightly" ../artifacts/ETOPaySdkBin.xcframework.zip
+          gh release create nightly --prerelease --title "nightly" ../artifacts/etopay-sdk-swift/ETOPaySdkBin.xcframework.zip
