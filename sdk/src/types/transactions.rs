@@ -52,6 +52,8 @@ pub struct WalletTxInfo {
     pub transaction_id: String,
     /// Describes type of transaction
     pub incoming: bool,
+    /// The receiver of the transaction
+    pub receiver: String,
     /// Amount of transfer
     pub amount: f64,
     /// either ETH or IOTA [convert network_id to string based on the value]
@@ -111,6 +113,7 @@ impl From<Transaction> for WalletTxInfo {
             block_id: transaction.block_id.map(|id| id.to_string()),
             transaction_id: transaction.transaction_id.to_string(),
             incoming: transaction.incoming,
+            receiver: String::new(), // TODO: iota is out anyways
             amount: sum,
             network: network.to_string(),
             status: format!("{:?}", transaction.inclusion_state),

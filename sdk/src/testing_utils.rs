@@ -378,6 +378,7 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         date: "some date".to_string(),
         block_id: None,
         transaction_id: "some tx id".to_string(),
+        receiver: String::new(),
         incoming: true,
         amount: 20.0,
         network: "some network".to_string(),

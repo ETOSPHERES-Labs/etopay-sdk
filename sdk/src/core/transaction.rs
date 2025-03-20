@@ -761,6 +761,7 @@ mod tests {
             date: String::new(),
             block_id: Some(String::new()),
             transaction_id: String::from("tx_id"),
+            receiver: String::new(),
             incoming: false,
             amount: 5.0,
             network: String::from("ETH"),
