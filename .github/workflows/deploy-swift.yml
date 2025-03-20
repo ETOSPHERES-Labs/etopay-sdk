@@ -58,7 +58,7 @@ jobs:
         run: |
           cd sdk/bindings/swift/ETOPaySdk
           ditto -c -k --sequesterRsrc --keepParent "ETOPaySdkBin.xcframework" "ETOPaySdkBin.xcframework.zip"
-          HASH=$(sha256sum -b ETOPaySdkBin.xcframework.zip | cut -d " " -f1)
+          HASH=$(shasum -a 256 "ETOPaySdkBin.xcframework.zip" | cut -d " " -f1)
           echo "hash=${HASH}" | tee -a $GITHUB_ENV
           rm -r ETOPaySdkBin.xcframework
 
@@ -100,9 +100,11 @@ jobs:
 
       - name: Modify url and insert hash
         run: |
+          cd target-repo
+          ls
           URL="https://github.com/${GH_REPO}/releases/download/nightly/ETOPaySdkBin.xcframework.zip"
-          sed -i '' -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" target-repo/Package.swift
-          cat target-repo/Package.swift
+          sed -i '' -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" Package.swift
+          cat Package.swift
 
 
       - name: Configure Git for commit
