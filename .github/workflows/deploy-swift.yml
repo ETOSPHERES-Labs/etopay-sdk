@@ -51,7 +51,7 @@ jobs:
       - name: Build swift sdk
         run: |
           cd sdk/bindings/swift
-          make xcframework_mac
+          make xcframework
 
       - name: Compress xcframework
         id: compress
