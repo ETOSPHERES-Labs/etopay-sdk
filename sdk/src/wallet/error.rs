@@ -131,6 +131,10 @@ pub enum WalletError {
     /// Error for calling a Smart Contract
     #[error("Contract error: {0}")]
     Contract(#[from] alloy::contract::Error),
+
+    /// Error for decoding a Smart Contract call
+    #[error("SolidityError error: {0}")]
+    SolidityError(#[from] alloy::sol_types::Error),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {

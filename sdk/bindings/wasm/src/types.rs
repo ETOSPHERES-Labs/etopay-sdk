@@ -178,6 +178,8 @@ pub struct WalletTxInfo {
     pub block_id: Option<String>,
     /// transaction id for particular transaction
     pub transaction_id: String,
+    /// The receiver address
+    pub receiver: String,
     /// Describes type of transaction
     pub incoming: bool,
     /// Amount of transfer
@@ -201,6 +203,7 @@ impl From<sdk::types::transactions::WalletTxInfo> for WalletTxInfo {
             date: value.date,
             block_id: value.block_id,
             transaction_id: value.transaction_id,
+            receiver: value.receiver,
             incoming: value.incoming,
             amount: value.amount,
             network: value.network,

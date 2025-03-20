@@ -58,6 +58,10 @@ public class SendAmount13 {
             double new_balance = sdk.getWalletBalance(utils.PIN);
             System.out.println("new balance: " + new_balance);
 
+			// print the details
+			String details = sdk.getWalletTransaction(utils.PIN, tx_id);
+            System.out.println("details: " + details);
+
         } catch (Exception e) {
             throw new RuntimeException("Send amount example failed", e);
         }

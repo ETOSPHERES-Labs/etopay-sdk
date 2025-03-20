@@ -8,6 +8,7 @@ use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
 use alloy::signers::local::coins_bip39::English;
 use alloy::signers::local::MnemonicBuilder;
+use alloy::sol_types::SolCall;
 use alloy::{
     primitives::Address,
     primitives::U256,
@@ -227,7 +228,13 @@ impl WalletUser for WalletImplEth {
 
         let my_address = self.get_address().await?;
 
-        let is_transaction_incoming = tx.to().is_some_and(|to| to.to_string() == my_address);
+        let Some(receiver_address) = tx.to() else {
+            return Err(WalletError::InvalidTransaction(
+                "Transaction has no to address".to_string(),
+            ));
+        };
+
+        let is_transaction_incoming = receiver_address.to_string() == my_address;
 
         let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
         let status = match receipt.map(|r| r.inner.is_success()) {
@@ -245,6 +252,7 @@ impl WalletUser for WalletImplEth {
             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
             block_id: tx.block_number.map(|n| n.to_string()),
             transaction_id: transaction_id.to_string(),
+            receiver: receiver_address.to_string(),
             incoming: is_transaction_incoming,
             amount: value_eth_f64,
             network: "ETH".to_string(),
@@ -348,9 +356,26 @@ impl WalletUser for WalletImplEthErc20 {
     }
 
     async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
-        // TODO: can we get the receiver of the tokens from the TX too?
-        // For now this is enough to get the gas etc.
-        self.inner.get_wallet_tx(transaction_id).await
+        // get the information for the underlying transaction
+        let mut info = self.inner.get_wallet_tx(transaction_id).await?;
+
+        // for now we will just patch the information with the info from the ERC20 transfer call
+        let transaction_hash = TxHash::from_str(transaction_id)?;
+        let transaction = self.inner.provider.get_transaction_by_hash(transaction_hash).await?;
+
+        let Some(tx) = transaction else {
+            return Err(WalletError::TransactionNotFound);
+        };
+
+        let args = Erc20Contract::transferCall::abi_decode(tx.inner.input(), true)?;
+
+        let amount_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(args._value)?;
+        let value_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(amount_wei_crypto_amount);
+        info.amount = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+
+        info.receiver = args._to.to_string();
+
+        Ok(info)
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {

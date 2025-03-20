@@ -32,6 +32,9 @@ async function main() {
     let balance_after = await sdk.getWalletBalance(pin);
     console.log("balance after sending amount", balance_after);
 
+	let details = await sdk.getWalletTransaction(pin, tx_id);
+    console.log("transaction details: ", details);
+
 }
 
 main();
