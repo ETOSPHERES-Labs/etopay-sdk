@@ -38,7 +38,7 @@ The `ETOPaySdk` module will then be available for import in your project.
 
 ## Using ETOPay with XCode
 
-In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://gitlab.inovel.de/zd0006/etopay-swift`) and select the ETOPay SDK when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
+In XCode, go to _File -> Add Package Dependencies_. In the top right search box, enter the url of the GitLab repository (`https://github.com/ETOSPHERES-Labs/etopay-sdk-swift`) and select the ETOPay SDK when it appears in the list. Select _Add Package_ and follow the on-screen instructions.
 
 ### Access to the binaries on JFrog
 
