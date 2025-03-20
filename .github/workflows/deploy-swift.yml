@@ -31,6 +31,7 @@ jobs:
     # provide outputs as input for the deploy step
     outputs:
       xcframework_sha256: ${{ steps.compress.outputs.hash }}
+      xcframework_filename: ${{ steps.compress.outputs.filename }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -57,9 +58,18 @@ jobs:
         id: compress
         run: |
           cd sdk/bindings/swift/ETOPaySdk
-          ditto -c -k --sequesterRsrc --keepParent "ETOPaySdkBin.xcframework" "ETOPaySdkBin.xcframework.zip"
-          HASH=$(shasum -a 256 "ETOPaySdkBin.xcframework.zip" | cut -d " " -f1)
+
+          # incorporate the short commit hash into the filename (to help with potential caching issues)
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          OUT_FILE="ETOPaySdkBin.xcframework-${SHORT_SHA}.zip"
+
+          ditto -c -k --sequesterRsrc --keepParent "ETOPaySdkBin.xcframework" ${OUT_FILE}
+
+          HASH=$(shasum -a 256 ${OUT_FILE} | cut -d " " -f1)
           echo "hash=${HASH}" | tee -a $GITHUB_OUTPUT
+          echo "filename=${OUT_FILE}" | tee -a $GITHUB_OUTPUT
+
+          # delete the folder so that it is not included in the uploaded artifact (include only the zip)
           rm -r ETOPaySdkBin.xcframework
 
       - name: Upload Artifact
@@ -80,6 +90,7 @@ jobs:
       GH_TOKEN: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
       # get hash from previous job
       CHECKSUM: ${{ needs.build-sdk-swift.outputs.xcframework_sha256 }}
+      FILENAME: ${{ needs.build-sdk-swift.outputs.xcframework_filename }}
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -101,11 +112,9 @@ jobs:
       - name: Modify url and insert hash
         run: |
           cd target-repo
-          ls
-          URL="https://github.com/${GH_REPO}/releases/download/nightly/ETOPaySdkBin.xcframework.zip"
+          URL="https://github.com/${GH_REPO}/releases/download/nightly/${FILENAME}"
           sed -i -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" Package.swift
           cat Package.swift
-
 
       - name: Configure Git for commit
         run: |
@@ -132,4 +141,4 @@ jobs:
           DEBUG: api
         run: |
           cd target-repo
-          gh release create nightly --prerelease --title "nightly" ../artifacts/etopay-sdk-swift/ETOPaySdkBin.xcframework.zip
+          gh release create nightly --prerelease --title "nightly" ../artifacts/etopay-sdk-swift/${FILENAME}
