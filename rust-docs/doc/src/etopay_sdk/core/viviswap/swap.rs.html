@@ -1648,7 +1648,7 @@
         };
         <span class="kw">let </span>body = serde_json::to_string(<span class="kw-2">&amp;</span>mock_response).unwrap();
 
-        <span class="kw">let </span>server_error_status = rand::thread_rng().gen_range(<span class="number">400</span>..<span class="number">410</span>);
+        <span class="kw">let </span>server_error_status = rand::rng().random_range(<span class="number">400</span>..<span class="number">410</span>);
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/orders?start=2&amp;limit=1"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
@@ -1675,7 +1675,7 @@
         sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
         sdk.active_user = <span class="prelude-val">Some</span>(get_active_user());
 
-        <span class="kw">let </span>server_error_status = rand::thread_rng().gen_range(<span class="number">400</span>..<span class="number">410</span>);
+        <span class="kw">let </span>server_error_status = rand::rng().random_range(<span class="number">400</span>..<span class="number">410</span>);
         <span class="kw">let </span>mock_server = srv
             .mock(<span class="string">"GET"</span>, <span class="macro">format!</span>(<span class="string">"/api/viviswap/orders?id={}"</span>, ORDER_ID).as_str())
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)

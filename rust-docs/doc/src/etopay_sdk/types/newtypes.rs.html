@@ -331,7 +331,7 @@
 };
 <span class="kw">use </span>iota_sdk::crypto::hashes::blake2b::Blake2b256;
 <span class="kw">use </span>iota_sdk::crypto::hashes::Digest;
-<span class="kw">use </span>rand_core::{OsRng, RngCore};
+<span class="kw">use </span>rand::RngCore;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
 
 <span class="macro">macro_rules!</span> impl_redacted_debug {
@@ -484,7 +484,7 @@
     <span class="doccomment">/// Generate a new random [`EncryptionSalt`].
     </span><span class="kw">pub fn </span>generate() -&gt; <span class="self">Self </span>{
         <span class="kw">let </span><span class="kw-2">mut </span>salt = [<span class="number">0u8</span>; <span class="number">12</span>];
-        OsRng.fill_bytes(<span class="kw-2">&amp;mut </span>salt);
+        rand::rng().fill_bytes(<span class="kw-2">&amp;mut </span>salt);
         <span class="self">Self</span>(Box::new(salt))
     }
 }
