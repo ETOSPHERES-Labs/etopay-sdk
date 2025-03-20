@@ -59,7 +59,7 @@ jobs:
           cd sdk/bindings/swift/ETOPaySdk
           ditto -c -k --sequesterRsrc --keepParent "ETOPaySdkBin.xcframework" "ETOPaySdkBin.xcframework.zip"
           HASH=$(shasum -a 256 "ETOPaySdkBin.xcframework.zip" | cut -d " " -f1)
-          echo "hash=${HASH}" | tee -a $GITHUB_ENV
+          echo "hash=${HASH}" | tee -a $GITHUB_OUTPUT
           rm -r ETOPaySdkBin.xcframework
 
       - name: Upload Artifact
@@ -132,4 +132,4 @@ jobs:
           DEBUG: api
         run: |
           cd target-repo
-          gh release create nightly --prerelease --title "nightly" artifacts/ETOPaySdkBin.xcframework.zip
+          gh release create nightly --prerelease --title "nightly" ../artifacts/ETOPaySdkBin.xcframework.zip
