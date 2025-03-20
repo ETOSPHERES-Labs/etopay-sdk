@@ -103,7 +103,7 @@ jobs:
           cd target-repo
           ls
           URL="https://github.com/${GH_REPO}/releases/download/nightly/ETOPaySdkBin.xcframework.zip"
-          sed -i '' -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" Package.swift
+          sed -i -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" Package.swift
           cat Package.swift
 
 
