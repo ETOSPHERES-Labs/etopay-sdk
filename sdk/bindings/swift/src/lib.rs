@@ -235,6 +235,7 @@ pub mod ffi {
         fn date(&self) -> String;
         fn block_id(&self) -> String;
         fn transaction_id(&self) -> String;
+        fn receiver(&self) -> String;
         fn incoming(&self) -> bool;
         fn amount(&self) -> f64;
         fn network(&self) -> String;

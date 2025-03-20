@@ -228,6 +228,7 @@ impl From<sdk::types::transactions::WalletTxInfo> for crate::ffi_functions::Wall
             date: value.date,
             block_id: value.block_id.unwrap_or("".to_string()),
             transaction_id: value.transaction_id,
+            receiver: value.receiver,
             incoming: value.incoming,
             amount: value.amount,
             network: value.network,

@@ -1495,6 +1495,7 @@ pub struct WalletTxInfo {
     pub date: String,
     pub block_id: String,
     pub transaction_id: String,
+    pub receiver: String,
     pub incoming: bool,
     pub amount: f64,
     pub network: String,
@@ -1513,6 +1514,10 @@ impl WalletTxInfo {
 
     pub fn transaction_id(&self) -> String {
         self.transaction_id.clone()
+    }
+
+    pub fn receiver(&self) -> String {
+        self.receiver.clone()
     }
 
     pub fn incoming(&self) -> bool {
