@@ -79,7 +79,7 @@ jobs:
       GH_REPO: ETOSPHERES-Labs/etopay-sdk-swift
       GH_TOKEN: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
       # get hash from previous job
-      CHECKSUM: ${{ needs.build-sdk-swift.outputs.hash }}
+      CHECKSUM: ${{ needs.build-sdk-swift.outputs.xcframework_sha256 }}
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
