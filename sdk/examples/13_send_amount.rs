@@ -47,4 +47,7 @@ async fn main() {
         .unwrap();
 
     println!("Success with transaction id: {tx_id}");
+
+    let details = sdk.get_wallet_tx(&user.pin, &tx_id).await.unwrap();
+    println!("Details:\n{:#?}", details);
 }
