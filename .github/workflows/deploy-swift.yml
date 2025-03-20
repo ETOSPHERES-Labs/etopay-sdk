@@ -72,7 +72,7 @@ jobs:
           overwrite: true
 
   deploy-sdk-swift:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: build-sdk-swift
     env:
       # for gh CLI
@@ -130,4 +130,4 @@ jobs:
           DEBUG: api
         run: |
           cd target-repo
-          gh release create nightly --prerelease --title "nightly" artifacts/ETOPaySdk.xcframework.zip
+          gh release create nightly --prerelease --title "nightly" artifacts/ETOPaySdkBin.xcframework.zip
