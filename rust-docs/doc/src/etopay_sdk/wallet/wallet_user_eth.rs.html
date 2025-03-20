@@ -934,7 +934,32 @@
 <a href="#933" id="933">933</a>
 <a href="#934" id="934">934</a>
 <a href="#935" id="935">935</a>
-<a href="#936" id="936">936</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<a href="#936" id="936">936</a>
+<a href="#937" id="937">937</a>
+<a href="#938" id="938">938</a>
+<a href="#939" id="939">939</a>
+<a href="#940" id="940">940</a>
+<a href="#941" id="941">941</a>
+<a href="#942" id="942">942</a>
+<a href="#943" id="943">943</a>
+<a href="#944" id="944">944</a>
+<a href="#945" id="945">945</a>
+<a href="#946" id="946">946</a>
+<a href="#947" id="947">947</a>
+<a href="#948" id="948">948</a>
+<a href="#949" id="949">949</a>
+<a href="#950" id="950">950</a>
+<a href="#951" id="951">951</a>
+<a href="#952" id="952">952</a>
+<a href="#953" id="953">953</a>
+<a href="#954" id="954">954</a>
+<a href="#955" id="955">955</a>
+<a href="#956" id="956">956</a>
+<a href="#957" id="957">957</a>
+<a href="#958" id="958">958</a>
+<a href="#959" id="959">959</a>
+<a href="#960" id="960">960</a>
+<a href="#961" id="961">961</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::{TransactionIntent, WalletUser};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
@@ -944,6 +969,7 @@
 <span class="kw">use </span>alloy::rpc::types::TransactionRequest;
 <span class="kw">use </span>alloy::signers::local::coins_bip39::English;
 <span class="kw">use </span>alloy::signers::local::MnemonicBuilder;
+<span class="kw">use </span>alloy::sol_types::SolCall;
 <span class="kw">use </span>alloy::{
     primitives::Address,
     primitives::U256,
@@ -1163,7 +1189,13 @@
 
         <span class="kw">let </span>my_address = <span class="self">self</span>.get_address().<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="kw">let </span>is_transaction_incoming = tx.to().is_some_and(|to| to.to_string() == my_address);
+        <span class="kw">let </span><span class="prelude-val">Some</span>(receiver_address) = tx.to() <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::InvalidTransaction(
+                <span class="string">"Transaction has no to address"</span>.to_string(),
+            ));
+        };
+
+        <span class="kw">let </span>is_transaction_incoming = receiver_address.to_string() == my_address;
 
         <span class="kw">let </span>receipt = <span class="self">self</span>.provider.get_transaction_receipt(transaction_hash).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>status = <span class="kw">match </span>receipt.map(|r| r.inner.is_success()) {
@@ -1181,6 +1213,7 @@
             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
             block_id: tx.block_number.map(|n| n.to_string()),
             transaction_id: transaction_id.to_string(),
+            receiver: receiver_address.to_string(),
             incoming: is_transaction_incoming,
             amount: value_eth_f64,
             network: <span class="string">"ETH"</span>.to_string(),
@@ -1284,10 +1317,27 @@
     }
 
     <span class="kw">async fn </span>get_wallet_tx(<span class="kw-2">&amp;</span><span class="self">self</span>, transaction_id: <span class="kw-2">&amp;</span>str) -&gt; <span class="prelude-ty">Result</span>&lt;WalletTxInfo&gt; {
-        <span class="comment">// TODO: can we get the receiver of the tokens from the TX too?
-        // For now this is enough to get the gas etc.
-        </span><span class="self">self</span>.inner.get_wallet_tx(transaction_id).<span class="kw">await
-    </span>}
+        <span class="comment">// get the information for the underlying transaction
+        </span><span class="kw">let </span><span class="kw-2">mut </span>info = <span class="self">self</span>.inner.get_wallet_tx(transaction_id).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="comment">// for now we will just patch the information with the info from the ERC20 transfer call
+        </span><span class="kw">let </span>transaction_hash = TxHash::from_str(transaction_id)<span class="question-mark">?</span>;
+        <span class="kw">let </span>transaction = <span class="self">self</span>.inner.provider.get_transaction_by_hash(transaction_hash).<span class="kw">await</span><span class="question-mark">?</span>;
+
+        <span class="kw">let </span><span class="prelude-val">Some</span>(tx) = transaction <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::TransactionNotFound);
+        };
+
+        <span class="kw">let </span>args = Erc20Contract::transferCall::abi_decode(tx.inner.input(), <span class="bool-val">true</span>)<span class="question-mark">?</span>;
+
+        <span class="kw">let </span>amount_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(args._value)<span class="question-mark">?</span>;
+        <span class="kw">let </span>value_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(amount_wei_crypto_amount);
+        info.amount = value_eth_crypto_amount.inner().try_into()<span class="question-mark">?</span>; <span class="comment">// TODO: WalletTxInfo f64 -&gt; Decimal ? maybe
+
+        </span>info.receiver = args._to.to_string();
+
+        <span class="prelude-val">Ok</span>(info)
+    }
 
     <span class="kw">async fn </span>estimate_gas_cost(<span class="kw-2">&amp;</span><span class="self">self</span>, intent: <span class="kw-2">&amp;</span>TransactionIntent) -&gt; <span class="prelude-ty">Result</span>&lt;GasCostEstimation&gt; {
         <span class="kw">let </span>tx_request = <span class="self">self</span>.prepare_transaction(intent)<span class="question-mark">?</span>;

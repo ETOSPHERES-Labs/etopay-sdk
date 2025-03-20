@@ -877,7 +877,8 @@
 <a href="#876" id="876">876</a>
 <a href="#877" id="877">877</a>
 <a href="#878" id="878">878</a>
-<a href="#879" id="879">879</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
+<a href="#879" id="879">879</a>
+<a href="#880" id="880">880</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
@@ -1640,6 +1641,7 @@
             date: String::new(),
             block_id: <span class="prelude-val">Some</span>(String::new()),
             transaction_id: String::from(<span class="string">"tx_id"</span>),
+            receiver: String::new(),
             incoming: <span class="bool-val">false</span>,
             amount: <span class="number">5.0</span>,
             network: String::from(<span class="string">"ETH"</span>),

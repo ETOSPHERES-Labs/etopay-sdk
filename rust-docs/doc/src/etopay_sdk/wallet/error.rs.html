@@ -144,7 +144,11 @@
 <a href="#143" id="143">143</a>
 <a href="#144" id="144">144</a>
 <a href="#145" id="145">145</a>
-<a href="#146" id="146">146</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{kdbx::KdbxStorageError, share::ShareError};
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a></pre></div><pre class="rust"><code><span class="kw">use super</span>::{kdbx::KdbxStorageError, share::ShareError};
 <span class="kw">use crate</span>::{backend::error::ApiError, types::error::TypeError, user::error::UserKvStorageError};
 <span class="kw">use </span>iota_sdk::types::block;
 <span class="kw">use </span>serde::Serialize;
@@ -277,6 +281,10 @@
     <span class="doccomment">/// Error for calling a Smart Contract
     </span><span class="attr">#[error(<span class="string">"Contract error: {0}"</span>)]
     </span>Contract(<span class="attr">#[from] </span>alloy::contract::Error),
+
+    <span class="doccomment">/// Error for decoding a Smart Contract call
+    </span><span class="attr">#[error(<span class="string">"SolidityError error: {0}"</span>)]
+    </span>SolidityError(<span class="attr">#[from] </span>alloy::sol_types::Error),
 }
 
 <span class="kw">impl </span>From&lt;iota_sdk::crypto::keys::bip39::Error&gt; <span class="kw">for </span>WalletError {

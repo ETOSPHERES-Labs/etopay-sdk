@@ -522,7 +522,9 @@
 <a href="#521" id="521">521</a>
 <a href="#522" id="522">522</a>
 <a href="#523" id="523">523</a>
-<a href="#524" id="524">524</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main implementation for the [`UserRepo`], which uses a simple storage abstraction internally.
+<a href="#524" id="524">524</a>
+<a href="#525" id="525">525</a>
+<a href="#526" id="526">526</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main implementation for the [`UserRepo`], which uses a simple storage abstraction internally.
 
 </span><span class="kw">use </span><span class="kw">super</span>::error::Result;
 <span class="kw">use </span><span class="kw">super</span>::UserRepo;
@@ -951,6 +953,7 @@
                 date: String::new(),
                 block_id: <span class="prelude-val">None</span>,
                 transaction_id: String::from(<span class="string">"transaction_id_1"</span>),
+                receiver: String::new(),
                 incoming: <span class="bool-val">false</span>,
                 amount: <span class="number">0.5</span>,
                 network: String::from(<span class="string">"ETH"</span>),
@@ -961,6 +964,7 @@
                 date: String::new(),
                 block_id: <span class="prelude-val">Some</span>(String::from(<span class="string">"block_2"</span>)),
                 transaction_id: String::from(<span class="string">"transaction_id_2"</span>),
+                receiver: String::new(),
                 incoming: <span class="bool-val">true</span>,
                 amount: <span class="number">4.0</span>,
                 network: String::from(<span class="string">"ETH"</span>),
