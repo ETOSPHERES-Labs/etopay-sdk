@@ -59,6 +59,14 @@ Task {
         let new_balance = try await sdk.getWalletBalance(env.pin)
         print("new balance: \(new_balance)")
 
+        // Get the details (wrap env.pin in RustString to make sure parameters have the same type (they share same generic type))
+        let details = try await sdk.getWalletTransaction(RustString(env.pin), tx_id)
+        print("tx details status: \(details.status().toString())")
+        print("tx details amount: \(details.amount())")
+        print("tx details receiver: \(details.receiver().toString())")
+        print("tx details block_id: \(details.block_id().toString())")
+
+
     } catch let error as RustString {
         fatalError("Send amount example failed: \(error.toString())")
     } catch {
