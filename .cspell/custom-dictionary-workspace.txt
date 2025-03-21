@@ -77,7 +77,7 @@ Vivi
 viviswap
 Viviswap
 walkdir
-walletsdk
+etopaysdk
 xcframework
 xcframeworks
 xcodebuild

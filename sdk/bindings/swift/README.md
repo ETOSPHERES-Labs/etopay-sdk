@@ -47,7 +47,7 @@ Our xcframework structure is as following:
         - SwiftBridgeCore.h
       - bridging-header.h
       - module.modulemap
-    - libwalletsdk_cabi.a
+    - libetopaysdk_cabi.a
   - ... (other architectures)
 
 The creation can be done using the `xcodebuild` command, which takes the static library as input and an include section, which is actually a folder containing at most one module.modulemap file and any other C header files which describe the interface to the static library, assuming that it is C ABI.

@@ -1,8 +1,8 @@
-//! This file contains the Rust implementation of the Android SDK bindings for the Cawaena library.
+//! This file contains the Rust implementation of the Android SDK bindings for the ETOPay library.
 //!
-//! It provides functions that interface with the Java code and handle the communication with the Cawaena SDK.
+//! It provides functions that interface with the Java code and handle the communication with the ETOPay SDK.
 //! The functions in this file are called from the Java code using JNI (Java Native Interface).
-//! The Rust code uses the `jni` crate to interact with the Java code and the `sdk` crate to access the Cawaena SDK functionality.
+//! The Rust code uses the `jni` crate to interact with the Java code and the `sdk` crate to access the ETOPay SDK functionality.
 //! The Rust code also uses other crates such as `once_cell`, `tokio`, and `serde_json` for various purposes.
 //! The functions in this file handle tasks such as setting up the SDK, initializing users, performing transactions, and managing wallets.
 //!
@@ -12,7 +12,7 @@
 //! This allows for concurrent access to the SDK from multiple threads.
 //! The Rust code also defines various helper macros for string conversion and error handling.
 //!
-//! Overall, this file serves as the bridge between the Java code and the Cawaena SDK, enabling seamless integration of the SDK into Android applications.
+//! Overall, this file serves as the bridge between the Java code and the ETOPay SDK, enabling seamless integration of the SDK into Android applications.
 
 mod type_conversions;
 
@@ -63,8 +63,8 @@ fn get_or_init_sdk() -> &'static SdkWrapper {
     sdk
 }
 
-/// Main object that contains all the functionality for interfacing with the CawaenaSdk.
-#[jnigen_macro::generate("com.cawaena.Wallet")]
+/// Main object that contains all the functionality for interfacing with the ETOPaySdk.
+#[jnigen_macro::generate("com.etospheres.etopay.ETOPaySdk")]
 mod ffi {
     use super::*;
     use sdk::{
@@ -116,7 +116,7 @@ mod ffi {
         }
     }
 
-    /// Selects the network for the Cryptpay SDK.
+    /// Selects the network for the ETOPay SDK.
     ///
     /// @param network_id The input string representing the network id.
     pub fn setNetwork(network_id: String) -> Result<(), String> {
@@ -988,7 +988,7 @@ mod ffi {
         result.map_err(|e| format!("{e:#?}"))
     }
 
-    /// Deletes the user in Cawaena. Hazmat!
+    /// Deletes the user in ETOPay. Hazmat!
     ///
     /// @param pin The wallet pin for confirmation. Optional in case there is an active wallet.
     pub fn deleteUser(pin: Option<String>) -> Result<(), String> {

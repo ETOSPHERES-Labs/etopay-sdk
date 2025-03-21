@@ -1,8 +1,8 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-    <groupId>com.cawaena</groupId>
-    <artifactId>wallet</artifactId>
+    <groupId>com.etospheres.etopay</groupId>
+    <artifactId>etopaysdk</artifactId>
 	<version>VERSION_TO_REPLACE</version>
     <packaging>jar</packaging>
     <name>etopay-sdk-jni</name>
@@ -10,7 +10,7 @@
     <licenses>
         <license>
             <name>AGPL-3.0-only</name>
-            <url>https://github.com/ETOSPHERES-Labs/cawaena-sdk/blob/main/LICENSE</url>
+            <url>https://github.com/ETOSPHERES-Labs/etopay-sdk/blob/main/LICENSE</url>
             <distribution>repo</distribution>
         </license>
     </licenses>
@@ -22,9 +22,9 @@
         </developer>
     </developers>
     <scm>
-        <connection>scm:git:git://github.com/ETOSPHERES-Labs/cawaena-sdk.git</connection>
-        <developerConnection>scm:git:ssh://github.com:ETOSPHERES-Labs/cawaena-sdk.git</developerConnection>
-        <url>http://github.com/ETOSPHERES-Labs/cawaena-sdk/tree/master</url>
+        <connection>scm:git:git://github.com/ETOSPHERES-Labs/etopay-sdk.git</connection>
+        <developerConnection>scm:git:ssh://github.com:ETOSPHERES-Labs/etopay-sdk.git</developerConnection>
+        <url>http://github.com/ETOSPHERES-Labs/etopay-sdk/tree/master</url>
     </scm>
 
     <properties>
@@ -84,7 +84,7 @@
 									<includeBaseDirectory>false</includeBaseDirectory>
                                     <files>
                                         <file>
-											<source>../../../target/release/libwalletsdk.so</source>
+											<source>../../../target/release/libetopaysdk.so</source>
 											<outputDirectory>linux/x64/</outputDirectory>
                                         </file>
                                     </files>

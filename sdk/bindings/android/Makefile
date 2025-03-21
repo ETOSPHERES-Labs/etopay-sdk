@@ -1,8 +1,6 @@
 # @file Makefile
-# @author Sharang Parnerkar
-#
+# @author Team Lobster 🦞
 # @copyright ETOSPHERES Labs GmbH
-#
 
 .PHONY = clean build_sdk bundle lib_example run_example build_javadoc
 
@@ -23,4 +21,4 @@ run_example: lib_example
 	cd examples && ./gradlew run --args $(example)
 
 build_javadoc:
-	javadoc -d javadoc -sourcepath ./tests/src/main/java com.cawaena
+	javadoc -d javadoc -sourcepath ./tests/src/main/java com.etospheres.etopay

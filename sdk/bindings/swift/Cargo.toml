@@ -32,7 +32,7 @@ swift-bridge = { version = "0.1", features = ["async"] }
 tokio = { workspace = true, features = ["sync"] }
 
 [lib]
-name = "walletsdk_cabi"
+name = "etopaysdk_cabi"
 crate-type = ["staticlib"]
 
 [build-dependencies]
