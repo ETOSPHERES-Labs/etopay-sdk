@@ -54,23 +54,23 @@ The jar files also contain the jniLibs folder. The jniLibs folder in turn contai
 ```
 jniLibs
 ├── arm64-v8a
-│   ├── libwalletsdk.so
+│   ├── libetopaysdk.so
 │   └── libc++_shared.so
 ├── armeabi-v7a
-│   ├── libwalletsdk.so
+│   ├── libetopaysdk.so
 │   └── libc++_shared.so
 ├── x86
-│   ├── libwalletsdk.so
+│   ├── libetopaysdk.so
 │   └── libc++_shared.so
 └── x86_64
-    ├── libwalletsdk.so
+    ├── libetopaysdk.so
     └── libc++_shared.so
 ```
 
 The `jniLibs` folder should be placed **as-is** under the `src/main` folder of the corresponding Java project from the jar file.
 
 !!! warning
-    Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the ETOPaySdk class `java.lang.UnsatisfiedLinkError: dlopen failed: library "libwalletsdk.so" not found`.
+    Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the ETOPaySdk class `java.lang.UnsatisfiedLinkError: dlopen failed: library "libetopaysdk.so" not found`.
 
 ## Future releases of SDK
 

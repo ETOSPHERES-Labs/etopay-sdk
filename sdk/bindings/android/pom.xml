@@ -84,7 +84,7 @@
 									<includeBaseDirectory>false</includeBaseDirectory>
                                     <files>
                                         <file>
-											<source>../../../target/release/libwalletsdk.so</source>
+											<source>../../../target/release/libetopaysdk.so</source>
 											<outputDirectory>linux/x64/</outputDirectory>
                                         </file>
                                     </files>

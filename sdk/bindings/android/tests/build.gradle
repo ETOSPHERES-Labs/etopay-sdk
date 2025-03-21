@@ -48,7 +48,7 @@ tasks.withType(Test) {
     dependsOn "compileNativeReleaseLibrary"
 
     // depend on the file so that the tests rerun if the native lib changed
-    inputs.file(file('../../../../target/release/libwalletsdk.so'))
+    inputs.file(file('../../../../target/release/libetopaysdk.so'))
 
     // then we can point the library path to the cargo output directory (relative to the project root)
     systemProperty "java.library.path", file("../../../../target/release/")
