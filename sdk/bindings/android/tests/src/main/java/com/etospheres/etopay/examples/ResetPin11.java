@@ -1,13 +1,13 @@
 package com.etospheres.etopay.examples;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 
 public class ResetPin11 {
 
     public static void main(String[] args) {
 
         // initialize the sdk
-        Wallet sdk = utils.initSdk(utils.USERNAME_SATOSHI);
+        ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
         String password = utils.getEnvVariable("PASSWORD");
 

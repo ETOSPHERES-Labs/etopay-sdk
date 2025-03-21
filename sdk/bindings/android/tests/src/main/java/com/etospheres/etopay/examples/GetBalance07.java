@@ -1,19 +1,19 @@
 package com.etospheres.etopay.examples;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 import com.etospheres.etopay.model.Network;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 
 public class GetBalance07 {
 
     public static void main(String[] args) {
 
         // initialize the sdk
-        Wallet sdk = utils.initSdk(utils.USERNAME_SATOSHI);
+        ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
         String password = utils.getEnvVariable("PASSWORD");
         String mnemonic = utils.getEnvVariable("MNEMONIC");

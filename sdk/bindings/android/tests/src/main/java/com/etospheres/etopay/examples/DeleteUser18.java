@@ -1,13 +1,13 @@
 package com.etospheres.etopay.examples;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 
 public class DeleteUser18 {
 
     public static void main(String[] args) {
 
         // initialize the sdk
-        Wallet sdk = utils.initSdk(utils.USERNAME_ARCHIVEME);
+        ETOPaySdk sdk = utils.initSdk(utils.USERNAME_ARCHIVEME);
 
         String password = utils.getEnvVariable("PASSWORD");
 

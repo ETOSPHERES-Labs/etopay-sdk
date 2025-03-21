@@ -59,7 +59,7 @@ tasks.withType(JavaCompile) {
     options.deprecation = true
 
     // depend on the generated file so that we recompile if it changed
-    inputs.file(file('src/main/java/com/etospheres/etopay/Wallet.java'))
+    inputs.file(file('src/main/java/com/etospheres/etopay/ETOPaySdk.java'))
 
     // since we need java to compile the generated bindings, we need to depend on the build task, and make sure we run after it
     dependsOn "compileNativeReleaseLibrary"

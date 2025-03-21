@@ -30,7 +30,7 @@ import com.etospheres.etopay.model.ViviswapPartiallyKycDetails;
 
 @OrderWith(Alphanumeric.class)
 public class SdkUnitTest {
-    private static Wallet sdk;
+    private static ETOPaySdk sdk;
     private static final Logger logger = LoggerFactory.getLogger(SdkUnitTest.class);
     private static final String token = "access_token";
 
@@ -56,11 +56,11 @@ public class SdkUnitTest {
 
     @BeforeClass
     public static void setUpClass() {
-        sdk = new Wallet();
+        sdk = new ETOPaySdk();
 
         try {
             // create a random directory for the tests to use
-            Path directory = Files.createTempDirectory("cryptpay_tests");
+            Path directory = Files.createTempDirectory("etopay_tests");
 
             sdk.setConfig("""
                     {

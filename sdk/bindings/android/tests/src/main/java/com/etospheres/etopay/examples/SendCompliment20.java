@@ -1,6 +1,6 @@
 package com.etospheres.etopay.examples;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 import com.etospheres.etopay.model.Network;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -18,7 +18,7 @@ public class SendCompliment20 {
     public static void main(String[] args) throws InterruptedException, ExecutionException, TimeoutException {
 
         // initialize the sdk
-        Wallet sdk = utils.initSdk(utils.USERNAME_HANS48);
+        ETOPaySdk sdk = utils.initSdk(utils.USERNAME_HANS48);
 
         String password = utils.getEnvVariable("PASSWORD");
         String mnemonic_hans48 = utils.getEnvVariable("MNEMONIC_HANS48");

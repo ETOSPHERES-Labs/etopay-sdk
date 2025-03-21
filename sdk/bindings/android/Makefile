@@ -1,8 +1,6 @@
 # @file Makefile
-# @author Sharang Parnerkar
-#
+# @author Team Lobster 🦞
 # @copyright ETOSPHERES Labs GmbH
-#
 
 .PHONY = clean build_sdk bundle lib_example run_example build_javadoc
 

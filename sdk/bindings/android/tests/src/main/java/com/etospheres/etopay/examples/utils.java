@@ -16,7 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 
 public class utils {
     public static String USERNAME_SATOSHI = "satoshi";
@@ -25,8 +25,8 @@ public class utils {
     public static String USERNAME_ARCHIVEME = "archiveme";
     public static String USERNAME_HANS48 = "hans48";
 
-    public static Wallet initSdk(String username) {
-        Wallet sdk = new Wallet();
+    public static ETOPaySdk initSdk(String username) {
+        ETOPaySdk sdk = new ETOPaySdk();
 
         // config sdk
         try {
@@ -35,9 +35,9 @@ public class utils {
             if (getEnvVariable("CI") != null) {
                 Path path = FileSystems.getDefault().getPath("logs");
                 Files.createDirectories(path);
-                directory = Files.createTempDirectory(path, "cryptpay_examples");
+                directory = Files.createTempDirectory(path, "etopay_examples");
             } else {
-                directory = Files.createTempDirectory("cryptpay_examples");
+                directory = Files.createTempDirectory("etopay_examples");
             }
 
             System.out.println("Setting storage path to temporary directory: " + directory.toString());
@@ -90,6 +90,7 @@ public class utils {
         }
 
         String urlString = kcURL + "/realms/" + kcRealm + "/protocol/openid-connect/token";
+        @SuppressWarnings("deprecation")
         URL url = new URL(urlString);
         HttpURLConnection con = (HttpURLConnection) url.openConnection();
         con.setRequestMethod("POST");

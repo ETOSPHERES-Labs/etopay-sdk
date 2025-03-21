@@ -1,13 +1,13 @@
 package com.etospheres.etopay.examples;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 
 public class CreateNewUser01 {
 
     public static void main(String[] args) {
 
         // Initialize SDK
-        Wallet sdk = utils.initSdk(utils.USERNAME_SATOSHI);
+        ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
         try {
             sdk.createNewUser(utils.USERNAME_SATOSHI);

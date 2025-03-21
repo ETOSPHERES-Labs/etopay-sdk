@@ -4,14 +4,14 @@
 
 package com.etospheres.etopay.examples;
 
-import com.etospheres.etopay.Wallet;
+import com.etospheres.etopay.ETOPaySdk;
 
 public class OnboardUserPostident02 {
 
     public static void main(String[] args) {
 
         // Initialize SDK
-        Wallet sdk = utils.initSdk(utils.USERNAME_SATOSHI);
+        ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
         try {
             // create and init new user
