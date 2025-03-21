@@ -69,7 +69,7 @@ jobs:
         run: |
           cargo build
           make build_javadoc
-          mv javadoc ../../../docs/
+          mv javadoc ../../../docs/docs/
 
       - name: Mark repository as safe for Git
         shell: bash
