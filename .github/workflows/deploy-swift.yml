@@ -1,11 +1,19 @@
 name: deploy-swift
 
+# Re-Creates a release in the etopay-sdk-swift repo which has the xcframework zip file attached as release artifact
+# everytime it is run.
+# Inspired by the CI in `lapce`: https://github.com/lapce/lapce/blob/115bc731f52c6886481f63753d4db3c2985d7a95/.github/workflows/release.yml
+
 # only run this on push to main (eg. after PR merge)
 on:
   workflow_dispatch:
   push:
     branches:
       - main
+  pull_request:
+    paths:
+      # trigger release workflow only if this file changed
+      - .github/workflows/deploy-swift.yml
 
 env:
   CARGO_TERM_COLOR: always
@@ -20,6 +28,10 @@ concurrency:
 jobs:
   build-sdk-swift:
     runs-on: macos-latest
+    # provide outputs as input for the deploy step
+    outputs:
+      xcframework_sha256: ${{ steps.compress.outputs.hash }}
+      xcframework_filename: ${{ steps.compress.outputs.filename }}
     steps:
       - uses: actions/checkout@v4
       - uses: dtolnay/rust-toolchain@stable
@@ -42,20 +54,43 @@ jobs:
           cd sdk/bindings/swift
           make xcframework
 
+      - name: Compress xcframework
+        id: compress
+        run: |
+          cd sdk/bindings/swift/ETOPaySdk
+
+          # incorporate the short commit hash into the filename (to help with potential caching issues)
+          SHORT_SHA=$(git rev-parse --short ${{ github.sha }})
+          OUT_FILE="ETOPaySdkBin.xcframework-${SHORT_SHA}.zip"
+
+          ditto -c -k --sequesterRsrc --keepParent "ETOPaySdkBin.xcframework" ${OUT_FILE}
+
+          HASH=$(shasum -a 256 ${OUT_FILE} | cut -d " " -f1)
+          echo "hash=${HASH}" | tee -a $GITHUB_OUTPUT
+          echo "filename=${OUT_FILE}" | tee -a $GITHUB_OUTPUT
+
+          # delete the folder so that it is not included in the uploaded artifact (include only the zip)
+          rm -r ETOPaySdkBin.xcframework
+
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: etopay-sdk-swift
-          path: sdk/bindings/swift/ETOPaySdk
+          path: sdk/bindings/swift/ETOPaySdk/
           if-no-files-found: error
           retention-days: 7
           overwrite: true
 
   deploy-sdk-swift:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     needs: build-sdk-swift
-    # For now this does not work and just fails because the way it expects artifacts to be there. We need a better solution.
-    if: false
+    env:
+      # for gh CLI
+      GH_REPO: ETOSPHERES-Labs/etopay-sdk-swift
+      GH_TOKEN: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
+      # get hash from previous job
+      CHECKSUM: ${{ needs.build-sdk-swift.outputs.xcframework_sha256 }}
+      FILENAME: ${{ needs.build-sdk-swift.outputs.xcframework_filename }}
     steps:
       - name: Checkout target repository
         uses: actions/checkout@v4
@@ -64,16 +99,27 @@ jobs:
           token: ${{ secrets.SWIFT_PAT_GITHUB_ACTIONS }}
           path: target-repo
 
-      - name: Copy built artifacts to target repository
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+
+      - name: Copy artifact sources to target repository
         run: |
-          cp -R sdk/bindings/swift/ETOPaySdk/Package.swift target-repo/
-          cp -R sdk/bindings/swift/ETOPaySdk/README.md target-repo/
-          cp -R sdk/bindings/swift/ETOPaySdk/Sources target-repo/
+          cp -R artifacts/etopay-sdk-swift/Package.swift target-repo/
+          cp -R artifacts/etopay-sdk-swift/README.md target-repo/
+          cp -R artifacts/etopay-sdk-swift/Sources target-repo/
+
+      - name: Modify url and insert hash
+        run: |
+          cd target-repo
+          URL="https://github.com/${GH_REPO}/releases/download/nightly/${FILENAME}"
+          sed -i -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" Package.swift
+          cat Package.swift
 
       - name: Configure Git for commit
         run: |
           cd target-repo
-          git config user.email "bot@etopay.com"
+          git config user.email "etopaybot@etoshpheres.com"
           git config user.name "bot"
 
       - name: Commit and push changes
@@ -82,3 +128,17 @@ jobs:
           git add .
           git commit -m "Update Swift SDK package files from commit ${{ github.sha }}" || echo "No changes to commit"
           git push
+
+      - name: Re-Tag nightly
+        run: |
+          cd target-repo
+          gh release delete nightly --yes || true
+          git push origin :nightly || true
+
+      - name: Publish release
+        # if: github.event_name != 'pull_request'
+        env:
+          DEBUG: api
+        run: |
+          cd target-repo
+          gh release create nightly --prerelease --title "nightly" ../artifacts/etopay-sdk-swift/${FILENAME}
