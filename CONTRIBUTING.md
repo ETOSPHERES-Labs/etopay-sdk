@@ -8,7 +8,7 @@ With Cawaena, we strive to empower developers, businesses, and end-users with to
 
 Our core principles of **Self-realization**, **Awareness**, **Fairness**, **Dexterity**, and **Community** guide us in building and growing this platform. By contributing to Cawaena, you become a part of this mission.
 
-You can read more about our philosophy and principles [here](/sdk/docs/Choosing%20Cryptpay/Philosophy.md).
+You can read more about our philosophy and principles [here](./sdk/docs/Choosing%20ETOPay/Philosophy.md).
 
 #### Key Features
 
@@ -22,7 +22,7 @@ You can read more about our philosophy and principles [here](/sdk/docs/Choosing%
 - European Data Center
 - Cyber-Secure
 
-You can read more about our features and use-cases [here](/sdk/docs/Choosing%20Cryptpay/Features.md).
+You can read more about our features and use-cases [here](./sdk/docs/Choosing%20ETOPay/Features.md). 
 
 ## We want to build with you
 
@@ -42,7 +42,7 @@ In short, when you submit code changes, your submissions are understood to be un
 
 ## Report bugs using Github
 
-We use [Github's issues](https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/Cryptpay-SDK/issues) to track public bugs. Report a bug by [opening a new issue](https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/Cryptpay-SDK/issues/new). It's that easy!
+We use [Github's issues](https://github.com/ETOSPHERES-Labs/etopay-sdk/issues) to track public bugs. Report a bug by [opening a new issue](https://github.com/ETOSPHERES-Labs/etopay-sdk/issues/new). It's that easy!
 
 We appreciate clear and detailed bug reports—they help us understand and resolve issues more effectively!
 **Write bug reports with detail, background, and sample code. Great Bug Reports** tend to have:

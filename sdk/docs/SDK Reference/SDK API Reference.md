@@ -29,7 +29,7 @@ The API reference for the JS/TS bindings are available [here](../jstsdocs/classe
 
 ## Java
 
-The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etogruppe/ETOPaySdk.html). Please consult the tables below for the dependencies between each function.
+The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etospheres/etopay/ETOPaySdk.html). Please consult the tables below for the dependencies between each function.
 
 ## Rust
 
@@ -48,7 +48,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [constructor](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.new)
 
 === "Java"
-    [constructor](../javadoc/com/etogruppe/ETOPaySdk.html#<init>())
+    [constructor](../javadoc/com/etospheres/etopay/ETOPaySdk.html#<init>())
 
 === "Typescript"
     [constructor](../jstsdocs/classes/ETOPaySdk.html#constructor)
@@ -71,7 +71,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [set_config](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_config)
 
 === "Java"
-    [setConfig](../javadoc/com/etogruppe/ETOPaySdk.html#setConfig(java.lang.String))
+    [setConfig](../javadoc/com/etospheres/etopay/ETOPaySdk.html#setConfig(java.lang.String))
 
 === "Typescript"
     [setConfig](../jstsdocs/classes/ETOPaySdk.html#setConfig)
@@ -93,7 +93,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [getNetworks](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_networks)
 
 === "Java"
-    [getNetworks](../javadoc/com/etogruppe/ETOPaySdk.html#get_networks())
+    [getNetworks](../javadoc/com/etospheres/etopay/ETOPaySdk.html#get_networks())
 
 === "Typescript"
     [getNetworks](../jstsdocs/classes/ETOPaySdk.html#get_networks)
@@ -115,7 +115,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [set_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_network)
 
 === "Java"
-    [setNetwork](../javadoc/com/etogruppe/ETOPaySdk.html#setNetwork(java.lang.String))
+    [setNetwork](../javadoc/com/etospheres/etopay/ETOPaySdk.html#setNetwork(java.lang.String))
 
 === "Typescript"
     [setNetwork](../jstsdocs/classes/ETOPaySdk.html#setNetwork)
@@ -137,7 +137,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_build_info](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_build_info)
 
 === "Java"
-    [getBuildInfo](../javadoc/com/etogruppe/ETOPaySdk.html#getBuildInfo())
+    [getBuildInfo](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getBuildInfo())
 
 === "Typescript"
     [getBuildInfo](../jstsdocs/classes/ETOPaySdk.html#getBuildInfo)
@@ -161,7 +161,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_new_user](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_new_user)
 
 === "Java"
-    [createNewUser](../javadoc/com/etogruppe/ETOPaySdk.html#createNewUser(java.lang.String))
+    [createNewUser](../javadoc/com/etospheres/etopay/ETOPaySdk.html#createNewUser(java.lang.String))
 
 === "Typescript"
     [createNewUser](../jstsdocs/classes/ETOPaySdk.html#createNewUser)
@@ -183,7 +183,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [init_user](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.init_user)
 
 === "Java"
-    [initializeUser](../javadoc/com/etogruppe/ETOPaySdk.html#initializeUser(java.lang.String))
+    [initializeUser](../javadoc/com/etospheres/etopay/ETOPaySdk.html#initializeUser(java.lang.String))
 
 === "Typescript"
     [initializeUser](../jstsdocs/classes/ETOPaySdk.html#initializeUser)
@@ -205,7 +205,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [refresh_access_token](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.refresh_access_token)
 
 === "Java"
-    [refreshAccessToken](../javadoc/com/etogruppe/ETOPaySdk.html#refreshAccessToken(java.lang.String))
+    [refreshAccessToken](../javadoc/com/etospheres/etopay/ETOPaySdk.html#refreshAccessToken(java.lang.String))
 
 === "Typescript"
     [refreshAccessToken](../jstsdocs/classes/ETOPaySdk.html#refreshAccessToken)
@@ -227,7 +227,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [is_kyc_status_verified](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.is_kyc_status_verified)
 
 === "Java"
-    [isKycVerified](../javadoc/com/etogruppe/ETOPaySdk.html#isKycVerified(java.lang.String))
+    [isKycVerified](../javadoc/com/etospheres/etopay/ETOPaySdk.html#isKycVerified(java.lang.String))
 
 === "Typescript"
     [isKycVerified](../jstsdocs/classes/ETOPaySdk.html#isKycVerified)
@@ -250,7 +250,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [delete_user](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.delete_user)
 
 === "Java"
-    [deleteUser](../javadoc/com/etogruppe/ETOPaySdk.html#deleteUser(java.lang.String))
+    [deleteUser](../javadoc/com/etospheres/etopay/ETOPaySdk.html#deleteUser(java.lang.String))
 
 === "Typescript"
     [deleteUser](../jstsdocs/classes/ETOPaySdk.html#deleteUser)
@@ -274,7 +274,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_wallet_from_new_mnemonic](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_from_new_mnemonic)
 
 === "Java"
-    [createNewWallet](../javadoc/com/etogruppe/ETOPaySdk.html#createNewWallet(java.lang.String))
+    [createNewWallet](../javadoc/com/etospheres/etopay/ETOPaySdk.html#createNewWallet(java.lang.String))
 
 === "Typescript"
     [createNewWallet](../jstsdocs/classes/ETOPaySdk.html#createNewWallet)
@@ -296,7 +296,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_wallet_from_existing_mnemonic](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_from_existing_mnemonic)
 
 === "Java"
-    [createWalletFromMnemonic](../javadoc/com/etogruppe/ETOPaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
+    [createWalletFromMnemonic](../javadoc/com/etospheres/etopay/ETOPaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
 
 === "Typescript"
     [createWalletFromMnemonic](../jstsdocs/classes/ETOPaySdk.html#createWalletFromMnemonic)
@@ -318,7 +318,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_wallet_from_backup](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_from_backup)
 
 === "Java"
-    [createWalletFromBackup](../javadoc/com/etogruppe/ETOPaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
+    [createWalletFromBackup](../javadoc/com/etospheres/etopay/ETOPaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
 
 === "Typescript"
     [createWalletFromBackup](../jstsdocs/classes/ETOPaySdk.html#createWalletFromBackup)
@@ -340,7 +340,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_wallet_backup](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_backup)
 
 === "Java"
-    [createWalletBackup](../javadoc/com/etogruppe/ETOPaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
+    [createWalletBackup](../javadoc/com/etospheres/etopay/ETOPaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
 
 === "Typescript"
     [createWalletBackup](../jstsdocs/classes/ETOPaySdk.html#createWalletBackup)
@@ -362,7 +362,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [verify_mnemonic](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.verify_mnemonic)
 
 === "Java"
-    [verifyMnemonic](../javadoc/com/etogruppe/ETOPaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
+    [verifyMnemonic](../javadoc/com/etospheres/etopay/ETOPaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
 
 === "Typescript"
     [verifyMnemonic](../jstsdocs/classes/ETOPaySdk.html#verifyMnemonic)
@@ -388,7 +388,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [delete_wallet](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.delete_wallet)
 
 === "Java"
-    [deleteWallet](../javadoc/com/etogruppe/ETOPaySdk.html#deleteWallet(java.lang.String))
+    [deleteWallet](../javadoc/com/etospheres/etopay/ETOPaySdk.html#deleteWallet(java.lang.String))
 
 === "Typescript"
     [deleteWallet](../jstsdocs/classes/ETOPaySdk.html#deleteWallet)
@@ -410,7 +410,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [verify_pin](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.verify_pin)
 
 === "Java"
-    [pinVerify](../javadoc/com/etogruppe/ETOPaySdk.html#pinVerify(java.lang.String))
+    [pinVerify](../javadoc/com/etospheres/etopay/ETOPaySdk.html#pinVerify(java.lang.String))
 
 === "Typescript"
     [verifyPin](../jstsdocs/classes/ETOPaySdk.html#verifyPin)
@@ -432,7 +432,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [change_pin](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.change_pin)
 
 === "Java"
-    [pinReset](../javadoc/com/etogruppe/ETOPaySdk.html#pinReset(java.lang.String,java.lang.String))
+    [pinReset](../javadoc/com/etospheres/etopay/ETOPaySdk.html#pinReset(java.lang.String,java.lang.String))
 
 === "Typescript"
     [resetPin](../jstsdocs/classes/ETOPaySdk.html#resetPin)
@@ -454,7 +454,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [set_wallet_password](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_wallet_password)
 
 === "Java"
-    [setWalletPassword](../javadoc/com/etogruppe/ETOPaySdk.html#setWalletPassword(java.lang.String,java.lang.String))
+    [setWalletPassword](../javadoc/com/etospheres/etopay/ETOPaySdk.html#setWalletPassword(java.lang.String,java.lang.String))
 
 === "Typescript"
     [setWalletPassword](../jstsdocs/classes/ETOPaySdk.html#setWalletPassword)
@@ -476,7 +476,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [is_wallet_password_set](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.is_wallet_password_set)
 
 === "Java"
-    [isWalletPasswordSet](../javadoc/com/etogruppe/ETOPaySdk.html#isWalletPasswordSet())
+    [isWalletPasswordSet](../javadoc/com/etospheres/etopay/ETOPaySdk.html#isWalletPasswordSet())
 
 === "Typescript"
     [isWalletPasswordSet](../jstsdocs/classes/ETOPaySdk.html#isWalletPasswordSet)
@@ -498,7 +498,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [generate_new_address](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.generate_new_address)
 
 === "Java"
-    [generateNewAddress](../javadoc/com/etogruppe/ETOPaySdk.html#generateNewAddress(java.lang.String))
+    [generateNewAddress](../javadoc/com/etospheres/etopay/ETOPaySdk.html#generateNewAddress(java.lang.String))
 
 === "Typescript"
     [generateNewAddress](../jstsdocs/classes/ETOPaySdk.html#generateNewAddress)
@@ -520,7 +520,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_balance](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_balance)
 
 === "Java"
-    [getWalletBalance](../javadoc/com/etogruppe/ETOPaySdk.html#getWalletBalance(java.lang.String))
+    [getWalletBalance](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getWalletBalance(java.lang.String))
 
 === "Typescript"
     [getWalletBalance](../jstsdocs/classes/ETOPaySdk.html#getWalletBalance)
@@ -542,7 +542,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_wallet_tx_list](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_wallet_tx_list)
 
 === "Java"
-    [getWalletTransactionList](../javadoc/com/etogruppe/ETOPaySdk.html#getWalletTransactionList(java.lang.String,long,long))
+    [getWalletTransactionList](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getWalletTransactionList(java.lang.String,long,long))
 
 === "Typescript"
     [getWalletTransactionList](../jstsdocs/classes/ETOPaySdk.html#getWalletTransactionList)
@@ -634,7 +634,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_wallet_tx](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_wallet_tx)
 
 === "Java"
-    [getWalletTransaction](../javadoc/com/etogruppe/ETOPaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
+    [getWalletTransaction](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
 
 === "Typescript"
     [getWalletTransaction](../jstsdocs/classes/ETOPaySdk.html#getWalletTransaction)
@@ -656,7 +656,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [set_recovery_share](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_recovery_share)
 
 === "Java"
-    [setRecoveryShare](../javadoc/com/etogruppe/ETOPaySdk.html#setRecoveryShare(java.lang.String))
+    [setRecoveryShare](../javadoc/com/etospheres/etopay/ETOPaySdk.html#setRecoveryShare(java.lang.String))
 
 === "Typescript"
     [setRecoveryShare](../jstsdocs/classes/ETOPaySdk.html#setRecoveryShare)
@@ -678,7 +678,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_recovery_share](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_recovery_share)
 
 === "Java"
-    [getRecoveryShare](../javadoc/com/etogruppe/ETOPaySdk.html#getRecoveryShare())
+    [getRecoveryShare](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getRecoveryShare())
 
 === "Typescript"
     [getRecoveryShare](../jstsdocs/classes/ETOPaySdk.html#getRecoveryShare)
@@ -702,7 +702,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [start_kyc_verification_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.start_kyc_verification_for_viviswap)
 
 === "Java"
-    [startViviswapKyc](../javadoc/com/etogruppe/ETOPaySdk.html#startViviswapKyc(java.lang.String,boolean))
+    [startViviswapKyc](../javadoc/com/etospheres/etopay/ETOPaySdk.html#startViviswapKyc(java.lang.String,boolean))
 
 === "Typescript"
     [startKycVerificationForViviswap](../jstsdocs/classes/ETOPaySdk.html#startKycVerificationForViviswap)
@@ -750,7 +750,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_kyc_details_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_kyc_details_for_viviswap)
 
 === "Java"
-    [getViviswapKyc](../javadoc/com/etogruppe/ETOPaySdk.html#getViviswapKyc())
+    [getViviswapKyc](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getViviswapKyc())
 
 === "Typescript"
     [getKycDetailsForViviswap](../jstsdocs/classes/ETOPaySdk.html#getKycDetailsForViviswap)
@@ -850,7 +850,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [update_kyc_partially_status_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.update_kyc_partially_status_for_viviswap)
 
 === "Java"
-    [updateViviswapKycPartial](../javadoc/com/etogruppe/ETOPaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
+    [updateViviswapKycPartial](../javadoc/com/etospheres/etopay/ETOPaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
 
 === "Typescript"
     [updateKycPartiallyStatusForViviswap](../jstsdocs/classes/ETOPaySdk.html#updateKycPartiallyStatusForViviswap)
@@ -949,7 +949,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [submit_kyc_partially_status_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.submit_kyc_partially_status_for_viviswap)
 
 === "Java"
-    [submitViviswapKycPartial](../javadoc/com/etogruppe/ETOPaySdk.html#submitViviswapKycPartial())
+    [submitViviswapKycPartial](../javadoc/com/etospheres/etopay/ETOPaySdk.html#submitViviswapKycPartial())
 
 === "Typescript"
     [submitKycPartiallyStatusForViviswap](../jstsdocs/classes/ETOPaySdk.html#submitKycPartiallyStatusForViviswap)
@@ -971,7 +971,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_iban_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_iban_for_viviswap)
 
 === "Java"
-    [getIbanViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#getIbanViviswap())
+    [getIbanViviswap](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getIbanViviswap())
 
 === "Typescript"
     [getIbanViviswap](../jstsdocs/classes/ETOPaySdk.html#getIbanViviswap)
@@ -1032,7 +1032,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [update_iban_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.update_iban_for_viviswap)
 
 === "Java"
-    [updateIbanViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
+    [updateIbanViviswap](../javadoc/com/etospheres/etopay/ETOPaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
 
 === "Typescript"
     [updateIbanViviswap](../jstsdocs/classes/ETOPaySdk.html#updateIbanViviswap)
@@ -1054,7 +1054,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_deposit_with_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_deposit_with_viviswap)
 
 === "Java"
-    [depositWithViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#depositWithViviswap(java.lang.String))
+    [depositWithViviswap](../javadoc/com/etospheres/etopay/ETOPaySdk.html#depositWithViviswap(java.lang.String))
 
 === "Typescript"
     [createDepositWithViviswap](../jstsdocs/classes/ETOPaySdk.html#createDepositWithViviswap)
@@ -1156,7 +1156,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_detail_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_detail_for_viviswap)
 
 === "Java"
-    [createViviswapDetail](../javadoc/com/etogruppe/ETOPaySdk.html#createViviswapDetail(java.lang.String))
+    [createViviswapDetail](../javadoc/com/etospheres/etopay/ETOPaySdk.html#createViviswapDetail(java.lang.String))
 
 === "Typescript"
     [createDetailForViviswap](../jstsdocs/classes/ETOPaySdk.html#createDetailForViviswap)
@@ -1178,7 +1178,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_withdrawal_with_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_withdrawal_with_viviswap)
 
 === "Java"
-    [withdrawWithViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D))
+    [withdrawWithViviswap](../javadoc/com/etospheres/etopay/ETOPaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D))
 
 === "Typescript"
     [createWithdrawalWithViviswap](../jstsdocs/classes/ETOPaySdk.html#createWithdrawalWithViviswap)
@@ -1262,7 +1262,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_swap_details](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_swap_details)
 
 === "Java"
-    [getSwapDetails](../javadoc/com/etogruppe/ETOPaySdk.html#getSwapDetails(java.lang.String))
+    [getSwapDetails](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getSwapDetails(java.lang.String))
 
 === "Typescript"
     [getSwapDetails](../jstsdocs/classes/ETOPaySdk.html#getSwapDetails)
@@ -1459,7 +1459,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_swap_list](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_swap_list)
 
 === "Java"
-    [getSwapList](../javadoc/com/etogruppe/ETOPaySdk.html#getSwapList(long,long))
+    [getSwapList](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getSwapList(long,long))
 
 === "Typescript"
     [getSwapList](../jstsdocs/classes/ETOPaySdk.html#getSwapList)
@@ -1481,7 +1481,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_exchange_rate](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_exchange_rate)
 
 === "Java"
-    [getExchangeRate](../javadoc/com/etogruppe/ETOPaySdk.html#getExchangeRate())
+    [getExchangeRate](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getExchangeRate())
 
 === "Typescript"
     [getExchangeRate](../jstsdocs/classes/ETOPaySdk.html#getExchangeRate)
@@ -1505,7 +1505,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [create_purchase_request](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_purchase_request)
 
 === "Java"
-    [purchaseRequestCreate](../javadoc/com/etogruppe/ETOPaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
+    [purchaseRequestCreate](../javadoc/com/etospheres/etopay/ETOPaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
 
 === "Typescript"
     [createPurchaseRequest](../jstsdocs/classes/ETOPaySdk.html#createPurchaseRequest)
@@ -1529,7 +1529,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_purchase_details](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_purchase_details)
 
 === "Java"
-    [purchaseDetails](../javadoc/com/etogruppe/ETOPaySdk.html#purchaseDetails(java.lang.String))
+    [purchaseDetails](../javadoc/com/etospheres/etopay/ETOPaySdk.html#purchaseDetails(java.lang.String))
 
 === "Typescript"
     [getPurchaseDetails](../jstsdocs/classes/ETOPaySdk.html#getPurchaseDetails)
@@ -1591,7 +1591,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [confirm_purchase_request](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.confirm_purchase_request)
 
 === "Java"
-    [purchaseRequestConfirm](../javadoc/com/etogruppe/ETOPaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
+    [purchaseRequestConfirm](../javadoc/com/etospheres/etopay/ETOPaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
 
 === "Typescript"
     [confirmPurchaseRequest](../jstsdocs/classes/ETOPaySdk.html#confirmPurchaseRequest)
@@ -1613,7 +1613,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [send_amount](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.send_amount)
 
 === "Java"
-    [sendAmount](../javadoc/com/etogruppe/ETOPaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D))
+    [sendAmount](../javadoc/com/etospheres/etopay/ETOPaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D))
 
 === "Typescript"
     [sendAmount](../jstsdocs/classes/ETOPaySdk.html#sendAmount)
@@ -1635,7 +1635,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_tx_list](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_tx_list)
 
 === "Java"
-    [txList](../javadoc/com/etogruppe/ETOPaySdk.html#txList(long,long))
+    [txList](../javadoc/com/etospheres/etopay/ETOPaySdk.html#txList(long,long))
 
 === "Typescript"
     [getTransactionList](../jstsdocs/classes/ETOPaySdk.html#getTransactionList)
@@ -1761,7 +1761,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [start_kyc_verification_for_postident](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.start_kyc_verification_for_postident)
 
 === "Java"
-    [startKycVerificationForPostident](../javadoc/com/etogruppe/ETOPaySdk.html#startKycVerificationForPostident())
+    [startKycVerificationForPostident](../javadoc/com/etospheres/etopay/ETOPaySdk.html#startKycVerificationForPostident())
 
 === "Typescript"
     [startKycVerificationForPostident](../jstsdocs/classes/ETOPaySdk.html#startKycVerificationForPostident)
@@ -1815,7 +1815,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_kyc_details_for_postident](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_kyc_details_for_postident)
 
 === "Java"
-    [getKycDetailsForPostident](../javadoc/com/etogruppe/ETOPaySdk.html#getKycDetailsForPostident())
+    [getKycDetailsForPostident](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getKycDetailsForPostident())
 
 === "Typescript"
     [getKycDetailsForPostident](../jstsdocs/classes/ETOPaySdk.html#getKycDetailsForPostident)
@@ -1872,7 +1872,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [update_kyc_status_for_postident](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.update_kyc_status_for_postident)
 
 === "Java"
-    [updateKycStatusForPostident](../javadoc/com/etogruppe/ETOPaySdk.html#updateKycStatusForPostident(java.lang.String))
+    [updateKycStatusForPostident](../javadoc/com/etospheres/etopay/ETOPaySdk.html#updateKycStatusForPostident(java.lang.String))
 
 === "Typescript"
     [updateKycStatusForPostident](../jstsdocs/classes/ETOPaySdk.html#updateKycStatusForPostident)
@@ -1894,7 +1894,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [get_preferred_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_preferred_network)
 
 === "Java"
-    [getPreferredNetwork](../javadoc/com/etogruppe/ETOPaySdk.html#getPreferredNetwork())
+    [getPreferredNetwork](../javadoc/com/etospheres/etopay/ETOPaySdk.html#getPreferredNetwork())
 
 === "Typescript"
     [getPreferredNetwork](../jstsdocs/classes/ETOPaySdk.html#getPreferredNetwork)
@@ -1916,7 +1916,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     [set_preferred_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_preferred_network)
 
 === "Java"
-    [setPreferredNetwork](../javadoc/com/etogruppe/ETOPaySdk.html#setPreferredNetwork(java.lang.String))
+    [setPreferredNetwork](../javadoc/com/etospheres/etopay/ETOPaySdk.html#setPreferredNetwork(java.lang.String))
 
 === "Typescript"
     [setPreferredNetwork](../jstsdocs/classes/ETOPaySdk.html#setPreferredNetwork)
