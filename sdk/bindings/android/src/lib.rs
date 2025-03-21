@@ -64,7 +64,7 @@ fn get_or_init_sdk() -> &'static SdkWrapper {
 }
 
 /// Main object that contains all the functionality for interfacing with the CawaenaSdk.
-#[jnigen_macro::generate("com.cawaena.Wallet")]
+#[jnigen_macro::generate("com.etospheres.etopay.Wallet")]
 mod ffi {
     use super::*;
     use sdk::{

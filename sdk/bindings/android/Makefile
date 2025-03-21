@@ -23,4 +23,4 @@ run_example: lib_example
 	cd examples && ./gradlew run --args $(example)
 
 build_javadoc:
-	javadoc -d javadoc -sourcepath ./tests/src/main/java com.cawaena
+	javadoc -d javadoc -sourcepath ./tests/src/main/java com.etospheres.etopay
