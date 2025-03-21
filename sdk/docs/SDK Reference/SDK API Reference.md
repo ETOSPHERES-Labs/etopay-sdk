@@ -25,23 +25,16 @@
 
 ## JavaScript / TypeScript
 
-The API reference for the JS/TS bindings are available [here](../jstsdocs/classes/CryptpaySdk.html). Please consult the tables below for the dependencies between each function.
+The API reference for the JS/TS bindings are available [here](../jstsdocs/classes/ETOPaySdk.html). Please consult the tables below for the dependencies between each function.
 
 ## Java
 
-The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etogruppe/CryptpaySdk.html). Please consult the tables below for the dependencies between each function.
+The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etogruppe/ETOPaySdk.html). Please consult the tables below for the dependencies between each function.
 
 ## Rust
 
-The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). Please consult the tables below for the dependencies between each function.
+The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.html). Please consult the tables below for the dependencies between each function.
 
-## Java
-
-The Javadoc API reference for the Java bindings is available [here](../javadoc/com/etogruppe/CryptpaySdk.html). Please consult the tables below for the dependencies between each function.
-
-## Rust
-
-The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). Please consult the tables below for the dependencies between each function.
 
 ## SDK Initialization and Configuration
 
@@ -52,20 +45,20 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Constructor | | Returns an `Error` if there is an issue in loading the dynamically or statically linked binary shared library, otherwise the handle to the SDK | | Basic | Handle |
 
 === "Rust"
-    [constructor](../rust-docs/doc/sdk/core/struct.Sdk.html#method.new)
+    [constructor](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.new)
 
 === "Java"
-    [constructor](../javadoc/com/etogruppe/CryptpaySdk.html#<init>())
+    [constructor](../javadoc/com/etogruppe/ETOPaySdk.html#<init>())
 
 === "Typescript"
-    [constructor](../jstsdocs/classes/CryptpaySdk.html#constructor)
+    [constructor](../jstsdocs/classes/ETOPaySdk.html#constructor)
 
 === "Swift"
     Not available yet!
 
     ```swift
-    import CryptpaySdk
-    let sdk = CryptpaySdk()
+    import ETOPaySdk
+    let sdk = ETOPaySdk()
     ```
 
 ### Set configuration
@@ -75,13 +68,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Set the SDK configuration parameters. | `config` - The JSON formatted string containing the configuration parameters. See [SDK Configuration](../SDK%20Configuration/Configuration.md) for more information of the available options. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
 
 === "Rust"
-    [set_config](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_config)
+    [set_config](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_config)
 
 === "Java"
-    [setConfig](../javadoc/com/etogruppe/CryptpaySdk.html#setConfig(java.lang.String))
+    [setConfig](../javadoc/com/etogruppe/ETOPaySdk.html#setConfig(java.lang.String))
 
 === "Typescript"
-    [setConfig](../jstsdocs/classes/CryptpaySdk.html#setConfig)
+    [setConfig](../jstsdocs/classes/ETOPaySdk.html#setConfig)
 
 === "Swift"
     Not available yet!
@@ -97,13 +90,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get the supported networks. | | Returns a list of ApiNetwork. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration), [Refresh access token](./SDK%20API%20Reference.md#refreshing-access-token), [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Basic | Handle |
 
 === "Rust"
-    [getNetworks](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_networks)
+    [getNetworks](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_networks)
 
 === "Java"
-    [getNetworks](../javadoc/com/etogruppe/CryptpaySdk.html#get_networks())
+    [getNetworks](../javadoc/com/etogruppe/ETOPaySdk.html#get_networks())
 
 === "Typescript"
-    [getNetworks](../jstsdocs/classes/CryptpaySdk.html#get_networks)
+    [getNetworks](../jstsdocs/classes/ETOPaySdk.html#get_networks)
 
 === "Swift"
     Not available yet!
@@ -119,13 +112,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Sets the network | `network_id` - The network_id as string.| | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
 
 === "Rust"
-    [set_network](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_network)
+    [set_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_network)
 
 === "Java"
-    [setNetwork](../javadoc/com/etogruppe/CryptpaySdk.html#setNetwork(java.lang.String))
+    [setNetwork](../javadoc/com/etogruppe/ETOPaySdk.html#setNetwork(java.lang.String))
 
 === "Typescript"
-    [setNetwork](../jstsdocs/classes/CryptpaySdk.html#setNetwork)
+    [setNetwork](../jstsdocs/classes/ETOPaySdk.html#setNetwork)
 
 === "Swift"
     Not available yet!
@@ -141,13 +134,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get the SDK build information | | Returns a multi-line String containing: `Branch name` (e.g. main), `Commit hash` (e.g. 92cedead), `Build time` (e.g. 2024-10-29 12:10:09 +00:00), `Rust version` (e.g. 1.80.1 3f5fd8dd4 2024-08-06), `Toolchain channel` (e.g. stable-x86_64-unknown-linux-gnu) | Usage | Application |
 
 === "Rust"
-    [get_build_info](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_build_info)
+    [get_build_info](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_build_info)
 
 === "Java"
-    [getBuildInfo](../javadoc/com/etogruppe/CryptpaySdk.html#getBuildInfo())
+    [getBuildInfo](../javadoc/com/etogruppe/ETOPaySdk.html#getBuildInfo())
 
 === "Typescript"
-    [getBuildInfo](../jstsdocs/classes/CryptpaySdk.html#getBuildInfo)
+    [getBuildInfo](../jstsdocs/classes/ETOPaySdk.html#getBuildInfo)
 
 === "Swift"
     Not available yet!
@@ -165,13 +158,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create a new user | `username` - The username of the new user. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration) | Basic | User |
 
 === "Rust"
-    [create_new_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_new_user)
+    [create_new_user](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_new_user)
 
 === "Java"
-    [createNewUser](../javadoc/com/etogruppe/CryptpaySdk.html#createNewUser(java.lang.String))
+    [createNewUser](../javadoc/com/etogruppe/ETOPaySdk.html#createNewUser(java.lang.String))
 
 === "Typescript"
-    [createNewUser](../jstsdocs/classes/CryptpaySdk.html#createNewUser)
+    [createNewUser](../jstsdocs/classes/ETOPaySdk.html#createNewUser)
 
 === "Swift"
     Not available yet!
@@ -187,13 +180,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Initialize a user | `username` - The username of the user to initialize. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration), [Refresh access token](./SDK%20API%20Reference.md#refreshing-access-token), [Create new user](./SDK%20API%20Reference.md#creating-a-new-user) | Usage | Application |
 
 === "Rust"
-    [init_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.init_user)
+    [init_user](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.init_user)
 
 === "Java"
-    [initializeUser](../javadoc/com/etogruppe/CryptpaySdk.html#initializeUser(java.lang.String))
+    [initializeUser](../javadoc/com/etogruppe/ETOPaySdk.html#initializeUser(java.lang.String))
 
 === "Typescript"
-    [initializeUser](../jstsdocs/classes/CryptpaySdk.html#initializeUser)
+    [initializeUser](../jstsdocs/classes/ETOPaySdk.html#initializeUser)
 
 === "Swift"
     Not available yet!
@@ -209,13 +202,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Refresh access token | `access_token` - The new access token to be set. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration)| Basic | Application |
 
 === "Rust"
-    [refresh_access_token](../rust-docs/doc/sdk/core/struct.Sdk.html#method.refresh_access_token)
+    [refresh_access_token](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.refresh_access_token)
 
 === "Java"
-    [refreshAccessToken](../javadoc/com/etogruppe/CryptpaySdk.html#refreshAccessToken(java.lang.String))
+    [refreshAccessToken](../javadoc/com/etogruppe/ETOPaySdk.html#refreshAccessToken(java.lang.String))
 
 === "Typescript"
-    [refreshAccessToken](../jstsdocs/classes/CryptpaySdk.html#refreshAccessToken)
+    [refreshAccessToken](../jstsdocs/classes/ETOPaySdk.html#refreshAccessToken)
 
 === "Swift"
     Not available yet!
@@ -231,13 +224,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Check if the user's KYC status is verified | `username` - The username of the user to check KYC status for. | Returns `true` if the KYC status is verified, or `false` if it is not verified. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [is_kyc_status_verified](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_kyc_status_verified)
+    [is_kyc_status_verified](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.is_kyc_status_verified)
 
 === "Java"
-    [isKycVerified](../javadoc/com/etogruppe/CryptpaySdk.html#isKycVerified(java.lang.String))
+    [isKycVerified](../javadoc/com/etogruppe/ETOPaySdk.html#isKycVerified(java.lang.String))
 
 === "Typescript"
-    [isKycVerified](../jstsdocs/classes/CryptpaySdk.html#isKycVerified)
+    [isKycVerified](../jstsdocs/classes/ETOPaySdk.html#isKycVerified)
 
 === "Swift"
     Not available yet!
@@ -254,13 +247,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Delete the currently active user and their wallet | `pin` - The PIN of the user to be deleted. Required only if the user has created a wallet. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [delete_user](../rust-docs/doc/sdk/core/struct.Sdk.html#method.delete_user)
+    [delete_user](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.delete_user)
 
 === "Java"
-    [deleteUser](../javadoc/com/etogruppe/CryptpaySdk.html#deleteUser(java.lang.String))
+    [deleteUser](../javadoc/com/etogruppe/ETOPaySdk.html#deleteUser(java.lang.String))
 
 === "Typescript"
-    [deleteUser](../jstsdocs/classes/CryptpaySdk.html#deleteUser)
+    [deleteUser](../jstsdocs/classes/ETOPaySdk.html#deleteUser)
 
 === "Swift"
     Not available yet!
@@ -278,13 +271,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Creates a new wallet for the user with the specified PIN and password | `pin` - The PIN for the wallet | Returns the mnemonic phrase of the newly created wallet if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [create_wallet_from_new_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_new_mnemonic)
+    [create_wallet_from_new_mnemonic](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_from_new_mnemonic)
 
 === "Java"
-    [createNewWallet](../javadoc/com/etogruppe/CryptpaySdk.html#createNewWallet(java.lang.String))
+    [createNewWallet](../javadoc/com/etogruppe/ETOPaySdk.html#createNewWallet(java.lang.String))
 
 === "Typescript"
-    [createNewWallet](../jstsdocs/classes/CryptpaySdk.html#createNewWallet)
+    [createNewWallet](../jstsdocs/classes/ETOPaySdk.html#createNewWallet)
 
 === "Swift"
     Not available yet!
@@ -300,13 +293,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create a wallet from existing mnemonic | `pin` - The PIN for the wallet, `mnemonic` - The mnemonic to migrate from | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [create_wallet_from_existing_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_existing_mnemonic)
+    [create_wallet_from_existing_mnemonic](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_from_existing_mnemonic)
 
 === "Java"
-    [createWalletFromMnemonic](../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
+    [createWalletFromMnemonic](../javadoc/com/etogruppe/ETOPaySdk.html#createWalletFromMnemonic(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [createWalletFromMnemonic](../jstsdocs/classes/CryptpaySdk.html#createWalletFromMnemonic)
+    [createWalletFromMnemonic](../jstsdocs/classes/ETOPaySdk.html#createWalletFromMnemonic)
 
 === "Swift"
     Not available yet!
@@ -322,13 +315,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create a wallet from existing backup | `pin` - The PIN for the wallet, `backup` - The bytes representing the backup file contents, `backup_password` - The password used when creating the backup | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [create_wallet_from_backup](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_from_backup)
+    [create_wallet_from_backup](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_from_backup)
 
 === "Java"
-    [createWalletFromBackup](../javadoc/com/etogruppe/CryptpaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
+    [createWalletFromBackup](../javadoc/com/etogruppe/ETOPaySdk.html#createWalletFromBackup(java.lang.String,byte%5B%5D,java.lang.String))
 
 === "Typescript"
-    [createWalletFromBackup](../jstsdocs/classes/CryptpaySdk.html#createWalletFromBackup)
+    [createWalletFromBackup](../jstsdocs/classes/ETOPaySdk.html#createWalletFromBackup)
 
 === "Swift"
     Not available yet!
@@ -344,13 +337,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create a wallet backup | `backup_password` - The password for the backup | Returns the bytes of the created backup file if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [create_wallet_backup](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_wallet_backup)
+    [create_wallet_backup](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_wallet_backup)
 
 === "Java"
-    [createWalletBackup](../javadoc/com/etogruppe/CryptpaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
+    [createWalletBackup](../javadoc/com/etogruppe/ETOPaySdk.html#createWalletBackup(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [createWalletBackup](../jstsdocs/classes/CryptpaySdk.html#createWalletBackup)
+    [createWalletBackup](../jstsdocs/classes/ETOPaySdk.html#createWalletBackup)
 
 === "Swift"
     Not available yet!
@@ -366,13 +359,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Verifies the mnemonic by checking if it matches the stored mnemonic | `pin` - The PIN for the wallet, `mnemonic` - The mnemonic to verify | Returns `true` or `false` whether the mnemonic is successfully verified. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | User |
 
 === "Rust"
-    [verify_mnemonic](../rust-docs/doc/sdk/core/struct.Sdk.html#method.verify_mnemonic)
+    [verify_mnemonic](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.verify_mnemonic)
 
 === "Java"
-    [verifyMnemonic](../javadoc/com/etogruppe/CryptpaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
+    [verifyMnemonic](../javadoc/com/etogruppe/ETOPaySdk.html#verifyMnemonic(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [verifyMnemonic](../jstsdocs/classes/CryptpaySdk.html#verifyMnemonic)
+    [verifyMnemonic](../jstsdocs/classes/ETOPaySdk.html#verifyMnemonic)
 
 === "Swift"
     Not available yet!
@@ -392,13 +385,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Delete the currently active wallet | `pin` - The PIN for the wallet | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [delete_wallet](../rust-docs/doc/sdk/core/struct.Sdk.html#method.delete_wallet)
+    [delete_wallet](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.delete_wallet)
 
 === "Java"
-    [deleteWallet](../javadoc/com/etogruppe/CryptpaySdk.html#deleteWallet(java.lang.String))
+    [deleteWallet](../javadoc/com/etogruppe/ETOPaySdk.html#deleteWallet(java.lang.String))
 
 === "Typescript"
-    [deleteWallet](../jstsdocs/classes/CryptpaySdk.html#deleteWallet)
+    [deleteWallet](../jstsdocs/classes/ETOPaySdk.html#deleteWallet)
 
 === "Swift"
     Not available yet!
@@ -414,13 +407,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Verifies the pin for the wallet | `pin` - The pin to verify | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [verify_pin](../rust-docs/doc/sdk/core/struct.Sdk.html#method.verify_pin)
+    [verify_pin](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.verify_pin)
 
 === "Java"
-    [pinVerify](../javadoc/com/etogruppe/CryptpaySdk.html#pinVerify(java.lang.String))
+    [pinVerify](../javadoc/com/etogruppe/ETOPaySdk.html#pinVerify(java.lang.String))
 
 === "Typescript"
-    [verifyPin](../jstsdocs/classes/CryptpaySdk.html#verifyPin)
+    [verifyPin](../jstsdocs/classes/ETOPaySdk.html#verifyPin)
 
 === "Swift"
     Not available yet!
@@ -436,13 +429,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Resets the pin for the wallet with a new pin by using the existing pin | `pin` - The current pin for the wallet, `new_pin` - The new pin to set for the wallet | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [change_pin](../rust-docs/doc/sdk/core/struct.Sdk.html#method.change_pin)
+    [change_pin](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.change_pin)
 
 === "Java"
-    [pinReset](../javadoc/com/etogruppe/CryptpaySdk.html#pinReset(java.lang.String,java.lang.String))
+    [pinReset](../javadoc/com/etogruppe/ETOPaySdk.html#pinReset(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [resetPin](../jstsdocs/classes/CryptpaySdk.html#resetPin)
+    [resetPin](../jstsdocs/classes/ETOPaySdk.html#resetPin)
 
 === "Swift"
     Not available yet!
@@ -458,13 +451,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Set the password for the wallet using the provided pin and new password. If the password is already set, this changes it to the new password. Use [`is_wallet_password_set`](./SDK%20API%20Reference.md#is-wallet-password-set) to check if the password is already set. | `pin` - The new or existing PIN for the wallet, `new_password` - The new password to set for the wallet | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [set_wallet_password](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_wallet_password)
+    [set_wallet_password](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_wallet_password)
 
 === "Java"
-    [setWalletPassword](../javadoc/com/etogruppe/CryptpaySdk.html#setWalletPassword(java.lang.String,java.lang.String))
+    [setWalletPassword](../javadoc/com/etogruppe/ETOPaySdk.html#setWalletPassword(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [setWalletPassword](../jstsdocs/classes/CryptpaySdk.html#setWalletPassword)
+    [setWalletPassword](../jstsdocs/classes/ETOPaySdk.html#setWalletPassword)
 
 === "Swift"
     Not available yet!
@@ -480,13 +473,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Check if the password is already set. Useful to prompt the user to setup one if it has not yet been done. See also [`set_wallet_password`](./SDK%20API%20Reference.md#set-wallet-password) for how to set a new password and change an existing password. | | Returns `true` or `false` whether or not the password is already set. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [is_wallet_password_set](../rust-docs/doc/sdk/core/struct.Sdk.html#method.is_wallet_password_set)
+    [is_wallet_password_set](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.is_wallet_password_set)
 
 === "Java"
-    [isWalletPasswordSet](../javadoc/com/etogruppe/CryptpaySdk.html#isWalletPasswordSet())
+    [isWalletPasswordSet](../javadoc/com/etogruppe/ETOPaySdk.html#isWalletPasswordSet())
 
 === "Typescript"
-    [isWalletPasswordSet](../jstsdocs/classes/CryptpaySdk.html#isWalletPasswordSet)
+    [isWalletPasswordSet](../jstsdocs/classes/ETOPaySdk.html#isWalletPasswordSet)
 
 === "Swift"
     Not available yet!
@@ -502,13 +495,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Generates a new receiver address for the wallet based on the selected network. | `pin` - The PIN for the wallet | Returns the generated address as a `String` if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Set network](./SDK%20API%20Reference.md#set-network) | Usage | Application |
 
 === "Rust"
-    [generate_new_address](../rust-docs/doc/sdk/core/struct.Sdk.html#method.generate_new_address)
+    [generate_new_address](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.generate_new_address)
 
 === "Java"
-    [generateNewAddress](../javadoc/com/etogruppe/CryptpaySdk.html#generateNewAddress(java.lang.String))
+    [generateNewAddress](../javadoc/com/etogruppe/ETOPaySdk.html#generateNewAddress(java.lang.String))
 
 === "Typescript"
-    [generateNewAddress](../jstsdocs/classes/CryptpaySdk.html#generateNewAddress)
+    [generateNewAddress](../jstsdocs/classes/ETOPaySdk.html#generateNewAddress)
 
 === "Swift"
     Not available yet!
@@ -524,13 +517,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Fetches the balance of the user from the wallet | `pin` - The PIN for the wallet | Returns the balance as a `f64` if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [get_balance](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_balance)
+    [get_balance](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_balance)
 
 === "Java"
-    [getWalletBalance](../javadoc/com/etogruppe/CryptpaySdk.html#getWalletBalance(java.lang.String))
+    [getWalletBalance](../javadoc/com/etogruppe/ETOPaySdk.html#getWalletBalance(java.lang.String))
 
 === "Typescript"
-    [getWalletBalance](../jstsdocs/classes/CryptpaySdk.html#getWalletBalance)
+    [getWalletBalance](../jstsdocs/classes/ETOPaySdk.html#getWalletBalance)
 
 === "Swift"
     Not available yet!
@@ -546,13 +539,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Wallet transaction list | `pin` - The PIN for the wallet, `start` - The starting page number for paginatation, `limit` - The page limit size for each page | Returns the list of transactions made on the wallet as an array of `WalletTxInfo` object or a serialized JSON of the same, if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [get_wallet_tx_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_wallet_tx_list)
+    [get_wallet_tx_list](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_wallet_tx_list)
 
 === "Java"
-    [getWalletTransactionList](../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransactionList(java.lang.String,long,long))
+    [getWalletTransactionList](../javadoc/com/etogruppe/ETOPaySdk.html#getWalletTransactionList(java.lang.String,long,long))
 
 === "Typescript"
-    [getWalletTransactionList](../jstsdocs/classes/CryptpaySdk.html#getWalletTransactionList)
+    [getWalletTransactionList](../jstsdocs/classes/ETOPaySdk.html#getWalletTransactionList)
 
 === "Swift"
     Not available yet!
@@ -638,13 +631,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Single wallet transaction | `pin` - The PIN for the wallet, `tx_id` - The transaction id on the network | Returns the transactions made on the wallet with the given id as `WalletTxInfo` object or a serialized JSON of the same, if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [get_wallet_tx](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_wallet_tx)
+    [get_wallet_tx](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_wallet_tx)
 
 === "Java"
-    [getWalletTransaction](../javadoc/com/etogruppe/CryptpaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
+    [getWalletTransaction](../javadoc/com/etogruppe/ETOPaySdk.html#getWalletTransaction(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [getWalletTransaction](../jstsdocs/classes/CryptpaySdk.html#getWalletTransaction)
+    [getWalletTransaction](../jstsdocs/classes/ETOPaySdk.html#getWalletTransaction)
 
 === "Swift"
     Not available yet!
@@ -660,13 +653,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Sets the recovery share for the users wallet. | `share` - The recovery share to upload. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [set_recovery_share](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_recovery_share)
+    [set_recovery_share](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_recovery_share)
 
 === "Java"
-    [setRecoveryShare](../javadoc/com/etogruppe/CryptpaySdk.html#setRecoveryShare(java.lang.String))
+    [setRecoveryShare](../javadoc/com/etogruppe/ETOPaySdk.html#setRecoveryShare(java.lang.String))
 
 === "Typescript"
-    [setRecoveryShare](../jstsdocs/classes/CryptpaySdk.html#setRecoveryShare)
+    [setRecoveryShare](../jstsdocs/classes/ETOPaySdk.html#setRecoveryShare)
 
 === "Swift"
     Not available yet!
@@ -682,13 +675,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get the recovery share for the users wallet. | | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_recovery_share](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_recovery_share)
+    [get_recovery_share](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_recovery_share)
 
 === "Java"
-    [getRecoveryShare](../javadoc/com/etogruppe/CryptpaySdk.html#getRecoveryShare())
+    [getRecoveryShare](../javadoc/com/etogruppe/ETOPaySdk.html#getRecoveryShare())
 
 === "Typescript"
-    [getRecoveryShare](../jstsdocs/classes/CryptpaySdk.html#getRecoveryShare)
+    [getRecoveryShare](../jstsdocs/classes/ETOPaySdk.html#getRecoveryShare)
 
 === "Swift"
     Not available yet!
@@ -706,13 +699,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create a new viviswap user and initialize KYC verification | `mail` - The email address of the user, `terms_accepted` - A boolean indicating whether the terms have been accepted | Returns `NewViviswapUser` object if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [start_kyc_verification_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.start_kyc_verification_for_viviswap)
+    [start_kyc_verification_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.start_kyc_verification_for_viviswap)
 
 === "Java"
-    [startViviswapKyc](../javadoc/com/etogruppe/CryptpaySdk.html#startViviswapKyc(java.lang.String,boolean))
+    [startViviswapKyc](../javadoc/com/etogruppe/ETOPaySdk.html#startViviswapKyc(java.lang.String,boolean))
 
 === "Typescript"
-    [startKycVerificationForViviswap](../jstsdocs/classes/CryptpaySdk.html#startKycVerificationForViviswap)
+    [startKycVerificationForViviswap](../jstsdocs/classes/ETOPaySdk.html#startKycVerificationForViviswap)
 
 === "Swift"
     Not available yet!
@@ -754,13 +747,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get current kyc status of viviswap | | Returns `ViviswapKycStatus` object if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_kyc_details_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_kyc_details_for_viviswap)
+    [get_kyc_details_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_kyc_details_for_viviswap)
 
 === "Java"
-    [getViviswapKyc](../javadoc/com/etogruppe/CryptpaySdk.html#getViviswapKyc())
+    [getViviswapKyc](../javadoc/com/etogruppe/ETOPaySdk.html#getViviswapKyc())
 
 === "Typescript"
-    [getKycDetailsForViviswap](../jstsdocs/classes/CryptpaySdk.html#getKycDetailsForViviswap)
+    [getKycDetailsForViviswap](../jstsdocs/classes/ETOPaySdk.html#getKycDetailsForViviswap)
 
 === "Swift"
     Not available yet!
@@ -854,13 +847,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Update the kyc details for viviswap to be submitted | `is_individual` - Whether the user is an individual, `is_pep` - Whether the user is a politically exposed person, `is_us_citizen` - Whether the user is a US citizen, `is_regulatory_disclosure` - Whether the user has accepted the regulatory disclosure, `country_of_residence` - The country of residence of the user, `nationality` - The nationality of the user, `full_name` - The full name of the user, `date_of_birth` - The date of birth of the user | Returns `ViviswapPartiallyKycDetails` object containing the partially updated KYC details. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [update_kyc_partially_status_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_kyc_partially_status_for_viviswap)
+    [update_kyc_partially_status_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.update_kyc_partially_status_for_viviswap)
 
 === "Java"
-    [updateViviswapKycPartial](../javadoc/com/etogruppe/CryptpaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
+    [updateViviswapKycPartial](../javadoc/com/etogruppe/ETOPaySdk.html#updateViviswapKycPartial(boolean,boolean,boolean,boolean,java.lang.String,java.lang.String,java.lang.String,java.lang.String))
 
 === "Typescript"
-    [updateKycPartiallyStatusForViviswap](../jstsdocs/classes/CryptpaySdk.html#updateKycPartiallyStatusForViviswap)
+    [updateKycPartiallyStatusForViviswap](../jstsdocs/classes/ETOPaySdk.html#updateKycPartiallyStatusForViviswap)
 
 === "Swift"
     Not available yet!
@@ -953,13 +946,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Submit the kyc details for viviswap | | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [submit_kyc_partially_status_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.submit_kyc_partially_status_for_viviswap)
+    [submit_kyc_partially_status_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.submit_kyc_partially_status_for_viviswap)
 
 === "Java"
-    [submitViviswapKycPartial](../javadoc/com/etogruppe/CryptpaySdk.html#submitViviswapKycPartial())
+    [submitViviswapKycPartial](../javadoc/com/etogruppe/ETOPaySdk.html#submitViviswapKycPartial())
 
 === "Typescript"
-    [submitKycPartiallyStatusForViviswap](../jstsdocs/classes/CryptpaySdk.html#submitKycPartiallyStatusForViviswap)
+    [submitKycPartiallyStatusForViviswap](../jstsdocs/classes/ETOPaySdk.html#submitKycPartiallyStatusForViviswap)
 
 === "Swift"
     Not available yet!
@@ -975,13 +968,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get current iban of viviswap user | | Returns `ViviswapAddressDetail` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [get_iban_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_iban_for_viviswap)
+    [get_iban_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_iban_for_viviswap)
 
 === "Java"
-    [getIbanViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#getIbanViviswap())
+    [getIbanViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#getIbanViviswap())
 
 === "Typescript"
-    [getIbanViviswap](../jstsdocs/classes/CryptpaySdk.html#getIbanViviswap)
+    [getIbanViviswap](../jstsdocs/classes/ETOPaySdk.html#getIbanViviswap)
 
 === "Swift"
     Not available yet!
@@ -1036,13 +1029,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Update IBAN of viviswap user | `pin` - The user's PIN, `address` - The new IBAN address | Returns `ViviswapAddressDetail` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [update_iban_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_iban_for_viviswap)
+    [update_iban_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.update_iban_for_viviswap)
 
 === "Java"
-    [updateIbanViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
+    [updateIbanViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#updateIbanViviswap(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [updateIbanViviswap](../jstsdocs/classes/CryptpaySdk.html#updateIbanViviswap)
+    [updateIbanViviswap](../jstsdocs/classes/ETOPaySdk.html#updateIbanViviswap)
 
 === "Swift"
     Not available yet!
@@ -1058,13 +1051,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create deposit for viviswap user | `pin` - The PIN for the wallet | Returns `ViviswapDeposit` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [create_deposit_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_deposit_with_viviswap)
+    [create_deposit_with_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_deposit_with_viviswap)
 
 === "Java"
-    [depositWithViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#depositWithViviswap(java.lang.String))
+    [depositWithViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#depositWithViviswap(java.lang.String))
 
 === "Typescript"
-    [createDepositWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createDepositWithViviswap)
+    [createDepositWithViviswap](../jstsdocs/classes/ETOPaySdk.html#createDepositWithViviswap)
 
 === "Swift"
     Not available yet!
@@ -1160,13 +1153,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create address detail for viviswap user | `pin` - The PIN for the wallet | Returns `ViviswapAddressDetail` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [create_detail_for_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_detail_for_viviswap)
+    [create_detail_for_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_detail_for_viviswap)
 
 === "Java"
-    [createViviswapDetail](../javadoc/com/etogruppe/CryptpaySdk.html#createViviswapDetail(java.lang.String))
+    [createViviswapDetail](../javadoc/com/etogruppe/ETOPaySdk.html#createViviswapDetail(java.lang.String))
 
 === "Typescript"
-    [createDetailForViviswap](../jstsdocs/classes/CryptpaySdk.html#createDetailForViviswap)
+    [createDetailForViviswap](../jstsdocs/classes/ETOPaySdk.html#createDetailForViviswap)
 
 === "Swift"
     Not available yet!
@@ -1182,13 +1175,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Create address detail for viviswap user | `amount` - The amount of the withdrawal, `pin` - The optional PIN for verification, `data` - Optional data which can be assigned to the transaction | Returns `ViviswapWithdrawal` object if successful. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap), [Update IBAN](./SDK%20API%20Reference.md#update-iban-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [create_withdrawal_with_viviswap](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_withdrawal_with_viviswap)
+    [create_withdrawal_with_viviswap](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_withdrawal_with_viviswap)
 
 === "Java"
-    [withdrawWithViviswap](../javadoc/com/etogruppe/CryptpaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D))
+    [withdrawWithViviswap](../javadoc/com/etogruppe/ETOPaySdk.html#withdrawWithViviswap(double,java.lang.String,byte%5B%5D))
 
 === "Typescript"
-    [createWithdrawalWithViviswap](../jstsdocs/classes/CryptpaySdk.html#createWithdrawalWithViviswap)
+    [createWithdrawalWithViviswap](../jstsdocs/classes/ETOPaySdk.html#createWithdrawalWithViviswap)
 
 === "Swift"
     Not available yet!
@@ -1266,13 +1259,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get swap details | `order_id` - The ID of the swap order. | Returns `Order` object containing the swap order details. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [get_swap_details](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_swap_details)
+    [get_swap_details](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_swap_details)
 
 === "Java"
-    [getSwapDetails](../javadoc/com/etogruppe/CryptpaySdk.html#getSwapDetails(java.lang.String))
+    [getSwapDetails](../javadoc/com/etogruppe/ETOPaySdk.html#getSwapDetails(java.lang.String))
 
 === "Typescript"
-    [getSwapDetails](../jstsdocs/classes/CryptpaySdk.html#getSwapDetails)
+    [getSwapDetails](../jstsdocs/classes/ETOPaySdk.html#getSwapDetails)
 
 === "Swift"
     Not available yet!
@@ -1463,13 +1456,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get swap list | `start` - The start page parameter, `limit` - The pagination limit parameter | Returns an array of `Order` object containing the swap order details for each swap. | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet), [Get KYC Details for viviswap](./SDK%20API%20Reference.md#get-kyc-details-for-viviswap) | Usage | Application |
 
 === "Rust"
-    [get_swap_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_swap_list)
+    [get_swap_list](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_swap_list)
 
 === "Java"
-    [getSwapList](../javadoc/com/etogruppe/CryptpaySdk.html#getSwapList(long,long))
+    [getSwapList](../javadoc/com/etogruppe/ETOPaySdk.html#getSwapList(long,long))
 
 === "Typescript"
-    [getSwapList](../jstsdocs/classes/CryptpaySdk.html#getSwapList)
+    [getSwapList](../jstsdocs/classes/ETOPaySdk.html#getSwapList)
 
 === "Swift"
     Not available yet!
@@ -1485,13 +1478,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get the exchange rate for the selected currency | | Returns the latest exchange rate | | Usage | Application |
 
 === "Rust"
-    [get_exchange_rate](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_exchange_rate)
+    [get_exchange_rate](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_exchange_rate)
 
 === "Java"
-    [getExchangeRate](../javadoc/com/etogruppe/CryptpaySdk.html#getExchangeRate())
+    [getExchangeRate](../javadoc/com/etogruppe/ETOPaySdk.html#getExchangeRate())
 
 === "Typescript"
-    [getExchangeRate](../jstsdocs/classes/CryptpaySdk.html#getExchangeRate)
+    [getExchangeRate](../jstsdocs/classes/ETOPaySdk.html#getExchangeRate)
 
 === "Swift"
     Not available yet!
@@ -1506,16 +1499,16 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Create purchase request | `receiver` - The receiver's username, `amount` - The amount of the purchase, `product_hash` - The hash of the product, `app_data` - The application data, `purchase_type` - The type of the purchase | Returns the purchase ID. This is an internal index used to reference the transaction in cryptpay | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
+| Create purchase request | `receiver` - The receiver's username, `amount` - The amount of the purchase, `product_hash` - The hash of the product, `app_data` - The application data, `purchase_type` - The type of the purchase | Returns the purchase ID. This is an internal index used to reference the transaction in etopay | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [create_purchase_request](../rust-docs/doc/sdk/core/struct.Sdk.html#method.create_purchase_request)
+    [create_purchase_request](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.create_purchase_request)
 
 === "Java"
-    [purchaseRequestCreate](../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
+    [purchaseRequestCreate](../javadoc/com/etogruppe/ETOPaySdk.html#purchaseRequestCreate(java.lang.String,double,java.lang.String,java.lang.String,java.lang.String))
 
 === "Typescript"
-    [createPurchaseRequest](../jstsdocs/classes/CryptpaySdk.html#createPurchaseRequest)
+    [createPurchaseRequest](../jstsdocs/classes/ETOPaySdk.html#createPurchaseRequest)
 
 === "Swift"
     Not available yet!
@@ -1533,13 +1526,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get purchase details | `purchase_id` - The ID of the purchase. | Returns the purchase details as `PurchaseDetails` object | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [get_purchase_details](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_purchase_details)
+    [get_purchase_details](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_purchase_details)
 
 === "Java"
-    [purchaseDetails](../javadoc/com/etogruppe/CryptpaySdk.html#purchaseDetails(java.lang.String))
+    [purchaseDetails](../javadoc/com/etogruppe/ETOPaySdk.html#purchaseDetails(java.lang.String))
 
 === "Typescript"
-    [getPurchaseDetails](../jstsdocs/classes/CryptpaySdk.html#getPurchaseDetails)
+    [getPurchaseDetails](../jstsdocs/classes/ETOPaySdk.html#getPurchaseDetails)
 
 === "Swift"
     Not available yet!
@@ -1595,13 +1588,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Confirm purchase request | `pin` - The PIN of the user, `purchase_id` - The ID of the purchase. | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [confirm_purchase_request](../rust-docs/doc/sdk/core/struct.Sdk.html#method.confirm_purchase_request)
+    [confirm_purchase_request](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.confirm_purchase_request)
 
 === "Java"
-    [purchaseRequestConfirm](../javadoc/com/etogruppe/CryptpaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
+    [purchaseRequestConfirm](../javadoc/com/etogruppe/ETOPaySdk.html#purchaseRequestConfirm(java.lang.String,java.lang.String))
 
 === "Typescript"
-    [confirmPurchaseRequest](../jstsdocs/classes/CryptpaySdk.html#confirmPurchaseRequest)
+    [confirmPurchaseRequest](../jstsdocs/classes/ETOPaySdk.html#confirmPurchaseRequest)
 
 === "Swift"
     Not available yet!
@@ -1617,13 +1610,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Send amount to the receiver address. | `pin` - The PIN of the user, `address` - The receiver's address, `amount` - The amount to send, `data` - Optional data which can be assigned to the transaction | | [Wallet initialization](./SDK%20API%20Reference.md#create-new-wallet) | Usage | Application |
 
 === "Rust"
-    [send_amount](../rust-docs/doc/sdk/core/struct.Sdk.html#method.send_amount)
+    [send_amount](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.send_amount)
 
 === "Java"
-    [sendAmount](../javadoc/com/etogruppe/CryptpaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D))
+    [sendAmount](../javadoc/com/etogruppe/ETOPaySdk.html#sendAmount(java.lang.String,java.lang.String,double,byte%5B%5D))
 
 === "Typescript"
-    [sendAmount](../jstsdocs/classes/CryptpaySdk.html#sendAmount)
+    [sendAmount](../jstsdocs/classes/ETOPaySdk.html#sendAmount)
 
 === "Swift"
     Not available yet!
@@ -1639,13 +1632,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get purchase list | `start` - The starting page number, `limit` - The maximum number of transactions per page | Returns a list of purchases as `TxInfo` object, if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_tx_list](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_tx_list)
+    [get_tx_list](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_tx_list)
 
 === "Java"
-    [txList](../javadoc/com/etogruppe/CryptpaySdk.html#txList(long,long))
+    [txList](../javadoc/com/etogruppe/ETOPaySdk.html#txList(long,long))
 
 === "Typescript"
-    [getTransactionList](../jstsdocs/classes/CryptpaySdk.html#getTransactionList)
+    [getTransactionList](../jstsdocs/classes/ETOPaySdk.html#getTransactionList)
 
 === "Swift"
     Not available yet!
@@ -1664,7 +1657,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
         pub date: Option<String>,
         /// receiver of the transaction
         pub receiver: String,
-        /// cryptpay reference id for the transaction
+        /// etopay reference id for the transaction
         pub reference_id: String,
         /// Application specific metadata attached to the tx
         pub application_metadata: Option<ApplicationMetadata>,
@@ -1705,7 +1698,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
             },
             "reference_id": {
                 "type": "string",
-                "description": "cryptpay reference id for the transaction"
+                "description": "etopay reference id for the transaction"
             },
             "application_metadata": {
                 "type": ["object", "null"],
@@ -1765,13 +1758,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Start kyc verification for postident | | Returns an object `NewCaseIdResponse` if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [start_kyc_verification_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.start_kyc_verification_for_postident)
+    [start_kyc_verification_for_postident](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.start_kyc_verification_for_postident)
 
 === "Java"
-    [startKycVerificationForPostident](../javadoc/com/etogruppe/CryptpaySdk.html#startKycVerificationForPostident())
+    [startKycVerificationForPostident](../javadoc/com/etogruppe/ETOPaySdk.html#startKycVerificationForPostident())
 
 === "Typescript"
-    [startKycVerificationForPostident](../jstsdocs/classes/CryptpaySdk.html#startKycVerificationForPostident)
+    [startKycVerificationForPostident](../jstsdocs/classes/ETOPaySdk.html#startKycVerificationForPostident)
 
 === "Swift"
     Not available yet!
@@ -1819,13 +1812,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Get case details for postident| | Returns an object `CaseDetailsResponse` if successful. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_kyc_details_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_kyc_details_for_postident)
+    [get_kyc_details_for_postident](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_kyc_details_for_postident)
 
 === "Java"
-    [getKycDetailsForPostident](../javadoc/com/etogruppe/CryptpaySdk.html#getKycDetailsForPostident())
+    [getKycDetailsForPostident](../javadoc/com/etogruppe/ETOPaySdk.html#getKycDetailsForPostident())
 
 === "Typescript"
-    [getKycDetailsForPostident](../jstsdocs/classes/CryptpaySdk.html#getKycDetailsForPostident)
+    [getKycDetailsForPostident](../jstsdocs/classes/ETOPaySdk.html#getKycDetailsForPostident)
 
 === "Swift"
     Not available yet!
@@ -1876,13 +1869,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Update case status for postident | `case_id`: The ID of the case to update. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [update_kyc_status_for_postident](../rust-docs/doc/sdk/core/struct.Sdk.html#method.update_kyc_status_for_postident)
+    [update_kyc_status_for_postident](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.update_kyc_status_for_postident)
 
 === "Java"
-    [updateKycStatusForPostident](../javadoc/com/etogruppe/CryptpaySdk.html#updateKycStatusForPostident(java.lang.String))
+    [updateKycStatusForPostident](../javadoc/com/etogruppe/ETOPaySdk.html#updateKycStatusForPostident(java.lang.String))
 
 === "Typescript"
-    [updateKycStatusForPostident](../jstsdocs/classes/CryptpaySdk.html#updateKycStatusForPostident)
+    [updateKycStatusForPostident](../jstsdocs/classes/ETOPaySdk.html#updateKycStatusForPostident)
 
 === "Swift"
     Not available yet!
@@ -1898,13 +1891,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Fetches the users preferred network | | Returns the network if successful or an empty value if no preferred network has been set. | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [get_preferred_network](../rust-docs/doc/sdk/core/struct.Sdk.html#method.get_preferred_network)
+    [get_preferred_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_preferred_network)
 
 === "Java"
-    [getPreferredNetwork](../javadoc/com/etogruppe/CryptpaySdk.html#getPreferredNetwork())
+    [getPreferredNetwork](../javadoc/com/etogruppe/ETOPaySdk.html#getPreferredNetwork())
 
 === "Typescript"
-    [getPreferredNetwork](../jstsdocs/classes/CryptpaySdk.html#getPreferredNetwork)
+    [getPreferredNetwork](../jstsdocs/classes/ETOPaySdk.html#getPreferredNetwork)
 
 === "Swift"
     Not available yet!
@@ -1920,13 +1913,13 @@ The Rustdoc API reference is available [here](../rust-docs/doc/sdk/index.html). 
 | Sets the users preferred network, or resets it if an empty value is provided. | `network_id` - The preferred user network. Optional value. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
-    [set_preferred_network](../rust-docs/doc/sdk/core/struct.Sdk.html#method.set_preferred_network)
+    [set_preferred_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_preferred_network)
 
 === "Java"
-    [setPreferredNetwork](../javadoc/com/etogruppe/CryptpaySdk.html#setPreferredNetwork(java.lang.String))
+    [setPreferredNetwork](../javadoc/com/etogruppe/ETOPaySdk.html#setPreferredNetwork(java.lang.String))
 
 === "Typescript"
-    [setPreferredNetwork](../jstsdocs/classes/CryptpaySdk.html#setPreferredNetwork)
+    [setPreferredNetwork](../jstsdocs/classes/ETOPaySdk.html#setPreferredNetwork)
 
 === "Swift"
     Not available yet!

@@ -25,7 +25,7 @@ The Java SDK is now available through a private Maven repository hosted on JFrog
     ```xml
     <dependency>
         <groupId>com.etogruppe</groupId>
-        <artifactId>CryptpaySdk</artifactId>
+        <artifactId>ETOPaySdk</artifactId>
         <version>0.11.0</version>
     </dependency>
     ```
@@ -70,7 +70,7 @@ jniLibs
 The `jniLibs` folder should be placed **as-is** under the `src/main` folder of the corresponding Java project from the jar file.
 
 !!! warning
-    Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the CryptpaySdk class `java.lang.UnsatisfiedLinkError: dlopen failed: library "libwalletsdk.so" not found`.
+    Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the ETOPaySdk class `java.lang.UnsatisfiedLinkError: dlopen failed: library "libwalletsdk.so" not found`.
 
 ## Future releases of SDK
 

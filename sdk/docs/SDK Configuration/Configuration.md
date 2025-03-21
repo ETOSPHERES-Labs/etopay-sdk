@@ -1,6 +1,6 @@
 # Configuring the SDK
 
-The Cawaena SDK needs to be configured correctly for secure and functional usage. Misconfiguration might lead to potential information leaks as well as bad end-user experience.
+The ETOPay SDK needs to be configured correctly for secure and functional usage. Misconfiguration might lead to potential information leaks as well as bad end-user experience.
 
 
 ## Static Configuration
@@ -19,7 +19,7 @@ The static configuration is provided by passing a JSON formatted string to the S
 
 ### Configuring authentication provider
 
-The authentication provider is a setting which is configured in the beginning in conjunction with the Cawaena development team. The Cawaena SDK and backend support Oauth2.0/OpenID Connect[^1] provider and can work with external authentication providers. The following information is needed by the Cawaena team to configure the backend to accept requests from the SDK:
+The authentication provider is a setting which is configured in the beginning in conjunction with the ETOPay development team. The ETOPay SDK and backend support Oauth2.0/OpenID Connect[^1] provider and can work with external authentication providers. The following information is needed by the ETOPay team to configure the backend to accept requests from the SDK:
 
 1. **ISSUER** - The issuer, which is part of the JWT claim in the `access_token`, created by the OAuth2.0 server. The issuer is generally the URL to the realm, but could also be different based on different settings.
 2. **AUTHORITY** - The authority is where the public keys/certificates are hosted, which are used by the OAuth2.0 server to sign the JWT `access_tokens`. This is mostly a URL of the following type: `{base_url}/auth/realms/{realm_name}/protocol/openid-connect/certs`
@@ -28,7 +28,7 @@ The authentication provider is a setting which is configured in the beginning in
 
 ???+ info
 
-    The control of the client credentials, the flows used to fetch the JWT as well as the entire user management including user registration, email verification and user settings is out of scope for Cawaena backend and SDK. This should be managed by applications using the SDK themselves.
+    The control of the client credentials, the flows used to fetch the JWT as well as the entire user management including user registration, email verification and user settings is out of scope for ETOPay backend and SDK. This should be managed by applications using the SDK themselves.
 
 
 Every time the OAuth client refreshes or fetches a new access token for the user, the access token can be updated in the SDK using the [`refresh_access_token`](../SDK%20Reference/SDK%20API%20Reference.md#refreshing-access-token) function.
@@ -48,7 +48,7 @@ Every time the OAuth client refreshes or fetches a new access token for the user
 
     ```java linenums="1"
     package org.example.app;
-    import com.cawaena.Wallet;
+    import com.etopay.Wallet;
 
     public class app {
         public static void main(){
@@ -68,9 +68,9 @@ Every time the OAuth client refreshes or fetches a new access token for the user
 
     ```swift linenums="1"
     import Foundation
-    import CawaenaSdk
+    import ETOPaySdk
 
-    let sdk = CawaenaSdk()
+    let sdk = ETOPaySdk()
     try await sdk.setConfig(config: "...")
 
     do {
@@ -85,7 +85,7 @@ Every time the OAuth client refreshes or fetches a new access token for the user
     ```typescript linenums="1"
     import * as wasm from "../pkg/etopay_sdk_wasm";
 
-    const sdk = await new CawaenaSdk();
+    const sdk = await new ETOPaySdk();
     await sdk.setConfig("...")
 
     await sdk.refreshAccessToken("access_token");
@@ -97,7 +97,7 @@ Every time the OAuth client refreshes or fetches a new access token for the user
 
 ### Configuring the backend
 
-The Cawaena team provides the URL for the backend, which is specified as the`backend_url` field of the configuration.
+The ETOPay team provides the URL for the backend, which is specified as the`backend_url` field of the configuration.
 This information is part of the initial setup and is important before starting the SDK usage.
 
 ### Configuring the storage path prefix

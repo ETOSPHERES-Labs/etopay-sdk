@@ -1,18 +1,18 @@
 # Examples
 
-The Cawaena SDK is built in `rust`. It is primarily an implementation of the various interfaces for managing users, wallets, on-boarding of users through KYC (Know Your Customer) processes, payment methods and listing usage information. The flows discussed in this document show examples using the rust language. For examples related to the specific language, refer to the corresponding pages.
+The ETOPay SDK is built in `rust`. It is primarily an implementation of the various interfaces for managing users, wallets, on-boarding of users through KYC (Know Your Customer) processes, payment methods and listing usage information. The flows discussed in this document show examples using the rust language. For examples related to the specific language, refer to the corresponding pages.
 
-The Cawaena SDK can be used only if the following pre-requisites have been fulfilled and the information resulting from these conditions is available:
+The ETOPay SDK can be used only if the following pre-requisites have been fulfilled and the information resulting from these conditions is available:
 
 - Oauth2.0 Identity and Access Management Provider is configured correctly,
-- The backend base URL of the Cawaena system is known,
+- The backend base URL of the ETOPay system is known,
 - The path to a certain file storage is available, where the application has read/write rights to create, modify and delete files related to the SDK like log files, local key-value DBs, and wallet files.
 
 Once this information is available, the SDK can be instantiated and the basic functions can be used.
 
 The examples shows the usage of the SDK in rust for creating a user. The user credentials are taken from the environment but could also be easily a user input.
 
-The environment configuration to `Development` attaches the SDK to the development backend of Cawaena automatically. It also configures the authentication provider correctly with the one used by the development team internally. This configuration is used by Cawaena developers and is only restricted to the users controlled by the identity provider configured for Cawaena internal testing.
+The environment configuration to `Development` attaches the SDK to the development backend of ETOPay automatically. It also configures the authentication provider correctly with the one used by the development team internally. This configuration is used by ETOPay developers and is only restricted to the users controlled by the identity provider configured for ETOPay internal testing.
 
 ## 0. Shared Setup Code
 

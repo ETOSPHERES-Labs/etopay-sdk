@@ -1,6 +1,6 @@
 # Philosophy
 
-The Cawaena project was started with a few basic principles and they are also the guiding values which will continue to motivate the team and all its contributors to work for this project.
+The ETOPay project was started with a few basic principles and they are also the guiding values which will continue to motivate the team and all its contributors to work for this project.
 
 ## Core principles
 
@@ -30,12 +30,12 @@ With these core principles guiding us, we just rinse and repeat at every opportu
 
 Hence, it does not come to us as a surprise that, all which we are building fits perfectly in the Web3 context, which also strives to unite over marginalizing or dividing people.
 
-## The Cawaena story
+## The ETOPay story
 
  began exactly with the simplest of problems: How is it possible for a person to pay another person for goods and services offered on a platform in a way where the platform is not a gate-keeper?
 
 With this started our search for solutions and we concluded that there is no platform as such which respects their end-users and their rights like data protection, but rather tries to exploit as much as they can from their users.
 
-We started developing Cawaena and we realized that we actually are just using various solutions, which are already available in the community, but just presenting and connecting them in a way that makes it fair, legal and transparent.
+We started developing ETOPay and we realized that we actually are just using various solutions, which are already available in the community, but just presenting and connecting them in a way that makes it fair, legal and transparent.
 
 Taking guidance from our core principles, we have decided to go open source with our solution and give it to the community, not just to help develop it further with us but also use it everywhere, where they encountered gate-keepers. To employ it in a way which guarantees fairness and transparency to their end users, baked right in the solution.
