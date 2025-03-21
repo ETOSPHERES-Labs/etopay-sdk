@@ -18,21 +18,21 @@ pub const MNEMONIC_HANS48: &str = "enemy attend neither digital dizzy soap lectu
 
 lazy_static! {
     /// Default test user satoshi verified everywhere
-    pub static ref USER_SATOSHI: TestUser = create_test_user("satoshi", "Satoshi", "Nakamoto", "satoshi@gmail.com", MNEMONIC_DEFAULT);
+    pub static ref USER_SATOSHI: TestUser = create_test_user("satoshi", "Satoshi", "Nakamoto", "example+satoshi@etospheres.com", MNEMONIC_DEFAULT);
 
     /// Verified users via Postident KYC
-    pub static ref USER_ALICE: TestUser = create_test_user("alice", "Alice", "Wonderland", "alice@eto.viviswap.com", MNEMONIC_ALICE);
-    pub static ref USER_HANS34: TestUser = create_test_user("hans34", "Hans34", "Sama", "hans34.maier34@gmx.com",  &std::env::var("MNEMONIC_HANS34").unwrap());
+    pub static ref USER_ALICE: TestUser = create_test_user("alice", "Alice", "Wonderland", "example+alice@etospheres.com", MNEMONIC_ALICE);
+    pub static ref USER_HANS34: TestUser = create_test_user("hans34", "Hans34", "Sama", "example+hans34@etospheres.com",  &std::env::var("MNEMONIC_HANS34").unwrap());
     pub static ref USER_HANS48: TestUser = create_test_user("hans48", "Hans48", "Sama", "hans48.maier34@gmx.com", MNEMONIC_HANS48);
 
     // user BOB not KYC verified!
-    // pub static ref USER_BOB: TestUser = create_test_user("bob", "Bob", "Swagger", "bob@eto.viviswap.com", MNEMONIC_DEFAULT);
+    // pub static ref USER_BOB: TestUser = create_test_user("bob", "Bob", "Swagger", "example+bob@etospheres.com", MNEMONIC_DEFAULT);
 
     // user VIVI not KYC verified!
-    // pub static ref USER_VIVI: TestUser = create_test_user("vivi", "Vivi", "Swap", "vivi@eto.viviswap.com", MNEMONIC_DEFAULT);
+    // pub static ref USER_VIVI: TestUser = create_test_user("vivi", "Vivi", "Swap", "example+vivi@etospheres.com", MNEMONIC_DEFAULT);
 
     /// Test user for archive purposes
-    pub static ref USER_ARCHIVEME: TestUser = create_test_user("archiveme", "", "", "noop@eto.viviswap.com", MNEMONIC_DEFAULT);
+    pub static ref USER_ARCHIVEME: TestUser = create_test_user("archiveme", "", "", "example+archiveme@etospheres.com", MNEMONIC_DEFAULT);
 }
 
 fn create_test_user(username: &str, first_name: &str, last_name: &str, email: &str, mnemonic: &str) -> TestUser {
