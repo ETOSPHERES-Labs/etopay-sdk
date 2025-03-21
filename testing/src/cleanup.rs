@@ -8,7 +8,7 @@ pub struct CleanUp {
 impl Default for CleanUp {
     fn default() -> Self {
         let uuid = Uuid::new_v4().to_string();
-        let path = format!("/tmp/cryptpay/{uuid}");
+        let path = format!("/tmp/etopay/{uuid}");
         let exists = std::path::Path::new(&path).exists();
         if !exists {
             std::fs::create_dir_all(&path).unwrap();
