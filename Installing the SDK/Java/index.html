@@ -1249,22 +1249,22 @@
 <p>The jar files also contain the jniLibs folder. The jniLibs folder in turn contains the pre-built shared object libraries of the SDK. The structure of the folder is as shown below:</p>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>jniLibs
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>├── arm64-v8a
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>│   ├── libwalletsdk.so
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>│   ├── libetopaysdk.so
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>│   └── libc++_shared.so
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>├── armeabi-v7a
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>│   ├── libwalletsdk.so
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>│   ├── libetopaysdk.so
 </span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>│   └── libc++_shared.so
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>├── x86
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>│   ├── libwalletsdk.so
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>│   ├── libetopaysdk.so
 </span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>│   └── libc++_shared.so
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>└── x86_64
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    ├── libwalletsdk.so
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    ├── libetopaysdk.so
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a>    └── libc++_shared.so
 </span></code></pre></div>
 <p>The <code>jniLibs</code> folder should be placed <strong>as-is</strong> under the <code>src/main</code> folder of the corresponding Java project from the jar file.</p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the ETOPaySdk class <code>java.lang.UnsatisfiedLinkError: dlopen failed: library "libwalletsdk.so" not found</code>.</p>
+<p>Currently the moving of the jniLibs from the jar to the src/main folder is manual and not automated. Later it will be automated with a gradle plugin once the project is moved to open source. Not copying this generally will throw the error while initializing the constructor of the ETOPaySdk class <code>java.lang.UnsatisfiedLinkError: dlopen failed: library "libetopaysdk.so" not found</code>.</p>
 </div>
 <h2 id="future-releases-of-sdk">Future releases of SDK<a class="headerlink" href="#future-releases-of-sdk" title="Permanent link">&para;</a></h2>
 <p>Future releases of the SDK will continue to be published to the private Maven repository. You will only need to update the dependency version in your pom.xml file to use the latest release and replace the jniLibs correspondingly.</p>
@@ -1301,7 +1301,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 21, 2025 08:25:37">March 21, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 21, 2025 10:39:47">March 21, 2025</span>
   </span>
 
     
