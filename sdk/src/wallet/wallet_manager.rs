@@ -363,9 +363,7 @@ impl WalletManagerImpl {
 
         if let Some(access_token) = access_token {
             log::info!("Uploading shares");
-            crate::backend::shares::upload_backup_share(config, access_token, &shares.backup, &user.username).await?;
-            crate::backend::shares::upload_recovery_share(config, access_token, &shares.recovery, &user.username)
-                .await?;
+            crate::backend::shares::upload_shares(config, access_token, &shares.backup, &shares.recovery).await?;
             log::info!("Done uploading shares");
         } else {
             log::info!("No access token, skipping uploading backup and recovery shares");

@@ -2,19 +2,19 @@ use super::error::{ApiError, Result};
 use crate::types::newtypes::AccessToken;
 use crate::{core::Config, share::Share};
 use api_types::api::user::GetShareResponse;
-use api_types::api::user::PutShareRequest;
+use api_types::api::user::PutSharesRequest;
 use log::{debug, error, info};
 use reqwest::StatusCode;
 use secrecy::ExposeSecret;
 
-/// Uploads the backup share
+/// Uploads the backup and recovery shares
 ///
 /// # Arguments
 ///
 /// * `config` - The configuration object.
 /// * `access_token` - The access token for authentication.
-/// * `backup_share` - The backup share as a String.
-/// * `username` - The corresponding user for the share.
+/// * `backup_share` - The backup share.
+/// * `recovery_share` - The recovery share.
 ///
 /// # Returns
 ///
@@ -24,14 +24,14 @@ use secrecy::ExposeSecret;
 ///
 /// Returns an `ApiError::MissingAccessToken` if the request is unauthorized, `ApiError::ShareError` if the share is not encrypted
 /// or an `ApiError::UnexpectedResponse` if an unexpected error occurs.
-pub async fn upload_backup_share(
+pub async fn upload_shares(
     config: &Config,
     access_token: &AccessToken,
     backup_share: &Share,
-    username: &str,
+    recovery_share: &Share,
 ) -> Result<()> {
     let base_url = &config.backend_url;
-    let url = format!("{base_url}/user/shares/backup");
+    let url = format!("{base_url}/user/shares");
     info!("Used url: {url:#?}");
 
     // Double check if the share is encrypted
@@ -39,11 +39,12 @@ pub async fn upload_backup_share(
         return Err(ApiError::Share("Backup share is not encrypted".to_string()));
     }
 
-    let body = PutShareRequest {
-        share: backup_share.to_string().expose_secret().to_owned(),
+    let body = PutSharesRequest {
+        backup_share: backup_share.to_string().expose_secret().to_owned(),
+        recovery_share: recovery_share.to_string().expose_secret().to_owned(),
     };
 
-    info!("Uploading backup share for user {}", username);
+    info!("Uploading backup shares");
 
     let client = reqwest::Client::new();
     let response = client
@@ -63,65 +64,6 @@ pub async fn upload_backup_share(
             let text = response.text().await?;
             error!(
                 "Failed to upload the backup share: Response status: {}, Response text: {:?}",
-                status, text
-            );
-            Err(ApiError::UnexpectedResponse {
-                code: status,
-                body: text,
-            })
-        }
-    }
-}
-
-/// Uploads the recovery share
-///
-/// # Arguments
-///
-/// * `config` - The configuration object.
-/// * `access_token` - The access token for authentication.
-/// * `recovery_share` - The recovery share as a String.
-/// * `username` - The corresponding user for the share.
-///
-/// # Returns
-///
-/// Returns an empty `Result` if successful, or an `Error` if an error occurs.
-///
-/// # Errors
-///
-/// Returns an `ApiError::MissingAccessToken` if the request is unauthorized, or an `ApiError::ShareError` if an unhandled error occurs.
-pub async fn upload_recovery_share(
-    config: &Config,
-    access_token: &AccessToken,
-    recovery_share: &Share,
-    username: &str,
-) -> Result<()> {
-    let base_url = &config.backend_url;
-    let url = format!("{base_url}/user/shares/recovery");
-    info!("Used url: {url:#?}");
-
-    let body = PutShareRequest {
-        share: recovery_share.to_string().expose_secret().to_owned(),
-    };
-    info!("Uploading recovery share for user {}", username);
-
-    let client = reqwest::Client::new();
-    let response = client
-        .put(&url)
-        .bearer_auth(access_token.as_str())
-        .header("X-APP-NAME", &config.auth_provider)
-        .json(&body)
-        .send()
-        .await?;
-    debug!("Upload recovery share response: {response:#?}");
-
-    match response.status() {
-        StatusCode::OK => Ok(()),
-        StatusCode::UNAUTHORIZED => Err(ApiError::MissingAccessToken),
-        _ => {
-            let status = response.status();
-            let text = response.text().await?;
-            error!(
-                "Failed to upload the recovery share: Response status: {}, Response text: {}",
                 status, text
             );
             Err(ApiError::UnexpectedResponse {
@@ -317,14 +259,14 @@ mod tests {
     }
 
     #[rstest::rstest]
-    #[case(200, ENCRYPTED_SHARE, Ok(()))]
-    #[case(401, ENCRYPTED_SHARE, Err(ApiError::MissingAccessToken))]
-    #[case(500, ENCRYPTED_SHARE, Err(ApiError::UnexpectedResponse {
+    #[case(200, ENCRYPTED_SHARE, NOT_ENCRYPTED_SHARE, Ok(()))]
+    #[case(401, ENCRYPTED_SHARE, NOT_ENCRYPTED_SHARE, Err(ApiError::MissingAccessToken))]
+    #[case(500, ENCRYPTED_SHARE, NOT_ENCRYPTED_SHARE, Err(ApiError::UnexpectedResponse {
         code: StatusCode::INTERNAL_SERVER_ERROR,
         body: "".to_string() 
     }))]
-    #[case(500, NOT_ENCRYPTED_SHARE, Err(ApiError::Share("Backup share is not encrypted".to_string())))]
-    #[case(501, ENCRYPTED_SHARE, Err(ApiError::UnexpectedResponse {
+    #[case(500, NOT_ENCRYPTED_SHARE,NOT_ENCRYPTED_SHARE,  Err(ApiError::Share("Backup share is not encrypted".to_string())))]
+    #[case(501, ENCRYPTED_SHARE,NOT_ENCRYPTED_SHARE,  Err(ApiError::UnexpectedResponse {
         code: StatusCode::NOT_IMPLEMENTED,
         body: "".to_string() 
     }))]
@@ -332,13 +274,15 @@ mod tests {
     async fn test_upload_backup_share(
         #[case] status_code: usize,
         #[case] str_share: &str,
+        #[case] str_share2: &str,
         #[case] expected: Result<()>,
     ) {
         // Arrange
         let (mut srv, config, _cleanup) = set_config().await;
 
-        let mock_request = PutShareRequest {
-            share: ENCRYPTED_SHARE.into(),
+        let mock_request = PutSharesRequest {
+            backup_share: ENCRYPTED_SHARE.into(),
+            recovery_share: NOT_ENCRYPTED_SHARE.into(),
         };
         let body = serde_json::to_string(&mock_request).unwrap();
 
@@ -358,51 +302,8 @@ mod tests {
 
         // Act
         let backup_share = str_share.parse::<Share>().unwrap();
-        let response = upload_backup_share(&config, &TOKEN, &backup_share, USERNAME).await;
-
-        // Assert
-        match expected {
-            Ok(_) => response.unwrap(),
-            Err(ref err) => {
-                assert_eq!(response.unwrap_err().to_string(), err.to_string());
-            }
-        }
-        mock_server.assert();
-    }
-
-    #[rstest::rstest]
-    #[case(200, Ok(()))]
-    #[case(401, Err(ApiError::MissingAccessToken))]
-    #[case(500, Err(ApiError::UnexpectedResponse {
-        code: StatusCode::INTERNAL_SERVER_ERROR,
-        body: "".to_string() 
-    }))]
-    #[case(501, Err(ApiError::UnexpectedResponse {
-        code: StatusCode::NOT_IMPLEMENTED,
-        body: "".to_string() 
-    }))]
-    #[tokio::test]
-    async fn test_upload_recovery_share(#[case] status_code: usize, #[case] expected: Result<()>) {
-        // Arrange
-        let (mut srv, config, _cleanup) = set_config().await;
-
-        let mock_request = PutShareRequest {
-            share: ENCRYPTED_SHARE.into(),
-        };
-        let body = serde_json::to_string(&mock_request).unwrap();
-
-        let mock_server = srv
-            .mock("PUT", "/api/user/shares/recovery")
-            .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
-            .match_body(Matcher::Exact(body))
-            .with_status(status_code)
-            .expect(1)
-            .create();
-
-        // Act
-        let recovery_share = ENCRYPTED_SHARE.parse::<Share>().unwrap();
-        let response = upload_recovery_share(&config, &TOKEN, &recovery_share, USERNAME).await;
+        let recovery_share = str_share2.parse::<Share>().unwrap();
+        let response = upload_shares(&config, &TOKEN, &backup_share, &recovery_share).await;
 
         // Assert
         match expected {
