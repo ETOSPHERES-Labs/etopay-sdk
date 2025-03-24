@@ -9,9 +9,10 @@ on:
       - v[0-9]+.[0-9]+.[0-9]+(-rc.+)?
   pull_request:
     paths:
-      - "sdk/docs/**/*"
+      - "docs/**/*"
       - "sdk/examples/**/*"
       - "sdk/bindings/**/*"
+      - "sdk/src/**/*"
 
 jobs:
   public-wiki:
