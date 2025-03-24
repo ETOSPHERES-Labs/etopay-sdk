@@ -367,17 +367,7 @@ Currently, polling is used to wait for the purchase request to be valid. It can 
                                Once     |   Multiple times     
                                         |                      </code></pre></div>
 <h3 id="building-the-public-docs"><a class="doc-anchor" href="#building-the-public-docs">§</a>Building the public docs</h3>
-<p>To build the public docs, you need to do some preparation. First, setup a new python virtual environment and install the required python and nodejs packages:</p>
-<div class="example-wrap"><pre class="language-bash"><code>python3 -m venv .venv
-source .venv/bin/activate
-pip install mkdocs-material mike mkdocs-git-revision-date-localized-plugin mkdocs-git-committers-plugin-2 mkdocs-git-authors-plugin mkdocs-typedoc
-pnpm install</code></pre></div>
-<p>Next you need to build the <code>wasm</code> bindings, since the generated typescript definitions are used to publish its API reference: (you can skip this step if you have already built the bindings once)</p>
-<div class="example-wrap"><pre class="language-bash"><code>cd bindings/wasm
-wasm-pack build --dev --scope eto</code></pre></div>
-<p>Finally you can build and serve the docs:</p>
-<div class="example-wrap"><pre class="language-bash"><code>mkdocs serve</code></pre></div>
-<p>where <code>$version</code> should be replace</p>
+<p>See <a href="../docs">../docs</a></p>
 </div></details><h2 id="reexports" class="section-header">Re-exports<a href="#reexports" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name" id="reexport.Error"><code>pub use error::<a class="enum" href="error/enum.Error.html" title="enum etopay_sdk::error::Error">Error</a>;</code></div></li><li><div class="item-name" id="reexport.Result"><code>pub use error::<a class="type" href="error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>;</code></div></li><li><div class="item-name" id="reexport.secrecy"><code>pub use secrecy;</code></div></li></ul><h2 id="modules" class="section-header">Modules<a href="#modules" class="anchor">§</a></h2><ul class="item-table"><li><div class="item-name"><a class="mod" href="build/index.html" title="mod etopay_sdk::build">build</a></div><div class="desc docblock-short">shadow-rs mod</div></li><li><div class="item-name"><a class="mod" href="core/index.html" title="mod etopay_sdk::core">core</a></div><div class="desc docblock-short">Main SDK module.</div></li><li><div class="item-name"><a class="mod" href="error/index.html" title="mod etopay_sdk::error">error</a></div><div class="desc docblock-short">Error handling</div></li><li><div class="item-name"><a class="mod" href="kdbx/index.html" title="mod etopay_sdk::kdbx">kdbx</a></div><div class="desc docblock-short">Module containing code related to the KDBX file format</div></li><li><div class="item-name"><a class="mod" href="share/index.html" title="mod etopay_sdk::share">share</a></div><div class="desc docblock-short">Module containing code related to the SSS secret sharing scheme</div></li><li><div class="item-name"><a class="mod" href="types/index.html" title="mod etopay_sdk::types">types</a></div><div class="desc docblock-short">Types module for SDK</div></li><li><div class="item-name"><a class="mod" href="wallet_manager/index.html" title="mod etopay_sdk::wallet_manager">wallet_<wbr>manager</a></div><div class="desc docblock-short">Wallet manager
 This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
