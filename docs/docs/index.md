@@ -22,7 +22,7 @@ The documentation is divided into following sections. Simply choose one and get 
 
     [:octicons-arrow-right-24: Architecture](./Choosing%20ETOPay/Architecture.md)
 
-- [:material-download-box:{ .lg .middle } __Set up the SDK__](./Installing%20the%20SDK/Installation.md){ .md-button}
+- [:material-download-box:{ .lg .middle } __Installing the SDK__](./Installing%20the%20SDK/Installation.md){ .md-button}
 
     ---
 
@@ -44,19 +44,19 @@ The documentation is divided into following sections. Simply choose one and get 
 
     [:octicons-arrow-right-24: Modules](./SDK%20Modules/Managing%20user.md)
 
-- [:material-code-block-braces:{ .lg .middle } __API Reference__](./SDK%20Reference/SDK%20API%20Reference.md){ .md-button}
-
-    ---
-    This section provides a detailed overview of the SDK's API, including descriptions of the different functions, their return values, and the error types you might encounter.
-
-    [:octicons-arrow-right-24: Reference](./SDK%20Reference/SDK%20API%20Reference.md)
-
 - [:fontawesome-solid-book:{ .lg .middle } __SDK Examples__](./SDK%20Examples/Examples.md){ .md-button}
 
     ---
     This section provides a basic overview of the SDK internal structure and explains the different modules and their functions intrinsically.
 
     [:octicons-arrow-right-24: Examples](./SDK%20Examples/Examples.md)
+
+- [:material-code-block-braces:{ .lg .middle } __API Reference__](./SDK%20Reference/SDK%20API%20Reference.md){ .md-button}
+
+    ---
+    This section provides a detailed overview of the SDK's API, including descriptions of the different functions, their return values, and the error types you might encounter.
+
+    [:octicons-arrow-right-24: Reference](./SDK%20Reference/SDK%20API%20Reference.md)
 
 </div>
 
