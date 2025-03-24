@@ -39,7 +39,7 @@ jobs:
       - name: Build wasm sdk
         run: |
           cd sdk/bindings/wasm
-          wasm-pack build --release --scope etopay --target nodejs --out-dir out/web/pkg
+          wasm-pack build --release --scope etospheres --target nodejs --out-dir out/web/pkg
 
       - name: Publish to npm
         run: |

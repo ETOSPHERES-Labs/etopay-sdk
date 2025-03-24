@@ -69,7 +69,7 @@ jobs:
       - name: Build wasm-bindings
         shell: bash
         working-directory: sdk/bindings/wasm
-        run: wasm-pack build --dev --scope eto
+        run: wasm-pack build --dev --scope etospheres
 
       - name: Build Rust docs
         shell: bash
