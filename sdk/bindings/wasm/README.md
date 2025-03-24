@@ -1,27 +1,57 @@
-# ETOPay SDK – WASM Bindings
+# ETOPay SDK WASM bindings
 
-This package provides ***WebAssembly (WASM)*** bindings for the ETOPay SDK, enabling seamless integration with both _Web_ applications and _NodeJS_ environments. It generates TypeScript type definitions for all relevant data objects, ensuring type safety and ease of use. Additionally, this package includes functionality for publishing both the WASM binary and the generated bindings to an NPM registry.
+In order to use the etopay sdk in a webapp the browser, this crate provides `wasm` bindings and generation of TypeScript type definitions for all the data type objects used.
+It also has functionality for publishing the bindings together with the generated `wasm` binary to a NPM registry.
 
-### 🚀 Quickstart
+## Development
 
-For a hands-on example of how to integrate the ETOPay SDK, check out our public quickstart guide:
-👉 [ETOPay SDK Quickstart (TypeScript)](https://github.com/ETOSPHERES-Labs/etopay-sdk-quickstart-ts).
+### Build with `wasm-pack build`
 
-### 📖 Usage
-
-Before integrating the ETOPay SDK, you must create a project via our [ETOPay Dashboard](https://etopayapp.etospheres.com). Once registered, you will receive some `credentials`, which are required for setting up and using the SDK.
-
-You can find more information regarding our products on our [ETOSPHERES](https://etospheres.com/) website.
-
-### 📦 Installation
-
-Install the ETOPay SDK via bun:
-
-```bash
-bun install @etospheres/etopay-sdk-wasm
 ```
-> Currently, we only support bun for running the SDK, as node does not work correctly with the current version. We recommend using bun to ensure proper functionality.
+wasm-pack build
+```
 
-### 🛠️ Example Usage
+### Test in Headless Browsers with `wasm-pack test`
 
-You can check out more examples in our [public docs](https://docs.etospheres.com/SDK%20Examples/Examples/).
+```
+wasm-pack test --headless --firefox
+```
+
+### Publish to NPM with `wasm-pack publish` after building
+
+```
+wasm-pack publish
+```
+
+### Executing the example scripts
+1. Navigate to examples directory: `cd sdk/bindings/wasm/examples`.
+2. Add a `.env` file as shown below, with the corresponding values:
+```
+MNEMONIC=
+MNEMONIC_ALICE=
+KC_URL=
+KC_REALM=
+KC_CLIENT_ID=
+KC_CLIENT_SECRET=
+PASSWORD=
+EXAMPLE_BACKEND_URL=
+```
+3. Install dependencies: `bun install`.
+4. Build the package with `nodejs` as target: `wasm-pack build --target nodejs`.
+5. Run individual examples, ex: `bun 07-get_balance.ts`.
+
+In case you want to run all the examples after installing the dependencies and building the package:
+1. Navigate back to sdk directory: `cd sdk`.
+2. Run: `make run_wasm_node_examples`. This will execute the `run_all_examples.sh` script on `sdk/bindings/wasm/examples`, which runs all the examples.
+
+### Executing the webapp example
+
+1. Follow step 1 above to make sure you have a `.env` file in the root with a valid access token for either `satoshi`, `archiveme` or `alice` depending on example which you want to run.(access token can be obtained with the `hello.http` API request in `docs/api-requests/hello.http`).
+2. Go into the webapp folder and install the dependencies:
+  ```bash
+  cd examples/webapp
+  pnpm install
+  ```
+3. Start the development server with `pnpm start`. This will start a server on port `8080`, which you can forward to the host (if vscode does not do this automatically)
+   by going to the `PORTS` tab in the vscode terminal and adding port `8080`. Then you can view the webapp at `http://localhost:8080/`. Open the developer console (F12)
+   to view the sdk logs. Click the button of the example you want to run.
