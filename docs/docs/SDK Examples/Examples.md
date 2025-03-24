@@ -19,13 +19,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/utils.rs::53"
+    --8<-- "examples/utils.rs:utils"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/utils.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/utils.java"
     ```
 
 === "Swift"
@@ -51,7 +51,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/CreateNewUser01.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/CreateNewUser01.java"
     ```
 
 === "Swift"
@@ -71,13 +71,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/02_onboard_user_postident.rs"
+    --8<-- "../sdk/examples/02_onboard_user_postident.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/OnboardUserPostident02.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/OnboardUserPostident02.java"
     ```
 
 === "Swift"
@@ -97,13 +97,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/04_migrate_wallet_from_mnemonic.rs"
+    --8<-- "../sdk/examples/04_migrate_wallet_from_mnemonic.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/MigrateWalletFromMnemonic04.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/MigrateWalletFromMnemonic04.java"
     ```
 
 === "Swift"
@@ -123,13 +123,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/05_migrate_wallet_from_backup.rs"
+    --8<-- "../sdk/examples/05_migrate_wallet_from_backup.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/MigrateWalletFromBackup05.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/MigrateWalletFromBackup05.java"
     ```
 
 === "Swift"
@@ -149,13 +149,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/06_generate_new_address.rs"
+    --8<-- "../sdk/examples/06_generate_new_address.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GenerateNewAddress06.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/GenerateNewAddress06.java"
     ```
 
 === "Swift"
@@ -175,13 +175,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/07_get_balance.rs"
+    --8<-- "../sdk/examples/07_get_balance.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GetBalance07.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/GetBalance07.java"
     ```
 
 === "Swift"
@@ -201,13 +201,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/08_create_purchase_request.rs"
+    --8<-- "../sdk/examples/08_create_purchase_request.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/CreatePurchaseRequest08.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/CreatePurchaseRequest08.java"
     ```
 
 === "Swift"
@@ -227,13 +227,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/09_onboard_user_viviswap.rs"
+    --8<-- "../sdk/examples/09_onboard_user_viviswap.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/OnboardUserViviswap09.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/OnboardUserViviswap09.java"
     ```
 
 === "Swift"
@@ -253,13 +253,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/10_verify_pin.rs"
+    --8<-- "../sdk/examples/10_verify_pin.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/VerifyPin10.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/VerifyPin10.java"
     ```
 
 === "Swift"
@@ -279,13 +279,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/11_reset_pin.rs"
+    --8<-- "../sdk/examples/11_reset_pin.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/ResetPin11.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/ResetPin11.java"
     ```
 
 === "Swift"
@@ -305,13 +305,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/12_change_password.rs"
+    --8<-- "../sdk/examples/12_change_password.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/ChangePassword12.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/ChangePassword12.java"
     ```
 
 === "Swift"
@@ -331,13 +331,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/13_send_amount.rs"
+    --8<-- "../sdk/examples/13_send_amount.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/SendAmount13.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/SendAmount13.java"
     ```
 
 === "Swift"
@@ -357,13 +357,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/14_get_exchange_rate.rs"
+    --8<-- "../sdk/examples/14_get_exchange_rate.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GetExchangeRate14.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/GetExchangeRate14.java"
     ```
 
 === "Swift"
@@ -383,13 +383,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/16_get_tx_list.rs"
+    --8<-- "../sdk/examples/16_get_tx_list.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GetTxList16.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/GetTxList16.java"
     ```
 
 === "Swift"
@@ -409,13 +409,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/18_delete_user.rs"
+    --8<-- "../sdk/examples/18_delete_user.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/DeleteUser18.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/DeleteUser18.java"
     ```
 
 === "Swift"
@@ -435,13 +435,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/19_get_wallet_tx_list.rs"
+    --8<-- "../sdk/examples/19_get_wallet_tx_list.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/GetWalletTxList19.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/GetWalletTxList19.java"
     ```
 
 === "Swift"
@@ -461,13 +461,13 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/20_send_compliment.rs"
+    --8<-- "../sdk/examples/20_send_compliment.rs"
     ```
 
 === "Java"
 
     ```java
-    --8<-- "bindings/android/tests/src/main/java/com/etogruppe/examples/SendCompliment20.java"
+    --8<-- "bindings/android/tests/src/main/java/com/etospheres/etopay/examples/SendCompliment20.java"
     ```
 
 === "Swift"
@@ -487,6 +487,6 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/22_init_wallet_from_shares.rs"
+    --8<-- "../sdk/examples/22_init_wallet_from_shares.rs"
 
     ```

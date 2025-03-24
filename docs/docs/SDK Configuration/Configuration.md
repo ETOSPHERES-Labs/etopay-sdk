@@ -16,15 +16,13 @@ The static configuration is provided by passing a JSON formatted string to the S
 }
 ```
 
+???+ info
 
-### Configuring authentication provider
+    The configuration is usually provided by the [dashboard](https://etopayapp.etospheres.com) when creating a new project.
 
-The authentication provider is a setting which is configured in the beginning in conjunction with the ETOPay development team. The ETOPay SDK and backend support Oauth2.0/OpenID Connect[^1] provider and can work with external authentication providers. The following information is needed by the ETOPay team to configure the backend to accept requests from the SDK:
+### Auth Provider
 
-1. **ISSUER** - The issuer, which is part of the JWT claim in the `access_token`, created by the OAuth2.0 server. The issuer is generally the URL to the realm, but could also be different based on different settings.
-2. **AUTHORITY** - The authority is where the public keys/certificates are hosted, which are used by the OAuth2.0 server to sign the JWT `access_tokens`. This is mostly a URL of the following type: `{base_url}/auth/realms/{realm_name}/protocol/openid-connect/certs`
-3. **AZP** - The authorized party, which is part of the JWT claim in the `access_token`, created by the OAuth2.0 server. The authorized party is typically the name of the 3rd-party client, which has requested the JWT Token for the user using various flows listed in the standard.
-4. **NAME** - A unique name to assign and identify this particular authentication provider settings in the backend as well as in the SDK. This is the name to specify in the `auth_provider` field of the configuration.
+The value of the auth provider is related to the Keycloak realm created for you when you create a new project in the [dashboard](https://etopayapp.etospheres.com).
 
 ???+ info
 
@@ -40,7 +38,7 @@ Every time the OAuth client refreshes or fetches a new access token for the user
         let mut sdk = Sdk::default();
         sdk.set_config("...").unwrap();
 
-        sdk.refresh_access_token("access_token").await.unwrap();
+        sdk.refresh_access_token(Some("access_token")).await.unwrap();
     }
     ```
 
@@ -94,11 +92,14 @@ Every time the OAuth client refreshes or fetches a new access token for the user
 !!! warning
 
     The SDK is not responsible for refreshing the access token. Neither does it have the credentials, nor a way to obtain credentials for refreshing an access token for the user. This is the responsibility of the client application integrating the SDK. The <B>refresh_access_token</B> function should not be confused with <B>refresh_token</B> and should not be passed the value of <B>refresh_token</B>. The function needs the value of a valid <B>access_token</B> as a string.
+    For more information about how to obtain an access token using OAuth2, see [^1].
 
 ### Configuring the backend
 
-The ETOPay team provides the URL for the backend, which is specified as the`backend_url` field of the configuration.
-This information is part of the initial setup and is important before starting the SDK usage.
+The `backend_url` is the URL to the ETOPay backend system. Depending on if you are using the live or the test instance, the values are the following:
+
+- Live: `https://api-etopay.etospheres.com`
+- Test: `https://api-test-etopay.etospheres.com`
 
 ### Configuring the storage path prefix
 
