@@ -16,12 +16,7 @@ on:
 
 jobs:
   public-wiki:
-    runs-on: dell
-    container:
-      image: ${{ vars.DEVCONTAINER_IMAGE }}:${{ vars.DEVCONTAINER_TAG }}
-      credentials:
-        username: ${{ secrets.ARTIFACTORY_USERNAME }}
-        password: ${{ secrets.ARTIFACTORY_PASSWORD }}
+    runs-on: ubuntu-latest
 
     env:
       GIT_DEPTH: 1000
@@ -33,7 +28,27 @@ jobs:
         with:
           fetch-depth: ${{ env.GIT_DEPTH }}
 
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: wasm32-unknown-unknown
       - uses: Swatinem/rust-cache@v2
+      - name: Install Protoc
+        uses: arduino/setup-protoc@v3
+        with:
+          version: "21.12"
+          repo-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Use Node.js v20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install wasm-pack
+        run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
       - name: Setup Python environment
         shell: bash
