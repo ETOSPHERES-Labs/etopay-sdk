@@ -581,9 +581,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#configuring-authentication-provider" class="md-nav__link">
+  <a href="#auth-provider" class="md-nav__link">
     <span class="md-ellipsis">
-      Configuring authentication provider
+      Auth Provider
     </span>
   </a>
   
@@ -1149,14 +1149,12 @@
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">&quot;log_level&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;info&quot;</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">}</span>
 </span></code></pre></div>
-<h3 id="configuring-authentication-provider">Configuring authentication provider<a class="headerlink" href="#configuring-authentication-provider" title="Permanent link">&para;</a></h3>
-<p>The authentication provider is a setting which is configured in the beginning in conjunction with the ETOPay development team. The ETOPay SDK and backend support Oauth2.0/OpenID Connect<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> provider and can work with external authentication providers. The following information is needed by the ETOPay team to configure the backend to accept requests from the SDK:</p>
-<ol>
-<li><strong>ISSUER</strong> - The issuer, which is part of the JWT claim in the <code>access_token</code>, created by the OAuth2.0 server. The issuer is generally the URL to the realm, but could also be different based on different settings.</li>
-<li><strong>AUTHORITY</strong> - The authority is where the public keys/certificates are hosted, which are used by the OAuth2.0 server to sign the JWT <code>access_tokens</code>. This is mostly a URL of the following type: <code>{base_url}/auth/realms/{realm_name}/protocol/openid-connect/certs</code></li>
-<li><strong>AZP</strong> - The authorized party, which is part of the JWT claim in the <code>access_token</code>, created by the OAuth2.0 server. The authorized party is typically the name of the 3rd-party client, which has requested the JWT Token for the user using various flows listed in the standard.</li>
-<li><strong>NAME</strong> - A unique name to assign and identify this particular authentication provider settings in the backend as well as in the SDK. This is the name to specify in the <code>auth_provider</code> field of the configuration.</li>
-</ol>
+<details class="info" open="open">
+<summary>Info</summary>
+<p>The configuration is usually provided by the <a href="https://etopayapp.etospheres.com">dashboard</a> when creating a new project.</p>
+</details>
+<h3 id="auth-provider">Auth Provider<a class="headerlink" href="#auth-provider" title="Permanent link">&para;</a></h3>
+<p>The value of the auth provider is related to the Keycloak realm created for you when you create a new project in the <a href="https://etopayapp.etospheres.com">dashboard</a>.</p>
 <details class="info" open="open">
 <summary>Info</summary>
 <p>The control of the client credentials, the flows used to fetch the JWT as well as the entire user management including user registration, email verification and user settings is out of scope for ETOPay backend and SDK. This should be managed by applications using the SDK themselves.</p>
@@ -1174,7 +1172,7 @@
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2"></a><span class="w">    </span><span class="kd">let</span><span class="w"> </span><span class="k">mut</span><span class="w"> </span><span class="n">sdk</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Sdk</span><span class="p">::</span><span class="n">default</span><span class="p">();</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3"></a><span class="w">    </span><span class="n">sdk</span><span class="p">.</span><span class="n">set_config</span><span class="p">(</span><span class="s">&quot;...&quot;</span><span class="p">).</span><span class="n">unwrap</span><span class="p">();</span>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4"></a>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="n">sdk</span><span class="p">.</span><span class="n">refresh_access_token</span><span class="p">(</span><span class="s">&quot;access_token&quot;</span><span class="p">).</span><span class="k">await</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5"></a><span class="w">    </span><span class="n">sdk</span><span class="p">.</span><span class="n">refresh_access_token</span><span class="p">(</span><span class="nb">Some</span><span class="p">(</span><span class="s">&quot;access_token&quot;</span><span class="p">)).</span><span class="k">await</span><span class="p">.</span><span class="n">unwrap</span><span class="p">();</span>
 </span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6"></a><span class="p">}</span>
 </span></code></pre></div></td></tr></table></div>
 </div>
@@ -1252,11 +1250,15 @@
 </div>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>The SDK is not responsible for refreshing the access token. Neither does it have the credentials, nor a way to obtain credentials for refreshing an access token for the user. This is the responsibility of the client application integrating the SDK. The <B>refresh_access_token</B> function should not be confused with <B>refresh_token</B> and should not be passed the value of <B>refresh_token</B>. The function needs the value of a valid <B>access_token</B> as a string.</p>
+<p>The SDK is not responsible for refreshing the access token. Neither does it have the credentials, nor a way to obtain credentials for refreshing an access token for the user. This is the responsibility of the client application integrating the SDK. The <B>refresh_access_token</B> function should not be confused with <B>refresh_token</B> and should not be passed the value of <B>refresh_token</B>. The function needs the value of a valid <B>access_token</B> as a string.
+For more information about how to obtain an access token using OAuth2, see <sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup>.</p>
 </div>
 <h3 id="configuring-the-backend">Configuring the backend<a class="headerlink" href="#configuring-the-backend" title="Permanent link">&para;</a></h3>
-<p>The ETOPay team provides the URL for the backend, which is specified as the<code>backend_url</code> field of the configuration.
-This information is part of the initial setup and is important before starting the SDK usage.</p>
+<p>The <code>backend_url</code> is the URL to the ETOPay backend system. Depending on if you are using the live or the test instance, the values are the following:</p>
+<ul>
+<li>Live: <code>https://api-etopay.etospheres.com</code></li>
+<li>Test: <code>https://api-test-etopay.etospheres.com</code></li>
+</ul>
 <h3 id="configuring-the-storage-path-prefix">Configuring the storage path prefix<a class="headerlink" href="#configuring-the-storage-path-prefix" title="Permanent link">&para;</a></h3>
 <p>For all platforms, except for when using the TypeScript/Javascript bindings, it is mandatory that the application has access to a file system where it is allowed read and write files and directories and sub-directories. This (existing) folder is specified as the <code>strorage_path</code> field in the configuration and accepts both releative and absolute paths. Absolute paths are, however, preferred and recommended.</p>
 <details class="tip" open="open">
@@ -1309,7 +1311,7 @@ This information is part of the initial setup and is important before starting t
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 24, 2025 07:59:35">March 24, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 24, 2025 15:17:18">March 24, 2025</span>
   </span>
 
     
