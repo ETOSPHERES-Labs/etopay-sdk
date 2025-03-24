@@ -271,7 +271,7 @@ mod tests {
         body: "".to_string() 
     }))]
     #[tokio::test]
-    async fn test_upload_backup_share(
+    async fn test_upload_shares(
         #[case] status_code: usize,
         #[case] str_share: &str,
         #[case] str_share2: &str,
@@ -287,7 +287,7 @@ mod tests {
         let body = serde_json::to_string(&mock_request).unwrap();
 
         let mut mock_server = srv
-            .mock("PUT", "/api/user/shares/backup")
+            .mock("PUT", "/api/user/shares")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_body(Matcher::Exact(body))
