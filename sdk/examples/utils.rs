@@ -1,4 +1,5 @@
 #![allow(clippy::unwrap_used, clippy::expect_used, dead_code)]
+// --8<-- [start:utils]
 
 use etopay_sdk::{
     core::{Config, Sdk},
@@ -38,6 +39,7 @@ pub async fn init_sdk() -> (Sdk, CleanUp) {
 
     (sdk, cleanup)
 }
+// --8<-- [end:utils]
 
 /// A copy of the [`testing::TestUser`] that uses the newtype wrappers for sensitive values for
 /// easier use in the examples.
