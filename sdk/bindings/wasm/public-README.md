@@ -9,7 +9,7 @@ For a hands-on example of how to integrate the ETOPay SDK, check out our public 
 
 ### 📖 Usage
 
-Before integrating the ETOPay SDK, you must create a project via our [ETOPay Dashboard](https://etopayapp.etospheres.com). Once registered, you will receive some `credentials`, which are required for setting up and using the SDK.
+Before integrating the ETOPay SDK, you must create a project via our [ETOPay Dashboard](https://etopayapp.etospheres.com). Once registered, you will receive some _credentials_, which are required for setting up and using the SDK.
 
 You can find more information regarding our products on our [ETOSPHERES](https://etospheres.com/) website.
 
@@ -20,7 +20,7 @@ Install the ETOPay SDK via bun:
 ```bash
 bun install @etospheres/etopay-sdk-wasm
 ```
-> Currently, we only support bun for running the SDK, as node does not work correctly with the current version. We recommend using bun to ensure proper functionality.
+❗ Currently, we only support [`bun`](https://bun.sh/) for running the SDK, as `node` does not work correctly with the current version. We recommend using [`bun`](https://bun.sh/) to ensure proper functionality.
 
 ### 🛠️ Example Usage
 
