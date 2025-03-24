@@ -1,5 +1,3 @@
-# Pull Request Template
-
 ## Motivation and Context
 
 Explain why this change is necessary or the issue it addresses.
