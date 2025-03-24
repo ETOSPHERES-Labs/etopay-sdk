@@ -61,7 +61,7 @@ pub async fn create_new_transaction(
     config: &Config,
     access_token: &AccessToken,
     receiver: &str,
-    network_id: String,
+    network_key: String,
     amount: CryptoAmount,
     metadata: ApiApplicationMetadata,
 ) -> Result<CreateTransactionResponse> {
@@ -70,7 +70,7 @@ pub async fn create_new_transaction(
 
     let body = CreateTransactionRequest {
         amount: amount.inner(),
-        network_key: network_id,
+        network_key,
         receiver: receiver.into(),
         application_metadata: metadata,
     };
