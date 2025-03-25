@@ -964,9 +964,7 @@
 <a href="#963" id="963">963</a>
 <a href="#964" id="964">964</a>
 <a href="#965" id="965">965</a>
-<a href="#966" id="966">966</a>
-<a href="#967" id="967">967</a>
-<a href="#968" id="968">968</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
+<a href="#966" id="966">966</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 //! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
 //! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
 //!
@@ -1331,9 +1329,7 @@
 
         <span class="kw">if let </span><span class="prelude-val">Some</span>(access_token) = access_token {
             <span class="macro">log::info!</span>(<span class="string">"Uploading shares"</span>);
-            <span class="kw">crate</span>::backend::shares::upload_backup_share(config, access_token, <span class="kw-2">&amp;</span>shares.backup, <span class="kw-2">&amp;</span>user.username).<span class="kw">await</span><span class="question-mark">?</span>;
-            <span class="kw">crate</span>::backend::shares::upload_recovery_share(config, access_token, <span class="kw-2">&amp;</span>shares.recovery, <span class="kw-2">&amp;</span>user.username)
-                .<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">crate</span>::backend::shares::upload_shares(config, access_token, <span class="kw-2">&amp;</span>shares.backup, <span class="kw-2">&amp;</span>shares.recovery).<span class="kw">await</span><span class="question-mark">?</span>;
             <span class="macro">log::info!</span>(<span class="string">"Done uploading shares"</span>);
         } <span class="kw">else </span>{
             <span class="macro">log::info!</span>(<span class="string">"No access token, skipping uploading backup and recovery shares"</span>);
