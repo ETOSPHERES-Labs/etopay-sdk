@@ -3,6 +3,12 @@ name: deploy-android
 # only run this on push to main (eg. after PR merge)
 on:
   workflow_dispatch:
+    inputs:
+      is_snapshot:
+        description: "True if this is a snapshot release"
+        type: "boolean"
+        default: "true"
+        required: true
   push:
     branches:
       - main
@@ -14,7 +20,7 @@ env:
 
 # cancel the job if a newer pipeline starts for the same MR or branch
 concurrency:
-  group: deploy-${{ github.ref }}
+  group: deploy-android-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
@@ -42,9 +48,6 @@ jobs:
         with:
           tool: cargo-ndk
 
-      - name: Build android native libraries
-        run: cd sdk/bindings/android && make build_sdk
-
       - name: Set up Java and Maven
         uses: actions/setup-java@v4
         with:
@@ -58,14 +61,21 @@ jobs:
           # get the version from cargo
           PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "etopay-sdk-jni") | .version')
 
-          # create the version string, only supports SNAPSHOT versions for now (add logic to change if release here)
-          PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")
+          # create the version string, default to SNAPSHOT if no manual input is provided
+          if [[ "${{ github.event.inputs.is_snapshot }}" == "false" ]]; then
+            PUBLISH_VERSION=$(printf "$PKG_VERSION")
+          else
+            PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")
+          fi
 
           # replace the version in the pom.xml file before deploying
           sed -i -e "s|<version>VERSION_TO_REPLACE</version>|<version>$PUBLISH_VERSION</version>|g" pom.xml
 
-          echo "Publishing with version $PUBLISH_VERSION"
+          echo "Building & Publishing with version $PUBLISH_VERSION"
 
+      - name: Build android native libraries
+        run: cd sdk/bindings/android && make build_sdk
+     
       - name: Publish package
         run: |
           cd sdk/bindings/android
@@ -73,3 +83,5 @@ jobs:
         env:
           TOKEN_USERNAME: ${{ secrets.TOKEN_USERNAME }}
           TOKEN_PASSWORD: ${{ secrets.TOKEN_PASSWORD }}
+          MAVEN_GPG_KEY: ${{ secrets.MAVEN_GPG_PRIV_KEY }}
+          MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PRIV_KEY_PASS }}
