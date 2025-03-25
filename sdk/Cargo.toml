@@ -8,6 +8,21 @@ version.workspace = true
 name = "etopay-sdk"
 description = "Frontend SDK for Android, iOS and Web. Includes wallet, kyc components"
 
+# Categories come from https://crates.io/category_slugs. Max 5.
+categories = [
+	"api-bindings",
+	"cryptography::cryptocurrencies",
+	"finance"
+]
+# Max 5 keywords allowed
+keywords = [
+    "blockchain",
+    "evm",
+    "payments",
+    "wallet",
+    "web3",
+]
+
 [lints.clippy]
 unwrap_used = "deny"
 expect_used = "deny"
@@ -87,12 +102,6 @@ alloy-provider = { version = "0.12", default-features = false, features = [
 alloy-json-rpc = "0.12"
 alloy-transport = "0.12"
 shadow-rs = { version = "1.0.1", default-features = false }
-
-
-# Fix for version of `deranged` crate that got released while not being completely SemVer compatible
-# Without this our dependendts get the 0.4.1 version which makes iota-sdk not compile.
-# See: https://github.com/jhpratt/deranged/issues/18
-deranged = "=0.4.0"
 
 [dependencies.rusty_secrets]
 package = "rusty_secrets"

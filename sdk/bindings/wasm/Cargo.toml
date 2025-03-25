@@ -6,6 +6,19 @@ license.workspace = true
 homepage.workspace = true
 repository.workspace = true
 publish = false
+readme = "public-README.md"
+keywords = [
+    "blockchain",
+    "crypto",
+    "erc20",
+    "etopay",
+    "etospheres",
+    "evm",
+    "kyc",
+    "payments",
+    "wallet",
+    "web3",
+]
 
 name = "etopay-sdk-wasm"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html

@@ -136,16 +136,9 @@ public class SdkUnitTest {
 
     @Test
     public void CshouldCreateNewWallet() throws Exception {
-        final String share_body_request = "{" + "\"share\":\"${json-unit.any-string}\"" + "}";
+        final String share_body_request = "{\"backup_share\":\"${json-unit.any-string}\",\"recovery_share\":\"${json-unit.any-string}\"}";
 
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
-                .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
-                .withRequestBody(equalToJson(share_body_request))
-                .willReturn(aResponse()
-                        .withStatus(200)));
-
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
+        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
@@ -251,16 +244,9 @@ public class SdkUnitTest {
 
     @Test
     public void JshouldCreateWalletFromMnemonic() throws Exception {
-        final String share_body_request = "{" + "\"share\":\"${json-unit.any-string}\"" + "}";
+        final String share_body_request = "{\"backup_share\":\"${json-unit.any-string}\",\"recovery_share\":\"${json-unit.any-string}\"}";
 
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
-                .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
-                .withRequestBody(equalToJson(share_body_request))
-                .willReturn(aResponse()
-                        .withStatus(200)));
-
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
+        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
@@ -279,16 +265,9 @@ public class SdkUnitTest {
 
     @Test
     public void LshouldCreateWalletFromBackup() throws Exception {
-        final String share_body_request = "{" + "\"share\":\"${json-unit.any-string}\"" + "}";
+        final String share_body_request = "{\"backup_share\":\"${json-unit.any-string}\",\"recovery_share\":\"${json-unit.any-string}\"}";
 
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
-                .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
-                .withRequestBody(equalToJson(share_body_request))
-                .willReturn(aResponse()
-                        .withStatus(200)));
-
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
+        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
@@ -331,16 +310,9 @@ public class SdkUnitTest {
 
     @Test
     public void RshouldChangePassword() throws Exception {
-        final String share_body_request = "{" + "\"share\":\"${json-unit.any-string}\"" + "}";
+        final String share_body_request = "{\"backup_share\":\"${json-unit.any-string}\",\"recovery_share\":\"${json-unit.any-string}\"}";
 
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/backup"))
-                .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
-                .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
-                .withRequestBody(equalToJson(share_body_request))
-                .willReturn(aResponse()
-                        .withStatus(200)));
-
-        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares/recovery"))
+        wireMockRule.stubFor(put(urlPathEqualTo("/api/user/shares"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
                 .withHeader("X-APP-NAME", equalTo(AUTH_PROVIDER))
                 .withRequestBody(equalToJson(share_body_request))
