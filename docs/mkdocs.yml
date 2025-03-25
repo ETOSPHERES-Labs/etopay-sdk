@@ -1,4 +1,7 @@
 site_name: ETOPay Docs
+not_in_nav: |
+  javadoc
+  rust-docs
 plugins:
   - privacy:
       enabled: true
@@ -49,7 +52,7 @@ extra_css:
 theme:
   custom_dir: overrides
   features:
-    - navigation.instant
+    - .igation.instant
     - navigation.instant.progress
     - navigation.tracking
     - navigation.sections
