@@ -56,8 +56,8 @@ pub struct WalletTxInfo {
     pub receiver: String,
     /// Amount of transfer
     pub amount: f64,
-    /// either ETH or IOTA [convert network_id to string based on the value]
-    pub network: String,
+    /// Unique key representing a network
+    pub network_key: String,
     /// Status of the transfer
     pub status: String,
     /// Url of network IOTA/ETH
@@ -88,7 +88,7 @@ impl From<Transaction> for WalletTxInfo {
         // convert from GLOW to IOTA/SMR
         let sum = sum as f64 / 1_000_000.0;
 
-        let (network, explorer_url) = match transaction.network_id {
+        let (network_key, explorer_url) = match transaction.network_id {
             id if id == network_name_to_id("iota") => {
                 let explorer_url = transaction
                     .block_id
@@ -115,7 +115,7 @@ impl From<Transaction> for WalletTxInfo {
             incoming: transaction.incoming,
             receiver: String::new(), // TODO: iota is out anyways
             amount: sum,
-            network: network.to_string(),
+            network_key: network_key.to_string(),
             status: format!("{:?}", transaction.inclusion_state),
             explorer_url,
             date,

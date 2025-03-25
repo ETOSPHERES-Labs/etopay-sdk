@@ -219,7 +219,7 @@ impl Sdk {
     }
 
     /// Set the user preferred network
-    pub async fn set_preferred_network(&mut self, network_id: Option<String>) -> Result<()> {
+    pub async fn set_preferred_network(&mut self, network_key: Option<String>) -> Result<()> {
         let Some(_user) = &self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
@@ -228,7 +228,7 @@ impl Sdk {
             .as_ref()
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
-        backend::user::set_preferred_network(config, access_token, network_id).await?;
+        backend::user::set_preferred_network(config, access_token, network_key).await?;
         Ok(())
     }
 
@@ -251,7 +251,9 @@ impl Sdk {
 mod tests {
     use super::*;
     use crate::core::core_testing_utils::handle_error_test_cases;
-    use crate::testing_utils::{example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
+    use crate::testing_utils::{
+        example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN, USERNAME,
+    };
     use crate::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     use api_types::api::kyc::KycStatusResponse;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
@@ -559,9 +561,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk
-            .set_preferred_network(Some(String::from("67a1f08edf55756bae21e7eb")))
-            .await;
+        let response = sdk.set_preferred_network(Some(IOTA_NETWORK_KEY.to_string())).await;
 
         // Assert
         match expected {
@@ -576,7 +576,7 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(Ok(Some(String::from("67a1f08edf55756bae21e7eb"))))]
+    #[case::success(Ok(Some(IOTA_NETWORK_KEY.to_string())))]
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::unauthorized(Err(crate::Error::MissingAccessToken))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]
@@ -601,7 +601,7 @@ mod tests {
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
                         .with_status(200)
                         .with_header("content-type", "application/json")
-                        .with_body("{\"network_id\":\"67a1f08edf55756bae21e7eb\"}")
+                        .with_body("{\"network_key\":\"IOTA\"}")
                         .expect(1)
                         .create(),
                 );
@@ -616,8 +616,8 @@ mod tests {
 
         // Assert
         match expected {
-            Ok(network_id) => {
-                assert_eq!(response.unwrap(), network_id)
+            Ok(network_key) => {
+                assert_eq!(response.unwrap(), network_key)
             }
             Err(ref expected_err) => {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());

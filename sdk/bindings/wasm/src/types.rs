@@ -78,17 +78,15 @@ impl From<sdk::types::ApiTxStatus> for TxStatus {
 #[wasm_bindgen(getter_with_clone, inspectable)]
 #[derive(Serialize, Deserialize)]
 pub struct Network {
-    pub id: String,
-    pub name: String,
-    pub currency: String,
+    pub key: String,
+    pub display_name: String,
 }
 
-impl From<sdk::types::networks::Network> for Network {
-    fn from(value: sdk::types::networks::Network) -> Self {
+impl From<sdk::types::networks::ApiNetwork> for Network {
+    fn from(value: sdk::types::networks::ApiNetwork) -> Self {
         Network {
-            id: value.id,
-            name: value.name,
-            currency: value.currency,
+            key: value.key,
+            display_name: value.display_name,
         }
     }
 }
@@ -185,7 +183,7 @@ pub struct WalletTxInfo {
     /// Amount of transfer
     pub amount: f64,
     /// either SMR or IOTA
-    pub network: String,
+    pub network_key: String,
     /// Status of the transfer
     pub status: String,
     /// Url of network explorer
@@ -206,7 +204,7 @@ impl From<sdk::types::transactions::WalletTxInfo> for WalletTxInfo {
             receiver: value.receiver,
             incoming: value.incoming,
             amount: value.amount,
-            network: value.network,
+            network_key: value.network_key,
             status: value.status,
             explorer_url: value.explorer_url,
         }

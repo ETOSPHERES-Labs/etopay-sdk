@@ -255,7 +255,7 @@ impl WalletUser for WalletImplEth {
             receiver: receiver_address.to_string(),
             incoming: is_transaction_incoming,
             amount: value_eth_f64,
-            network: "ETH".to_string(),
+            network_key: "ETH".to_string(),
             status: format!("{:?}", status),
             explorer_url: None,
         })
