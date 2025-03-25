@@ -5,9 +5,23 @@ homepage.workspace = true
 repository.workspace = true
 authors.workspace = true
 version.workspace = true
-keywords.workspace = true
 name = "etopay-sdk"
 description = "Frontend SDK for Android, iOS and Web. Includes wallet, kyc components"
+
+# Categories come from https://crates.io/category_slugs. Max 5.
+categories = [
+	"api-bindings",
+	"cryptography::cryptocurrencies",
+	"finance"
+]
+# Max 5 keywords allowed
+keywords = [
+    "blockchain",
+    "evm",
+    "payments",
+    "wallet",
+    "web3",
+]
 
 [lints.clippy]
 unwrap_used = "deny"
