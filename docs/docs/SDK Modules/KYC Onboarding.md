@@ -1,4 +1,4 @@
-# Understanding KYC
+# KYC Onboarding
 
 ## What is KYC?
 
@@ -63,17 +63,19 @@ For any additional help regarding onboarding with Postident as a business custom
 The following table shows the information that is required by the custoemr. By plugging it in the ETOPay application dashboard, it permits ETOPay to connect to the Postident services and enable the KYC onboarding for all SDK clients.
 
 | Parameter | Description|
-|:----:|:----:|
+|----|----|
 | ClientId | This information is used in the ETOPay application for connecting to the Postident SCR. This basically represents the username for login using basic auth for all Postident SCR endpoints. |
 | Login password | This information authenticates the above client against all the SCR endpoint and is passed in the header along with the username as basic authentication |
 | Data password/Encryption password| This password is used for generating the HMAC of the public key, which is generated and used by the system for JWE payloads.|
+
+More information on Postident can be found in their [handbook](https://www.deutschepost.de/de/p/postident/downloads.html)
 
 ### Onboarding users via ETOSPHERES Exchange
 
 Similar to Postident, in order to use the ETOSPHERES Exchange as a process for KYC on-boarding of users, customers are required to register their business account directly with the ETOSPHERES Exchange. Once registered, the customers are able to access credentials listed below in the table, one each for a testing and for a production environment.
 
 | Parameter | Description|
-|:----:|:----:|
+|----|----|
 | Organisation Id | This information identifies the organisation account at the Exchange.  |
 | API Key  | This key is used as part of the JWT payload. This key is unique for each organisation and environment |
 | API Secret | This secret is used for generating the HMAC-based signature of the JWT Payload. This secret is also unique to each organisation and environment|
@@ -84,3 +86,35 @@ Please reach out to us directly for onboarding as a business on the ETOSPHERES E
 
 The onboarding of users and their related KYC process is described directly in our [documentation](
 https://api-service-dev.viviswap.com/docs/#section/Know-your-customer-(KYC)) hosted at the exchange. The ETOPay SDK completely integrates the organisations API scope. In addition, the existed users on the exchange are also immediately federated to the organisations, once they approve to share their KYC data with the customer attached organisation at the exchange. This feature is however, not yet available directly in ETOPay and the approval for sharing data is only possible right now via an E-Mail from the user.
+
+#### Order of verification
+
+The order of verification in the SDK strictly follows the order of verification as recommended by the Exchange API.
+
+general – Provide general information such as country of origin or current country of residence.
+personal – Provide further information about yourself and your current occupation.
+residence – State your place of residence and confirm it.
+identity – Verify your identity with the help of legal documents.
+amla – Answer a few questions about your income and assets.
+documents – Upload other missing documents.
+
+#### Risk levels
+
+In order to query only the most relevant data in accordance with our customers' requirements and to comply with regulatory conditions, we maintain a risk level for each customer. This is a unsigned integer and can assume values from 1 to 99. The higher this value, the more risky the business relationship is assessed to be and the more limited we provide our functionalities. This mechanism helps us to comply with regulatory requirements.
+
+For values greater than or equal to 70, by default, the customer does not have permission to transact business through our services. At a lower value, the customer has an increasingly higher volume available per month with descending risk level.
+
+|Risk level|	Trading enabled	|KYC steps required |	Daily limit|	Monthly limit|	Comments|
+|----|-----|----|----|----|----|
+|90|	NO|	n/a|0 EUR|	0 EUR| |
+|80|	NO|	n/a|	0 EUR|	0 EUR| |
+|70|	NO|	n/a|	0 EUR|	0 EUR|	default risk level of a new registered user|
+|60|	YES|	general & personal|	699 EUR|	20.000 EUR|	|
+|55|	YES|	general & personal|	699 EUR|	20.000 EUR|	in addition this user has added at least one verified bank account on it's name|
+|50|	YES|	general, personal, identity, residence, amla & documents|	699 EUR|	20.000 EUR|	there’s a criteria with increased risk for this user|
+|40|	YES|	general, personal, identity, residence, amla & documents|	14.999 EUR|	250.000 EUR |	no specific risk criteria|
+|30|	YES|	general, personal, identity, residence, amla & documents|	250.000 EUR|	250.000 EUR|	full verification plus source of funds document|
+|20|	YES|	general, personal, identity, residence, amla & documents|	individual|	individual| |
+|10|	YES|	general, personal, identity, residence, amla & documents|	individual|	individual|	|
+
+Users can further lower their risk level by providing more information about themselves. For example, to set the risk level to 60 the exchange needs information about the country of origin and the person (general and personal kyc step). To achieve a risk level of 40, all KYC steps (general, personal, identity, residence, amla & documents) must be completed. To achieve an even lower risk level, the exchange requires further individual information from the user. To do this, the user can directly contact [support](support@etospheres.com).
