@@ -111,10 +111,10 @@
                         <goals>
                             <goal>sign</goal>
                         </goals>
+						<configuration>
+							<bestPractices>true</bestPractices>
+						</configuration>
                     </execution>
-					<configuration>
-						<bestPractices>true</bestPractices>
-					</configuration>
                 </executions>
             </plugin>
             <!-- This plugin uploads to the (new) maven central repository -->
