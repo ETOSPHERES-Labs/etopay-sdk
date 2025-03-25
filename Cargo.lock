@@ -1960,7 +1960,6 @@ dependencies = [
  "async-trait",
  "base64 0.22.1",
  "chrono",
- "deranged",
  "dotenvy",
  "env_logger",
  "fake",
@@ -2969,7 +2968,7 @@ dependencies = [
 [[package]]
 name = "iota-sdk"
 version = "1.1.5"
-source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/iota-sdk?branch=develop#77a073370d247b6cbc2cec23849fd0ae1c9d8cd8"
+source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/iota-sdk?branch=develop#867faffdd8c681d0c4b246e24144f40e36e551ee"
 dependencies = [
  "anymap3",
  "async-trait",
@@ -5518,9 +5517,9 @@ dependencies = [
 
 [[package]]
 name = "time"
-version = "0.3.40"
+version = "0.3.41"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d9c75b47bdff86fa3334a3db91356b8d7d86a9b839dab7d0bdc5c3d3a077618"
+checksum = "8a7619e19bc266e0f9c5e6686659d394bc57973859340060a69221e57dbc0c40"
 dependencies = [
  "deranged",
  "itoa",
@@ -5550,9 +5549,9 @@ dependencies = [
 
 [[package]]
 name = "time-macros"
-version = "0.2.21"
+version = "0.2.22"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "29aa485584182073ed57fd5004aa09c371f021325014694e432313345865fd04"
+checksum = "3526739392ec93fd8b359c8e98514cb3e8e021beb4e5f597b00a0221f8ed8a49"
 dependencies = [
  "num-conv",
  "time-core",
