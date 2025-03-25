@@ -61,11 +61,11 @@ jobs:
           # get the version from cargo
           PKG_VERSION=$(cargo metadata --format-version=1 --no-deps | jq -r '.packages[] | select(.name == "etopay-sdk-jni") | .version')
 
-          # create the version string
-          if [[ "${{ github.event.inputs.is_snapshot }}" == "true" ]]; then
-            PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")
-          else
+          # create the version string, default to SNAPSHOT if no manual input is provided
+          if [[ "${{ github.event.inputs.is_snapshot }}" == "false" ]]; then
             PUBLISH_VERSION=$(printf "$PKG_VERSION")
+          else
+            PUBLISH_VERSION=$(printf "$PKG_VERSION-SNAPSHOT")
           fi
 
           # replace the version in the pom.xml file before deploying
