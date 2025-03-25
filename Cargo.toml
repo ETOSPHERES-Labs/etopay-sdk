@@ -34,7 +34,9 @@ repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
 # deprecated = "allow"
 
 # used for the wasm bindings tests
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(wasm_bindgen_unstable_test_coverage)'] }
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(wasm_bindgen_unstable_test_coverage)',
+] }
 
 [workspace.lints.clippy]
 # With these two, we avoid panicking behavior in our code.
@@ -54,7 +56,10 @@ dotenvy = { version = "0.15", default-features = false }
 fluent-assertions = { version = "0.4", default-features = false }
 mockall = { version = "0.13", default-features = false }
 mockito = { version = "1.7.0", default-features = false }
-reqwest = { version = "0.12.12", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.12.12", default-features = false, features = [
+    "json",
+    "rustls-tls",
+] }
 rstest = { version = "0.25.0", default-features = false }
 rust_decimal = { version = "1.37.1", default-features = false, features = [
     "serde-str",
