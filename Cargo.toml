@@ -60,7 +60,7 @@ rust_decimal = { version = "1.37.1", default-features = false, features = [
     "serde-str",
 ] }
 once_cell = { version = "^1.17.0", default-features = false }
-rust_decimal_macros = { version = "1.36", default-features = false }
+rust_decimal_macros = { version = "1.37", default-features = false }
 secrecy = { version = "0.10", default-features = false }
 serial_test = { version = "*", features = ["file_locks"] }
 serde = { version = "1.0.218", default-features = false, features = ["derive"] }
