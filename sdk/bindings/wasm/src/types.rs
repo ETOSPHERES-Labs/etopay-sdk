@@ -183,7 +183,7 @@ pub struct WalletTxInfo {
     /// Amount of transfer
     pub amount: f64,
     /// either SMR or IOTA
-    pub network: String,
+    pub network_key: String,
     /// Status of the transfer
     pub status: String,
     /// Url of network explorer
@@ -204,7 +204,7 @@ impl From<sdk::types::transactions::WalletTxInfo> for WalletTxInfo {
             receiver: value.receiver,
             incoming: value.incoming,
             amount: value.amount,
-            network: value.network,
+            network_key: value.network_key,
             status: value.status,
             explorer_url: value.explorer_url,
         }

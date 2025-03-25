@@ -1498,7 +1498,7 @@ pub struct WalletTxInfo {
     pub receiver: String,
     pub incoming: bool,
     pub amount: f64,
-    pub network: String,
+    pub network_key: String,
     pub status: String,
     pub explorer_url: String,
 }
@@ -1528,8 +1528,8 @@ impl WalletTxInfo {
         self.amount
     }
 
-    pub fn network(&self) -> String {
-        self.network.clone()
+    pub fn network_key(&self) -> String {
+        self.network_key.clone()
     }
 
     pub fn status(&self) -> String {

@@ -767,7 +767,7 @@ mod tests {
             receiver: String::new(),
             incoming: false,
             amount: 5.0,
-            network: ETH_NETWORK_KEY.to_string(),
+            network_key: ETH_NETWORK_KEY.to_string(),
             status: format!("{:?}", InclusionState::Pending),
             explorer_url: Some(String::new()),
         };

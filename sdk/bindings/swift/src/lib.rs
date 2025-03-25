@@ -238,7 +238,7 @@ pub mod ffi {
         fn receiver(&self) -> String;
         fn incoming(&self) -> bool;
         fn amount(&self) -> f64;
-        fn network(&self) -> String;
+        fn network_key(&self) -> String;
         fn status(&self) -> String;
         fn explorer_url(&self) -> String;
     }

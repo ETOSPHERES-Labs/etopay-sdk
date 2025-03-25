@@ -27,14 +27,14 @@ pub struct GetUserAddressResponse {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct SetPreferredNetworkRequest {
-    /// The id of the preferred network, or None if it should be cleared.
+    /// The key to the preferred network, or None if it should be cleared.
     pub network_key: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct GetPreferredNetworkResponse {
-    /// The id of the preferred network, or None if it is not set.
+    /// The input string representing the network key, or None if it is not set.
     pub network_key: Option<String>,
 }
 
