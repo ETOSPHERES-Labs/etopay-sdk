@@ -42,6 +42,15 @@ jobs:
         with:
           tool: cargo-ndk
 
+      - name: Import GPG key
+        run: |
+          echo -n "$GPG_SIGNING_KEY" | gpg --import
+        env:
+          GPG_SIGNING_KEY: ${{ secrets.MAVEN_GPG_PRIV_KEY }}
+
+      - name: list keys
+        run: gpg --list-keys
+
       - name: Build android native libraries
         run: cd sdk/bindings/android && make build_sdk
 
