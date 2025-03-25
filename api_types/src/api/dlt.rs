@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema, utoipa::IntoParams))]
 pub struct AddressQueryParameters {
-    pub network_id: String,
+    pub network_key: String,
 }
 
 /// Get User address request
@@ -27,15 +27,15 @@ pub struct GetUserAddressResponse {
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct SetPreferredNetworkRequest {
-    /// The id of the preferred network, or None if it should be cleared.
-    pub network_id: Option<String>,
+    /// The key to the preferred network, or None if it should be cleared.
+    pub network_key: Option<String>,
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct GetPreferredNetworkResponse {
-    /// The id of the preferred network, or None if it is not set.
-    pub network_id: Option<String>,
+    /// The input string representing the network key, or None if it is not set.
+    pub network_key: Option<String>,
 }
 
 // Get networks from the backend
