@@ -878,13 +878,15 @@
 <a href="#877" id="877">877</a>
 <a href="#878" id="878">878</a>
 <a href="#879" id="879">879</a>
-<a href="#880" id="880">880</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
+<a href="#880" id="880">880</a>
+<a href="#881" id="881">881</a>
+<a href="#882" id="882">882</a>
+<a href="#883" id="883">883</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
 <span class="kw">use </span><span class="kw">crate</span>::error::Result;
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
-<span class="kw">use </span><span class="kw">crate</span>::types::networks::{Network, NetworkType};
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, PurchaseDetails};
 <span class="kw">use </span><span class="kw">crate</span>::types::{
     newtypes::EncryptionPin,
@@ -892,7 +894,7 @@
 };
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::WalletError;
 <span class="kw">use </span><span class="kw">crate</span>::wallet_user::TransactionIntent;
-<span class="kw">use </span>api_types::api::networks::ApiNetworkType;
+<span class="kw">use </span>api_types::api::networks::{ApiNetwork, ApiProtocol};
 <span class="kw">use </span>api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 <span class="kw">use </span>log::{debug, info};
 
@@ -932,7 +934,7 @@
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>purchase_model = PurchaseModel::try_from(purchase_type.to_string()).map_err(<span class="kw">crate</span>::error::Error::Parse)<span class="question-mark">?</span>;
 
@@ -947,7 +949,7 @@
             purchase_model: purchase_model.to_string(),
             app_data: app_data.into(),
         };
-        <span class="kw">let </span>response = create_new_transaction(config, access_token, receiver, network.id, amount, metadata).<span class="kw">await</span><span class="question-mark">?</span>;
+        <span class="kw">let </span>response = create_new_transaction(config, access_token, receiver, network.key, amount, metadata).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>purchase_id = response.index;
         <span class="macro">debug!</span>(<span class="string">"Created purchase request with id: {purchase_id}"</span>);
         <span class="prelude-val">Ok</span>(purchase_id)
@@ -1031,15 +1033,15 @@
             )))<span class="question-mark">?</span>;
         }
 
-        <span class="kw">let </span>current_network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>current_network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 
-        <span class="comment">// for now we check that the correct network_id is configured, in the future we might just
+        <span class="comment">// for now we check that the correct network_key is configured, in the future we might just
         // instantiate the correct wallet instead of throwing an error
-        </span><span class="kw">let </span>network: Network = tx_details.network.clone().into();
-        <span class="kw">if </span>network.id != current_network.id {
+        </span><span class="kw">let </span>network: ApiNetwork = tx_details.network.clone();
+        <span class="kw">if </span>network.key != current_network.key {
             <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::InvalidTransaction(<span class="macro">format!</span>(
-                <span class="string">"Transaction to commit is in network_id {:?}, but {:?} is the currently active current_network_id."</span>,
-                network.id, current_network.id
+                <span class="string">"Transaction to commit is in network_key {:?}, but {:?} is the currently active current_network_key."</span>,
+                network.key, current_network.key
             )))<span class="question-mark">?</span>;
         }
 
@@ -1060,7 +1062,16 @@
 
         <span class="comment">// Store tx details for all networks other than Stardust (which stores transactions internally)
         // TODO: rework this to always store the transactions
-        </span><span class="kw">if let </span>ApiNetworkType::Evm { .. } = tx_details.network.network_type {
+        </span><span class="kw">if let </span>ApiProtocol::Evm { .. } = tx_details.network.protocol {
+            <span class="kw">let </span>tx_id = wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>;
+
+            <span class="kw">let </span>newly_created_transaction = wallet.get_wallet_tx(<span class="kw-2">&amp;</span>tx_id).<span class="kw">await</span><span class="question-mark">?</span>;
+            <span class="kw">let </span><span class="kw-2">mut </span>user = repo.get(<span class="kw-2">&amp;</span>active_user.username)<span class="question-mark">?</span>;
+            user.wallet_transactions.push(newly_created_transaction);
+            <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>active_user.username, user.wallet_transactions);
+        }
+
+        <span class="kw">if let </span>ApiProtocol::EvmERC20 { .. } = tx_details.network.protocol {
             <span class="kw">let </span>tx_id = wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>;
 
             <span class="kw">let </span>newly_created_transaction = wallet.get_wallet_tx(<span class="kw-2">&amp;</span>tx_id).<span class="kw">await</span><span class="question-mark">?</span>;
@@ -1111,7 +1122,7 @@
         };
 
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>wallet = active_user
             .wallet_manager
@@ -1125,16 +1136,12 @@
             data,
         };
 
-        <span class="kw">let </span>tx_id = <span class="kw">match </span>network.network_type {
-            NetworkType::EvmErc20 {
-                node_urls: <span class="kw">_</span>,
+        <span class="kw">let </span>tx_id = <span class="kw">match </span>network.protocol {
+            ApiProtocol::EvmERC20 {
                 chain_id: <span class="kw">_</span>,
                 contract_address: <span class="kw">_</span>,
             } =&gt; wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>,
-            NetworkType::Evm {
-                node_urls: <span class="kw">_</span>,
-                chain_id: <span class="kw">_</span>,
-            } =&gt; {
+            ApiProtocol::Evm { chain_id: <span class="kw">_ </span>} =&gt; {
                 <span class="kw">let </span>tx_id = wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>;
 
                 <span class="comment">// store the created transaction in the repo
@@ -1145,7 +1152,7 @@
                 <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>active_user.username, wallet_transactions);
                 tx_id
             }
-            NetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>,
+            ApiProtocol::Stardust {} =&gt; wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>,
         };
 
         <span class="prelude-val">Ok</span>(tx_id)
@@ -1186,7 +1193,7 @@
         };
 
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>wallet = active_user
             .wallet_manager
@@ -1243,7 +1250,7 @@
                         receiver: val.outgoing.username,
                         reference_id: val.index,
                         amount: val.incoming.amount.try_into()<span class="question-mark">?</span>,
-                        currency: val.incoming.network.currency,
+                        currency: val.incoming.network.display_symbol,
                         application_metadata: val.application_metadata,
                         status: val.status,
                         transaction_hash: val.incoming.transaction_id,
@@ -1260,11 +1267,10 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        example_api_network, example_get_user, example_network_id, example_networks, example_tx_details,
-        example_tx_metadata, example_wallet_borrow, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, PURCHASE_ID, TOKEN,
-        TX_INDEX, USERNAME,
+        example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
+        example_wallet_borrow, set_config, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
+        PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
     };
-    <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
     <span class="kw">use </span><span class="kw">crate</span>::types::transactions::WalletTxInfo;
     <span class="kw">use </span><span class="kw">crate</span>::types::users::KycType;
     <span class="kw">use crate</span>::{
@@ -1303,7 +1309,7 @@
                     address: main_address.clone(),
                     amount: <span class="macro">dec!</span>(<span class="number">920.89</span>),
                     exchange_rate: <span class="macro">dec!</span>(<span class="number">0.06015</span>),
-                    network: example_api_network(Currency::Iota),
+                    network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 },
                 outgoing: ApiTransferDetails {
                     transaction_id: <span class="prelude-val">Some</span>(
@@ -1314,7 +1320,7 @@
                     address: aux_address.clone(),
                     amount: <span class="macro">dec!</span>(<span class="number">920.89</span>),
                     exchange_rate: <span class="macro">dec!</span>(<span class="number">0.06015</span>),
-                    network: example_api_network(Currency::Iota),
+                    network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 },
                 application_metadata: <span class="prelude-val">Some</span>(example_tx_metadata()),
             }],
@@ -1331,8 +1337,8 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_networks());
-        sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server = <span class="prelude-val">None</span>;
 
         <span class="kw">match </span><span class="kw-2">&amp;</span>expected {
@@ -1397,8 +1403,8 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_networks());
-        sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server_details = <span class="prelude-val">None</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>mock_server_commit = <span class="prelude-val">None</span>;
 
@@ -1428,7 +1434,7 @@
                     system_address: <span class="string">""</span>.to_string(),
                     amount: <span class="macro">dec!</span>(<span class="number">5.0</span>),
                     status: ApiTxStatus::Valid,
-                    network: example_api_network(Currency::Iota),
+                    network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 };
                 <span class="kw">let </span>body = serde_json::to_string(<span class="kw-2">&amp;</span>mock_tx_response).unwrap();
 
@@ -1468,7 +1474,7 @@
                     system_address: <span class="string">""</span>.to_string(),
                     amount: <span class="macro">dec!</span>(<span class="number">5.0</span>),
                     status: ApiTxStatus::Invalid(<span class="macro">vec!</span>[<span class="string">"ReceiverNotVerified"</span>.to_string()]),
-                    network: example_api_network(Currency::Iota),
+                    network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 };
                 <span class="kw">let </span>body = serde_json::to_string(<span class="kw-2">&amp;</span>mock_tx_response).unwrap();
 
@@ -1555,7 +1561,7 @@
                         system_address: response.as_ref().unwrap().system_address.clone(),
                         amount: response.as_ref().unwrap().amount,
                         status: response.unwrap().status,
-                        network: example_api_network(Currency::Iota),
+                        network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                     },
                     resp
                 );
@@ -1579,8 +1585,8 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(_srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_networks());
-        sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
 
         <span class="kw">match </span><span class="kw-2">&amp;</span>expected {
             <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; {
@@ -1634,8 +1640,8 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(_srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_networks());
-        sdk.set_network(example_network_id(Currency::Eth)).<span class="kw">await</span>.unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(ETH_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
 
         <span class="kw">let </span>wallet_transaction = WalletTxInfo {
             date: String::new(),
@@ -1644,7 +1650,7 @@
             receiver: String::new(),
             incoming: <span class="bool-val">false</span>,
             amount: <span class="number">5.0</span>,
-            network: String::from(<span class="string">"ETH"</span>),
+            network_key: ETH_NETWORK_KEY.to_string(),
             status: <span class="macro">format!</span>(<span class="string">"{:?}"</span>, InclusionState::Pending),
             explorer_url: <span class="prelude-val">Some</span>(String::new()),
         };

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"enum":["NetworkType"],"struct":["Network"]};
+window.SIDEBAR_ITEMS = {"enum":["ApiProtocol"],"struct":["ApiNetwork"]};

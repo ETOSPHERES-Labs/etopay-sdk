@@ -296,10 +296,7 @@
 <a href="#295" id="295">295</a>
 <a href="#296" id="296">296</a>
 <a href="#297" id="297">297</a>
-<a href="#298" id="298">298</a>
-<a href="#299" id="299">299</a>
-<a href="#300" id="300">300</a>
-<a href="#301" id="301">301</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
+<a href="#298" id="298">298</a></pre></div><pre class="rust"><code><span class="doccomment">//! Main SDK module.
 
 /// Config module.
 </span><span class="kw">pub mod </span>config;
@@ -331,11 +328,11 @@
 <span class="kw">use </span><span class="kw">crate</span>::backend::dlt::get_networks;
 <span class="kw">use </span><span class="kw">crate</span>::build;
 <span class="kw">use </span><span class="kw">crate</span>::error::Result;
-<span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::{AccessToken, EncryptionPin};
 <span class="kw">use </span><span class="kw">crate</span>::types::users::ActiveUser;
 <span class="kw">use </span><span class="kw">crate</span>::user::UserRepo;
 <span class="kw">use </span><span class="kw">crate</span>::wallet_manager::WalletBorrow;
+<span class="kw">use </span>api_types::api::networks::ApiNetwork;
 <span class="kw">pub use </span>config::Config;
 <span class="kw">use </span>log::debug;
 
@@ -352,9 +349,9 @@
     <span class="doccomment">/// Contains the user repository for storing and loading different users.
     </span>repo: <span class="prelude-ty">Option</span>&lt;UserRepoT&gt;,
     <span class="doccomment">/// The currently active network
-    </span>network: <span class="prelude-ty">Option</span>&lt;Network&gt;,
+    </span>active_network: <span class="prelude-ty">Option</span>&lt;ApiNetwork&gt;,
     <span class="doccomment">/// Available networks
-    </span>networks: Vec&lt;Network&gt;,
+    </span>networks: Vec&lt;ApiNetwork&gt;,
 }
 
 <span class="kw">impl </span>Drop <span class="kw">for </span>Sdk {
@@ -372,7 +369,7 @@
             active_user: <span class="prelude-val">None</span>,
             access_token: <span class="prelude-val">None</span>,
             repo: <span class="prelude-val">None</span>,
-            network: <span class="prelude-val">None</span>,
+            active_network: <span class="prelude-val">None</span>,
             networks: <span class="macro">vec!</span>[],
         }
     }
@@ -388,26 +385,26 @@
     }
 
     <span class="doccomment">/// Set network
-    </span><span class="kw">pub async fn </span>set_network(<span class="kw-2">&amp;mut </span><span class="self">self</span>, network_id: String) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
-        <span class="macro">debug!</span>(<span class="string">"Selected network_id: {:?}"</span>, network_id.clone());
+    </span><span class="kw">pub async fn </span>set_network(<span class="kw-2">&amp;mut </span><span class="self">self</span>, network_key: String) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
+        <span class="macro">debug!</span>(<span class="string">"Selected network_key: {:?}"</span>, network_key.clone());
 
-        <span class="kw">let </span><span class="prelude-val">Some</span>(network) = <span class="self">self</span>.networks.iter().find(|network| network.id == network_id) <span class="kw">else </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::NetworkUnavailable(network_id));
+        <span class="kw">let </span><span class="prelude-val">Some</span>(network) = <span class="self">self</span>.networks.iter().find(|network| network.key == network_key) <span class="kw">else </span>{
+            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::NetworkUnavailable(network_key));
         };
 
         <span class="macro">debug!</span>(<span class="string">"Selected Network: {:?}"</span>, network);
-        <span class="self">self</span>.network = <span class="prelude-val">Some</span>(network.clone());
+        <span class="self">self</span>.active_network = <span class="prelude-val">Some</span>(network.clone());
 
         <span class="prelude-val">Ok</span>(())
     }
 
     <span class="doccomment">/// Set networks
-    </span><span class="kw">pub fn </span>set_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, networks: Vec&lt;Network&gt;) {
+    </span><span class="kw">pub fn </span>set_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>, networks: Vec&lt;ApiNetwork&gt;) {
         <span class="self">self</span>.networks = networks;
     }
 
     <span class="doccomment">/// Get networks
-    </span><span class="kw">pub async fn </span>get_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt; {
+    </span><span class="kw">pub async fn </span>get_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;ApiNetwork&gt;&gt; {
         <span class="kw">if </span><span class="self">self</span>.networks.is_empty() {
             <span class="kw">if </span><span class="self">self</span>.access_token.is_none() {
                 <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingNetwork);
@@ -426,16 +423,15 @@
     }
 
     <span class="doccomment">/// Get supported networks from backend
-    </span><span class="kw">async fn </span>get_networks_backend(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt; {
+    </span><span class="kw">async fn </span>get_networks_backend(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;ApiNetwork&gt;&gt; {
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>access_token = <span class="self">self
             </span>.access_token
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>backend_networks = get_networks(config, access_token).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span>networks: Vec&lt;Network&gt; = backend_networks.iter().map(|n| Network::from(n.clone())).collect();
 
-        <span class="prelude-val">Ok</span>(networks)
+        <span class="prelude-val">Ok</span>(backend_networks)
     }
 
     <span class="doccomment">/// Tries to get the wallet of the currently active user. Or returns an error if no user is
@@ -451,7 +447,7 @@
         <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>wallet = active_user
             .wallet_manager
@@ -474,8 +470,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
-    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_network_id, example_networks};
-    <span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::IOTA_NETWORK_KEY;
     <span class="kw">use crate</span>::{
         core::Sdk,
         error::Result,
@@ -485,6 +480,7 @@
         wallet_user::MockWalletUser,
     };
     <span class="kw">use </span>api_types::api::dlt::ApiGetNetworksResponse;
+    <span class="kw">use </span>api_types::api::networks::ApiNetwork;
     <span class="kw">use </span>rstest::rstest;
 
     <span class="kw">use crate</span>::{
@@ -512,10 +508,8 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(example_networks());
-                sdk.set_network(example_network_id(<span class="kw">crate</span>::types::currencies::Currency::Iota))
-                    .<span class="kw">await
-                    </span>.unwrap();
+                sdk.set_networks(example_api_networks());
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
                 handle_error_test_cases(error, <span class="kw-2">&amp;mut </span>sdk, <span class="number">0</span>, <span class="number">0</span>).<span class="kw">await</span>;
@@ -544,11 +538,11 @@
     }
 
     <span class="attr">#[rstest]
-    #[case::success(<span class="prelude-val">Ok</span>(example_networks()))]
+    #[case::success(<span class="prelude-val">Ok</span>(example_api_networks()))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]
     #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
     #[tokio::test]
-    </span><span class="kw">async fn </span>test_get_networks_backend(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;Vec&lt;Network&gt;&gt;) {
+    </span><span class="kw">async fn </span>test_get_networks_backend(<span class="attr">#[case] </span>expected: <span class="prelude-ty">Result</span>&lt;Vec&lt;ApiNetwork&gt;&gt;) {
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();

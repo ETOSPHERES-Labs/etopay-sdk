@@ -1187,8 +1187,8 @@
         };
 
         <span class="kw">let </span>iban_method_id = <span class="self">self</span>.get_payment_method_id_viviswap(SwapPaymentDetailKey::Sepa).<span class="kw">await</span><span class="question-mark">?</span>;
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
-        <span class="kw">let </span>currency = Currency::try_from(network.currency)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>currency = Currency::try_from(network.display_symbol)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>payment_method_key = currency.to_vivi_payment_method_key();
 
@@ -1256,8 +1256,8 @@
     /// - [`crate::Error::ViviswapMissingUserError`] - If the viviswap user is missing.
     </span><span class="comment">// MARK5:create_detail_for_viviswap
     </span><span class="kw">pub async fn </span>create_detail_for_viviswap(<span class="kw-2">&amp;mut </span><span class="self">self</span>, pin: <span class="kw-2">&amp;</span>EncryptionPin) -&gt; <span class="prelude-ty">Result</span>&lt;ViviswapAddressDetail&gt; {
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
-        <span class="kw">let </span>currency = Currency::try_from(network.currency)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>currency = Currency::try_from(network.display_symbol)<span class="question-mark">?</span>;
         <span class="kw">let </span>payment_method_key = currency.to_vivi_payment_method_key();
 
         <span class="macro">info!</span>(<span class="string">"Creating a payment detail for viviswap for {payment_method_key:?}"</span>);
@@ -1374,8 +1374,8 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::Viviswap(ViviswapError::MissingUser));
         };
 
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
-        <span class="kw">let </span>currency = Currency::try_from(network.currency)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>currency = Currency::try_from(network.display_symbol)<span class="question-mark">?</span>;
 
         <span class="comment">// check if iban exists, otherwise error
         </span><span class="kw">let </span><span class="prelude-val">Some</span>(iban_detail) = viviswap_state.current_iban <span class="kw">else </span>{
@@ -1500,20 +1500,20 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        example_bank_details, example_contract_response, example_crypto_details, example_exchange_rate_response,
-        example_get_payment_details_response, example_get_user, example_network, example_network_id, example_networks,
-        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, ORDER_ID, PIN, TOKEN,
-        USERNAME,
+        example_api_network, example_api_networks, example_bank_details, example_contract_response,
+        example_crypto_details, example_exchange_rate_response, example_get_payment_details_response, example_get_user,
+        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME,
+        IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
     };
-    <span class="kw">use </span><span class="kw">crate</span>::types::networks::Network;
     <span class="kw">use </span><span class="kw">crate</span>::types::users::KycType;
     <span class="kw">use crate</span>::{
         core::Sdk,
-        types::{currencies::Currency, users::ActiveUser},
+        types::users::ActiveUser,
         user::MockUserRepo,
         wallet_manager::{MockWalletManager, WalletBorrow},
         wallet_user::MockWalletUser,
     };
+    <span class="kw">use </span>api_types::api::networks::ApiNetwork;
     <span class="kw">use </span>api_types::api::{dlt::SetUserAddressRequest, viviswap::order::GetOrdersResponse};
     <span class="kw">use </span>mockito::Matcher;
     <span class="kw">use </span>rand::Rng;
@@ -1694,18 +1694,18 @@
 
     <span class="attr">#[rstest]
     #[case(
-        example_network(Currency::Iota),
+        example_api_network(IOTA_NETWORK_KEY.to_string()),
         SwapPaymentDetailKey::Iota,
         <span class="string">"/api/viviswap/details?payment_method_key=IOTA"
     </span>)]
     #[case(
-        example_network(Currency::Eth),
+        example_api_network(ETH_NETWORK_KEY.to_string()),
         SwapPaymentDetailKey::Eth,
         <span class="string">"/api/viviswap/details?payment_method_key=ETH"
     </span>)]
     #[tokio::test]
     </span><span class="kw">async fn </span>it_should_create_viviswap_deposit(
-        <span class="attr">#[case] </span>network: Network,                         <span class="comment">// Parametrized network
+        <span class="attr">#[case] </span>network: ApiNetwork,                      <span class="comment">// Parametrized network
         </span><span class="attr">#[case] </span>payment_detail_key: SwapPaymentDetailKey, <span class="comment">// Payment detail key (Iota, Eth, etc.)
         </span><span class="attr">#[case] </span>payment_method_path: <span class="kw-2">&amp;</span>str,                <span class="comment">// The payment method query path
     </span>) {
@@ -1714,8 +1714,8 @@
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
         sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
 
-        sdk.set_networks(example_networks());
-        sdk.set_network(network.id.clone()).<span class="kw">await</span>.unwrap(); <span class="comment">// Set parametrized network
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(network.key.clone()).<span class="kw">await</span>.unwrap(); <span class="comment">// Set parametrized network
         </span>sdk.refresh_access_token(<span class="prelude-val">Some</span>(TOKEN.clone())).<span class="kw">await</span>.unwrap();
 
         <span class="kw">let </span>mock_user_repo = example_get_user(payment_detail_key, <span class="bool-val">false</span>, <span class="number">5</span>, KycType::Viviswap);
@@ -1772,7 +1772,7 @@
             .mock(<span class="string">"PUT"</span>, <span class="string">"/api/user/address"</span>)
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
-            .match_query(Matcher::Exact(<span class="macro">format!</span>(<span class="string">"network_id={}"</span>, network.id)))
+            .match_query(Matcher::Exact(<span class="macro">format!</span>(<span class="string">"network_key={}"</span>, network.key)))
             .match_body(Matcher::Exact(body))
             .with_status(<span class="number">201</span>)
             .expect(<span class="number">1</span>)
@@ -1794,8 +1794,8 @@
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_networks());
-        sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
 
         <span class="kw">let </span>mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, <span class="bool-val">false</span>, <span class="number">3</span>, KycType::Viviswap);
         sdk.repo = <span class="prelude-val">Some</span>(Box::new(mock_user_repo));
@@ -1831,8 +1831,8 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
         <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_networks());
-        sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
 
         sdk.repo = <span class="prelude-val">Some</span>(Box::new(example_get_user(
             SwapPaymentDetailKey::Iota,

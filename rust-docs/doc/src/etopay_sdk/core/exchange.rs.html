@@ -105,9 +105,7 @@
 <a href="#104" id="104">104</a>
 <a href="#105" id="105">105</a>
 <a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
+<a href="#107" id="107">107</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::Sdk;
 <span class="kw">use </span><span class="kw">crate</span>::backend::viviswap::get_viviswap_exchange_rate;
 <span class="kw">use </span><span class="kw">crate</span>::error::Result;
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
@@ -130,8 +128,8 @@
             .as_ref()
             .ok_or(<span class="kw">crate</span>::error::Error::MissingAccessToken)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
-        <span class="kw">let </span>currency = Currency::try_from(network.currency)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>currency = Currency::try_from(network.display_symbol)<span class="question-mark">?</span>;
         <span class="kw">let </span>exchange_rate = get_viviswap_exchange_rate(config, access_token, currency).<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(exchange_rate)
     }
@@ -140,7 +138,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
-    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_network_id, example_networks};
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_api_networks, IOTA_NETWORK_KEY};
     <span class="kw">use crate</span>::{
         core::Sdk,
         error::Result,
@@ -177,10 +175,8 @@
                     wallet_manager: Box::new(MockWalletManager::new()),
                 });
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
-                sdk.set_networks(example_networks());
-                sdk.set_network(example_network_id(<span class="kw">crate</span>::types::currencies::Currency::Iota))
-                    .<span class="kw">await
-                    </span>.unwrap();
+                sdk.set_networks(example_api_networks());
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
 
                 <span class="kw">let </span>body = serde_json::to_string(<span class="kw-2">&amp;</span>example_exchange_rate_response()).unwrap();
                 mock_server = <span class="prelude-val">Some</span>(

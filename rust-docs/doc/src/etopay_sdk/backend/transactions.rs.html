@@ -555,7 +555,7 @@
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
     receiver: <span class="kw-2">&amp;</span>str,
-    network_id: String,
+    network_key: String,
     amount: CryptoAmount,
     metadata: ApiApplicationMetadata,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;CreateTransactionResponse&gt; {
@@ -564,7 +564,7 @@
 
     <span class="kw">let </span>body = CreateTransactionRequest {
         amount: amount.inner(),
-        network_id,
+        network_key,
         receiver: receiver.into(),
         application_metadata: metadata,
     };
@@ -775,8 +775,8 @@
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME, LIMIT, RECEIVER,
-        START, TOKEN, TX_INDEX,
+        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME,
+        IOTA_NETWORK_KEY, LIMIT, RECEIVER, START, TOKEN, TX_INDEX,
     };
     <span class="kw">use </span>mockito::Matcher;
 
@@ -801,7 +801,7 @@
 
         <span class="kw">let </span>mock_request = CreateTransactionRequest {
             amount: AMOUNT.inner(),
-            network_id: String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>),
+            network_key: IOTA_NETWORK_KEY.to_string(),
             receiver: RECEIVER.into(),
             application_metadata: example_tx_metadata(),
         };
@@ -828,7 +828,7 @@
             <span class="kw-2">&amp;</span>config,
             <span class="kw-2">&amp;</span>TOKEN,
             RECEIVER,
-            String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>),
+            IOTA_NETWORK_KEY.to_string(),
             AMOUNT,
             example_tx_metadata(),
         )

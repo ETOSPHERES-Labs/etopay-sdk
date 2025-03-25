@@ -204,8 +204,8 @@
     </span><span class="kw">pub </span>receiver: String,
     <span class="doccomment">/// Amount of transfer
     </span><span class="kw">pub </span>amount: f64,
-    <span class="doccomment">/// either ETH or IOTA [convert network_id to string based on the value]
-    </span><span class="kw">pub </span>network: String,
+    <span class="doccomment">/// Unique key representing a network
+    </span><span class="kw">pub </span>network_key: String,
     <span class="doccomment">/// Status of the transfer
     </span><span class="kw">pub </span>status: String,
     <span class="doccomment">/// Url of network IOTA/ETH
@@ -236,7 +236,7 @@
         <span class="comment">// convert from GLOW to IOTA/SMR
         </span><span class="kw">let </span>sum = sum <span class="kw">as </span>f64 / <span class="number">1_000_000.0</span>;
 
-        <span class="kw">let </span>(network, explorer_url) = <span class="kw">match </span>transaction.network_id {
+        <span class="kw">let </span>(network_key, explorer_url) = <span class="kw">match </span>transaction.network_id {
             id <span class="kw">if </span>id == network_name_to_id(<span class="string">"iota"</span>) =&gt; {
                 <span class="kw">let </span>explorer_url = transaction
                     .block_id
@@ -263,7 +263,7 @@
             incoming: transaction.incoming,
             receiver: String::new(), <span class="comment">// TODO: iota is out anyways
             </span>amount: sum,
-            network: network.to_string(),
+            network_key: network_key.to_string(),
             status: <span class="macro">format!</span>(<span class="string">"{:?}"</span>, transaction.inclusion_state),
             explorer_url,
             date,

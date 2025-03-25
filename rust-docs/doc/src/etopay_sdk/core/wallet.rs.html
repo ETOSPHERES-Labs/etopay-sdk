@@ -1210,14 +1210,7 @@
 <a href="#1209" id="1209">1209</a>
 <a href="#1210" id="1210">1210</a>
 <a href="#1211" id="1211">1211</a>
-<a href="#1212" id="1212">1212</a>
-<a href="#1213" id="1213">1213</a>
-<a href="#1214" id="1214">1214</a>
-<a href="#1215" id="1215">1215</a>
-<a href="#1216" id="1216">1216</a>
-<a href="#1217" id="1217">1217</a>
-<a href="#1218" id="1218">1218</a>
-<a href="#1219" id="1219">1219</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module provides methods for initializing, verifying, deleting, and creating wallets, as well as
+<a href="#1212" id="1212">1212</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module provides methods for initializing, verifying, deleting, and creating wallets, as well as
 //! migrating wallets from mnemonic or backup, creating backups, and verifying PINs.
 //!
 //! It also includes various helper functions and imports required for the wallet functionality.
@@ -1648,7 +1641,7 @@
         <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.active_user <span class="kw">else </span>{
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
         };
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
         <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
         <span class="kw">let </span>wallet = active_user
             .wallet_manager
@@ -1659,7 +1652,7 @@
 
         <span class="comment">// if there is an access token, push the generated address to the backend
         </span><span class="kw">if let </span><span class="prelude-val">Some</span>(access_token) = <span class="self">self</span>.access_token.as_ref() {
-            put_user_address(config, access_token, network.id, <span class="kw-2">&amp;</span>address).<span class="kw">await</span><span class="question-mark">?</span>;
+            put_user_address(config, access_token, network.key, <span class="kw-2">&amp;</span>address).<span class="kw">await</span><span class="question-mark">?</span>;
         }
         <span class="macro">debug!</span>(<span class="string">"Generated address: {address}"</span>);
         <span class="prelude-val">Ok</span>(address)
@@ -1712,20 +1705,16 @@
         <span class="macro">info!</span>(<span class="string">"Wallet getting list of transactions"</span>);
         <span class="self">self</span>.verify_pin(pin).<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="kw">let </span>network = <span class="self">self</span>.network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
         <span class="kw">let </span>user = <span class="self">self</span>.get_user().<span class="kw">await</span><span class="question-mark">?</span>;
         <span class="kw">let </span>wallet = <span class="self">self</span>.try_get_active_user_wallet(pin).<span class="kw">await</span><span class="question-mark">?</span>;
 
-        <span class="kw">let </span>tx_list = <span class="kw">match </span>network.network_type {
-            <span class="kw">crate</span>::types::networks::NetworkType::EvmErc20 {
-                node_urls: <span class="kw">_</span>,
+        <span class="kw">let </span>tx_list = <span class="kw">match </span>network.protocol {
+            <span class="kw">crate</span>::types::networks::ApiProtocol::EvmERC20 {
                 chain_id: <span class="kw">_</span>,
                 contract_address: <span class="kw">_</span>,
             } =&gt; wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?</span>,
-            <span class="kw">crate</span>::types::networks::NetworkType::Evm {
-                node_urls: <span class="kw">_</span>,
-                chain_id: <span class="kw">_</span>,
-            } =&gt; {
+            <span class="kw">crate</span>::types::networks::ApiProtocol::Evm { chain_id: <span class="kw">_ </span>} =&gt; {
                 <span class="comment">// We retrieve the transaction list from the wallet,
                 // then synchronize selected transactions (by fetching their current status from the network),
                 // and finally, save the refreshed list back to the wallet
@@ -1752,9 +1741,7 @@
                     transactions: wallet_transactions,
                 }
             }
-            <span class="kw">crate</span>::types::networks::NetworkType::Stardust { node_urls: <span class="kw">_ </span>} =&gt; {
-                wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?
-            </span>}
+            api_types::api::networks::ApiProtocol::Stardust {} =&gt; wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?</span>,
         };
 
         <span class="prelude-val">Ok</span>(tx_list)
@@ -1790,10 +1777,9 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
     <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-        example_get_user, example_network_id, example_networks, example_wallet_tx_info, set_config, ADDRESS,
-        AUTH_PROVIDER, BACKUP_PASSWORD, HEADER_X_APP_NAME, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
+        example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
+        BACKUP_PASSWORD, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
     };
-    <span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
     <span class="kw">use </span><span class="kw">crate</span>::types::users::UserEntity;
     <span class="kw">use crate</span>::{
         core::Sdk,
@@ -2237,8 +2223,8 @@
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
                 sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
-                sdk.set_networks(example_networks());
-                sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+                sdk.set_networks(example_api_networks());
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
 
                 <span class="kw">let </span>mock_request = SetUserAddressRequest {
                     address: ADDRESS.into(),
@@ -2250,7 +2236,7 @@
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
                         .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
                         .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-                        .match_query(Matcher::Exact(<span class="string">"network_id=67a1f08edf55756bae21e7eb"</span>.to_string()))
+                        .match_query(Matcher::Exact(<span class="string">"network_key=IOTA"</span>.to_string()))
                         .match_body(Matcher::Exact(body))
                         .with_status(<span class="number">201</span>)
                         .expect(<span class="number">1</span>)
@@ -2311,8 +2297,8 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(example_networks());
-                sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+                sdk.set_networks(example_api_networks());
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
                 handle_error_test_cases(error, <span class="kw-2">&amp;mut </span>sdk, <span class="number">1</span>, <span class="number">0</span>).<span class="kw">await</span>;
@@ -2362,8 +2348,8 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(example_networks());
-                sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+                sdk.set_networks(example_api_networks());
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
                 handle_error_test_cases(error, <span class="kw-2">&amp;mut </span>sdk, <span class="number">1</span>, <span class="number">0</span>).<span class="kw">await</span>;
@@ -2414,8 +2400,8 @@
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
-                sdk.set_networks(example_networks());
-                sdk.set_network(example_network_id(Currency::Iota)).<span class="kw">await</span>.unwrap();
+                sdk.set_networks(example_api_networks());
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
             }
             <span class="prelude-val">Err</span>(error) =&gt; {
                 handle_error_test_cases(error, <span class="kw-2">&amp;mut </span>sdk, <span class="number">2</span>, <span class="number">0</span>).<span class="kw">await</span>;

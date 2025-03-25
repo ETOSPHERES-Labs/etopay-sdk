@@ -230,8 +230,7 @@
 <a href="#229" id="229">229</a>
 <a href="#230" id="230">230</a>
 <a href="#231" id="231">231</a>
-<a href="#232" id="232">232</a>
-<a href="#233" id="233">233</a></pre></div><pre class="rust"><code><span class="doccomment">//! Connects to the dlt-service and puts the user address.
+<a href="#232" id="232">232</a></pre></div><pre class="rust"><code><span class="doccomment">//! Connects to the dlt-service and puts the user address.
 
 </span><span class="kw">use </span><span class="kw">super</span>::error::{ApiError, <span class="prelude-ty">Result</span>};
 <span class="kw">use crate</span>::{core::config::Config, types::newtypes::AccessToken};
@@ -258,13 +257,13 @@
 </span><span class="kw">pub async fn </span>put_user_address(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    network_id: String,
+    network_key: String,
     address: <span class="kw-2">&amp;</span>str,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
     <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/address"</span>);
     <span class="kw">let </span>query = AddressQueryParameters {
-        network_id: network_id.clone(),
+        network_key: network_key.clone(),
     };
 
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
@@ -360,11 +359,9 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use crate</span>::{
-        testing_utils::{
-            example_api_network, example_network_id, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
-        },
-        types::currencies::Currency,
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
+        example_api_network, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
+        TOKEN,
     };
     <span class="kw">use </span>mockito::Matcher;
 
@@ -384,8 +381,6 @@
         <span class="comment">// Arrange
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
-        <span class="kw">let </span>iota_network_id = example_network_id(Currency::Iota);
-
         <span class="kw">let </span>mock_request = SetUserAddressRequest {
             address: ADDRESS.into(),
         };
@@ -396,7 +391,7 @@
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
             .match_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-            .match_query(Matcher::Exact(<span class="macro">format!</span>(<span class="string">"network_id={}"</span>, iota_network_id)))
+            .match_query(Matcher::Exact(<span class="macro">format!</span>(<span class="string">"network_key={}"</span>, IOTA_NETWORK_KEY)))
             .match_body(Matcher::Exact(body))
             .with_status(status_code)
             .expect(<span class="number">1</span>)
@@ -404,7 +399,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = put_user_address(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>), ADDRESS).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = put_user_address(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, IOTA_NETWORK_KEY.to_string(), ADDRESS).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
@@ -417,7 +412,7 @@
     }
 
     <span class="attr">#[rstest::rstest]
-    #[case(<span class="number">200</span>, <span class="prelude-val">Ok</span>(ApiGetNetworksResponse {networks: <span class="macro">vec!</span>[example_api_network(Currency::Iota), example_api_network(Currency::Eth)]</span>}))]
+    #[case(<span class="number">200</span>, <span class="prelude-val">Ok</span>(ApiGetNetworksResponse {networks: <span class="macro">vec!</span>[example_api_network(IOTA_NETWORK_KEY.to_string()), example_api_network(ETH_NETWORK_KEY.to_string())]</span>}))]
     <span class="attr">#[case(<span class="number">401</span>, <span class="prelude-val">Err</span>(ApiError::MissingAccessToken))]
     #[case(<span class="number">500</span>, <span class="prelude-val">Err</span>(ApiError::UnexpectedResponse {
         code: StatusCode::INTERNAL_SERVER_ERROR,
@@ -433,7 +428,10 @@
         </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
         <span class="kw">let </span>resp_body = ApiGetNetworksResponse {
-            networks: <span class="macro">vec!</span>[example_api_network(Currency::Iota), example_api_network(Currency::Eth)],
+            networks: <span class="macro">vec!</span>[
+                example_api_network(IOTA_NETWORK_KEY.to_string()),
+                example_api_network(ETH_NETWORK_KEY.to_string()),
+            ],
         };
         <span class="kw">let </span>mock_body_response = serde_json::to_string(<span class="kw-2">&amp;</span>resp_body).unwrap();
 

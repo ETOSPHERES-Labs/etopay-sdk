@@ -360,14 +360,14 @@
 </span><span class="kw">pub async fn </span>set_preferred_network(
     config: <span class="kw-2">&amp;</span>Config,
     access_token: <span class="kw-2">&amp;</span>AccessToken,
-    network_id: <span class="prelude-ty">Option</span>&lt;String&gt;,
+    network_key: <span class="prelude-ty">Option</span>&lt;String&gt;,
 ) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
     <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
     <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/network"</span>);
     <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
     <span class="macro">info!</span>(<span class="string">"Setting preferred network"</span>);
 
-    <span class="kw">let </span>body = SetPreferredNetworkRequest { network_id };
+    <span class="kw">let </span>body = SetPreferredNetworkRequest { network_key };
 
     <span class="kw">let </span>client = reqwest::Client::new();
     <span class="kw">let </span>response = client
@@ -428,7 +428,7 @@
     <span class="macro">debug!</span>(<span class="string">"Response: {response:#?}"</span>);
 
     <span class="kw">match </span>response.status() {
-        StatusCode::OK =&gt; <span class="prelude-val">Ok</span>(response.json::&lt;GetPreferredNetworkResponse&gt;().<span class="kw">await</span><span class="question-mark">?</span>.network_id),
+        StatusCode::OK =&gt; <span class="prelude-val">Ok</span>(response.json::&lt;GetPreferredNetworkResponse&gt;().<span class="kw">await</span><span class="question-mark">?</span>.network_key),
         StatusCode::UNAUTHORIZED =&gt; <span class="prelude-val">Err</span>(ApiError::MissingAccessToken),
         <span class="kw">_ </span>=&gt; {
             <span class="kw">let </span>status = response.status();
@@ -447,7 +447,7 @@
 <span class="attr">#[cfg(test)]
 </span><span class="kw">mod </span>tests {
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
-    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN};
+    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN};
 
     <span class="attr">#[rstest::rstest]
     #[case(<span class="number">202</span>, <span class="prelude-val">Ok</span>(()))]
@@ -487,7 +487,7 @@
     }
 
     <span class="attr">#[rstest::rstest]
-    #[case(<span class="number">200</span>, <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>))))]
+    #[case(<span class="number">200</span>, <span class="prelude-val">Ok</span>(<span class="prelude-val">Some</span>(IOTA_NETWORK_KEY.to_string())))]
     #[case(<span class="number">401</span>, <span class="prelude-val">Err</span>(ApiError::MissingAccessToken))]
     #[case(<span class="number">500</span>, <span class="prelude-val">Err</span>(ApiError::UnexpectedResponse {
         code: StatusCode::INTERNAL_SERVER_ERROR,
@@ -510,7 +510,7 @@
             .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>);
         <span class="comment">// Conditionally add the response body only for the 200 status code
         </span><span class="kw">if </span>status_code == <span class="number">200 </span>{
-            mock_server = mock_server.with_body(<span class="string">"{\"network_id\":\"67a1f08edf55756bae21e7eb\"}"</span>);
+            mock_server = mock_server.with_body(<span class="string">"{\"network_key\":\"IOTA\"}"</span>);
         }
         <span class="kw">let </span>mock_server = mock_server.expect(<span class="number">1</span>).create();
 
@@ -554,7 +554,7 @@
             .create();
 
         <span class="comment">// Act
-        </span><span class="kw">let </span>response = set_preferred_network(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="prelude-val">Some</span>(String::from(<span class="string">"67a1f08edf55756bae21e7eb"</span>))).<span class="kw">await</span>;
+        </span><span class="kw">let </span>response = set_preferred_network(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, <span class="prelude-val">Some</span>(IOTA_NETWORK_KEY.to_string())).<span class="kw">await</span>;
 
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {

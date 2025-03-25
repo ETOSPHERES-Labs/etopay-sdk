@@ -668,7 +668,7 @@
 
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use crate</span>::{
-        testing_utils::ENCRYPTED_PASSWORD,
+        testing_utils::{ENCRYPTED_PASSWORD, ETH_NETWORK_KEY},
         types::{
             newtypes::{EncryptedPassword, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -956,7 +956,7 @@
                 receiver: String::new(),
                 incoming: <span class="bool-val">false</span>,
                 amount: <span class="number">0.5</span>,
-                network: String::from(<span class="string">"ETH"</span>),
+                network_key: ETH_NETWORK_KEY.to_string(),
                 status: <span class="macro">format!</span>(<span class="string">"{:?}"</span>, InclusionState::Pending),
                 explorer_url: <span class="prelude-val">None</span>,
             },
@@ -967,7 +967,7 @@
                 receiver: String::new(),
                 incoming: <span class="bool-val">true</span>,
                 amount: <span class="number">4.0</span>,
-                network: String::from(<span class="string">"ETH"</span>),
+                network_key: ETH_NETWORK_KEY.to_string(),
                 status: <span class="macro">format!</span>(<span class="string">"{:?}"</span>, InclusionState::Pending),
                 explorer_url: <span class="prelude-val">None</span>,
             },
