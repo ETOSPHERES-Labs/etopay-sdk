@@ -42,7 +42,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
             block_explorer_url: String::from("https://explorer.iota.org/iota-testnet/"),
         },
         ApiNetwork {
-            key: String::from("IOTA"),
+            key: String::from("ETH"),
             display_name: String::from("Eth Sepolia"),
             display_symbol: String::from("ETH"),
             coin_type: 60,

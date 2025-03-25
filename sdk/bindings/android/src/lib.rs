@@ -118,7 +118,7 @@ mod ffi {
 
     /// Selects the network for the ETOPay SDK.
     ///
-    /// @param network_key The input string representing the network id.
+    /// @param network_key The input string representing the network key
     pub fn setNetwork(network_key: String) -> Result<(), String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;

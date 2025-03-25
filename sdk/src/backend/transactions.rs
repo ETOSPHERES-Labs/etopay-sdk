@@ -281,8 +281,8 @@ pub async fn get_transactions_list(
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME, LIMIT, RECEIVER,
-        START, TOKEN, TX_INDEX,
+        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME,
+        IOTA_NETWORK_KEY, LIMIT, RECEIVER, START, TOKEN, TX_INDEX,
     };
     use mockito::Matcher;
 
@@ -307,7 +307,7 @@ mod tests {
 
         let mock_request = CreateTransactionRequest {
             amount: AMOUNT.inner(),
-            network_key: String::from("IOTA"),
+            network_key: IOTA_NETWORK_KEY.to_string(),
             receiver: RECEIVER.into(),
             application_metadata: example_tx_metadata(),
         };
@@ -334,7 +334,7 @@ mod tests {
             &config,
             &TOKEN,
             RECEIVER,
-            String::from("IOTA"),
+            IOTA_NETWORK_KEY.to_string(),
             AMOUNT,
             example_tx_metadata(),
         )

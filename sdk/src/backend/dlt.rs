@@ -127,7 +127,10 @@ pub async fn get_networks(config: &Config, access_token: &AccessToken) -> Result
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing_utils::{example_api_network, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN};
+    use crate::testing_utils::{
+        example_api_network, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
+        TOKEN,
+    };
     use mockito::Matcher;
 
     #[rstest::rstest]
@@ -146,8 +149,6 @@ mod tests {
         // Arrange
         let (mut srv, config, _cleanup) = set_config().await;
 
-        let iota_network_key = "IOTA";
-
         let mock_request = SetUserAddressRequest {
             address: ADDRESS.into(),
         };
@@ -158,7 +159,7 @@ mod tests {
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .match_header("content-type", "application/json")
-            .match_query(Matcher::Exact(format!("network_key={}", iota_network_key)))
+            .match_query(Matcher::Exact(format!("network_key={}", IOTA_NETWORK_KEY)))
             .match_body(Matcher::Exact(body))
             .with_status(status_code)
             .expect(1)
@@ -166,7 +167,7 @@ mod tests {
             .create();
 
         // Act
-        let response = put_user_address(&config, &TOKEN, String::from("IOTA"), ADDRESS).await;
+        let response = put_user_address(&config, &TOKEN, IOTA_NETWORK_KEY.to_string(), ADDRESS).await;
 
         // Assert
         match expected {
@@ -179,7 +180,7 @@ mod tests {
     }
 
     #[rstest::rstest]
-    #[case(200, Ok(ApiGetNetworksResponse {networks: vec![example_api_network(String::from("IOTA")), example_api_network(String::from("ETH"))]}))]
+    #[case(200, Ok(ApiGetNetworksResponse {networks: vec![example_api_network(IOTA_NETWORK_KEY.to_string()), example_api_network(ETH_NETWORK_KEY.to_string())]}))]
     #[case(401, Err(ApiError::MissingAccessToken))]
     #[case(500, Err(ApiError::UnexpectedResponse {
         code: StatusCode::INTERNAL_SERVER_ERROR,
@@ -196,8 +197,8 @@ mod tests {
 
         let resp_body = ApiGetNetworksResponse {
             networks: vec![
-                example_api_network(String::from("IOTA")),
-                example_api_network(String::from("ETH")),
+                example_api_network(IOTA_NETWORK_KEY.to_string()),
+                example_api_network(ETH_NETWORK_KEY.to_string()),
             ],
         };
         let mock_body_response = serde_json::to_string(&resp_body).unwrap();

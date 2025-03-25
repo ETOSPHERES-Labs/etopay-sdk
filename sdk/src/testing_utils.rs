@@ -73,6 +73,8 @@ pub const SALT: [u8; 12] = [241, 167, 131, 245, 166, 203, 63, 247, 211, 157, 138
 pub const PURCHASE_ID: &str = "123";
 pub const ORDER_ID: &str = "497f6eca-6276-4993-bfeb-53cbbbba6f08";
 pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("1234").unwrap());
+pub const IOTA_NETWORK_KEY: &str = "IOTA";
+pub const ETH_NETWORK_KEY: &str = "ETH";
 
 /// Mnemonic for testing.
 /// Iota: tst1qz7m7xtfppy9xd73xvsnpvlnx5rcewjz2k2gqh6w67tdleks83rh768k6rc
@@ -160,7 +162,7 @@ pub fn example_tx_details() -> GetTransactionDetailsResponse {
         amount: AMOUNT.inner(),
         status: ApiTxStatus::Completed,
         network: ApiNetwork {
-            key: String::from("IOTA"),
+            key: IOTA_NETWORK_KEY.to_string(),
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
@@ -176,7 +178,7 @@ pub fn example_tx_details() -> GetTransactionDetailsResponse {
 pub fn example_api_network(key: String) -> ApiNetwork {
     match key {
         val if val == *"IOTA" => ApiNetwork {
-            key: String::from("IOTA"),
+            key: IOTA_NETWORK_KEY.to_string(),
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
@@ -187,7 +189,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
             block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
         },
         val if val == *"ETH" => ApiNetwork {
-            key: String::from("ETH"),
+            key: ETH_NETWORK_KEY.to_string(),
             display_name: String::from("Eth Sepolia"),
             display_symbol: String::from("ETH"),
             coin_type: 60,
@@ -214,7 +216,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
 pub fn example_api_networks() -> Vec<ApiNetwork> {
     vec![
         ApiNetwork {
-            key: String::from("IOTA"),
+            key: IOTA_NETWORK_KEY.to_string(),
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
@@ -225,7 +227,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
             block_explorer_url: String::from("https://explorer.iota.org/iota-testnet/"),
         },
         ApiNetwork {
-            key: String::from("ETH"),
+            key: ETH_NETWORK_KEY.to_string(),
             display_name: String::from("Eth Sepolia"),
             display_symbol: String::from("ETH"),
             coin_type: 60,

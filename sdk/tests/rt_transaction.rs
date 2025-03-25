@@ -107,11 +107,9 @@ async fn it_should_create_purchase_request_and_confirm_it() {
     let access_token = testing::get_access_token(&user.username, &password).await.access_token;
     let access_token = AccessToken::try_from(access_token).unwrap();
     sdk.refresh_access_token(Some(access_token)).await.unwrap();
-
-    // calling `set_network` method will automatically query the backend for the list of available networks
-    // (because the network list is empty). You can manually add networks by calling `set_networks()`
-    // to avoid fetching the list from the backend
-    sdk.set_network(String::from("IOTA")).await.unwrap();
+    let networks = sdk.get_networks().await.unwrap();
+    let iota_network_key = networks.first().unwrap().key.clone();
+    sdk.set_network(iota_network_key).await.unwrap();
 
     /*
     rest of the test

@@ -163,7 +163,7 @@ pub async fn get_preferred_network(config: &Config, access_token: &AccessToken) 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN};
+    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN};
 
     #[rstest::rstest]
     #[case(202, Ok(()))]
@@ -203,7 +203,7 @@ mod tests {
     }
 
     #[rstest::rstest]
-    #[case(200, Ok(Some(String::from("IOTA"))))]
+    #[case(200, Ok(Some(IOTA_NETWORK_KEY.to_string())))]
     #[case(401, Err(ApiError::MissingAccessToken))]
     #[case(500, Err(ApiError::UnexpectedResponse {
         code: StatusCode::INTERNAL_SERVER_ERROR,
@@ -270,7 +270,7 @@ mod tests {
             .create();
 
         // Act
-        let response = set_preferred_network(&config, &TOKEN, Some(String::from("IOTA"))).await;
+        let response = set_preferred_network(&config, &TOKEN, Some(IOTA_NETWORK_KEY.to_string())).await;
 
         // Assert
         match expected {

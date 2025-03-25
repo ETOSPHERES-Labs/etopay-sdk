@@ -56,7 +56,7 @@ pub struct WalletTxInfo {
     pub receiver: String,
     /// Amount of transfer
     pub amount: f64,
-    /// either ETH or IOTA [convert network_id to string based on the value]
+    /// Describes the network
     pub network: String,
     /// Status of the transfer
     pub status: String,

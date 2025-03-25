@@ -573,7 +573,7 @@ mod tests {
     use crate::{
         core::{Config, UserRepoT},
         kdbx::KdbxStorageError,
-        testing_utils::{example_api_network, BACKUP_PASSWORD},
+        testing_utils::{example_api_network, BACKUP_PASSWORD, IOTA_NETWORK_KEY},
         types::{
             newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -703,7 +703,7 @@ mod tests {
                 &mut config,
                 &None,
                 &mut repo,
-                example_api_network(String::from("IOTA")),
+                example_api_network(IOTA_NETWORK_KEY.to_string()),
                 &pin,
             )
             .await
@@ -731,7 +731,7 @@ mod tests {
                 &mut config,
                 &None,
                 &mut repo,
-                example_api_network(String::from("IOTA")),
+                example_api_network(IOTA_NETWORK_KEY.to_string()),
                 &pin,
             )
             .await
@@ -956,7 +956,7 @@ mod tests {
                     &mut config,
                     &access_token,
                     &mut repo,
-                    example_api_network(String::from("IOTA")),
+                    example_api_network(IOTA_NETWORK_KEY.to_string()),
                     &pin,
                 )
                 .await

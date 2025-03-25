@@ -51,7 +51,7 @@ pub struct Sdk {
     /// Contains the user repository for storing and loading different users.
     repo: Option<UserRepoT>,
     /// The currently active network
-    network: Option<ApiNetwork>,
+    active_network: Option<ApiNetwork>,
     /// Available networks
     networks: Vec<ApiNetwork>,
 }
@@ -71,7 +71,7 @@ impl Default for Sdk {
             active_user: None,
             access_token: None,
             repo: None,
-            network: None,
+            active_network: None,
             networks: vec![],
         }
     }
@@ -95,7 +95,7 @@ impl Sdk {
         };
 
         debug!("Selected Network: {:?}", network);
-        self.network = Some(network.clone());
+        self.active_network = Some(network.clone());
 
         Ok(())
     }
@@ -149,7 +149,7 @@ impl Sdk {
         let Some(active_user) = &mut self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
-        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
@@ -172,7 +172,7 @@ impl Sdk {
 #[cfg(test)]
 mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
-    //use crate::types::networks::Network;
+    use crate::testing_utils::IOTA_NETWORK_KEY;
     use crate::{
         core::Sdk,
         error::Result,
@@ -211,7 +211,7 @@ mod tests {
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
                 sdk.set_networks(example_api_networks());
-                sdk.set_network(String::from("IOTA")).await.unwrap();
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
             }
             Err(error) => {
                 handle_error_test_cases(error, &mut sdk, 0, 0).await;

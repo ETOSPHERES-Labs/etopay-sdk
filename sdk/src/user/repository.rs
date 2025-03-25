@@ -142,7 +142,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        testing_utils::ENCRYPTED_PASSWORD,
+        testing_utils::{ENCRYPTED_PASSWORD, ETH_NETWORK_KEY},
         types::{
             newtypes::{EncryptedPassword, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -430,7 +430,7 @@ mod tests {
                 receiver: String::new(),
                 incoming: false,
                 amount: 0.5,
-                network: String::from("ETH"),
+                network: ETH_NETWORK_KEY.to_string(),
                 status: format!("{:?}", InclusionState::Pending),
                 explorer_url: None,
             },
@@ -441,7 +441,7 @@ mod tests {
                 receiver: String::new(),
                 incoming: true,
                 amount: 4.0,
-                network: String::from("ETH"),
+                network: ETH_NETWORK_KEY.to_string(),
                 status: format!("{:?}", InclusionState::Pending),
                 explorer_url: None,
             },

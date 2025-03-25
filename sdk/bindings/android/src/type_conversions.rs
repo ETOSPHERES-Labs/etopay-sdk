@@ -10,7 +10,7 @@ pub struct PurchaseDetailsEntity {
     pub status: String,
     /// Any reasons attached to the status
     pub invalid_reasons: Vec<String>,
-    /// The id of the network that the transaction is sent in
+    /// The key of the network that the transaction is sent in
     pub network_key: String,
 }
 

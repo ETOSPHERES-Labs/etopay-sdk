@@ -254,7 +254,7 @@ impl Sdk {
         };
 
         let iban_method_id = self.get_payment_method_id_viviswap(SwapPaymentDetailKey::Sepa).await?;
-        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
         let currency = Currency::try_from(network.display_symbol)?;
 
         let payment_method_key = currency.to_vivi_payment_method_key();
@@ -323,7 +323,7 @@ impl Sdk {
     /// - [`crate::Error::ViviswapMissingUserError`] - If the viviswap user is missing.
     // MARK5:create_detail_for_viviswap
     pub async fn create_detail_for_viviswap(&mut self, pin: &EncryptionPin) -> Result<ViviswapAddressDetail> {
-        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
         let currency = Currency::try_from(network.display_symbol)?;
         let payment_method_key = currency.to_vivi_payment_method_key();
 
@@ -441,7 +441,7 @@ impl Sdk {
             return Err(crate::Error::Viviswap(ViviswapError::MissingUser));
         };
 
-        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
         let currency = Currency::try_from(network.display_symbol)?;
 
         // check if iban exists, otherwise error
@@ -569,8 +569,8 @@ mod tests {
     use crate::testing_utils::{
         example_api_network, example_api_networks, example_bank_details, example_contract_response,
         example_crypto_details, example_exchange_rate_response, example_get_payment_details_response, example_get_user,
-        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, ORDER_ID, PIN, TOKEN,
-        USERNAME,
+        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME,
+        IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
     };
     //use crate::types::networks::Network;
     use crate::types::users::KycType;
@@ -762,12 +762,12 @@ mod tests {
 
     #[rstest]
     #[case(
-        example_api_network(String::from("IOTA")),
+        example_api_network(IOTA_NETWORK_KEY.to_string()),
         SwapPaymentDetailKey::Iota,
         "/api/viviswap/details?payment_method_key=IOTA"
     )]
     #[case(
-        example_api_network(String::from("ETH")),
+        example_api_network(ETH_NETWORK_KEY.to_string()),
         SwapPaymentDetailKey::Eth,
         "/api/viviswap/details?payment_method_key=ETH"
     )]
@@ -863,7 +863,7 @@ mod tests {
 
         let mut sdk = Sdk::new(config).unwrap();
         sdk.set_networks(example_api_networks());
-        sdk.set_network(String::from("IOTA")).await.unwrap();
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
 
         let mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 3, KycType::Viviswap);
         sdk.repo = Some(Box::new(mock_user_repo));
@@ -900,7 +900,7 @@ mod tests {
         let (mut srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
         sdk.set_networks(example_api_networks());
-        sdk.set_network(String::from("IOTA")).await.unwrap();
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
 
         sdk.repo = Some(Box::new(example_get_user(
             SwapPaymentDetailKey::Iota,

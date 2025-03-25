@@ -429,7 +429,7 @@ impl Sdk {
         let Some(active_user) = &mut self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
-        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
@@ -493,7 +493,7 @@ impl Sdk {
         info!("Wallet getting list of transactions");
         self.verify_pin(pin).await?;
 
-        let network = self.network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
         let user = self.get_user().await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
@@ -566,7 +566,7 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        BACKUP_PASSWORD, HEADER_X_APP_NAME, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
+        BACKUP_PASSWORD, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -1012,7 +1012,7 @@ mod tests {
                 });
                 sdk.access_token = Some(TOKEN.clone());
                 sdk.set_networks(example_api_networks());
-                sdk.set_network(String::from("IOTA")).await.unwrap();
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
 
                 let mock_request = SetUserAddressRequest {
                     address: ADDRESS.into(),
@@ -1086,7 +1086,7 @@ mod tests {
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
                 sdk.set_networks(example_api_networks());
-                sdk.set_network(String::from("IOTA")).await.unwrap();
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
             }
             Err(error) => {
                 handle_error_test_cases(error, &mut sdk, 1, 0).await;
@@ -1137,7 +1137,7 @@ mod tests {
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
                 sdk.set_networks(example_api_networks());
-                sdk.set_network(String::from("IOTA")).await.unwrap();
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
             }
             Err(error) => {
                 handle_error_test_cases(error, &mut sdk, 1, 0).await;
@@ -1189,7 +1189,7 @@ mod tests {
                     wallet_manager: Box::new(mock_wallet_manager),
                 });
                 sdk.set_networks(example_api_networks());
-                sdk.set_network(String::from("IOTA")).await.unwrap();
+                sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
             }
             Err(error) => {
                 handle_error_test_cases(error, &mut sdk, 2, 0).await;

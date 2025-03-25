@@ -251,7 +251,9 @@ impl Sdk {
 mod tests {
     use super::*;
     use crate::core::core_testing_utils::handle_error_test_cases;
-    use crate::testing_utils::{example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
+    use crate::testing_utils::{
+        example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN, USERNAME,
+    };
     use crate::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     use api_types::api::kyc::KycStatusResponse;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
@@ -559,7 +561,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.set_preferred_network(Some(String::from("IOTA"))).await;
+        let response = sdk.set_preferred_network(Some(IOTA_NETWORK_KEY.to_string())).await;
 
         // Assert
         match expected {
@@ -574,7 +576,7 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(Ok(Some(String::from("IOTA"))))]
+    #[case::success(Ok(Some(IOTA_NETWORK_KEY.to_string())))]
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::unauthorized(Err(crate::Error::MissingAccessToken))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]

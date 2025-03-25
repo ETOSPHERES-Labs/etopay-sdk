@@ -89,7 +89,7 @@ impl ETOPaySdk {
     ///
     /// # Arguments
     ///
-    /// * `network_key` - The input string representing the network id.
+    /// * `network_key` - The input string representing the network key.
     ///
     /// # Returns
     ///
