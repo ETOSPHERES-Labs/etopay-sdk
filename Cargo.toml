@@ -27,6 +27,7 @@ license = "AGPL-3.0-only"
 license-file = "LICENSE"
 homepage = "https://www.etogruppe.com/en/information/legal-notice.html"
 repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
+keywords = ["wallet", "web3", "payments", "crypto", "kyc"]
 
 [workspace.lints.rust]
 # Since we are using the deprecation annotation to mark things to remove later, it causes a lot of noise in the problems reported in vscode.
@@ -34,7 +35,9 @@ repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
 # deprecated = "allow"
 
 # used for the wasm bindings tests
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(wasm_bindgen_unstable_test_coverage)'] }
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(wasm_bindgen_unstable_test_coverage)',
+] }
 
 [workspace.lints.clippy]
 # With these two, we avoid panicking behavior in our code.
@@ -54,7 +57,10 @@ dotenvy = { version = "0.15", default-features = false }
 fluent-assertions = { version = "0.4", default-features = false }
 mockall = { version = "0.13", default-features = false }
 mockito = { version = "1.7.0", default-features = false }
-reqwest = { version = "0.12.12", default-features = false, features = ["json", "rustls-tls"] }
+reqwest = { version = "0.12.12", default-features = false, features = [
+    "json",
+    "rustls-tls",
+] }
 rstest = { version = "0.25.0", default-features = false }
 rust_decimal = { version = "1.37.1", default-features = false, features = [
     "serde-str",

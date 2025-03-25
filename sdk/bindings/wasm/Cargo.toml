@@ -5,6 +5,7 @@ authors.workspace = true
 license.workspace = true
 homepage.workspace = true
 repository.workspace = true
+keywords.workspace = true
 publish = false
 readme = "public-README.md"
 
