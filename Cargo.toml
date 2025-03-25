@@ -27,7 +27,13 @@ license = "AGPL-3.0-only"
 license-file = "LICENSE"
 homepage = "https://www.etogruppe.com/en/information/legal-notice.html"
 repository = "https://github.com/ETOSPHERES-Labs/cawaena-sdk"
-keywords = ["wallet", "web3", "payments", "crypto", "kyc"]
+keywords = [
+    "blockchain",
+    "evm",
+    "payments",
+    "wallet",
+    "web3",
+]
 
 [workspace.lints.rust]
 # Since we are using the deprecation annotation to mark things to remove later, it causes a lot of noise in the problems reported in vscode.
