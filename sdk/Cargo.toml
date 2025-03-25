@@ -88,12 +88,6 @@ alloy-json-rpc = "0.12"
 alloy-transport = "0.12"
 shadow-rs = { version = "1.0.1", default-features = false }
 
-
-# Fix for version of `deranged` crate that got released while not being completely SemVer compatible
-# Without this our dependendts get the 0.4.1 version which makes iota-sdk not compile.
-# See: https://github.com/jhpratt/deranged/issues/18
-deranged = "=0.4.0"
-
 [dependencies.rusty_secrets]
 package = "rusty_secrets"
 git = "https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/RustySecrets.git"
