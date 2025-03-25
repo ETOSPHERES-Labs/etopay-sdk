@@ -572,7 +572,6 @@ mod tests {
         example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME,
         IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
     };
-    //use crate::types::networks::Network;
     use crate::types::users::KycType;
     use crate::{
         core::Sdk,

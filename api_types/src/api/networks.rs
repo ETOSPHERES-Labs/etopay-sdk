@@ -3,14 +3,25 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub enum ApiProtocol {
-    Evm { chain_id: u64 },
-    EvmERC20 { chain_id: u64, contract_address: String },
+    /// Represents an EVM-based network (e.g., Ethereum)
+    Evm {
+        /// chain_id
+        chain_id: u64,
+    },
+    /// Represents and EVM based ERC20 Smart Contract token
+    EvmERC20 {
+        /// chain_id
+        chain_id: u64,
+        ///contract address
+        contract_address: String,
+    },
+    /// Represents a Stardust network
     Stardust {},
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
-/// Structure representing a cryptocurrency network.
+/// Represents a network supported by the wallet
 pub struct ApiNetwork {
     /// Unique key for the network
     pub key: String,
