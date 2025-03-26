@@ -7,7 +7,13 @@ name: deploy-swift
 # only run this on push to main (eg. after PR merge)
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name for release"
+        required: false
+        default: nightly
   push:
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
     branches:
       - main
   pull_request:
@@ -92,6 +98,20 @@ jobs:
       CHECKSUM: ${{ needs.build-sdk-swift.outputs.xcframework_sha256 }}
       FILENAME: ${{ needs.build-sdk-swift.outputs.xcframework_filename }}
     steps:
+      # take TAG_NAME from input variable
+      - if: github.event_name == 'workflow_dispatch'
+        run: echo "TAG_NAME=${{ github.event.inputs.tag_name }}" | tee -a $GITHUB_ENV
+
+      # if this run is the push to main, it is the 'nightly' release
+      - if: (github.event_name == 'push' && github.event.ref == 'refs/heads/main' ) || github.event_name == 'pull_request'
+        run: echo 'TAG_NAME=nightly' | tee -a $GITHUB_ENV
+
+        # if this run is not the push to main it is a tag, take the tag value
+      - if: github.event_name == 'push' && github.event.ref != 'refs/heads/main'
+        run: |
+          TAG_NAME=${{ github.ref }}
+          echo "TAG_NAME=${TAG_NAME#refs/tags/}" | tee -a $GITHUB_ENV
+
       - name: Checkout target repository
         uses: actions/checkout@v4
         with:
@@ -112,7 +132,7 @@ jobs:
       - name: Modify url and insert hash
         run: |
           cd target-repo
-          URL="https://github.com/${GH_REPO}/releases/download/nightly/${FILENAME}"
+          URL="https://github.com/${GH_REPO}/releases/download/${TAG_NAME}/${FILENAME}"
           sed -i -e "s|path: \"ETOPaySdkBin.xcframework\"|url: \"${URL}\", checksum: \"${CHECKSUM}\"|" Package.swift
           cat Package.swift
 
@@ -129,16 +149,28 @@ jobs:
           git commit -m "Update Swift SDK package files from commit ${{ github.sha }}" || echo "No changes to commit"
           git push
 
-      - name: Re-Tag nightly
+      - if: env.TAG_NAME == 'nightly' && github.event_name != 'pull_request'
+        name: Re-Tag nightly
         run: |
           cd target-repo
           gh release delete nightly --yes || true
           git push origin :nightly || true
 
+      # set correct parameters based on if this is nightly or not
+      - if: env.TAG_NAME == 'nightly'
+        run: |
+          echo 'SUBJECT=ETOPaySDK development build' | tee -a $GITHUB_ENV
+          echo 'PRERELEASE=--prerelease' | tee -a $GITHUB_ENV
+
+      - if: env.TAG_NAME != 'nightly'
+        run: |
+          echo 'SUBJECT=ETOPaySDK release build' | tee -a $GITHUB_ENV
+          echo 'PRERELEASE=' | tee -a $GITHUB_ENV
+
       - name: Publish release
-        # if: github.event_name != 'pull_request'
+        if: github.event_name != 'pull_request'
         env:
           DEBUG: api
         run: |
           cd target-repo
-          gh release create nightly --prerelease --title "nightly" ../artifacts/etopay-sdk-swift/${FILENAME}
+          gh release create $TAG_NAME $PRERELEASE --title "$TAG_NAME" ../artifacts/etopay-sdk-swift/${FILENAME}
