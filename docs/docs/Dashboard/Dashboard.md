@@ -10,7 +10,7 @@ The backend to the ETOPay SDK is accessible through our [dashboard](https://etop
 ## Login using GitHub
 
 Open the [dashboard](https://etopayapp.etospheres.com) and press the button to login through your [GitHub](https://github.com) account.
-By logging in an using our platform you agree to the [Terms of Service](https://etopayapp.etospheres.com/terms_of_service) [Privacy Policy](https://etopayapp.etospheres.com/privacy_policy).
+By logging in an using our platform you agree to the [Terms of Service](https://etopayapp.etospheres.com/terms_of_service) and [Privacy Policy](https://etopayapp.etospheres.com/privacy_policy).
 When authorizing the GitHub application, you also agree to that we can access the following information about your account:
 
 - Your primary email address (even if it is marked as _private_). We use this information to communicate important updates and required actions about your projects.
