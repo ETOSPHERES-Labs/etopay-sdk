@@ -36,12 +36,24 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Build wasm sdk
+      - name: Build wasm sdk for node target
         run: |
           cd bindings/wasm
-          wasm-pack build --release --scope etospheres --target nodejs --out-dir out/web/pkg
+          wasm-pack build --release --scope etospheres --target nodejs --out-dir out/node/pkg
+          sed -i 's/"name": "@etospheres\/etopay-sdk-wasm"/"name": "@etospheres\/etopay-sdk-wasm-node"/' out/node/pkg/package.json
 
-      - name: Publish to npm
+      - name: Publish to npm node
+        run: |
+          cd bindings/wasm
+          wasm-pack publish out/node --access public
+
+      - name: Build wasm sdk for web target
+        run: |
+          cd bindings/wasm
+          wasm-pack build --release --scope etospheres --target web --out-dir out/web/pkg
+          sed -i 's/"name": "@etospheres\/etopay-sdk-wasm"/"name": "@etospheres\/etopay-sdk-wasm-web"/' out/web/pkg/package.json
+
+      - name: Publish to npm web
         run: |
           cd bindings/wasm
           wasm-pack publish out/web --access public

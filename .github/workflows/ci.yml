@@ -176,10 +176,10 @@ jobs:
       - name: Install wasm-pack
         run: curl https://rustwasm.github.io/wasm-pack/installer/init.sh -sSf | sh
 
-      - name: Build wasm sdk for nodejs
+      - name: Build wasm sdk for web target and build web examples
         run: |
           cd bindings/wasm
-          wasm-pack build --release --scope etopay --target nodejs --out-dir out/web/pkg
+          wasm-pack build --release --scope etospheres --target web --out-dir out/web/pkg
           wasm-pack pack out/web
           cd examples/webapp
           echo -e "RUST_LOG=info\nTRACING_ENV=dev" > ../.env

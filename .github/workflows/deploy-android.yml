@@ -74,7 +74,7 @@ jobs:
           echo "Building & Publishing with version $PUBLISH_VERSION"
 
       - name: Build android native libraries
-        run: cd sdk/bindings/android && make build_sdk
+        run: cd bindings/android && make build_sdk
 
       - name: Publish package
         run: |
