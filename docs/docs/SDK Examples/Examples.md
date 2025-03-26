@@ -19,7 +19,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/utils.rs:utils"
+    --8<-- "sdk/examples/utils.rs:utils"
     ```
 
 === "Java"
@@ -45,7 +45,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "examples/01_create_new_user.rs"
+    --8<-- "sdk/examples/01_create_new_user.rs"
     ```
 
 === "Java"
@@ -71,7 +71,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/02_onboard_user_postident.rs"
+    --8<-- "sdk/examples/02_onboard_user_postident.rs"
     ```
 
 === "Java"
@@ -97,7 +97,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/04_migrate_wallet_from_mnemonic.rs"
+    --8<-- "sdk/examples/04_migrate_wallet_from_mnemonic.rs"
     ```
 
 === "Java"
@@ -123,7 +123,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/05_migrate_wallet_from_backup.rs"
+    --8<-- "sdk/examples/05_migrate_wallet_from_backup.rs"
     ```
 
 === "Java"
@@ -149,7 +149,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/06_generate_new_address.rs"
+    --8<-- "sdk/examples/06_generate_new_address.rs"
     ```
 
 === "Java"
@@ -175,7 +175,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/07_get_balance.rs"
+    --8<-- "sdk/examples/07_get_balance.rs"
     ```
 
 === "Java"
@@ -201,7 +201,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/08_create_purchase_request.rs"
+    --8<-- "sdk/examples/08_create_purchase_request.rs"
     ```
 
 === "Java"
@@ -227,7 +227,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/09_onboard_user_viviswap.rs"
+    --8<-- "sdk/examples/09_onboard_user_viviswap.rs"
     ```
 
 === "Java"
@@ -253,7 +253,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/10_verify_pin.rs"
+    --8<-- "sdk/examples/10_verify_pin.rs"
     ```
 
 === "Java"
@@ -279,7 +279,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/11_reset_pin.rs"
+    --8<-- "sdk/examples/11_reset_pin.rs"
     ```
 
 === "Java"
@@ -305,7 +305,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/12_change_password.rs"
+    --8<-- "sdk/examples/12_change_password.rs"
     ```
 
 === "Java"
@@ -331,7 +331,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/13_send_amount.rs"
+    --8<-- "sdk/examples/13_send_amount.rs"
     ```
 
 === "Java"
@@ -357,7 +357,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/14_get_exchange_rate.rs"
+    --8<-- "sdk/examples/14_get_exchange_rate.rs"
     ```
 
 === "Java"
@@ -383,7 +383,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/16_get_tx_list.rs"
+    --8<-- "sdk/examples/16_get_tx_list.rs"
     ```
 
 === "Java"
@@ -409,7 +409,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/18_delete_user.rs"
+    --8<-- "sdk/examples/18_delete_user.rs"
     ```
 
 === "Java"
@@ -435,7 +435,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/19_get_wallet_tx_list.rs"
+    --8<-- "sdk/examples/19_get_wallet_tx_list.rs"
     ```
 
 === "Java"
@@ -461,7 +461,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/20_send_compliment.rs"
+    --8<-- "sdk/examples/20_send_compliment.rs"
     ```
 
 === "Java"
@@ -487,6 +487,6 @@ The environment configuration to `Development` attaches the SDK to the developme
 === "Rust"
 
     ```rust
-    --8<-- "../sdk/examples/22_init_wallet_from_shares.rs"
+    --8<-- "sdk/examples/22_init_wallet_from_shares.rs"
 
     ```

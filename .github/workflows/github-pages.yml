@@ -13,7 +13,7 @@ on:
       - ".github/workflows/github-pages.yml"
       - "docs/**/*"
       - "sdk/examples/**/*"
-      - "sdk/bindings/**/*"
+      - "bindings/**/*"
       - "sdk/src/**/*"
 
 jobs:
@@ -70,7 +70,7 @@ jobs:
 
       - name: Build wasm-bindings
         shell: bash
-        working-directory: sdk/bindings/wasm
+        working-directory: bindings/wasm
         run: wasm-pack build --dev --scope etospheres
 
       - name: Build Rust docs
@@ -83,11 +83,11 @@ jobs:
 
       - name: Build Java docs
         shell: bash
-        working-directory: sdk/bindings/android
+        working-directory: bindings/android
         run: |
           cargo build
           make build_javadoc
-          mv javadoc ../../../docs/docs/
+          mv javadoc ../../docs/docs/
 
       - name: Mark repository as safe for Git
         shell: bash
