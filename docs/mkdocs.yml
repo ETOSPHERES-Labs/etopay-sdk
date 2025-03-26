@@ -1,4 +1,7 @@
 site_name: ETOPay Docs
+not_in_nav: |
+  javadoc
+  rust-docs
 plugins:
   - privacy:
       enabled: true
