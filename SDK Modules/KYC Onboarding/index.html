@@ -73,6 +73,11 @@
     <label class="md-overlay" for="__drawer"></label>
     <div data-md-component="skip">
       
+        
+        <a href="#kyc-onboarding" class="md-skip">
+          Skip to content
+        </a>
+      
     </div>
     <div data-md-component="announce">
       
@@ -666,6 +671,20 @@
       <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
       
       
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    KYC Onboarding
+    
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
       
       <a href="./" class="md-nav__link md-nav__link--active">
         
@@ -677,6 +696,102 @@
   
 
       </a>
+      
+        
+
+  
+
+<nav class="md-nav md-nav--secondary" aria-label="On this page">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      On this page
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#what-is-kyc" class="md-nav__link">
+    <span class="md-ellipsis">
+      What is KYC?
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#the-purpose-of-kyc-in-web3" class="md-nav__link">
+    <span class="md-ellipsis">
+      The Purpose of KYC in Web3
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#onboarding-users-for-kyc" class="md-nav__link">
+    <span class="md-ellipsis">
+      Onboarding users for KYC
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Onboarding users for KYC">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#onboarding-users-via-postident" class="md-nav__link">
+    <span class="md-ellipsis">
+      Onboarding users via Postident
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#onboarding-users-via-etospheres-exchange" class="md-nav__link">
+    <span class="md-ellipsis">
+      Onboarding users via ETOSPHERES Exchange
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Onboarding users via ETOSPHERES Exchange">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#order-of-verification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Order of verification
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#risk-levels" class="md-nav__link">
+    <span class="md-ellipsis">
+      Risk levels
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
       
     </li>
   
@@ -1038,9 +1153,218 @@
 
 
 
-  <h1>KYC Onboarding</h1>
-
-
+<h1 id="kyc-onboarding">KYC Onboarding<a class="headerlink" href="#kyc-onboarding" title="Permanent link">&para;</a></h1>
+<h2 id="what-is-kyc">What is KYC?<a class="headerlink" href="#what-is-kyc" title="Permanent link">&para;</a></h2>
+<p>Know Your Customer (KYC) is a regulatory and compliance process used by financial institutions and businesses to verify the identity of their customers. The primary goal of KYC is to prevent fraudulent activities such as identity theft, financial fraud, and money laundering. Traditionally, KYC involves collecting personal information, such as government-issued identification, proof of address, and other relevant documents, to ensure that individuals engaging in financial transactions are legitimate.</p>
+<p>With the rise of blockchain and decentralized finance (DeFi), the importance of KYC has extended beyond traditional banking into the Web3 ecosystem. While the decentralized nature of Web3 promotes anonymity and self-sovereign identity, it also introduces challenges in regulatory compliance, particularly in preventing illicit financial activities.</p>
+<h2 id="the-purpose-of-kyc-in-web3">The Purpose of KYC in Web3<a class="headerlink" href="#the-purpose-of-kyc-in-web3" title="Permanent link">&para;</a></h2>
+<p>In the Web3 industry, KYC serves several key purposes:</p>
+<ol>
+<li>
+<p><strong>Preventing Money Laundering</strong> – Cryptocurrencies and blockchain-based financial systems can be exploited by criminals to launder illicit funds due to their pseudonymous nature. Implementing KYC ensures that users engaging in financial transactions are properly identified, reducing the risk of money laundering.</p>
+</li>
+<li>
+<p><strong>Ensuring Regulatory Compliance</strong> – Governments and regulatory bodies worldwide have imposed Anti-Money Laundering (AML) and Counter-Terrorist Financing (CTF) laws that apply to cryptocurrency exchanges, DeFi platforms, and NFT marketplaces. KYC compliance helps Web3 projects adhere to these regulations and avoid legal repercussions.</p>
+</li>
+<li>
+<p><strong>Mitigating Fraud and Scams</strong> – The Web3 space has seen numerous scams, including rug pulls, Ponzi schemes, and fraudulent token offerings. By implementing KYC, projects can verify the legitimacy of users and project teams, fostering trust within the ecosystem.</p>
+</li>
+<li>
+<p><strong>Protecting Institutional Investors</strong> – Institutional investors are increasingly exploring Web3 and DeFi. However, without proper KYC measures, they face significant risks. KYC-compliant platforms provide greater security and legitimacy, encouraging broader institutional participation.</p>
+</li>
+</ol>
+<h2 id="onboarding-users-for-kyc">Onboarding users for KYC<a class="headerlink" href="#onboarding-users-for-kyc" title="Permanent link">&para;</a></h2>
+<p>Currently, the ETOPay SDK offers two alternatives for onboarding users through a KYC process. These two processes are indepedent of each other, however the ETOPay SDK consults the backend to check which process the user has started and also continues from the state where the user previously left. Hence, in case if the user loses their devices, or re-initiates the onboarding through another client of the ETOPay SDK, the user is guided onward from where they left of, instead of starting from the beginning.</p>
+<p>The two KYC processes that are offered by the SDK are:</p>
+<ol>
+<li>Using Postident as the KYC Provider</li>
+<li>Using ETOSPHERES Exchange (previously known as viviswap) as the KYC Provider.</li>
+</ol>
+<p>The onboarding steps in the SDK follow a very simple flow:</p>
+<ol>
+<li>Check if the user is already KYC verified. This is independent of the process the user followed.</li>
+<li>If the user is not verified, check if the user has already started a process.</li>
+<li>If the user as already started a process, continue the process with the same provider as the user has started.</li>
+<li>Or offer the user a choice and start with the chosen provider.</li>
+</ol>
+<details class="info" open="open">
+<summary>Info</summary>
+<p>Currently, the federation of the KYC status of the user across multiple customers is not supported. This would mean that the same user might need to perform a KYC again for a different ETOPay customer. This feature is highly demanded as it improves the user onboarding, and it provides new ETOPay customers immediate access to a verified user pool. However, the feature is currently under scrutiny and is bound to be planned in future releases of the ETOPay platform.</p>
+</details>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>There is a provider lock, that currently prevents users from switching between the two providers, or in future, potentially multiple providers, once they chose to start the process with a certain provider. Due to this, the user is forced to complete the onboarding with the same provider they chose at the beginning and have no option of switching providers once a process is started.</p>
+</div>
+<h3 id="onboarding-users-via-postident">Onboarding users via Postident<a class="headerlink" href="#onboarding-users-via-postident" title="Permanent link">&para;</a></h3>
+<p>Onboarding users via Postident allows users with existing wallets to simply perform a KYC onboarding, migrate their existing mnemonic to ETOPay and start using the wallet services directly.</p>
+<p>Before being able to use the Postident integration in the SDK for all the end-users, the customers should register with Postident and get a business account for using their services. The SDK is merely a wrapper around the Postident Standard Connect and Response (SCR) interface for faster onboarding without the need of programming own integrations. After creating a business account, the Postident provides information as shown in the table below.</p>
+<p>There are typically two access credentials provided. One access to their <code>TestApp</code> on the ITU can be plugged in to the ETOPay test environment. The other access to their production can be plugged in to the ETOPay live environment.</p>
+<details class="info" open="open">
+<summary>Info</summary>
+<p>Postident also publishes their own SDK for both Android and iOS platforms. These SDK's work in conjunction with the ETOPay SDK. The SDK's from Postident provide the UI/UX for the KYC Onboarding, whilst the ETOPay SDK handles the business logic of generating case Ids, tracking them and securely encrypting. Simply feeding the case Ids generated by the ETOPay SDK to the Postident SDK provides a complete all rounded KYC Integration for end-users with a simplified UI/UX</p>
+</details>
+<p>For any additional help regarding onboarding with Postident as a business customer or questions for integration with Postident, please free to always reach out to our <a href="mailto:contact@etospheres.com">team</a></p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>The JSON Web Encryption(JWE) is always enabled on all endpoints at ETOPay. Hence, after on-boarding with Postident, creating cases intially might fail, if you have not reached out to Postident and informed them to also enable the encryption on their end. This included also enabling encryption for ITU (Test environment of ETOPay). This is default behavior and for security reasons, the JWE will never be disabled, even on ETOPay test environment.</p>
+</div>
+<p>The following table shows the information that is required by the custoemr. By plugging it in the ETOPay application dashboard, it permits ETOPay to connect to the Postident services and enable the KYC onboarding for all SDK clients.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>ClientId</td>
+<td>This information is used in the ETOPay application for connecting to the Postident SCR. This basically represents the username for login using basic auth for all Postident SCR endpoints.</td>
+</tr>
+<tr>
+<td>Login password</td>
+<td>This information authenticates the above client against all the SCR endpoint and is passed in the header along with the username as basic authentication</td>
+</tr>
+<tr>
+<td>Data password/Encryption password</td>
+<td>This password is used for generating the HMAC of the public key, which is generated and used by the system for JWE payloads.</td>
+</tr>
+</tbody>
+</table>
+<p>More information on Postident can be found in their <a href="https://www.deutschepost.de/de/p/postident/downloads.html">handbook</a></p>
+<h3 id="onboarding-users-via-etospheres-exchange">Onboarding users via ETOSPHERES Exchange<a class="headerlink" href="#onboarding-users-via-etospheres-exchange" title="Permanent link">&para;</a></h3>
+<p>Similar to Postident, in order to use the ETOSPHERES Exchange as a process for KYC on-boarding of users, customers are required to register their business account directly with the ETOSPHERES Exchange. Once registered, the customers are able to access credentials listed below in the table, one each for a test and for a live environment.</p>
+<table>
+<thead>
+<tr>
+<th>Parameter</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Organisation Id</td>
+<td>This information identifies the organisation account at the Exchange.</td>
+</tr>
+<tr>
+<td>API Key</td>
+<td>This key is used as part of the JWT payload. This key is unique for each organisation and environment</td>
+</tr>
+<tr>
+<td>API Secret</td>
+<td>This secret is used for generating the HMAC-based signature of the JWT Payload. This secret is also unique to each organisation and environment</td>
+</tr>
+</tbody>
+</table>
+<p>For more information on how ETOPay authenticates against the API of the Exchange, please see <a href="https://api-service-dev.viviswap.com/docs/#section/Authentication">here</a></p>
+<p>Please reach out to us directly for onboarding as a business on the ETOSPHERES Exchange <a href="mailto:contact@etospheres.com">here</a></p>
+<p>The onboarding of users and their related KYC process is described directly in our <a href="https://api-service-dev.viviswap.com/docs/#section/Know-your-customer-(KYC)">documentation</a> hosted at the exchange. The ETOPay SDK completely integrates the organisations API scope. In addition, the existed users on the exchange are also immediately federated to the organisations, once they approve to share their KYC data with the customer attached organisation at the exchange. This feature is however, not yet available directly in ETOPay and the approval for sharing data is only possible right now via an E-Mail from the user.</p>
+<h4 id="order-of-verification">Order of verification<a class="headerlink" href="#order-of-verification" title="Permanent link">&para;</a></h4>
+<p>The order of verification in the SDK strictly follows the order of verification as recommended by the Exchange API.</p>
+<p>general – Provide general information such as country of origin or current country of residence.
+personal – Provide further information about yourself and your current occupation.
+residence – State your place of residence and confirm it.
+identity – Verify your identity with the help of legal documents.
+amla – Answer a few questions about your income and assets.
+documents – Upload other missing documents.</p>
+<h4 id="risk-levels">Risk levels<a class="headerlink" href="#risk-levels" title="Permanent link">&para;</a></h4>
+<p>In order to query only the most relevant data in accordance with our customers' requirements and to comply with regulatory conditions, we maintain a risk level for each customer. This is a unsigned integer and can assume values from 1 to 99. The higher this value, the more risky the business relationship is assessed to be and the more limited we provide our functionalities. This mechanism helps us to comply with regulatory requirements.</p>
+<p>For values greater than or equal to 70, by default, the customer does not have permission to transact business through our services. At a lower value, the customer has an increasingly higher volume available per month with descending risk level.</p>
+<table>
+<thead>
+<tr>
+<th>Risk level</th>
+<th>Trading enabled</th>
+<th>KYC steps required</th>
+<th>Daily limit</th>
+<th>Monthly limit</th>
+<th>Comments</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>90</td>
+<td>NO</td>
+<td>n/a</td>
+<td>0 EUR</td>
+<td>0 EUR</td>
+<td></td>
+</tr>
+<tr>
+<td>80</td>
+<td>NO</td>
+<td>n/a</td>
+<td>0 EUR</td>
+<td>0 EUR</td>
+<td></td>
+</tr>
+<tr>
+<td>70</td>
+<td>NO</td>
+<td>n/a</td>
+<td>0 EUR</td>
+<td>0 EUR</td>
+<td>default risk level of a new registered user</td>
+</tr>
+<tr>
+<td>60</td>
+<td>YES</td>
+<td>general &amp; personal</td>
+<td>699 EUR</td>
+<td>20.000 EUR</td>
+<td></td>
+</tr>
+<tr>
+<td>55</td>
+<td>YES</td>
+<td>general &amp; personal</td>
+<td>699 EUR</td>
+<td>20.000 EUR</td>
+<td>in addition this user has added at least one verified bank account on it's name</td>
+</tr>
+<tr>
+<td>50</td>
+<td>YES</td>
+<td>general, personal, identity, residence, amla &amp; documents</td>
+<td>699 EUR</td>
+<td>20.000 EUR</td>
+<td>there’s a criteria with increased risk for this user</td>
+</tr>
+<tr>
+<td>40</td>
+<td>YES</td>
+<td>general, personal, identity, residence, amla &amp; documents</td>
+<td>14.999 EUR</td>
+<td>250.000 EUR</td>
+<td>no specific risk criteria</td>
+</tr>
+<tr>
+<td>30</td>
+<td>YES</td>
+<td>general, personal, identity, residence, amla &amp; documents</td>
+<td>250.000 EUR</td>
+<td>250.000 EUR</td>
+<td>full verification plus source of funds document</td>
+</tr>
+<tr>
+<td>20</td>
+<td>YES</td>
+<td>general, personal, identity, residence, amla &amp; documents</td>
+<td>individual</td>
+<td>individual</td>
+<td></td>
+</tr>
+<tr>
+<td>10</td>
+<td>YES</td>
+<td>general, personal, identity, residence, amla &amp; documents</td>
+<td>individual</td>
+<td>individual</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Users can further lower their risk level by providing more information about themselves. For example, to set the risk level to 60 the exchange needs information about the country of origin and the person (general and personal kyc step). To achieve a risk level of 40, all KYC steps (general, personal, identity, residence, amla &amp; documents) must be completed. To achieve an even lower risk level, the exchange requires further individual information from the user. To do this, the user can directly contact <a href="mailto:support@etospheres.com">support</a>.</p>
 
 
 
@@ -1063,7 +1387,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 24, 2025 07:59:35">March 24, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 26, 2025 12:40:37">March 26, 2025</span>
   </span>
 
     
