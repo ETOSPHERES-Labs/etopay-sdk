@@ -10,7 +10,7 @@ The backend to the ETOPay SDK is accessible through our [dashboard](https://etop
 ## Login using GitHub
 
 Open the [dashboard](https://etopayapp.etospheres.com) and press the button to login through your [GitHub](https://github.com) account.
-By logging in an using our platform you agree to the [Terms of Service](https://etopayapp.etospheres.com/terms_of_service) and [Privacy Policy](https://etopayapp.etospheres.com/privacy_policy).
+By logging in and using our platform you agree to the [Terms of Service](https://etopayapp.etospheres.com/terms_of_service) and [Privacy Policy](https://etopayapp.etospheres.com/privacy_policy).
 When authorizing the GitHub application, you also agree to that we can access the following information about your account:
 
 - Your primary email address (even if it is marked as _private_). We use this information to communicate important updates and required actions about your projects.
@@ -23,17 +23,17 @@ When authorizing the GitHub application, you also agree to that we can access th
 After logging in for the first time, you'll be greated with a page that allows you to create a new project by signing up for your preferred plan.
 
 ???+ info
-    The payment is entirely handled through [Stripe](https://stripe.com). We do not store or have access you your payment details at any time.
+    The payment is entirely handled through [Stripe](https://stripe.com). We do not store or have access to your payment details at any time.
     After paying and creating a project you can manage your subscription at any time through the _Manage Subscription_ navigation link.
 
-When signing up for a new plan a new project is created in your list of projects. You can create a new project, with your preferred plan, using the _Create New Project_ button.
+When signing up for a new plan, a new project is created add added to your list of projects. You can create a new project, with your preferred plan, using the _Create New Project_ button.
 
 Each project includes two instances of the ETOPay services:
 
 1. A `test` instance used for testing during integration and development.
 2. A `live` instance used for the actual production usage.
 
-After creating a project, follow the _Setup Guide_ shown on the _Project Details_ page to perform the required one-time setup of the Keycloak administrator accounts that you will use to manage your end-users.
+After creating a project, follow the _Setup Guide_ shown on the _Project Details_ page to perform the required one-time setup of the Keycloak administrator account that you will use to manage your end-users.
 
 ### Managing a Project
 
@@ -60,7 +60,7 @@ See also [Configuration](../SDK%20Configuration/Configuration.md) for details on
 ## Configuring Secrets
 
 To use any of the supported [KYC providers](../SDK%20Modules/KYC%20Onboarding.md) for enabling Know Your Customer (KYC) on your instance, visit the _Secrets_ tab under _Project Settings_.
-On this page, you can enter your access credentials for respective provider. Note that you need to do this for the `live` and `test` instace separately.
+On this page, you can enter your access credentials for the respective provider. Note that you need to do this for the `live` and `test` instance separately.
 If you need to rotate the credentials you can update them at any time, but you need to provide all values every time you save.
 
 ???+ info
