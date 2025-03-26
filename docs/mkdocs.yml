@@ -11,10 +11,10 @@ plugins:
       enable_creation_date: true
   - search
   - typedoc:
-      source: "../sdk/bindings/wasm/pkg/etopay_sdk_wasm.d.ts"
+      source: "../bindings/wasm/pkg/etopay_sdk_wasm.d.ts"
       output_dir: "jstsdocs"
-      tsconfig: "../sdk/bindings/wasm/tsconfig.json"
-      options: "../sdk/bindings/wasm/typedoc.json"
+      tsconfig: "../bindings/wasm/tsconfig.json"
+      options: "../bindings/wasm/typedoc.json"
       name: "ETOPay Docs"
       title_link: "/SDK%20Reference/SDK%20API%20Reference/"
 
@@ -35,7 +35,7 @@ markdown_extensions:
       pygments_lang_class: true
   - pymdownx.inlinehilite
   - pymdownx.snippets:
-      base_path: "../sdk"
+      base_path: "../"
   - pymdownx.superfences:
       custom_fences:
         - name: mermaid
