@@ -179,7 +179,13 @@ jobs:
       - name: Build wasm sdk for nodejs
         run: |
           cd sdk/bindings/wasm
-          wasm-pack build --release --scope etopay --target nodejs --out-dir out/web/pkg
+          wasm-pack build --release --scope etopay --target nodejs --out-dir out/node/pkg
+          wasm-pack pack out/node
+
+      - name: Build wasm sdk for web target and build web app
+        run: |
+          cd sdk/bindings/wasm
+          wasm-pack build --release --scope etopay --target web --out-dir out/web/pkg
           wasm-pack pack out/web
           cd examples/webapp
           echo -e "RUST_LOG=info\nTRACING_ENV=dev" > ../.env
