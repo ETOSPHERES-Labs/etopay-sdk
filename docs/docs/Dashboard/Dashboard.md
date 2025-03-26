@@ -60,7 +60,9 @@ See also [Configuration](../SDK%20Configuration/Configuration.md) for details on
 ## Configuring Secrets
 
 To use any of the supported [KYC providers](../SDK%20Modules/KYC%20Onboarding.md) for enabling Know Your Customer (KYC) on your instance, visit the _Secrets_ tab under _Project Settings_.
-On this page, you can enter your access credentials for respective service. Note that you need to do this for the `live` and `test` instace separately.
+On this page, you can enter your access credentials for respective provider. Note that you need to do this for the `live` and `test` instace separately.
+If you need to rotate the credentials you can update them at any time, but you need to provide all values every time you save.
 
 ???+ info
     The secret values you enter are write-only. Thus there is no way to retrieve the secret values once they are saved.
+    Hence the text inputs will stay empty when the page is refreshed even when values are stored.
