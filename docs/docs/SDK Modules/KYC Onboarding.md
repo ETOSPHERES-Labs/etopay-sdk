@@ -22,7 +22,7 @@ In the Web3 industry, KYC serves several key purposes:
 
 Currently, the ETOPay SDK offers two alternatives for onboarding users through a KYC process. These two processes are indepedent of each other, however the ETOPay SDK consults the backend to check which process the user has started and also continues from the state where the user previously left. Hence, in case if the user loses their devices, or re-initiates the onboarding through another client of the ETOPay SDK, the user is guided onward from where they left of, instead of starting from the beginning.
 
-The two KYC processes that are offered by the SDK are namely:
+The two KYC processes that are offered by the SDK are:
 
 1. Using Postident as the KYC Provider
 2. Using ETOSPHERES Exchange (previously known as viviswap) as the KYC Provider.
