@@ -89,15 +89,15 @@ impl ETOPaySdk {
     ///
     /// # Arguments
     ///
-    /// * `network_id` - The input string representing the network id.
+    /// * `network_key` - The input string representing the network key.
     ///
     /// # Returns
     ///
     /// * Ok - if the network is set successfully.
     /// * Err - if something went wrong.`
-    pub async fn set_network(&self, network_id: String) -> Result<(), String> {
+    pub async fn set_network(&self, network_key: String) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
-        sdk.set_network(network_id).await.map_err(|e| format!("{e:#?}"))
+        sdk.set_network(network_key).await.map_err(|e| format!("{e:#?}"))
     }
 
     /// Destructor for the SDK handle
@@ -1236,15 +1236,15 @@ impl ETOPaySdk {
     ///
     /// # Arguments
     ///
-    /// * `network_id` - The preferred network, or `None` if it should be unset.
+    /// * `network_key` - The preferred network, or `None` if it should be unset.
     ///
     /// # Returns
     ///
     /// * Ok - if setting the preferred network was successful.
     /// * Err - if there was an error contacting the backend.
-    pub async fn set_preferred_network(&self, network_id: Option<String>) -> Result<(), String> {
+    pub async fn set_preferred_network(&self, network_key: Option<String>) -> Result<(), String> {
         let mut sdk = self.inner.write().await;
-        sdk.set_preferred_network(network_id)
+        sdk.set_preferred_network(network_key)
             .await
             .map_err(|err| format!("{:#?}", err))
     }
@@ -1498,7 +1498,7 @@ pub struct WalletTxInfo {
     pub receiver: String,
     pub incoming: bool,
     pub amount: f64,
-    pub network: String,
+    pub network_key: String,
     pub status: String,
     pub explorer_url: String,
 }
@@ -1528,8 +1528,8 @@ impl WalletTxInfo {
         self.amount
     }
 
-    pub fn network(&self) -> String {
-        self.network.clone()
+    pub fn network_key(&self) -> String {
+        self.network_key.clone()
     }
 
     pub fn status(&self) -> String {
@@ -1542,16 +1542,16 @@ impl WalletTxInfo {
 }
 
 pub struct Network {
-    pub id: String,
-    pub name: String,
+    pub key: String,
+    pub display_name: String,
 }
 
 impl Network {
-    pub fn id(&self) -> String {
-        self.id.clone()
+    pub fn key(&self) -> String {
+        self.key.clone()
     }
 
-    pub fn name(&self) -> String {
-        self.name.clone()
+    pub fn display_name(&self) -> String {
+        self.display_name.clone()
     }
 }

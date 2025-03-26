@@ -570,8 +570,8 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     pub incoming: bool,
     /// Amount of transfer
     pub amount: f64,
-    /// Name of the network [convert network_id to string based on the value]
-    pub network: String,
+    /// Unique key representing a network
+    pub network_key: String,
     /// Status of the transfer
     pub status: String,
     /// Url of network
@@ -606,9 +606,9 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
                 "type": "number",
                 "description": "Amount of transfer"
             },
-            "network": {
+            "network_key": {
                 "type": "string",
-                "description": "Name of the network [convert network_id to string based on the value]"
+                "description": "Unique key representing a network"
             },
             "status": {
                 "type": "string",

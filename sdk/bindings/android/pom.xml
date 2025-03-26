@@ -3,10 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.etospheres.etopay</groupId>
     <artifactId>etopaysdk</artifactId>
-	<version>VERSION_TO_REPLACE</version>
+    <version>VERSION_TO_REPLACE</version>
     <packaging>jar</packaging>
     <name>etopay-sdk-jni</name>
     <description>The SDK java native bindings for use in java based applications and android</description>
+    <url>https://github.com/ETOSPHERES-Labs/etopay-sdk</url>
     <licenses>
         <license>
             <name>AGPL-3.0-only</name>
@@ -18,7 +19,7 @@
         <developer>
             <name>Team Lobster 🦞</name>
             <organization>ETOSPHERES Labs GmbH</organization>
-            <organizationUrl>https://www.etogruppe.com/</organizationUrl>
+            <organizationUrl>https://etospheres.com/</organizationUrl>
         </developer>
     </developers>
     <scm>
@@ -57,7 +58,7 @@
                                     <formats>
                                         <format>jar</format>
                                     </formats>
-									<includeBaseDirectory>false</includeBaseDirectory>
+                                    <includeBaseDirectory>false</includeBaseDirectory>
                                     <fileSets>
                                         <fileSet>
                                             <directory>jniLibs/</directory>
@@ -68,7 +69,7 @@
                             </inlineDescriptors>
                         </configuration>
                     </execution>
-					<execution>
+                    <execution>
                         <id>linux-x64</id>
                         <phase>package</phase>
                         <goals>
@@ -81,11 +82,11 @@
                                     <formats>
                                         <format>jar</format>
                                     </formats>
-									<includeBaseDirectory>false</includeBaseDirectory>
+                                    <includeBaseDirectory>false</includeBaseDirectory>
                                     <files>
                                         <file>
-											<source>../../../target/release/libetopaysdk.so</source>
-											<outputDirectory>linux/x64/</outputDirectory>
+                                            <source>../../../target/release/libetopaysdk.so</source>
+                                            <outputDirectory>linux/x64/</outputDirectory>
                                         </file>
                                     </files>
                                 </inlineDescriptor>
@@ -95,6 +96,26 @@
 
                 </executions>
             </plugin>
+            <!-- This plugin bundles all the source code into a jar file -->
+            <plugin>
+              <artifactId>maven-source-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>attach-sources</id>
+                  <goals><goal>jar-no-fork</goal></goals>
+                </execution>
+              </executions>
+            </plugin>
+            <!-- This plugin generates Javadoc and bundles it into a jar file -->
+            <plugin>
+              <artifactId>maven-javadoc-plugin</artifactId>
+              <executions>
+                <execution>
+                  <id>attach-javadocs</id>
+                  <goals><goal>jar</goal></goals>
+                </execution>
+              </executions>
+            </plugin>
             <!-- This plugin compiles all java sources in the src/main/java directory -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -102,18 +123,22 @@
                 <version>3.14.0</version>
             </plugin>
             <!-- This plugin signs all artifacts with gpg -->
-            <!-- <plugin> -->
-            <!--     <groupId>org.apache.maven.plugins</groupId> -->
-            <!--     <artifactId>maven-gpg-plugin</artifactId> -->
-            <!--     <version>3.2.7</version> -->
-            <!--     <executions> -->
-            <!--         <execution> -->
-            <!--             <goals> -->
-            <!--                 <goal>sign</goal> -->
-            <!--             </goals> -->
-            <!--         </execution> -->
-            <!--     </executions> -->
-            <!-- </plugin> -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-gpg-plugin</artifactId>
+                <version>3.2.7</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>sign</goal>
+                        </goals>
+                        <configuration>
+                            <bestPractices>true</bestPractices>
+                            <signer>bc</signer>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <!-- This plugin uploads to the (new) maven central repository -->
             <plugin>
                 <groupId>org.sonatype.central</groupId>
