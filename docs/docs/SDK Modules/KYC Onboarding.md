@@ -44,11 +44,11 @@ The onboarding steps in the SDK follow a very simple flow:
 
 ### Onboarding users via Postident
 
-For onboarding users on KYC via Postident allows users with existing wallets to simply perform a KYC onboarding, migrate the mnemonic to ETOPay and start using the wallet services directly.
+Onboarding users via Postident allows users with existing wallets to simply perform a KYC onboarding, migrate their existing mnemonic to ETOPay and start using the wallet services directly.
 
 Before being able to use the Postident integration in the SDK for all the end-users, the customers should register with Postident and get a business account for using their services. The SDK is merely a wrapper around the Postident Standard Connect and Response (SCR) interface for faster onboarding without the need of programming own integrations. After creating a business account, the Postident provides information as shown in the table below.
 
-There are typically two access credentials provided. One access to their `TestApp` on the ITU can be plugged in to the ETOPay test environment. The other access to their production can be plugged in to the ETOPay production environment.
+There are typically two access credentials provided. One access to their `TestApp` on the ITU can be plugged in to the ETOPay test environment. The other access to their production can be plugged in to the ETOPay live environment.
 
 ???+ info
 
@@ -72,7 +72,7 @@ More information on Postident can be found in their [handbook](https://www.deuts
 
 ### Onboarding users via ETOSPHERES Exchange
 
-Similar to Postident, in order to use the ETOSPHERES Exchange as a process for KYC on-boarding of users, customers are required to register their business account directly with the ETOSPHERES Exchange. Once registered, the customers are able to access credentials listed below in the table, one each for a testing and for a production environment.
+Similar to Postident, in order to use the ETOSPHERES Exchange as a process for KYC on-boarding of users, customers are required to register their business account directly with the ETOSPHERES Exchange. Once registered, the customers are able to access credentials listed below in the table, one each for a test and for a live environment.
 
 | Parameter | Description|
 |----|----|
