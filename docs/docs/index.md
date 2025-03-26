@@ -20,7 +20,15 @@ The documentation is divided into following sections. Simply choose one and get 
 
     Know the features before using ETOPay in your applications for a better product-market fit.
 
-    [:octicons-arrow-right-24: Architecture](./Choosing%20ETOPay/Architecture.md)
+    [:octicons-arrow-right-24: Features](./Choosing%20ETOPay/Features.md)
+
+- [:material-view-dashboard:{ .lg .middle } __Dashboard__](./Dashboard/Dashboard.md){ .md-button}
+
+    ---
+
+    Learn how to use the dashboard to manage your projects.
+
+    [:octicons-arrow-right-24: Dashboard](./Dashboard/Dashboard.md)
 
 - [:material-download-box:{ .lg .middle } __Installing the SDK__](./Installing%20the%20SDK/Installation.md){ .md-button}
 
