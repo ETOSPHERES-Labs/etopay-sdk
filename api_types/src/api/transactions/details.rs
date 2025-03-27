@@ -1,7 +1,7 @@
-use crate::api::networks::ApiNetwork;
+use crate::api::{decimal::Decimal, networks::ApiNetwork};
 
 use super::ApiTxStatus;
-use rust_decimal::Decimal;
+
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
