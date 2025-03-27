@@ -583,7 +583,7 @@ pub async fn set_viviswap_contract(
     info!("Set viviswap contract ");
 
     let request = ContractRequestBody {
-        amount: Option::Some(amount.inner()),
+        amount: Option::Some(amount.into()),
         incoming_payment_method_id,
         incoming_payment_detail_id,
         outgoing_payment_method_id,
@@ -1194,7 +1194,7 @@ mod tests {
         let (mut srv, config, _cleanup) = set_config().await;
 
         let mock_request = ContractRequestBody {
-            amount: Some(dec!(15.0)),
+            amount: Some(dec!(15.0).into()),
             incoming_payment_detail_id: Some(PAYMENT_DETAIL_ID.into()),
             incoming_payment_method_id: PAYMENT_METHOD_ID.into(),
             outgoing_payment_detail_id: PAYMENT_DETAIL_ID.into(),

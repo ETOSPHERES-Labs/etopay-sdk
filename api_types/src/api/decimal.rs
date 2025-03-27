@@ -1,5 +1,5 @@
-/// Represents a decimal amount of either FIAT or crypto currencies, always in the main unit (eg.
-/// EURO, USD, ETH, IOTA).
+/// Represents a decimal amount of either FIAT or crypto currencies, always in the main unit for
+/// respective currency/network (eg. EURO, USD, ETH, IOTA).
 #[derive(Debug, Copy, Clone, PartialEq)]
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 #[cfg_attr(feature = "utoipa", schema(value_type = String))]

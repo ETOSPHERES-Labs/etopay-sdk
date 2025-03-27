@@ -1,5 +1,6 @@
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use crate::api::decimal::Decimal;
 
 // data objects
 

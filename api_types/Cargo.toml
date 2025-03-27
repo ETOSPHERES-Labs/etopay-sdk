@@ -15,7 +15,6 @@ serde = { workspace = true }
 rust_decimal = { workspace = true }
 utoipa = { version = "5.3", default-features = false, features = [
     "macros",
-    "decimal",
 ], optional = true }
 
 [features]
