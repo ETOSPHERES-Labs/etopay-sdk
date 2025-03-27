@@ -831,9 +831,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#the-iota-wallet" class="md-nav__link">
+  <a href="#the-etopay-wallet" class="md-nav__link">
     <span class="md-ellipsis">
-      The IOTA wallet
+      The ETOPay wallet
     </span>
   </a>
   
@@ -918,15 +918,6 @@
   <a href="#password-and-pin-utilities" class="md-nav__link">
     <span class="md-ellipsis">
       Password and pin utilities
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#wallet-flows" class="md-nav__link">
-    <span class="md-ellipsis">
-      Wallet flows
     </span>
   </a>
   
@@ -1063,16 +1054,9 @@
 
 <h1 id="wallet-management">Wallet management<a class="headerlink" href="#wallet-management" title="Permanent link">&para;</a></h1>
 <p>The SDK provides users with the opportunity to host their own wallets on their personal end-devices in a safe and easy manner. Before discussing wallet management, some information on wallets and what they are is needed to understand how to manage non-custodial hot wallets.</p>
-<h2 id="the-iota-wallet">The IOTA wallet<a class="headerlink" href="#the-iota-wallet" title="Permanent link">&para;</a></h2>
-<p>The wallet used within the SDK is the official wallet developed by the IOTA Foundation and maintained in its own SDK found <a href="https://github.com/iotaledger/iota-sdk">here</a>. The wallet internally uses the stronghold secret management engine also developed by the IOTA Foundation found <a href="https://github.com/iotaledger/stronghold.rs">here</a>. The secret management engine not only stores sensitive data in files but also uses obfuscation and mechanisms against memory dumps to protect the secrets while they are being operated upon in the memory. Stronghold also provides functions for BIP-0032 derivation using the BIP-0044 derivation path mechanism described <a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki">here</a>. The word list used by the wallet is the word list described in BIP-0039 <a href="https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/english.txt">here</a>.</p>
-<p>The various coin types supported by BIP-0044 can be found in the list <a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md">here</a>. Both <code>IOTA</code> and <code>SMR</code> are supported and have the coin types <code>4218</code> and <code>4219</code> respectively.</p>
-<p>Currently, in its base implementation the IOTA SDK also needs an in-memory key-value store to manage some metadata related to the stronghold engine and other wallet settings. The IOTA SDK uses a rocksdb implementation in rust for this purpose. There are a few noteworthy problems with rocksdb:</p>
-<ul>
-<li>rocksdb is not light-weight for mobile end devices and the resulting binaries of the sdk take long to build and are bigger in storage requirements.</li>
-<li>rocksdb does not support all mobile platforms</li>
-<li>rocksdb is not maintained on the latest sdks of the android and iOS mobile platforms</li>
-</ul>
-<p>After investigation, it was found that the in-memory key-value store was used only for storing some metadata keys and not necessarily need high-performance query execution. Luckily, the IOTA SDK implemented the rocksdb connection as a <code>Storage</code> trait. Since, the SDK already used jammdb for its internal key-value store, a fork was created and the trait was implemented using <code>jammdb</code>. A pull request was created to the upstream, but the dev team at IOTA Foundation recommended to maintain the fork for now, as there would be some new breaking changes coming and the pull request can be created at a later point. The fork is updated regularly and maintained <a href="https://github.com/mighty840/iota-sdk">here</a>.</p>
+<h2 id="the-etopay-wallet">The ETOPay wallet<a class="headerlink" href="#the-etopay-wallet" title="Permanent link">&para;</a></h2>
+<p>The wallet internally uses the stronghold secret management engine developed by the IOTA Foundation found <a href="https://github.com/iotaledger/stronghold.rs">here</a>. The secret management engine not only stores sensitive data in files but also uses obfuscation and mechanisms against memory dumps to protect the secrets while they are being operated upon in the memory. Stronghold also provides functions for BIP-0032 derivation using the BIP-0044 derivation path mechanism described <a href="https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki">here</a>. The word list used by the wallet is the word list described in BIP-0039 <a href="https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/english.txt">here</a>.</p>
+<p>The various coin types supported by BIP-0044 can be found in the list <a href="https://github.com/satoshilabs/slips/blob/master/slip-0044.md">here</a>.</p>
 <h2 id="hot-wallets-the-swift-side-of-crypto">Hot Wallets: The Swift Side of Crypto<a class="headerlink" href="#hot-wallets-the-swift-side-of-crypto" title="Permanent link">&para;</a></h2>
 <p>Picture a hot wallet as the bustling city centre of your digital finances. Hot wallets are online, connected to the internet, and readily available for transactions. They provide users with quick access to their cryptocurrencies, making them ideal for active trading and daily transactions. Think of them as your go-to pocket wallet for everyday spending in the digital realm.</p>
 <p>However, convenience comes at a cost. The very connectivity that makes hot wallets user-friendly also renders them more vulnerable to cyber threats. Hacking attempts and online attacks pose a constant risk, making it crucial for users to exercise caution and implement additional security measures when relying on hot wallets.</p>
@@ -1756,57 +1740,6 @@
 </div>
 </div>
 </div>
-<h2 id="wallet-flows">Wallet flows<a class="headerlink" href="#wallet-flows" title="Permanent link">&para;</a></h2>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-20-1"><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a>                Mnemonic  Username  Password  Pin  backup password         Pin                            Pin        
-</span><span id="__span-20-2"><a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>                   | ^         |      |       |      |                     |                              |          
-</span><span id="__span-20-3"><a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a>                   | |         |      |       |      |                     |                              |          
-</span><span id="__span-20-4"><a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a>                   | |         |      |       |      |                     |                              |          
-</span><span id="__span-20-5"><a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>                   | |         |      |       |      |                     |                              |          
-</span><span id="__span-20-6"><a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>                   | |         |      |       |      |                     |                              |          
-</span><span id="__span-20-7"><a id="__codelineno-20-7" name="__codelineno-20-7" href="#__codelineno-20-7"></a>                   | |         |      |       |      |                     |                              |          
-</span><span id="__span-20-8"><a id="__codelineno-20-8" name="__codelineno-20-8" href="#__codelineno-20-8"></a>                   | |         |      |       |      |                     |                              |          
-</span><span id="__span-20-9"><a id="__codelineno-20-9" name="__codelineno-20-9" href="#__codelineno-20-9"></a>    Inputs         v |         v      v       v      v                     v                              v          
-</span><span id="__span-20-10"><a id="__codelineno-20-10" name="__codelineno-20-10" href="#__codelineno-20-10"></a>-------------------------------------------------------------------------------------------------------------------  
-</span><span id="__span-20-11"><a id="__codelineno-20-11" name="__codelineno-20-11" href="#__codelineno-20-11"></a>                                                                |                           |                        
-</span><span id="__span-20-12"><a id="__codelineno-20-12" name="__codelineno-20-12" href="#__codelineno-20-12"></a>                                           +-------------+      |                           |                        
-</span><span id="__span-20-13"><a id="__codelineno-20-13" name="__codelineno-20-13" href="#__codelineno-20-13"></a>                                           |             |      |                           |                        
-</span><span id="__span-20-14"><a id="__codelineno-20-14" name="__codelineno-20-14" href="#__codelineno-20-14"></a>                                           | Create      |      |      +-------------+      |                        
-</span><span id="__span-20-15"><a id="__codelineno-20-15" name="__codelineno-20-15" href="#__codelineno-20-15"></a>                                           | New         +---+  |      |             |      |        +--------------+
-</span><span id="__span-20-16"><a id="__codelineno-20-16" name="__codelineno-20-16" href="#__codelineno-20-16"></a>                                           | Wallet      |   |  |      |  Initialize |      |        |              |
-</span><span id="__span-20-17"><a id="__codelineno-20-17" name="__codelineno-20-17" href="#__codelineno-20-17"></a>                                           |             |   |  |      |  Wallet     +------+--------&gt;   Delete     |
-</span><span id="__span-20-18"><a id="__codelineno-20-18" name="__codelineno-20-18" href="#__codelineno-20-18"></a>                                           +-------------+   |  +------&gt;             |      |        |   wallet     |
-</span><span id="__span-20-19"><a id="__codelineno-20-19" name="__codelineno-20-19" href="#__codelineno-20-19"></a>                                                             |  |      |             |      |        |   (external) |
-</span><span id="__span-20-20"><a id="__codelineno-20-20" name="__codelineno-20-20" href="#__codelineno-20-20"></a>                                                             |  |      +------+------+      |        |              |
-</span><span id="__span-20-21"><a id="__codelineno-20-21" name="__codelineno-20-21" href="#__codelineno-20-21"></a>                         +----------+      +-------------+   |  |             |             |        +--------------+
-</span><span id="__span-20-22"><a id="__codelineno-20-22" name="__codelineno-20-22" href="#__codelineno-20-22"></a>                         |          |      |             |   |  |             |             |                        
-</span><span id="__span-20-23"><a id="__codelineno-20-23" name="__codelineno-20-23" href="#__codelineno-20-23"></a>                         | Mnemonic |      | Migrate     |   |  |             |             |                        
-</span><span id="__span-20-24"><a id="__codelineno-20-24" name="__codelineno-20-24" href="#__codelineno-20-24"></a>                 +-------&gt;          +------&gt; Existing    |   |  |             |             |                        
-</span><span id="__span-20-25"><a id="__codelineno-20-25" name="__codelineno-20-25" href="#__codelineno-20-25"></a>                 |       |          |      | Wallet      |   |  |      +------v------+      |                        
-</span><span id="__span-20-26"><a id="__codelineno-20-26" name="__codelineno-20-26" href="#__codelineno-20-26"></a>                 |       |          |      |             |   |  |      |             |      |                        
-</span><span id="__span-20-27"><a id="__codelineno-20-27" name="__codelineno-20-27" href="#__codelineno-20-27"></a>                 |       +----------+      +-------------+   |  |      |  User       |      |                        
-</span><span id="__span-20-28"><a id="__codelineno-20-28" name="__codelineno-20-28" href="#__codelineno-20-28"></a>                 |                                           |  |      |  Wallet     |      |                        
-</span><span id="__span-20-29"><a id="__codelineno-20-29" name="__codelineno-20-29" href="#__codelineno-20-29"></a>                 |                                           |  |      |  Functions  |      |                        
-</span><span id="__span-20-30"><a id="__codelineno-20-30" name="__codelineno-20-30" href="#__codelineno-20-30"></a>                 |           +------+      +-------------+   |  |      |             |      |                        
-</span><span id="__span-20-31"><a id="__codelineno-20-31" name="__codelineno-20-31" href="#__codelineno-20-31"></a>                 |           |      |      |             |   |  |      +-------------+      |                        
-</span><span id="__span-20-32"><a id="__codelineno-20-32" name="__codelineno-20-32" href="#__codelineno-20-32"></a>                 |           |Backup|      | Create      |   |  |                           |                        
-</span><span id="__span-20-33"><a id="__codelineno-20-33" name="__codelineno-20-33" href="#__codelineno-20-33"></a>                 |           | File +------&gt; Wallet      |   |  |                           |                        
-</span><span id="__span-20-34"><a id="__codelineno-20-34" name="__codelineno-20-34" href="#__codelineno-20-34"></a>                 |           |      |      | From        |   |  |                           |                        
-</span><span id="__span-20-35"><a id="__codelineno-20-35" name="__codelineno-20-35" href="#__codelineno-20-35"></a>                 |           |      |      | Backup      |   |  |                           |                        
-</span><span id="__span-20-36"><a id="__codelineno-20-36" name="__codelineno-20-36" href="#__codelineno-20-36"></a>                 |           +------+      +-------------+   |  |                           |                        
-</span><span id="__span-20-37"><a id="__codelineno-20-37" name="__codelineno-20-37" href="#__codelineno-20-37"></a>                 |                                           |  |                           |                        
-</span><span id="__span-20-38"><a id="__codelineno-20-38" name="__codelineno-20-38" href="#__codelineno-20-38"></a>                 |                                           |  |                           |                        
-</span><span id="__span-20-39"><a id="__codelineno-20-39" name="__codelineno-20-39" href="#__codelineno-20-39"></a>                 |    +-------------+      +-------------+   |  |                           |                        
-</span><span id="__span-20-40"><a id="__codelineno-20-40" name="__codelineno-20-40" href="#__codelineno-20-40"></a>                 |    |             |      |             |   |  |                           |                        
-</span><span id="__span-20-41"><a id="__codelineno-20-41" name="__codelineno-20-41" href="#__codelineno-20-41"></a>                 |    | Verify      |      |  Delete     |   |  |                           |                        
-</span><span id="__span-20-42"><a id="__codelineno-20-42" name="__codelineno-20-42" href="#__codelineno-20-42"></a>                 +----+ Mnemonic    &lt;------+  wallet     &lt;---+  |                           |                        
-</span><span id="__span-20-43"><a id="__codelineno-20-43" name="__codelineno-20-43" href="#__codelineno-20-43"></a>                      |             |      | (internal)  |      |                           |                        
-</span><span id="__span-20-44"><a id="__codelineno-20-44" name="__codelineno-20-44" href="#__codelineno-20-44"></a>                      |             |      |             |      |                           |                        
-</span><span id="__span-20-45"><a id="__codelineno-20-45" name="__codelineno-20-45" href="#__codelineno-20-45"></a>                      +-------------+      +-------------+      |                           |                        
-</span><span id="__span-20-46"><a id="__codelineno-20-46" name="__codelineno-20-46" href="#__codelineno-20-46"></a>                                                                |                           |                        
-</span><span id="__span-20-47"><a id="__codelineno-20-47" name="__codelineno-20-47" href="#__codelineno-20-47"></a>                                                                |                           |                        
-</span><span id="__span-20-48"><a id="__codelineno-20-48" name="__codelineno-20-48" href="#__codelineno-20-48"></a>                                             Once(setup)        |        Multiple times     |       Once (tear down) 
-</span><span id="__span-20-49"><a id="__codelineno-20-49" name="__codelineno-20-49" href="#__codelineno-20-49"></a>                                                                |                           |                        
-</span></code></pre></div>
 
 
 
@@ -1829,7 +1762,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 24, 2025 07:59:35">March 24, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 27, 2025 11:31:13">March 27, 2025</span>
   </span>
 
     
