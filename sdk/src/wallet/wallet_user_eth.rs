@@ -166,6 +166,8 @@ fn convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -> Result<Cryp
         .set_scale(decimals)
         .map_err(|e| WalletError::ConversionError(format!("could not set scale to decimals: {e:?}")))?;
 
+    result_decimal.normalize_assign(); // remove trailing zeros
+
     CryptoAmount::try_from(result_decimal).map_err(|e| {
         WalletError::ConversionError(format!(
             "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
