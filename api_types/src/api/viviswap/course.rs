@@ -1,7 +1,6 @@
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::api::generic::ApiCryptoCurrency;
+use crate::api::{decimal::Decimal, generic::ApiCryptoCurrency};
 
 // data objects
 

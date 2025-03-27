@@ -7,8 +7,9 @@ use iota_sdk::{
     types::block::{helper::network_name_to_id, output::Output, payload::transaction::TransactionEssence},
     wallet::account::types::Transaction,
 };
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use super::currencies::CryptoAmount;
 
 /// Transaction list
 #[derive(Debug, Serialize)]
@@ -129,7 +130,7 @@ pub struct PurchaseDetails {
     /// The sender address where the fees goes to.
     pub system_address: String,
     /// The amount to be paid.
-    pub amount: Decimal,
+    pub amount: CryptoAmount,
     /// The status of transaction
     pub status: ApiTxStatus,
     /// The network that the transaction is sent in

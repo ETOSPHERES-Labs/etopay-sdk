@@ -69,7 +69,7 @@ pub async fn create_new_transaction(
     let url = format!("{base_url}/transactions/create");
 
     let body = CreateTransactionRequest {
-        amount: amount.inner(),
+        amount: amount.inner().into(),
         network_key,
         receiver: receiver.into(),
         application_metadata: metadata,
@@ -306,7 +306,7 @@ mod tests {
         let (mut srv, config, _cleanup) = set_config().await;
 
         let mock_request = CreateTransactionRequest {
-            amount: AMOUNT.inner(),
+            amount: AMOUNT.inner().into(),
             network_key: IOTA_NETWORK_KEY.to_string(),
             receiver: RECEIVER.into(),
             application_metadata: example_tx_metadata(),

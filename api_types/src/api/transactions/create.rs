@@ -1,5 +1,6 @@
+use crate::api::decimal::Decimal;
+
 use super::ApiApplicationMetadata;
-use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
