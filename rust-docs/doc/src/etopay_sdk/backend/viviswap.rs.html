@@ -2278,7 +2278,7 @@
     <span class="macro">info!</span>(<span class="string">"Set viviswap contract "</span>);
 
     <span class="kw">let </span>request = ContractRequestBody {
-        amount: Option::Some(amount.inner()),
+        amount: Option::Some(amount.into()),
         incoming_payment_method_id,
         incoming_payment_detail_id,
         outgoing_payment_method_id,
@@ -2322,7 +2322,7 @@
         .execute_parse()
         .<span class="kw">await</span><span class="question-mark">?</span>;
 
-    <span class="prelude-val">Ok</span>(response.course.course)
+    <span class="prelude-val">Ok</span>(response.course.course.<span class="number">0</span>)
 }
 
 <span class="doccomment">/// Get viviswap payment methods.
@@ -2889,7 +2889,7 @@
         <span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
 
         <span class="kw">let </span>mock_request = ContractRequestBody {
-            amount: <span class="prelude-val">Some</span>(<span class="macro">dec!</span>(<span class="number">15.0</span>)),
+            amount: <span class="prelude-val">Some</span>(<span class="macro">dec!</span>(<span class="number">15.0</span>).into()),
             incoming_payment_detail_id: <span class="prelude-val">Some</span>(PAYMENT_DETAIL_ID.into()),
             incoming_payment_method_id: PAYMENT_METHOD_ID.into(),
             outgoing_payment_detail_id: PAYMENT_DETAIL_ID.into(),
@@ -2972,7 +2972,7 @@
         <span class="comment">// Assert
         </span><span class="kw">match </span>expected {
             <span class="prelude-val">Ok</span>(resp) =&gt; {
-                <span class="macro">assert_eq!</span>(response.unwrap(), resp.course.course);
+                <span class="macro">assert_eq!</span>(response.unwrap(), resp.course.course.<span class="number">0</span>);
             }
             <span class="prelude-val">Err</span>(<span class="kw-2">ref </span>expected_err) =&gt; {
                 <span class="macro">assert_eq!</span>(response.err().unwrap().to_string(), expected_err.to_string());

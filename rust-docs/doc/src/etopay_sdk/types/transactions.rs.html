@@ -146,7 +146,8 @@
 <a href="#145" id="145">145</a>
 <a href="#146" id="146">146</a>
 <a href="#147" id="147">147</a>
-<a href="#148" id="148">148</a></pre></div><pre class="rust"><code><span class="kw">use </span>api_types::api::{
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a></pre></div><pre class="rust"><code><span class="kw">use </span>api_types::api::{
     networks::ApiNetwork,
     transactions::{ApiApplicationMetadata, ApiTxStatus},
 };
@@ -155,8 +156,9 @@
     types::block::{helper::network_name_to_id, output::Output, payload::transaction::TransactionEssence},
     wallet::account::types::Transaction,
 };
-<span class="kw">use </span>rust_decimal::Decimal;
 <span class="kw">use </span>serde::{Deserialize, Serialize};
+
+<span class="kw">use </span><span class="kw">super</span>::currencies::CryptoAmount;
 
 <span class="doccomment">/// Transaction list
 </span><span class="attr">#[derive(Debug, Serialize)]
@@ -277,7 +279,7 @@
     <span class="doccomment">/// The sender address where the fees goes to.
     </span><span class="kw">pub </span>system_address: String,
     <span class="doccomment">/// The amount to be paid.
-    </span><span class="kw">pub </span>amount: Decimal,
+    </span><span class="kw">pub </span>amount: CryptoAmount,
     <span class="doccomment">/// The status of transaction
     </span><span class="kw">pub </span>status: ApiTxStatus,
     <span class="doccomment">/// The network that the transaction is sent in

@@ -984,7 +984,7 @@
 
         <span class="kw">let </span>details = PurchaseDetails {
             system_address: response.system_address,
-            amount: response.amount,
+            amount: response.amount.try_into()<span class="question-mark">?</span>,
             status: response.status,
             network: response.network,
         };
@@ -1249,12 +1249,12 @@
                         sender: val.incoming.username,
                         receiver: val.outgoing.username,
                         reference_id: val.index,
-                        amount: val.incoming.amount.try_into()<span class="question-mark">?</span>,
+                        amount: val.incoming.amount.<span class="number">0</span>.try_into()<span class="question-mark">?</span>,
                         currency: val.incoming.network.display_symbol,
                         application_metadata: val.application_metadata,
                         status: val.status,
                         transaction_hash: val.incoming.transaction_id,
-                        course: val.incoming.exchange_rate.try_into()<span class="question-mark">?</span>,
+                        course: val.incoming.exchange_rate.<span class="number">0</span>.try_into()<span class="question-mark">?</span>,
                     })
                 })
                 .collect::&lt;<span class="prelude-ty">Result</span>&lt;Vec&lt;<span class="kw">_</span>&gt;&gt;&gt;()<span class="question-mark">?</span>,
@@ -1299,7 +1299,7 @@
                 status: ApiTxStatus::Completed,
                 created_at: <span class="string">"2022-12-09T09:30:33.52Z"</span>.to_string(),
                 updated_at: <span class="string">"2022-12-09T09:30:33.52Z"</span>.to_string(),
-                fee_rate: <span class="macro">dec!</span>(<span class="number">0.2</span>),
+                fee_rate: <span class="macro">dec!</span>(<span class="number">0.2</span>).into(),
                 incoming: ApiTransferDetails {
                     transaction_id: <span class="prelude-val">Some</span>(
                         <span class="string">"0x215322f8afdba4e22463a9d8a2e25d96ab0cb9ae6d56ee5ab13065068dae46c0"</span>.to_string(),
@@ -1307,8 +1307,8 @@
                     block_id: <span class="prelude-val">Some</span>(<span class="string">"0x215322f8afdba4e22463a9d8a2e25d96ab0cb9ae6d56ee5ab13065068dae46c0"</span>.to_string()),
                     username: <span class="string">"satoshi"</span>.into(),
                     address: main_address.clone(),
-                    amount: <span class="macro">dec!</span>(<span class="number">920.89</span>),
-                    exchange_rate: <span class="macro">dec!</span>(<span class="number">0.06015</span>),
+                    amount: <span class="macro">dec!</span>(<span class="number">920.89</span>).into(),
+                    exchange_rate: <span class="macro">dec!</span>(<span class="number">0.06015</span>).into(),
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 },
                 outgoing: ApiTransferDetails {
@@ -1318,8 +1318,8 @@
                     block_id: <span class="prelude-val">Some</span>(<span class="string">"0x215322f8afdba4e22463a9d8a2e25d96ab0cb9ae6d56ee5ab13065068dae46c0"</span>.to_string()),
                     username: <span class="string">"hulk"</span>.into(),
                     address: aux_address.clone(),
-                    amount: <span class="macro">dec!</span>(<span class="number">920.89</span>),
-                    exchange_rate: <span class="macro">dec!</span>(<span class="number">0.06015</span>),
+                    amount: <span class="macro">dec!</span>(<span class="number">920.89</span>).into(),
+                    exchange_rate: <span class="macro">dec!</span>(<span class="number">0.06015</span>).into(),
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 },
                 application_metadata: <span class="prelude-val">Some</span>(example_tx_metadata()),
@@ -1432,7 +1432,7 @@
 
                 <span class="kw">let </span>mock_tx_response = GetTransactionDetailsResponse {
                     system_address: <span class="string">""</span>.to_string(),
-                    amount: <span class="macro">dec!</span>(<span class="number">5.0</span>),
+                    amount: <span class="macro">dec!</span>(<span class="number">5.0</span>).into(),
                     status: ApiTxStatus::Valid,
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 };
@@ -1472,7 +1472,7 @@
 
                 <span class="kw">let </span>mock_tx_response = GetTransactionDetailsResponse {
                     system_address: <span class="string">""</span>.to_string(),
-                    amount: <span class="macro">dec!</span>(<span class="number">5.0</span>),
+                    amount: <span class="macro">dec!</span>(<span class="number">5.0</span>).into(),
                     status: ApiTxStatus::Invalid(<span class="macro">vec!</span>[<span class="string">"ReceiverNotVerified"</span>.to_string()]),
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 };
@@ -1559,7 +1559,7 @@
                 <span class="macro">assert_eq!</span>(
                     GetTransactionDetailsResponse {
                         system_address: response.as_ref().unwrap().system_address.clone(),
-                        amount: response.as_ref().unwrap().amount,
+                        amount: response.as_ref().unwrap().amount.into(),
                         status: response.unwrap().status,
                         network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                     },

@@ -155,7 +155,7 @@
     <span class="kw">use </span>rust_decimal::Decimal;
 
     <span class="attr">#[rstest]
-    #[case::success(<span class="prelude-val">Ok</span>(example_exchange_rate_response().course.course))]
+    #[case::success(<span class="prelude-val">Ok</span>(example_exchange_rate_response().course.course.<span class="number">0</span>))]
     #[case::repo_init_error(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized))]
     #[case::unauthorized(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken))]
     #[case::missing_config(<span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingConfig))]

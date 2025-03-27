@@ -202,7 +202,20 @@
 <a href="#201" id="201">201</a>
 <a href="#202" id="202">202</a>
 <a href="#203" id="203">203</a>
-<a href="#204" id="204">204</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::{<span class="prelude-ty">Result</span>, TypeError};
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
+<a href="#216" id="216">216</a>
+<a href="#217" id="217">217</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::{<span class="prelude-ty">Result</span>, TypeError};
 <span class="kw">use </span>api_types::api::{generic::ApiCryptoCurrency, viviswap::detail::SwapPaymentDetailKey};
 <span class="kw">use </span>iota_sdk::client::constants::{ETHER_COIN_TYPE, IOTA_COIN_TYPE};
 <span class="kw">use </span>serde::Serialize;
@@ -321,6 +334,19 @@
             <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::NegativeAmount);
         }
         <span class="prelude-val">Ok</span>(<span class="self">Self</span>(value))
+    }
+}
+<span class="kw">impl </span>TryFrom&lt;api_types::api::decimal::Decimal&gt; <span class="kw">for </span>CryptoAmount {
+    <span class="kw">type </span>Error = <span class="kw">crate</span>::Error;
+
+    <span class="kw">fn </span>try_from(value: api_types::api::decimal::Decimal) -&gt; std::result::Result&lt;<span class="self">Self</span>, <span class="self">Self</span>::Error&gt; {
+        <span class="self">Self</span>::try_from(value.<span class="number">0</span>)
+    }
+}
+
+<span class="kw">impl </span>From&lt;CryptoAmount&gt; <span class="kw">for </span>api_types::api::decimal::Decimal {
+    <span class="kw">fn </span>from(val: CryptoAmount) -&gt; <span class="self">Self </span>{
+        <span class="self">Self</span>(val.<span class="number">0</span>)
     }
 }
 
