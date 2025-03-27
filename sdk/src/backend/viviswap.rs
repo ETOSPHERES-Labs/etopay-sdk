@@ -627,7 +627,7 @@ pub async fn get_viviswap_exchange_rate(
         .execute_parse()
         .await?;
 
-    Ok(response.course.course)
+    Ok(response.course.course.0)
 }
 
 /// Get viviswap payment methods.
@@ -1277,7 +1277,7 @@ mod tests {
         // Assert
         match expected {
             Ok(resp) => {
-                assert_eq!(response.unwrap(), resp.course.course);
+                assert_eq!(response.unwrap(), resp.course.course.0);
             }
             Err(ref expected_err) => {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());

@@ -101,7 +101,7 @@ impl Sdk {
 
         let details = PurchaseDetails {
             system_address: response.system_address,
-            amount: response.amount,
+            amount: response.amount.try_into()?,
             status: response.status,
             network: response.network,
         };
@@ -366,12 +366,12 @@ impl Sdk {
                         sender: val.incoming.username,
                         receiver: val.outgoing.username,
                         reference_id: val.index,
-                        amount: val.incoming.amount.try_into()?,
+                        amount: val.incoming.amount.0.try_into()?,
                         currency: val.incoming.network.display_symbol,
                         application_metadata: val.application_metadata,
                         status: val.status,
                         transaction_hash: val.incoming.transaction_id,
-                        course: val.incoming.exchange_rate.try_into()?,
+                        course: val.incoming.exchange_rate.0.try_into()?,
                     })
                 })
                 .collect::<Result<Vec<_>>>()?,
@@ -416,7 +416,7 @@ mod tests {
                 status: ApiTxStatus::Completed,
                 created_at: "2022-12-09T09:30:33.52Z".to_string(),
                 updated_at: "2022-12-09T09:30:33.52Z".to_string(),
-                fee_rate: dec!(0.2),
+                fee_rate: dec!(0.2).into(),
                 incoming: ApiTransferDetails {
                     transaction_id: Some(
                         "0x215322f8afdba4e22463a9d8a2e25d96ab0cb9ae6d56ee5ab13065068dae46c0".to_string(),
@@ -424,8 +424,8 @@ mod tests {
                     block_id: Some("0x215322f8afdba4e22463a9d8a2e25d96ab0cb9ae6d56ee5ab13065068dae46c0".to_string()),
                     username: "satoshi".into(),
                     address: main_address.clone(),
-                    amount: dec!(920.89),
-                    exchange_rate: dec!(0.06015),
+                    amount: dec!(920.89).into(),
+                    exchange_rate: dec!(0.06015).into(),
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 },
                 outgoing: ApiTransferDetails {
@@ -435,8 +435,8 @@ mod tests {
                     block_id: Some("0x215322f8afdba4e22463a9d8a2e25d96ab0cb9ae6d56ee5ab13065068dae46c0".to_string()),
                     username: "hulk".into(),
                     address: aux_address.clone(),
-                    amount: dec!(920.89),
-                    exchange_rate: dec!(0.06015),
+                    amount: dec!(920.89).into(),
+                    exchange_rate: dec!(0.06015).into(),
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 },
                 application_metadata: Some(example_tx_metadata()),
@@ -549,7 +549,7 @@ mod tests {
 
                 let mock_tx_response = GetTransactionDetailsResponse {
                     system_address: "".to_string(),
-                    amount: dec!(5.0),
+                    amount: dec!(5.0).into(),
                     status: ApiTxStatus::Valid,
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 };
@@ -589,7 +589,7 @@ mod tests {
 
                 let mock_tx_response = GetTransactionDetailsResponse {
                     system_address: "".to_string(),
-                    amount: dec!(5.0),
+                    amount: dec!(5.0).into(),
                     status: ApiTxStatus::Invalid(vec!["ReceiverNotVerified".to_string()]),
                     network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                 };
@@ -676,7 +676,7 @@ mod tests {
                 assert_eq!(
                     GetTransactionDetailsResponse {
                         system_address: response.as_ref().unwrap().system_address.clone(),
-                        amount: response.as_ref().unwrap().amount,
+                        amount: response.as_ref().unwrap().amount.into(),
                         status: response.unwrap().status,
                         network: example_api_network(IOTA_NETWORK_KEY.to_string()),
                     },
