@@ -59,3 +59,25 @@ mod serde {
         }
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::Decimal;
+    use rust_decimal_macros::dec;
+
+    #[rstest::rstest]
+    #[case("\"0.000000000000000001\"", Ok(Decimal::from(dec!(0.000000000000000001))))]
+    #[case("\"1.000000000000000001\"", Ok(Decimal::from(dec!(1.000000000000000001))))]
+    #[case("\"10000000000.000000000000000001\"", Ok(Decimal::from(dec!(10000000000.000000000000000001))))]
+    #[case("\"100000000000.000000000000000001\"", Err(serde_json::error::Category::Data))]
+    #[case("\"10000000000000000000000000001\"", Ok(Decimal::from(dec!(10000000000000000000000000001))))]
+    fn test_deserialization(#[case] input: &str, #[case] expected: Result<Decimal, serde_json::error::Category>) {
+        let result = serde_json::from_str::<Decimal>(input);
+
+        match (result, expected) {
+            (Ok(d), Ok(d2)) => assert_eq!(d, d2),
+            (Err(e), Err(e2)) => assert_eq!(e.classify(), e2),
+            (other, other2) => panic!("Expected: {:?} but got {:?}", other2, other),
+        }
+    }
+}

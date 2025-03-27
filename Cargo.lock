@@ -734,8 +734,11 @@ name = "api_types"
 version = "0.14.0"
 dependencies = [
  "base64 0.22.1",
+ "rstest",
  "rust_decimal",
+ "rust_decimal_macros",
  "serde",
+ "serde_json",
  "utoipa",
 ]
 
