@@ -48,7 +48,7 @@ mod tests {
     use rust_decimal::Decimal;
 
     #[rstest]
-    #[case::success(Ok(example_exchange_rate_response().course.course))]
+    #[case::success(Ok(example_exchange_rate_response().course.course.0))]
     #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
     #[case::unauthorized(Err(crate::Error::MissingAccessToken))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]

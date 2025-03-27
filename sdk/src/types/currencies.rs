@@ -119,6 +119,19 @@ impl TryFrom<rust_decimal::Decimal> for CryptoAmount {
         Ok(Self(value))
     }
 }
+impl TryFrom<api_types::api::decimal::Decimal> for CryptoAmount {
+    type Error = crate::Error;
+
+    fn try_from(value: api_types::api::decimal::Decimal) -> std::result::Result<Self, Self::Error> {
+        Self::try_from(value.0)
+    }
+}
+
+impl From<CryptoAmount> for api_types::api::decimal::Decimal {
+    fn from(val: CryptoAmount) -> Self {
+        Self(val.0)
+    }
+}
 
 impl TryFrom<CryptoAmount> for f64 {
     type Error = crate::Error;

@@ -159,7 +159,7 @@ pub fn example_tx_metadata() -> ApiApplicationMetadata {
 pub fn example_tx_details() -> GetTransactionDetailsResponse {
     GetTransactionDetailsResponse {
         system_address: ADDRESS.to_string(),
-        amount: AMOUNT.inner(),
+        amount: AMOUNT.inner().into(),
         status: ApiTxStatus::Completed,
         network: ApiNetwork {
             key: IOTA_NETWORK_KEY.to_string(),
@@ -296,7 +296,7 @@ pub fn example_get_payment_details_response() -> GetPaymentDetailsResponse {
 pub fn example_exchange_rate_response() -> GetCourseResponse {
     GetCourseResponse {
         course: Course {
-            course: dec!(1.0),
+            course: dec!(1.0).into(),
             date: "2222-22-22".into(),
         },
     }
