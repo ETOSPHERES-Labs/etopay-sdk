@@ -15,8 +15,12 @@ serde = { workspace = true }
 rust_decimal = { workspace = true }
 utoipa = { version = "5.3", default-features = false, features = [
     "macros",
-    "decimal",
 ], optional = true }
+
+[dev-dependencies]
+rstest = { workspace = true }
+serde_json = { workspace = true }
+rust_decimal_macros = { workspace = true }
 
 [features]
 # Enable to derive utoipa::{IntoParams, ToSchema} for the types.

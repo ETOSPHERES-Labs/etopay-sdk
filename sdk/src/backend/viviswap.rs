@@ -583,7 +583,7 @@ pub async fn set_viviswap_contract(
     info!("Set viviswap contract ");
 
     let request = ContractRequestBody {
-        amount: Option::Some(amount.inner()),
+        amount: Option::Some(amount.into()),
         incoming_payment_method_id,
         incoming_payment_detail_id,
         outgoing_payment_method_id,
@@ -627,7 +627,7 @@ pub async fn get_viviswap_exchange_rate(
         .execute_parse()
         .await?;
 
-    Ok(response.course.course)
+    Ok(response.course.course.0)
 }
 
 /// Get viviswap payment methods.
@@ -1194,7 +1194,7 @@ mod tests {
         let (mut srv, config, _cleanup) = set_config().await;
 
         let mock_request = ContractRequestBody {
-            amount: Some(dec!(15.0)),
+            amount: Some(dec!(15.0).into()),
             incoming_payment_detail_id: Some(PAYMENT_DETAIL_ID.into()),
             incoming_payment_method_id: PAYMENT_METHOD_ID.into(),
             outgoing_payment_detail_id: PAYMENT_DETAIL_ID.into(),
@@ -1277,7 +1277,7 @@ mod tests {
         // Assert
         match expected {
             Ok(resp) => {
-                assert_eq!(response.unwrap(), resp.course.course);
+                assert_eq!(response.unwrap(), resp.course.course.0);
             }
             Err(ref expected_err) => {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());
