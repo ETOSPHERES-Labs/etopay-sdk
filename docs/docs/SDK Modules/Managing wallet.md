@@ -2,19 +2,11 @@
 
 The SDK provides users with the opportunity to host their own wallets on their personal end-devices in a safe and easy manner. Before discussing wallet management, some information on wallets and what they are is needed to understand how to manage non-custodial hot wallets.
 
-## The IOTA wallet
+## The ETOPay wallet
 
-The wallet used within the SDK is the official wallet developed by the IOTA Foundation and maintained in its own SDK found [here](https://github.com/iotaledger/iota-sdk). The wallet internally uses the stronghold secret management engine also developed by the IOTA Foundation found [here](https://github.com/iotaledger/stronghold.rs). The secret management engine not only stores sensitive data in files but also uses obfuscation and mechanisms against memory dumps to protect the secrets while they are being operated upon in the memory. Stronghold also provides functions for BIP-0032 derivation using the BIP-0044 derivation path mechanism described [here](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki). The word list used by the wallet is the word list described in BIP-0039 [here](https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/english.txt).
+The wallet internally uses the stronghold secret management engine developed by the IOTA Foundation found [here](https://github.com/iotaledger/stronghold.rs). The secret management engine not only stores sensitive data in files but also uses obfuscation and mechanisms against memory dumps to protect the secrets while they are being operated upon in the memory. Stronghold also provides functions for BIP-0032 derivation using the BIP-0044 derivation path mechanism described [here](https://github.com/bitcoin/bips/blob/master/bip-0044.mediawiki). The word list used by the wallet is the word list described in BIP-0039 [here](https://raw.githubusercontent.com/bitcoin/bips/master/bip-0039/english.txt).
 
-The various coin types supported by BIP-0044 can be found in the list [here](https://github.com/satoshilabs/slips/blob/master/slip-0044.md). Both `IOTA` and `SMR` are supported and have the coin types `4218` and `4219` respectively.
-
-Currently, in its base implementation the IOTA SDK also needs an in-memory key-value store to manage some metadata related to the stronghold engine and other wallet settings. The IOTA SDK uses a rocksdb implementation in rust for this purpose. There are a few noteworthy problems with rocksdb:
-
-- rocksdb is not light-weight for mobile end devices and the resulting binaries of the sdk take long to build and are bigger in storage requirements.
-- rocksdb does not support all mobile platforms
-- rocksdb is not maintained on the latest sdks of the android and iOS mobile platforms
-
-After investigation, it was found that the in-memory key-value store was used only for storing some metadata keys and not necessarily need high-performance query execution. Luckily, the IOTA SDK implemented the rocksdb connection as a `Storage` trait. Since, the SDK already used jammdb for its internal key-value store, a fork was created and the trait was implemented using `jammdb`. A pull request was created to the upstream, but the dev team at IOTA Foundation recommended to maintain the fork for now, as there would be some new breaking changes coming and the pull request can be created at a later point. The fork is updated regularly and maintained [here](https://github.com/mighty840/iota-sdk).
+The various coin types supported by BIP-0044 can be found in the list [here](https://github.com/satoshilabs/slips/blob/master/slip-0044.md).
 
 ## Hot Wallets: The Swift Side of Crypto
 
@@ -466,57 +458,3 @@ In addition to creating, migrating, backups and initialization, the wallet modul
     // or change the password
     await sdk.setWalletPassword("pin", "new_password");
     ```
-
-## Wallet flows
-
-```
-                Mnemonic  Username  Password  Pin  backup password         Pin                            Pin        
-                   | ^         |      |       |      |                     |                              |          
-                   | |         |      |       |      |                     |                              |          
-                   | |         |      |       |      |                     |                              |          
-                   | |         |      |       |      |                     |                              |          
-                   | |         |      |       |      |                     |                              |          
-                   | |         |      |       |      |                     |                              |          
-                   | |         |      |       |      |                     |                              |          
-    Inputs         v |         v      v       v      v                     v                              v          
--------------------------------------------------------------------------------------------------------------------  
-                                                                |                           |                        
-                                           +-------------+      |                           |                        
-                                           |             |      |                           |                        
-                                           | Create      |      |      +-------------+      |                        
-                                           | New         +---+  |      |             |      |        +--------------+
-                                           | Wallet      |   |  |      |  Initialize |      |        |              |
-                                           |             |   |  |      |  Wallet     +------+-------->   Delete     |
-                                           +-------------+   |  +------>             |      |        |   wallet     |
-                                                             |  |      |             |      |        |   (external) |
-                                                             |  |      +------+------+      |        |              |
-                         +----------+      +-------------+   |  |             |             |        +--------------+
-                         |          |      |             |   |  |             |             |                        
-                         | Mnemonic |      | Migrate     |   |  |             |             |                        
-                 +------->          +------> Existing    |   |  |             |             |                        
-                 |       |          |      | Wallet      |   |  |      +------v------+      |                        
-                 |       |          |      |             |   |  |      |             |      |                        
-                 |       +----------+      +-------------+   |  |      |  User       |      |                        
-                 |                                           |  |      |  Wallet     |      |                        
-                 |                                           |  |      |  Functions  |      |                        
-                 |           +------+      +-------------+   |  |      |             |      |                        
-                 |           |      |      |             |   |  |      +-------------+      |                        
-                 |           |Backup|      | Create      |   |  |                           |                        
-                 |           | File +------> Wallet      |   |  |                           |                        
-                 |           |      |      | From        |   |  |                           |                        
-                 |           |      |      | Backup      |   |  |                           |                        
-                 |           +------+      +-------------+   |  |                           |                        
-                 |                                           |  |                           |                        
-                 |                                           |  |                           |                        
-                 |    +-------------+      +-------------+   |  |                           |                        
-                 |    |             |      |             |   |  |                           |                        
-                 |    | Verify      |      |  Delete     |   |  |                           |                        
-                 +----+ Mnemonic    <------+  wallet     <---+  |                           |                        
-                      |             |      | (internal)  |      |                           |                        
-                      |             |      |             |      |                           |                        
-                      +-------------+      +-------------+      |                           |                        
-                                                                |                           |                        
-                                                                |                           |                        
-                                             Once(setup)        |        Multiple times     |       Once (tear down) 
-                                                                |                           |                        
-```
