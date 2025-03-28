@@ -27,12 +27,8 @@ use log::info;
 use reqwest::Url;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
-use rust_decimal_macros::dec;
 use std::fmt::Debug;
-use std::ops::{Div, Mul};
 use std::str::FromStr;
-
-const WEI_TO_ETH_DIVISOR: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000_000_000_000_000_000)) }; // SAFETY: the value is non-negative
 
 // Type alias for the crazy long type used as Provider with the default fillers (Gas, Nonce,
 // ChainId) and Wallet
@@ -50,13 +46,16 @@ pub struct WalletImplEth {
     /// ChainId for the transactions.
     chain_id: u64,
 
+    /// The number of decimals for the symbol value
+    decimals: u32,
+
     /// Rpc client, contains the Signer based on the mnemonic.
     provider: ProviderType,
 }
 
 impl WalletImplEth {
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64) -> Result<Self> {
+    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64, decimals: u32) -> Result<Self> {
         // Ase mnemonic to create a Signer
         // Child key at derivation path: m/44'/60'/0'/0/{index}.
         let wallet = MnemonicBuilder::<English>::default()
@@ -79,41 +78,19 @@ impl WalletImplEth {
 
         Ok(WalletImplEth {
             chain_id,
+            decimals,
             provider: http_provider,
         })
     }
 
-    fn convert_wei_to_eth(value_wei: CryptoAmount) -> CryptoAmount {
-        value_wei.div(WEI_TO_ETH_DIVISOR)
+    /// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+    fn convert_alloy_256_to_crypto_amount(&self, v: alloy_primitives::Uint<256, 4>) -> Result<CryptoAmount> {
+        convert_alloy_256_to_crypto_amount(v, self.decimals)
     }
 
-    fn convert_eth_to_wei(value_eth: CryptoAmount) -> CryptoAmount {
-        value_eth.mul(WEI_TO_ETH_DIVISOR)
-    }
-
-    fn convert_alloy_256_to_crypto_amount(v: alloy_primitives::Uint<256, 4>) -> Result<CryptoAmount> {
-        let value_i128 = v.to::<i128>();
-        let value_decimal = Decimal::from_i128(value_i128);
-
-        let Some(result_decimal) = value_decimal else {
-            return Err(WalletError::ConversionError(format!(
-                "could not convert alloy 256 to decimal: {v:?}"
-            )));
-        };
-
-        CryptoAmount::try_from(result_decimal).map_err(|e| {
-            WalletError::ConversionError(format!(
-                "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
-            ))
-        })
-    }
-
-    fn convert_crypto_amount_to_u256(v: CryptoAmount) -> Result<alloy_primitives::U256> {
-        let value_decimal = v.inner();
-        let value_i128: i128 = value_decimal.try_into()?;
-        let value = U256::from(value_i128);
-
-        Ok(value)
+    /// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+    fn convert_crypto_amount_to_u256(&self, v: CryptoAmount) -> Result<alloy_primitives::U256> {
+        convert_crypto_amount_to_u256(v, self.decimals)
     }
 
     /// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
@@ -125,8 +102,7 @@ impl WalletImplEth {
         } = intent;
 
         let addr_to = Address::from_str(address_to)?;
-        let amount_wei = Self::convert_eth_to_wei(*amount);
-        let amount_wei_u256 = Self::convert_crypto_amount_to_u256(amount_wei)?;
+        let amount_wei_u256 = self.convert_crypto_amount_to_u256(*amount)?;
 
         let mut tx = TransactionRequest::default()
             .with_to(addr_to)
@@ -174,6 +150,74 @@ impl WalletImplEth {
         })
     }
 }
+/// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+fn convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -> Result<CryptoAmount> {
+    let value_u128 = u128::try_from(value)
+        .map_err(|e| WalletError::ConversionError(format!("could not convert U256 to u128: {e:?}")))?;
+
+    let Some(mut result_decimal) = Decimal::from_u128(value_u128) else {
+        return Err(WalletError::ConversionError(format!(
+            "could not convert u128 to Decimal: {value:?}"
+        )));
+    };
+
+    // directly set the decimals
+    result_decimal
+        .set_scale(decimals)
+        .map_err(|e| WalletError::ConversionError(format!("could not set scale to decimals: {e:?}")))?;
+
+    result_decimal.normalize_assign(); // remove trailing zeros
+
+    CryptoAmount::try_from(result_decimal).map_err(|e| {
+        WalletError::ConversionError(format!(
+            "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
+        ))
+    })
+}
+
+/// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+fn convert_crypto_amount_to_u256(amount: CryptoAmount, decimals: u32) -> Result<U256> {
+    // normalize to remove trailing zeros
+    let value_decimal = amount.inner().normalize();
+
+    let scale = value_decimal.scale();
+
+    // if the Decimal has more decimals than we will store in the U256, we cannot accurately represent this value.
+    if scale > decimals {
+        return Err(WalletError::ConversionError(format!(
+            "cannot represent value of {} in a U256 with {} decimals.",
+            value_decimal, decimals
+        )));
+    }
+
+    if value_decimal.is_sign_negative() {
+        return Err(WalletError::ConversionError(format!(
+            "cannot represent negative values: {}",
+            value_decimal
+        )));
+    }
+
+    // create a U256 from all the mantissa bits, then we just need to multiply by 10^(decimals - scale) to get the scaled value
+    let mantissa = U256::try_from(value_decimal.mantissa())
+        .map_err(|e| WalletError::ConversionError(format!("mantissa does not fit in U256: {e}",)))?;
+
+    // the scale is 10^(decimals-scale). Since we checked for scale > decimals above, (decimals - scale) >= 0
+    let exponent = U256::from(decimals - scale);
+    let scale = U256::from(10)
+        .checked_pow(exponent)
+        .ok_or_else(|| WalletError::ConversionError(format!("10^{exponent} does not fit in U256")))?;
+
+    println!(
+        "decimals: {decimals}, value: {value_decimal}, mantissa: {}, scale: {}",
+        mantissa, scale
+    );
+
+    let value = mantissa.checked_mul(scale).ok_or_else(|| {
+        WalletError::ConversionError(format!("result does not fit in U256: {} * {}", mantissa, scale))
+    })?;
+
+    Ok(value)
+}
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
@@ -191,8 +235,7 @@ impl WalletUser for WalletImplEth {
             total += balance;
         }
 
-        let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(total)?;
-        let balance_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
+        let balance_eth_crypto_amount = self.convert_alloy_256_to_crypto_amount(total)?;
         Ok(balance_eth_crypto_amount)
     }
 
@@ -243,8 +286,7 @@ impl WalletUser for WalletImplEth {
             None => InclusionState::Pending,
         };
 
-        let balance_wei_crypto_amount = Self::convert_alloy_256_to_crypto_amount(tx.value())?;
-        let value_eth_crypto_amount = Self::convert_wei_to_eth(balance_wei_crypto_amount);
+        let value_eth_crypto_amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
 
         let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
 
@@ -281,9 +323,15 @@ pub struct WalletImplEthErc20 {
 }
 impl WalletImplEthErc20 {
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64, contract_address: String) -> Result<Self> {
+    pub fn new(
+        mnemonic: Mnemonic,
+        node_urls: Vec<String>,
+        chain_id: u64,
+        decimals: u32,
+        contract_address: String,
+    ) -> Result<Self> {
         Ok(Self {
-            inner: WalletImplEth::new(mnemonic, node_urls, chain_id)?,
+            inner: WalletImplEth::new(mnemonic, node_urls, chain_id, decimals)?,
             contract_address: contract_address.parse()?,
         })
     }
@@ -306,8 +354,7 @@ impl WalletImplEthErc20 {
         }
 
         let addr_to = Address::from_str(address_to)?;
-        let amount_wei = WalletImplEth::convert_eth_to_wei(*amount);
-        let amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)?;
+        let amount_wei_u256 = self.inner.convert_crypto_amount_to_u256(*amount)?;
 
         let contract = self.get_contract();
 
@@ -337,9 +384,7 @@ impl WalletUser for WalletImplEthErc20 {
             total += balance;
         }
 
-        // TODO: respect the decimals here
-        let balance_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(total)?;
-        let balance_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(balance_wei_crypto_amount);
+        let balance_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(total)?;
         Ok(balance_eth_crypto_amount)
     }
 
@@ -369,8 +414,7 @@ impl WalletUser for WalletImplEthErc20 {
 
         let args = Erc20Contract::transferCall::abi_decode(tx.inner.input(), true)?;
 
-        let amount_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(args._value)?;
-        let value_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(amount_wei_crypto_amount);
+        let value_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(args._value)?;
         info.amount = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
 
         info.receiver = args._to.to_string();
@@ -389,7 +433,7 @@ mod tests {
     use super::*;
     use crate::core::Config;
     use iota_sdk::crypto::keys::bip39::Mnemonic;
-    use rust_decimal::prelude::FromPrimitive;
+    use rust_decimal_macros::dec;
     use serde_json::json;
     use testing::CleanUp;
 
@@ -397,13 +441,63 @@ mod tests {
     // Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
     pub const HARDHAT_MNEMONIC: &str = "test test test test test test test test test test test junk";
 
+    const ETH_DECIMALS: u32 = 18;
+
+    #[rstest::rstest]
+    #[case(Some(CryptoAmount::try_from(dec!(1)).unwrap()), 3, U256::from(1000))]
+    #[case(Some(CryptoAmount::try_from(dec!(1.0)).unwrap()), 3, U256::from(1000))]
+    #[case(Some(CryptoAmount::try_from(dec!(1.01)).unwrap()), 3, U256::from(1010))]
+    #[case(Some(CryptoAmount::try_from(dec!(1.010)).unwrap()), 3, U256::from(1010))]
+    #[case(Some(CryptoAmount::try_from(dec!(1.00)).unwrap()), ETH_DECIMALS, U256::from(1_000_000_000_000_000_000u128))]
+    #[case(Some(CryptoAmount::try_from(dec!(0.000_000_000_000_000_001)).unwrap()), ETH_DECIMALS, U256::from(1))]
+    #[case(Some(CryptoAmount::try_from(dec!(1.000_000_000_000_000_001)).unwrap()), ETH_DECIMALS, U256::from(1_000_000_000_000_000_001u128))]
+    #[case(None, ETH_DECIMALS, U256::MAX)] // Overflow
+    #[case(None, 50, U256::from(1))] // Too many decimals, Underflow
+    fn test_convert_alloy_256_to_decimal(
+        #[case] expected_amount: Option<CryptoAmount>,
+        #[case] decimals: u32,
+        #[case] value: U256,
+    ) {
+        let res = convert_alloy_256_to_crypto_amount(value, decimals);
+        if let Some(expected) = expected_amount {
+            assert_eq!(res.unwrap(), expected);
+        } else {
+            res.unwrap_err();
+        }
+    }
+
+    #[rstest::rstest]
+    #[case(CryptoAmount::try_from(dec!(1)).unwrap(), 3, Some(U256::from(1000)))]
+    #[case(CryptoAmount::try_from(dec!(1.0)).unwrap(), 3, Some(U256::from(1000)))]
+    #[case(CryptoAmount::try_from(dec!(1.01)).unwrap(), 3, Some(U256::from(1010)))]
+    #[case(CryptoAmount::try_from(dec!(1.010)).unwrap(), 3, Some(U256::from(1010)))]
+    #[case(CryptoAmount::try_from(dec!(1.00)).unwrap(), ETH_DECIMALS, Some(U256::from(1_000_000_000_000_000_000u128)))]
+    #[case(CryptoAmount::try_from(dec!(0.000_000_000_000_000_001)).unwrap(), ETH_DECIMALS, Some(U256::from(1)))]
+    #[case(CryptoAmount::try_from(dec!(1.000_000_000_000_000_001)).unwrap(), ETH_DECIMALS, Some(U256::from(1_000_000_000_000_000_001u128)))]
+    #[case(CryptoAmount::try_from(dec!(1_000_000_000_000_000_000)).unwrap(), 60, None)] // Overflow
+    #[case(CryptoAmount::try_from(dec!(0.000_000_000_000_000_000_001)).unwrap(), ETH_DECIMALS, None)] // Underflow
+    fn test_convert_crypto_amount_to_alloy_256(
+        #[case] amount: CryptoAmount,
+        #[case] decimals: u32,
+        #[case] expected: Option<U256>,
+    ) {
+        let res = convert_crypto_amount_to_u256(amount, decimals);
+
+        if let Some(expected) = expected {
+            assert_eq!(res.unwrap(), expected);
+        } else {
+            res.unwrap_err();
+        }
+    }
+
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEth, CleanUp) {
         let (_, cleanup) = Config::new_test_with_cleanup();
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id).expect("should initialize wallet");
+        let wallet =
+            WalletImplEth::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS).expect("should initialize wallet");
         (wallet, cleanup)
     }
 
@@ -413,7 +507,8 @@ mod tests {
         node_url: String,
         chain_id: u64,
     ) -> WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id).expect("could not initialize WalletImplEth")
+        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id, ETH_DECIMALS)
+            .expect("could not initialize WalletImplEth")
     }
 
     #[tokio::test]
@@ -428,59 +523,6 @@ mod tests {
         let parsed = Address::parse_checksummed(addr_raw, None).unwrap();
         let expected = alloy_primitives::address!("0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266");
         assert_eq!(parsed, expected);
-    }
-
-    #[tokio::test]
-    async fn test_convert_wei_to_decimal() {
-        //Arrange
-        let value_wei: i128 = 10000000000000000000000; // 22 zeros
-        let value_wei_decimal = Decimal::from_i128(value_wei).unwrap();
-        // SAFETY: the value is non-negative
-        let value_wei_crypto_amount: CryptoAmount = unsafe { CryptoAmount::new_unchecked(value_wei_decimal) };
-
-        // Act
-        let value_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(value_wei_crypto_amount);
-
-        // Assert
-
-        /***
-         * 1 10^22
-         * 10 10^21
-         * ...
-         * 10000 10^18
-         */
-        assert_eq!(value_eth_crypto_amount, CryptoAmount::from(10000))
-    }
-
-    #[tokio::test]
-    async fn test_convert_alloy_256_to_decimal() {
-        //Arrange
-        let expected_value_decimal: i128 = 10000000000000000000000;
-        let expected_value_decimal = Decimal::from_i128(expected_value_decimal).unwrap();
-        // SAFETY: the value is non-negative
-        let expected_value_crypto_amount: CryptoAmount = unsafe { CryptoAmount::new_unchecked(expected_value_decimal) };
-
-        let value_alloy_256: alloy_primitives::Uint<256, 4> =
-            alloy_primitives::Uint::from_str("10000000000000000000000").unwrap();
-
-        // Act
-        let value_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(value_alloy_256).unwrap();
-
-        // Assert
-        assert_eq!(value_crypto_amount, expected_value_crypto_amount)
-    }
-
-    #[tokio::test]
-    async fn test_convert_crypto_amount_to_alloy_256() {
-        //Arrange
-        let expected_value_u256 = U256::from(1);
-        let value_crypto_amount = CryptoAmount::from(1);
-
-        // Act
-        let value_u256 = WalletImplEth::convert_crypto_amount_to_u256(value_crypto_amount).unwrap();
-
-        // Assert
-        assert_eq!(value_u256, expected_value_u256)
     }
 
     #[tokio::test]

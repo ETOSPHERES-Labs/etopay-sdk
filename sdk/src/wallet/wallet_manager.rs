@@ -543,14 +543,20 @@ impl WalletManager for WalletManagerImpl {
 
         let bo = match network.protocol {
             ApiProtocol::Evm { chain_id } => {
-                let wallet = WalletImplEth::new(mnemonic, network.node_urls, chain_id)?;
+                let wallet = WalletImplEth::new(mnemonic, network.node_urls, chain_id, network.decimals)?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             ApiProtocol::EvmERC20 {
                 chain_id,
                 contract_address,
             } => {
-                let wallet = WalletImplEthErc20::new(mnemonic, network.node_urls, chain_id, contract_address)?;
+                let wallet = WalletImplEthErc20::new(
+                    mnemonic,
+                    network.node_urls,
+                    chain_id,
+                    network.decimals,
+                    contract_address,
+                )?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             ApiProtocol::Stardust {} => {
