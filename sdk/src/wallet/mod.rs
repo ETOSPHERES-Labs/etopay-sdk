@@ -7,8 +7,11 @@
 /// Wallet manager
 pub mod wallet_manager;
 
-/// wallet user for IOTA and SMR
+/// wallet user definition
 pub(crate) mod wallet_user;
+
+/// wallet user for Stardust protocol
+pub(crate) mod wallet_user_stardust;
 
 /// wallet user for EVM
 pub(crate) mod wallet_user_evm;
