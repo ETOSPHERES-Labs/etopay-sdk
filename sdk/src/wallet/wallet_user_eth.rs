@@ -55,12 +55,18 @@ pub struct WalletImplEth {
 
 impl WalletImplEth {
     /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64, decimals: u32) -> Result<Self> {
+    pub fn new(
+        mnemonic: Mnemonic,
+        node_urls: Vec<String>,
+        chain_id: u64,
+        decimals: u32,
+        coin_type: u32,
+    ) -> Result<Self> {
         // Ase mnemonic to create a Signer
-        // Child key at derivation path: m/44'/60'/0'/0/{index}.
         let wallet = MnemonicBuilder::<English>::default()
             .phrase(mnemonic.as_ref().to_string())
-            .index(0)?
+            // Child key at derivation path: m/44'/{coin_type}'/{account}'/{change}/{index}.
+            .derivation_path(format!("m/44'/{}'/0'/0/0", coin_type))?
             // // Use this if your mnemonic is encrypted.
             // .password(password)
             .build()?;
@@ -328,10 +334,11 @@ impl WalletImplEthErc20 {
         node_urls: Vec<String>,
         chain_id: u64,
         decimals: u32,
+        coin_type: u32,
         contract_address: String,
     ) -> Result<Self> {
         Ok(Self {
-            inner: WalletImplEth::new(mnemonic, node_urls, chain_id, decimals)?,
+            inner: WalletImplEth::new(mnemonic, node_urls, chain_id, decimals, coin_type)?,
             contract_address: contract_address.parse()?,
         })
     }
@@ -442,6 +449,7 @@ mod tests {
     pub const HARDHAT_MNEMONIC: &str = "test test test test test test test test test test test junk";
 
     const ETH_DECIMALS: u32 = 18;
+    const ETH_COIN_TYPE: u32 = 60;
 
     #[rstest::rstest]
     #[case(Some(CryptoAmount::try_from(dec!(1)).unwrap()), 3, U256::from(1000))]
@@ -496,8 +504,8 @@ mod tests {
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet =
-            WalletImplEth::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS).expect("should initialize wallet");
+        let wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+            .expect("should initialize wallet");
         (wallet, cleanup)
     }
 
@@ -507,7 +515,7 @@ mod tests {
         node_url: String,
         chain_id: u64,
     ) -> WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id, ETH_DECIMALS)
+        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("could not initialize WalletImplEth")
     }
 
