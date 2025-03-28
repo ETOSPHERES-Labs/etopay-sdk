@@ -5,7 +5,7 @@
 
 use super::share::Share;
 use super::wallet_user::{WalletImplStardust, WalletUser};
-use super::wallet_user_eth::{WalletImplEth, WalletImplEthErc20};
+use super::wallet_user_evm::{WalletImplEvm, WalletImplEvmErc20};
 use crate::core::{Config, UserRepoT};
 use crate::types::currencies::Currency;
 use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
@@ -543,7 +543,7 @@ impl WalletManager for WalletManagerImpl {
 
         let bo = match network.protocol {
             ApiProtocol::Evm { chain_id } => {
-                let wallet = WalletImplEth::new(
+                let wallet = WalletImplEvm::new(
                     mnemonic,
                     network.node_urls,
                     chain_id,
@@ -556,7 +556,7 @@ impl WalletManager for WalletManagerImpl {
                 chain_id,
                 contract_address,
             } => {
-                let wallet = WalletImplEthErc20::new(
+                let wallet = WalletImplEvmErc20::new(
                     mnemonic,
                     network.node_urls,
                     chain_id,

@@ -10,8 +10,8 @@ pub mod wallet_manager;
 /// wallet user for IOTA and SMR
 pub(crate) mod wallet_user;
 
-/// wallet user for ETH
-pub(crate) mod wallet_user_eth;
+/// wallet user for EVM
+pub(crate) mod wallet_user_evm;
 
 /// Module containing code related to the SSS secret sharing scheme
 pub mod share;
