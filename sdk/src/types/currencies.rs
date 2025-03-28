@@ -1,6 +1,5 @@
 use super::error::{Result, TypeError};
 use api_types::api::{generic::ApiCryptoCurrency, viviswap::detail::SwapPaymentDetailKey};
-use iota_sdk::client::constants::{ETHER_COIN_TYPE, IOTA_COIN_TYPE};
 use serde::Serialize;
 
 /// Supported currencies (mirrors `api_types` but needed so we can implement the additional
@@ -26,16 +25,6 @@ impl TryFrom<String> for Currency {
 }
 
 impl Currency {
-    /// Returns the coin type for the [`Currency`] according to [`SLIP-044`].
-    ///
-    /// [`SLIP-044`]: https://github.com/satoshilabs/slips/blob/master/slip-0044.md
-    pub fn coin_type(self) -> u32 {
-        match self {
-            Self::Iota => IOTA_COIN_TYPE,
-            Self::Eth => ETHER_COIN_TYPE,
-        }
-    }
-
     /// Convert this [`Currency`] into a [`SwapPaymentDetailKey`]
     pub fn to_vivi_payment_method_key(self) -> SwapPaymentDetailKey {
         match self {
