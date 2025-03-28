@@ -959,7 +959,49 @@
 <a href="#958" id="958">958</a>
 <a href="#959" id="959">959</a>
 <a href="#960" id="960">960</a>
-<a href="#961" id="961">961</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<a href="#961" id="961">961</a>
+<a href="#962" id="962">962</a>
+<a href="#963" id="963">963</a>
+<a href="#964" id="964">964</a>
+<a href="#965" id="965">965</a>
+<a href="#966" id="966">966</a>
+<a href="#967" id="967">967</a>
+<a href="#968" id="968">968</a>
+<a href="#969" id="969">969</a>
+<a href="#970" id="970">970</a>
+<a href="#971" id="971">971</a>
+<a href="#972" id="972">972</a>
+<a href="#973" id="973">973</a>
+<a href="#974" id="974">974</a>
+<a href="#975" id="975">975</a>
+<a href="#976" id="976">976</a>
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a>
+<a href="#990" id="990">990</a>
+<a href="#991" id="991">991</a>
+<a href="#992" id="992">992</a>
+<a href="#993" id="993">993</a>
+<a href="#994" id="994">994</a>
+<a href="#995" id="995">995</a>
+<a href="#996" id="996">996</a>
+<a href="#997" id="997">997</a>
+<a href="#998" id="998">998</a>
+<a href="#999" id="999">999</a>
+<a href="#1000" id="1000">1000</a>
+<a href="#1001" id="1001">1001</a>
+<a href="#1002" id="1002">1002</a>
+<a href="#1003" id="1003">1003</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
 <span class="kw">use </span><span class="kw">super</span>::wallet_user::{TransactionIntent, WalletUser};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
@@ -988,14 +1030,10 @@
 <span class="kw">use </span>reqwest::Url;
 <span class="kw">use </span>rust_decimal::prelude::FromPrimitive;
 <span class="kw">use </span>rust_decimal::Decimal;
-<span class="kw">use </span>rust_decimal_macros::dec;
 <span class="kw">use </span>std::fmt::Debug;
-<span class="kw">use </span>std::ops::{Div, Mul};
 <span class="kw">use </span>std::str::FromStr;
 
-<span class="kw">const </span>WEI_TO_ETH_DIVISOR: CryptoAmount = <span class="kw">unsafe </span>{ CryptoAmount::new_unchecked(<span class="macro">dec!</span>(<span class="number">1_000_000_000_000_000_000</span>)) }; <span class="comment">// SAFETY: the value is non-negative
-
-// Type alias for the crazy long type used as Provider with the default fillers (Gas, Nonce,
+<span class="comment">// Type alias for the crazy long type used as Provider with the default fillers (Gas, Nonce,
 // ChainId) and Wallet
 </span><span class="kw">type </span>ProviderType = FillProvider&lt;
     JoinFill&lt;
@@ -1011,13 +1049,16 @@
     <span class="doccomment">/// ChainId for the transactions.
     </span>chain_id: u64,
 
+    <span class="doccomment">/// The number of decimals for the symbol value
+    </span>decimals: u32,
+
     <span class="doccomment">/// Rpc client, contains the Signer based on the mnemonic.
     </span>provider: ProviderType,
 }
 
 <span class="kw">impl </span>WalletImplEth {
     <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    </span><span class="kw">pub fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64, decimals: u32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// Ase mnemonic to create a Signer
         // Child key at derivation path: m/44'/60'/0'/0/{index}.
         </span><span class="kw">let </span>wallet = MnemonicBuilder::&lt;English&gt;::default()
@@ -1040,41 +1081,19 @@
 
         <span class="prelude-val">Ok</span>(WalletImplEth {
             chain_id,
+            decimals,
             provider: http_provider,
         })
     }
 
-    <span class="kw">fn </span>convert_wei_to_eth(value_wei: CryptoAmount) -&gt; CryptoAmount {
-        value_wei.div(WEI_TO_ETH_DIVISOR)
+    <span class="doccomment">/// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+    </span><span class="kw">fn </span>convert_alloy_256_to_crypto_amount(<span class="kw-2">&amp;</span><span class="self">self</span>, v: alloy_primitives::Uint&lt;<span class="number">256</span>, <span class="number">4</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;CryptoAmount&gt; {
+        convert_alloy_256_to_crypto_amount(v, <span class="self">self</span>.decimals)
     }
 
-    <span class="kw">fn </span>convert_eth_to_wei(value_eth: CryptoAmount) -&gt; CryptoAmount {
-        value_eth.mul(WEI_TO_ETH_DIVISOR)
-    }
-
-    <span class="kw">fn </span>convert_alloy_256_to_crypto_amount(v: alloy_primitives::Uint&lt;<span class="number">256</span>, <span class="number">4</span>&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;CryptoAmount&gt; {
-        <span class="kw">let </span>value_i128 = v.to::&lt;i128&gt;();
-        <span class="kw">let </span>value_decimal = Decimal::from_i128(value_i128);
-
-        <span class="kw">let </span><span class="prelude-val">Some</span>(result_decimal) = value_decimal <span class="kw">else </span>{
-            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::ConversionError(<span class="macro">format!</span>(
-                <span class="string">"could not convert alloy 256 to decimal: {v:?}"
-            </span>)));
-        };
-
-        CryptoAmount::try_from(result_decimal).map_err(|e| {
-            WalletError::ConversionError(<span class="macro">format!</span>(
-                <span class="string">"could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
-            </span>))
-        })
-    }
-
-    <span class="kw">fn </span>convert_crypto_amount_to_u256(v: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;alloy_primitives::U256&gt; {
-        <span class="kw">let </span>value_decimal = v.inner();
-        <span class="kw">let </span>value_i128: i128 = value_decimal.try_into()<span class="question-mark">?</span>;
-        <span class="kw">let </span>value = U256::from(value_i128);
-
-        <span class="prelude-val">Ok</span>(value)
+    <span class="doccomment">/// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+    </span><span class="kw">fn </span>convert_crypto_amount_to_u256(<span class="kw-2">&amp;</span><span class="self">self</span>, v: CryptoAmount) -&gt; <span class="prelude-ty">Result</span>&lt;alloy_primitives::U256&gt; {
+        convert_crypto_amount_to_u256(v, <span class="self">self</span>.decimals)
     }
 
     <span class="doccomment">/// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
@@ -1086,8 +1105,7 @@
         } = intent;
 
         <span class="kw">let </span>addr_to = Address::from_str(address_to)<span class="question-mark">?</span>;
-        <span class="kw">let </span>amount_wei = <span class="self">Self</span>::convert_eth_to_wei(<span class="kw-2">*</span>amount);
-        <span class="kw">let </span>amount_wei_u256 = <span class="self">Self</span>::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
+        <span class="kw">let </span>amount_wei_u256 = <span class="self">self</span>.convert_crypto_amount_to_u256(<span class="kw-2">*</span>amount)<span class="question-mark">?</span>;
 
         <span class="kw">let </span><span class="kw-2">mut </span>tx = TransactionRequest::default()
             .with_to(addr_to)
@@ -1135,6 +1153,74 @@
         })
     }
 }
+<span class="doccomment">/// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+</span><span class="kw">fn </span>convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -&gt; <span class="prelude-ty">Result</span>&lt;CryptoAmount&gt; {
+    <span class="kw">let </span>value_u128 = u128::try_from(value)
+        .map_err(|e| WalletError::ConversionError(<span class="macro">format!</span>(<span class="string">"could not convert U256 to u128: {e:?}"</span>)))<span class="question-mark">?</span>;
+
+    <span class="kw">let </span><span class="prelude-val">Some</span>(<span class="kw-2">mut </span>result_decimal) = Decimal::from_u128(value_u128) <span class="kw">else </span>{
+        <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::ConversionError(<span class="macro">format!</span>(
+            <span class="string">"could not convert u128 to Decimal: {value:?}"
+        </span>)));
+    };
+
+    <span class="comment">// directly set the decimals
+    </span>result_decimal
+        .set_scale(decimals)
+        .map_err(|e| WalletError::ConversionError(<span class="macro">format!</span>(<span class="string">"could not set scale to decimals: {e:?}"</span>)))<span class="question-mark">?</span>;
+
+    result_decimal.normalize_assign(); <span class="comment">// remove trailing zeros
+
+    </span>CryptoAmount::try_from(result_decimal).map_err(|e| {
+        WalletError::ConversionError(<span class="macro">format!</span>(
+            <span class="string">"could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
+        </span>))
+    })
+}
+
+<span class="doccomment">/// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+</span><span class="kw">fn </span>convert_crypto_amount_to_u256(amount: CryptoAmount, decimals: u32) -&gt; <span class="prelude-ty">Result</span>&lt;U256&gt; {
+    <span class="comment">// normalize to remove trailing zeros
+    </span><span class="kw">let </span>value_decimal = amount.inner().normalize();
+
+    <span class="kw">let </span>scale = value_decimal.scale();
+
+    <span class="comment">// if the Decimal has more decimals than we will store in the U256, we cannot accurately represent this value.
+    </span><span class="kw">if </span>scale &gt; decimals {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::ConversionError(<span class="macro">format!</span>(
+            <span class="string">"cannot represent value of {} in a U256 with {} decimals."</span>,
+            value_decimal, decimals
+        )));
+    }
+
+    <span class="kw">if </span>value_decimal.is_sign_negative() {
+        <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::ConversionError(<span class="macro">format!</span>(
+            <span class="string">"cannot represent negative values: {}"</span>,
+            value_decimal
+        )));
+    }
+
+    <span class="comment">// create a U256 from all the mantissa bits, then we just need to multiply by 10^(decimals - scale) to get the scaled value
+    </span><span class="kw">let </span>mantissa = U256::try_from(value_decimal.mantissa())
+        .map_err(|e| WalletError::ConversionError(<span class="macro">format!</span>(<span class="string">"mantissa does not fit in U256: {e}"</span>,)))<span class="question-mark">?</span>;
+
+    <span class="comment">// the scale is 10^(decimals-scale). Since we checked for scale &gt; decimals above, (decimals - scale) &gt;= 0
+    </span><span class="kw">let </span>exponent = U256::from(decimals - scale);
+    <span class="kw">let </span>scale = U256::from(<span class="number">10</span>)
+        .checked_pow(exponent)
+        .ok_or_else(|| WalletError::ConversionError(<span class="macro">format!</span>(<span class="string">"10^{exponent} does not fit in U256"</span>)))<span class="question-mark">?</span>;
+
+    <span class="macro">println!</span>(
+        <span class="string">"decimals: {decimals}, value: {value_decimal}, mantissa: {}, scale: {}"</span>,
+        mantissa, scale
+    );
+
+    <span class="kw">let </span>value = mantissa.checked_mul(scale).ok_or_else(|| {
+        WalletError::ConversionError(<span class="macro">format!</span>(<span class="string">"result does not fit in U256: {} * {}"</span>, mantissa, scale))
+    })<span class="question-mark">?</span>;
+
+    <span class="prelude-val">Ok</span>(value)
+}
 
 <span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
 #[cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), async_trait)]
@@ -1152,8 +1238,7 @@
             total += balance;
         }
 
-        <span class="kw">let </span>balance_wei_crypto_amount = <span class="self">Self</span>::convert_alloy_256_to_crypto_amount(total)<span class="question-mark">?</span>;
-        <span class="kw">let </span>balance_eth_crypto_amount = <span class="self">Self</span>::convert_wei_to_eth(balance_wei_crypto_amount);
+        <span class="kw">let </span>balance_eth_crypto_amount = <span class="self">self</span>.convert_alloy_256_to_crypto_amount(total)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(balance_eth_crypto_amount)
     }
 
@@ -1204,8 +1289,7 @@
             <span class="prelude-val">None </span>=&gt; InclusionState::Pending,
         };
 
-        <span class="kw">let </span>balance_wei_crypto_amount = <span class="self">Self</span>::convert_alloy_256_to_crypto_amount(tx.value())<span class="question-mark">?</span>;
-        <span class="kw">let </span>value_eth_crypto_amount = <span class="self">Self</span>::convert_wei_to_eth(balance_wei_crypto_amount);
+        <span class="kw">let </span>value_eth_crypto_amount = <span class="self">self</span>.convert_alloy_256_to_crypto_amount(tx.value())<span class="question-mark">?</span>;
 
         <span class="kw">let </span>value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()<span class="question-mark">?</span>; <span class="comment">// TODO: WalletTxInfo f64 -&gt; Decimal ? maybe
 
@@ -1242,9 +1326,15 @@
 }
 <span class="kw">impl </span>WalletImplEthErc20 {
     <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    </span><span class="kw">pub fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64, contract_address: String) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+    </span><span class="kw">pub fn </span>new(
+        mnemonic: Mnemonic,
+        node_urls: Vec&lt;String&gt;,
+        chain_id: u64,
+        decimals: u32,
+        contract_address: String,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-            inner: WalletImplEth::new(mnemonic, node_urls, chain_id)<span class="question-mark">?</span>,
+            inner: WalletImplEth::new(mnemonic, node_urls, chain_id, decimals)<span class="question-mark">?</span>,
             contract_address: contract_address.parse()<span class="question-mark">?</span>,
         })
     }
@@ -1267,8 +1357,7 @@
         }
 
         <span class="kw">let </span>addr_to = Address::from_str(address_to)<span class="question-mark">?</span>;
-        <span class="kw">let </span>amount_wei = WalletImplEth::convert_eth_to_wei(<span class="kw-2">*</span>amount);
-        <span class="kw">let </span>amount_wei_u256 = WalletImplEth::convert_crypto_amount_to_u256(amount_wei)<span class="question-mark">?</span>;
+        <span class="kw">let </span>amount_wei_u256 = <span class="self">self</span>.inner.convert_crypto_amount_to_u256(<span class="kw-2">*</span>amount)<span class="question-mark">?</span>;
 
         <span class="kw">let </span>contract = <span class="self">self</span>.get_contract();
 
@@ -1298,9 +1387,7 @@
             total += balance;
         }
 
-        <span class="comment">// TODO: respect the decimals here
-        </span><span class="kw">let </span>balance_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(total)<span class="question-mark">?</span>;
-        <span class="kw">let </span>balance_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(balance_wei_crypto_amount);
+        <span class="kw">let </span>balance_eth_crypto_amount = <span class="self">self</span>.inner.convert_alloy_256_to_crypto_amount(total)<span class="question-mark">?</span>;
         <span class="prelude-val">Ok</span>(balance_eth_crypto_amount)
     }
 
@@ -1330,8 +1417,7 @@
 
         <span class="kw">let </span>args = Erc20Contract::transferCall::abi_decode(tx.inner.input(), <span class="bool-val">true</span>)<span class="question-mark">?</span>;
 
-        <span class="kw">let </span>amount_wei_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(args._value)<span class="question-mark">?</span>;
-        <span class="kw">let </span>value_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(amount_wei_crypto_amount);
+        <span class="kw">let </span>value_eth_crypto_amount = <span class="self">self</span>.inner.convert_alloy_256_to_crypto_amount(args._value)<span class="question-mark">?</span>;
         info.amount = value_eth_crypto_amount.inner().try_into()<span class="question-mark">?</span>; <span class="comment">// TODO: WalletTxInfo f64 -&gt; Decimal ? maybe
 
         </span>info.receiver = args._to.to_string();
@@ -1350,7 +1436,7 @@
     <span class="kw">use super</span>::<span class="kw-2">*</span>;
     <span class="kw">use </span><span class="kw">crate</span>::core::Config;
     <span class="kw">use </span>iota_sdk::crypto::keys::bip39::Mnemonic;
-    <span class="kw">use </span>rust_decimal::prelude::FromPrimitive;
+    <span class="kw">use </span>rust_decimal_macros::dec;
     <span class="kw">use </span>serde_json::json;
     <span class="kw">use </span>testing::CleanUp;
 
@@ -1358,13 +1444,63 @@
     // Private Key: 0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80
     </span><span class="kw">pub const </span>HARDHAT_MNEMONIC: <span class="kw-2">&amp;</span>str = <span class="string">"test test test test test test test test test test test junk"</span>;
 
+    <span class="kw">const </span>ETH_DECIMALS: u32 = <span class="number">18</span>;
+
+    <span class="attr">#[rstest::rstest]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1</span>)).unwrap()), <span class="number">3</span>, U256::from(<span class="number">1000</span>))]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.0</span>)).unwrap()), <span class="number">3</span>, U256::from(<span class="number">1000</span>))]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.01</span>)).unwrap()), <span class="number">3</span>, U256::from(<span class="number">1010</span>))]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.010</span>)).unwrap()), <span class="number">3</span>, U256::from(<span class="number">1010</span>))]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.00</span>)).unwrap()), ETH_DECIMALS, U256::from(<span class="number">1_000_000_000_000_000_000u128</span>))]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">0.000_000_000_000_000_001</span>)).unwrap()), ETH_DECIMALS, U256::from(<span class="number">1</span>))]
+    #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.000_000_000_000_000_001</span>)).unwrap()), ETH_DECIMALS, U256::from(<span class="number">1_000_000_000_000_000_001u128</span>))]
+    #[case(<span class="prelude-val">None</span>, ETH_DECIMALS, U256::MAX)] </span><span class="comment">// Overflow
+    </span><span class="attr">#[case(<span class="prelude-val">None</span>, <span class="number">50</span>, U256::from(<span class="number">1</span>))] </span><span class="comment">// Too many decimals, Underflow
+    </span><span class="kw">fn </span>test_convert_alloy_256_to_decimal(
+        <span class="attr">#[case] </span>expected_amount: <span class="prelude-ty">Option</span>&lt;CryptoAmount&gt;,
+        <span class="attr">#[case] </span>decimals: u32,
+        <span class="attr">#[case] </span>value: U256,
+    ) {
+        <span class="kw">let </span>res = convert_alloy_256_to_crypto_amount(value, decimals);
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(expected) = expected_amount {
+            <span class="macro">assert_eq!</span>(res.unwrap(), expected);
+        } <span class="kw">else </span>{
+            res.unwrap_err();
+        }
+    }
+
+    <span class="attr">#[rstest::rstest]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1</span>)).unwrap(), <span class="number">3</span>, <span class="prelude-val">Some</span>(U256::from(<span class="number">1000</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.0</span>)).unwrap(), <span class="number">3</span>, <span class="prelude-val">Some</span>(U256::from(<span class="number">1000</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.01</span>)).unwrap(), <span class="number">3</span>, <span class="prelude-val">Some</span>(U256::from(<span class="number">1010</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.010</span>)).unwrap(), <span class="number">3</span>, <span class="prelude-val">Some</span>(U256::from(<span class="number">1010</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.00</span>)).unwrap(), ETH_DECIMALS, <span class="prelude-val">Some</span>(U256::from(<span class="number">1_000_000_000_000_000_000u128</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">0.000_000_000_000_000_001</span>)).unwrap(), ETH_DECIMALS, <span class="prelude-val">Some</span>(U256::from(<span class="number">1</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1.000_000_000_000_000_001</span>)).unwrap(), ETH_DECIMALS, <span class="prelude-val">Some</span>(U256::from(<span class="number">1_000_000_000_000_000_001u128</span>)))]
+    #[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1_000_000_000_000_000_000</span>)).unwrap(), <span class="number">60</span>, <span class="prelude-val">None</span>)] </span><span class="comment">// Overflow
+    </span><span class="attr">#[case(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">0.000_000_000_000_000_000_001</span>)).unwrap(), ETH_DECIMALS, <span class="prelude-val">None</span>)] </span><span class="comment">// Underflow
+    </span><span class="kw">fn </span>test_convert_crypto_amount_to_alloy_256(
+        <span class="attr">#[case] </span>amount: CryptoAmount,
+        <span class="attr">#[case] </span>decimals: u32,
+        <span class="attr">#[case] </span>expected: <span class="prelude-ty">Option</span>&lt;U256&gt;,
+    ) {
+        <span class="kw">let </span>res = convert_crypto_amount_to_u256(amount, decimals);
+
+        <span class="kw">if let </span><span class="prelude-val">Some</span>(expected) = expected {
+            <span class="macro">assert_eq!</span>(res.unwrap(), expected);
+        } <span class="kw">else </span>{
+            res.unwrap_err();
+        }
+    }
+
     <span class="doccomment">/// helper function to get a [`WalletUser`] instance.
     </span><span class="kw">async fn </span>get_wallet_user(mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;) -&gt; (WalletImplEth, CleanUp) {
         <span class="kw">let </span>(<span class="kw">_</span>, cleanup) = Config::new_test_with_cleanup();
         <span class="kw">let </span>node_url = <span class="macro">vec!</span>[String::from(<span class="string">"https://sepolia.mode.network"</span>)];
         <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic.into(), node_url, chain_id).expect(<span class="string">"should initialize wallet"</span>);
+        <span class="kw">let </span>wallet =
+            WalletImplEth::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS).expect(<span class="string">"should initialize wallet"</span>);
         (wallet, cleanup)
     }
 
@@ -1374,7 +1510,8 @@
         node_url: String,
         chain_id: u64,
     ) -&gt; WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), <span class="macro">vec!</span>[node_url], chain_id).expect(<span class="string">"could not initialize WalletImplEth"</span>)
+        WalletImplEth::new(mnemonic.into(), <span class="macro">vec!</span>[node_url], chain_id, ETH_DECIMALS)
+            .expect(<span class="string">"could not initialize WalletImplEth"</span>)
     }
 
     <span class="attr">#[tokio::test]
@@ -1389,59 +1526,6 @@
         </span><span class="kw">let </span>parsed = Address::parse_checksummed(addr_raw, <span class="prelude-val">None</span>).unwrap();
         <span class="kw">let </span>expected = <span class="macro">alloy_primitives::address!</span>(<span class="string">"0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266"</span>);
         <span class="macro">assert_eq!</span>(parsed, expected);
-    }
-
-    <span class="attr">#[tokio::test]
-    </span><span class="kw">async fn </span>test_convert_wei_to_decimal() {
-        <span class="comment">//Arrange
-        </span><span class="kw">let </span>value_wei: i128 = <span class="number">10000000000000000000000</span>; <span class="comment">// 22 zeros
-        </span><span class="kw">let </span>value_wei_decimal = Decimal::from_i128(value_wei).unwrap();
-        <span class="comment">// SAFETY: the value is non-negative
-        </span><span class="kw">let </span>value_wei_crypto_amount: CryptoAmount = <span class="kw">unsafe </span>{ CryptoAmount::new_unchecked(value_wei_decimal) };
-
-        <span class="comment">// Act
-        </span><span class="kw">let </span>value_eth_crypto_amount = WalletImplEth::convert_wei_to_eth(value_wei_crypto_amount);
-
-        <span class="comment">// Assert
-
-        /***
-         * 1 10^22
-         * 10 10^21
-         * ...
-         * 10000 10^18
-         */
-        </span><span class="macro">assert_eq!</span>(value_eth_crypto_amount, CryptoAmount::from(<span class="number">10000</span>))
-    }
-
-    <span class="attr">#[tokio::test]
-    </span><span class="kw">async fn </span>test_convert_alloy_256_to_decimal() {
-        <span class="comment">//Arrange
-        </span><span class="kw">let </span>expected_value_decimal: i128 = <span class="number">10000000000000000000000</span>;
-        <span class="kw">let </span>expected_value_decimal = Decimal::from_i128(expected_value_decimal).unwrap();
-        <span class="comment">// SAFETY: the value is non-negative
-        </span><span class="kw">let </span>expected_value_crypto_amount: CryptoAmount = <span class="kw">unsafe </span>{ CryptoAmount::new_unchecked(expected_value_decimal) };
-
-        <span class="kw">let </span>value_alloy_256: alloy_primitives::Uint&lt;<span class="number">256</span>, <span class="number">4</span>&gt; =
-            alloy_primitives::Uint::from_str(<span class="string">"10000000000000000000000"</span>).unwrap();
-
-        <span class="comment">// Act
-        </span><span class="kw">let </span>value_crypto_amount = WalletImplEth::convert_alloy_256_to_crypto_amount(value_alloy_256).unwrap();
-
-        <span class="comment">// Assert
-        </span><span class="macro">assert_eq!</span>(value_crypto_amount, expected_value_crypto_amount)
-    }
-
-    <span class="attr">#[tokio::test]
-    </span><span class="kw">async fn </span>test_convert_crypto_amount_to_alloy_256() {
-        <span class="comment">//Arrange
-        </span><span class="kw">let </span>expected_value_u256 = U256::from(<span class="number">1</span>);
-        <span class="kw">let </span>value_crypto_amount = CryptoAmount::from(<span class="number">1</span>);
-
-        <span class="comment">// Act
-        </span><span class="kw">let </span>value_u256 = WalletImplEth::convert_crypto_amount_to_u256(value_crypto_amount).unwrap();
-
-        <span class="comment">// Assert
-        </span><span class="macro">assert_eq!</span>(value_u256, expected_value_u256)
     }
 
     <span class="attr">#[tokio::test]

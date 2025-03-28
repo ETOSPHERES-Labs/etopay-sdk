@@ -975,7 +975,13 @@
 <a href="#974" id="974">974</a>
 <a href="#975" id="975">975</a>
 <a href="#976" id="976">976</a>
-<a href="#977" id="977">977</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
+<a href="#977" id="977">977</a>
+<a href="#978" id="978">978</a>
+<a href="#979" id="979">979</a>
+<a href="#980" id="980">980</a>
+<a href="#981" id="981">981</a>
+<a href="#982" id="982">982</a>
+<a href="#983" id="983">983</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 //! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
 //! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
 //!
@@ -1520,14 +1526,20 @@
 
         <span class="kw">let </span>bo = <span class="kw">match </span>network.protocol {
             ApiProtocol::Evm { chain_id } =&gt; {
-                <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic, network.node_urls, chain_id)<span class="question-mark">?</span>;
+                <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic, network.node_urls, chain_id, network.decimals)<span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
             ApiProtocol::EvmERC20 {
                 chain_id,
                 contract_address,
             } =&gt; {
-                <span class="kw">let </span>wallet = WalletImplEthErc20::new(mnemonic, network.node_urls, chain_id, contract_address)<span class="question-mark">?</span>;
+                <span class="kw">let </span>wallet = WalletImplEthErc20::new(
+                    mnemonic,
+                    network.node_urls,
+                    chain_id,
+                    network.decimals,
+                    contract_address,
+                )<span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
             ApiProtocol::Stardust {} =&gt; {
