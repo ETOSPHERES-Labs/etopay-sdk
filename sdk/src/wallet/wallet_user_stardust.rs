@@ -1,6 +1,6 @@
 use super::error::{Result, WalletError};
 use super::wallet_user::{TransactionIntent, WalletUser};
-use crate::types::currencies::{CryptoAmount, Currency};
+use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManager;
@@ -30,7 +30,7 @@ pub struct WalletImplStardust {
 
 impl WalletImplStardust {
     /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
-    pub async fn new(mnemonic: Mnemonic, path: &Path, currency: Currency, node_url: Vec<String>) -> Result<Self> {
+    pub async fn new(mnemonic: Mnemonic, path: &Path, coin_type: u32, node_url: Vec<String>) -> Result<Self> {
         // we now have the mnemonic and can initialize a wallet
         let node_urls: Vec<&str> = node_url.iter().map(String::as_str).collect();
 
@@ -39,8 +39,6 @@ impl WalletImplStardust {
             .with_local_pow(false)
             .with_fallback_to_local_pow(true)
             .with_nodes(&node_urls)?;
-
-        let coin_type = currency.coin_type();
 
         // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
         #[cfg(not(target_arch = "wasm32"))]
@@ -218,32 +216,33 @@ mod tests {
     use super::*;
     use crate::core::Config;
     use crate::testing_utils::MNEMONIC;
-    use crate::types::{self, currencies::Currency};
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rstest::rstest;
     use rust_decimal_macros::dec;
     use testing::CleanUp;
+
+    const COIN_TYPE_IOTA: u32 = iota_sdk::client::constants::IOTA_COIN_TYPE;
 
     // General Note:
     // - Check the corresponding wallet address on the explorer: https://explorer.shimmer.network/testnet
     // - Obtain testnet tokens for the wallet (if needed): https://faucet.testnet.shimmer.network/
 
     /// helper function to get a [`WalletUser`] instance.
-    async fn get_wallet_user(mnemonic: impl Into<Mnemonic>, currency: Currency) -> (WalletImplStardust, CleanUp) {
+    async fn get_wallet_user(mnemonic: impl Into<Mnemonic>, coin_type: u32) -> (WalletImplStardust, CleanUp) {
         let (_, cleanup) = Config::new_test_with_cleanup();
         let node_url = vec![String::from("https://api.testnet.iotaledger.net")];
-        let wallet = WalletImplStardust::new(mnemonic.into(), Path::new(&cleanup.path_prefix), currency, node_url)
+        let wallet = WalletImplStardust::new(mnemonic.into(), Path::new(&cleanup.path_prefix), coin_type, node_url)
             .await
             .expect("should initialize wallet");
         (wallet, cleanup)
     }
 
     #[rstest]
-    #[case(Currency::Iota, "tst")]
+    #[case(COIN_TYPE_IOTA, "tst")]
     #[tokio::test]
-    async fn test_get_address(#[case] currency: Currency, #[case] expected_prefix: &str) {
+    async fn test_get_address(#[case] coin_type: u32, #[case] expected_prefix: &str) {
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, currency).await;
+        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, coin_type).await;
 
         // Act
         let address = wallet_user.get_address().await;
@@ -257,11 +256,11 @@ mod tests {
     }
 
     #[rstest]
-    #[case(Currency::Iota)]
+    #[case(COIN_TYPE_IOTA)]
     #[tokio::test]
-    async fn test_get_balance(#[case] currency: Currency) {
+    async fn test_get_balance(#[case] coin_type: u32) {
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, currency).await;
+        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, coin_type).await;
 
         // Act
         let balance = wallet_user.get_balance().await;
@@ -275,7 +274,7 @@ mod tests {
     async fn test_serial_get_wallet_tx_list() {
         // Arrange
         let mnemonic = "west neutral cannon wreck notice disorder message three phrase accident office flavor merit kiss claim finish finger forum mesh mouse torch cradle inside glue";
-        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, COIN_TYPE_IOTA).await;
 
         let address = wallet_user.get_address().await.unwrap(); // tst1qpaha27ytq8ay3ahqlfl6rn5xndnwxwahunf20h59cadpt9q2gx0crqekxk
 
@@ -300,7 +299,7 @@ mod tests {
 
         // Assert
         let wallet_tx_info_list = result.unwrap();
-        let transactions: Vec<types::transactions::WalletTxInfo> = wallet_tx_info_list.transactions.to_vec();
+        let transactions: Vec<crate::types::transactions::WalletTxInfo> = wallet_tx_info_list.transactions.to_vec();
 
         assert_eq!(transactions.len(), 1);
         assert_eq!(transactions[0].transaction_id, transaction);
@@ -311,7 +310,7 @@ mod tests {
     async fn test_serial_get_wallet_tx_success() {
         // Arrange
         let mnemonic = "century jazz giant zebra pledge head school supreme aim certain moment mechanic curtain chronic duck addict despair pistol romance risk impulse upgrade rubber grid";
-        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, COIN_TYPE_IOTA).await;
 
         let address = wallet_user.get_address().await.unwrap(); //tst1qq68c239vacsq3gnksqss5glh9e3w0wc9mra9d6cs39e8hs3xrmgjscdpac
         let balance = wallet_user.get_balance().await.unwrap();
@@ -336,7 +335,7 @@ mod tests {
     #[tokio::test]
     async fn test_get_wallet_tx_error_nonexistent_transaction() {
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, COIN_TYPE_IOTA).await;
 
         let transaction_id = "nonexistent_transaction_id";
 
@@ -352,7 +351,7 @@ mod tests {
     async fn it_should_send_amount_with_data() {
         let mnemonic = "predict wrist plug desert mobile crowd build leg swap impose breeze loyal surge brand hair bronze melody scale hello cereal car item slow bring";
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(mnemonic, COIN_TYPE_IOTA).await;
 
         let address = wallet_user.get_address().await.unwrap();
         let balance = wallet_user.get_balance().await.unwrap();
@@ -378,7 +377,7 @@ mod tests {
     #[tokio::test]
     async fn it_should_send_amount_without_data() {
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, COIN_TYPE_IOTA).await;
 
         let address = wallet_user.get_address().await.unwrap();
         let balance = wallet_user.get_balance().await.unwrap();
@@ -401,7 +400,7 @@ mod tests {
     #[tokio::test]
     async fn it_should_not_send_amount_more_then_balance() {
         // Arrange
-        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, Currency::Iota).await;
+        let (wallet_user, _cleanup) = get_wallet_user(MNEMONIC, COIN_TYPE_IOTA).await;
 
         let address = wallet_user.get_address().await.unwrap();
         let balance = wallet_user.get_balance().await.unwrap();

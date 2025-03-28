@@ -8,7 +8,6 @@ use super::wallet_user::WalletUser;
 use super::wallet_user_evm::{WalletImplEvm, WalletImplEvmErc20};
 use super::wallet_user_stardust::WalletImplStardust;
 use crate::core::{Config, UserRepoT};
-use crate::types::currencies::Currency;
 use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
 use crate::wallet::error::{ErrorKind, Result, WalletError};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
@@ -568,8 +567,7 @@ impl WalletManager for WalletManagerImpl {
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             ApiProtocol::Stardust {} => {
-                let currency = Currency::try_from(network.display_symbol)?;
-                let wallet = WalletImplStardust::new(mnemonic, &path, currency, network.node_urls).await?;
+                let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, network.node_urls).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };
