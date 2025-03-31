@@ -577,8 +577,8 @@ mod tests {
         core::Sdk,
         types::users::ActiveUser,
         user::MockUserRepo,
+        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
-        wallet_user::MockWalletUser,
     };
     use api_types::api::networks::ApiNetwork;
     use api_types::api::{dlt::SetUserAddressRequest, viviswap::order::GetOrdersResponse};

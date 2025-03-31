@@ -1,5 +1,5 @@
 use super::error::Result;
-use super::wallet_user::{TransactionIntent, WalletUser};
+use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use crate::wallet::error::WalletError;
@@ -40,9 +40,9 @@ type ProviderType = FillProvider<
     RootProvider,
 >;
 
-/// [`WalletUser`] implementation for ETH
+/// [`WalletUser`] implementation for EVM
 #[derive(Debug)]
-pub struct WalletImplEth {
+pub struct WalletImplEvm {
     /// ChainId for the transactions.
     chain_id: u64,
 
@@ -53,14 +53,20 @@ pub struct WalletImplEth {
     provider: ProviderType,
 }
 
-impl WalletImplEth {
-    /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    pub fn new(mnemonic: Mnemonic, node_urls: Vec<String>, chain_id: u64, decimals: u32) -> Result<Self> {
+impl WalletImplEvm {
+    /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
+    pub fn new(
+        mnemonic: Mnemonic,
+        node_urls: Vec<String>,
+        chain_id: u64,
+        decimals: u32,
+        coin_type: u32,
+    ) -> Result<Self> {
         // Ase mnemonic to create a Signer
-        // Child key at derivation path: m/44'/60'/0'/0/{index}.
         let wallet = MnemonicBuilder::<English>::default()
             .phrase(mnemonic.as_ref().to_string())
-            .index(0)?
+            // Child key at derivation path: m/44'/{coin_type}'/{account}'/{change}/{index}.
+            .derivation_path(format!("m/44'/{}'/0'/0/0", coin_type))?
             // // Use this if your mnemonic is encrypted.
             // .password(password)
             .build()?;
@@ -76,7 +82,7 @@ impl WalletImplEth {
 
         info!("Wallet creation successful");
 
-        Ok(WalletImplEth {
+        Ok(WalletImplEvm {
             chain_id,
             decimals,
             provider: http_provider,
@@ -150,6 +156,7 @@ impl WalletImplEth {
         })
     }
 }
+
 /// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
 fn convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -> Result<CryptoAmount> {
     let value_u128 = u128::try_from(value)
@@ -222,7 +229,7 @@ fn convert_crypto_amount_to_u256(amount: CryptoAmount, decimals: u32) -> Result<
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[cfg_attr(test, mockall::automock)]
-impl WalletUser for WalletImplEth {
+impl WalletUser for WalletImplEvm {
     async fn get_address(&self) -> Result<String> {
         Ok(self.provider.default_signer_address().to_string())
     }
@@ -315,23 +322,24 @@ alloy::sol!(
     "src/abi/erc20.json"
 );
 
-/// [`WalletUser`] implementation for ETH-ERC20
+/// [`WalletUser`] implementation for EVM-ERC20
 #[derive(Debug)]
-pub struct WalletImplEthErc20 {
-    inner: WalletImplEth,
+pub struct WalletImplEvmErc20 {
+    inner: WalletImplEvm,
     contract_address: Address,
 }
-impl WalletImplEthErc20 {
-    /// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
+impl WalletImplEvmErc20 {
+    /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
     pub fn new(
         mnemonic: Mnemonic,
         node_urls: Vec<String>,
         chain_id: u64,
         decimals: u32,
+        coin_type: u32,
         contract_address: String,
     ) -> Result<Self> {
         Ok(Self {
-            inner: WalletImplEth::new(mnemonic, node_urls, chain_id, decimals)?,
+            inner: WalletImplEvm::new(mnemonic, node_urls, chain_id, decimals, coin_type)?,
             contract_address: contract_address.parse()?,
         })
     }
@@ -366,7 +374,7 @@ impl WalletImplEthErc20 {
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 #[cfg_attr(test, mockall::automock)]
-impl WalletUser for WalletImplEthErc20 {
+impl WalletUser for WalletImplEvmErc20 {
     async fn get_address(&self) -> Result<String> {
         self.inner.get_address().await
     }
@@ -442,6 +450,7 @@ mod tests {
     pub const HARDHAT_MNEMONIC: &str = "test test test test test test test test test test test junk";
 
     const ETH_DECIMALS: u32 = 18;
+    const ETH_COIN_TYPE: u32 = 60;
 
     #[rstest::rstest]
     #[case(Some(CryptoAmount::try_from(dec!(1)).unwrap()), 3, U256::from(1000))]
@@ -491,13 +500,13 @@ mod tests {
     }
 
     /// helper function to get a [`WalletUser`] instance.
-    async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEth, CleanUp) {
+    async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEvm, CleanUp) {
         let (_, cleanup) = Config::new_test_with_cleanup();
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet =
-            WalletImplEth::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS).expect("should initialize wallet");
+        let wallet = WalletImplEvm::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+            .expect("should initialize wallet");
         (wallet, cleanup)
     }
 
@@ -506,8 +515,8 @@ mod tests {
         mnemonic: impl Into<Mnemonic>,
         node_url: String,
         chain_id: u64,
-    ) -> WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), vec![node_url], chain_id, ETH_DECIMALS)
+    ) -> WalletImplEvm {
+        WalletImplEvm::new(mnemonic.into(), vec![node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("could not initialize WalletImplEth")
     }
 

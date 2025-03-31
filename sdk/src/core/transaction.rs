@@ -10,7 +10,7 @@ use crate::types::{
     transactions::{TxInfo, TxList},
 };
 use crate::wallet::error::WalletError;
-use crate::wallet_user::TransactionIntent;
+use crate::wallet::wallet::TransactionIntent;
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 use log::{debug, info};
@@ -393,8 +393,8 @@ mod tests {
     use crate::{
         core::Sdk,
         user::MockUserRepo,
+        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
-        wallet_user::MockWalletUser,
     };
     use api_types::api::transactions::GetTxsDetailsResponse;
     use api_types::api::transactions::{

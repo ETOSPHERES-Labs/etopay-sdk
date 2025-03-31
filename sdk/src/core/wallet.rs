@@ -573,8 +573,8 @@ mod tests {
         core::Sdk,
         types::users::KycType,
         user::MockUserRepo,
+        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
-        wallet_user::MockWalletUser,
     };
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
