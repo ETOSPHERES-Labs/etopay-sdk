@@ -76,7 +76,7 @@ task runCreateNewUser01(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runCreateNewWallet03(type: JavaExec) {
@@ -85,7 +85,7 @@ task runCreateNewWallet03(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runMigrateWalletFromMnemonic04(type: JavaExec) {
@@ -94,7 +94,7 @@ task runMigrateWalletFromMnemonic04(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runMigrateWalletFromBackup05(type: JavaExec) {
@@ -103,7 +103,7 @@ task runMigrateWalletFromBackup05(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runGenerateNewAddress06(type: JavaExec) {
@@ -112,7 +112,7 @@ task runGenerateNewAddress06(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runGetBalance07(type: JavaExec) {
@@ -121,7 +121,7 @@ task runGetBalance07(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runCreatePurchaseRequest08(type: JavaExec) {
@@ -130,7 +130,7 @@ task runCreatePurchaseRequest08(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runVerifyPin10(type: JavaExec) {
@@ -139,7 +139,7 @@ task runVerifyPin10(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runResetPin11(type: JavaExec) {
@@ -148,7 +148,7 @@ task runResetPin11(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runChangePassword12(type: JavaExec) {
@@ -157,7 +157,7 @@ task runChangePassword12(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runSendAmount13(type: JavaExec) {
@@ -166,7 +166,7 @@ task runSendAmount13(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runGetExchangeRate14(type: JavaExec) {
@@ -175,7 +175,7 @@ task runGetExchangeRate14(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runGetTxList16(type: JavaExec) {
@@ -184,7 +184,7 @@ task runGetTxList16(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runDeleteUser18(type: JavaExec) {
@@ -193,7 +193,7 @@ task runDeleteUser18(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runGetWalletTxList19(type: JavaExec) {
@@ -202,7 +202,7 @@ task runGetWalletTxList19(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runSendCompliment20(type: JavaExec) {
@@ -211,7 +211,7 @@ task runSendCompliment20(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 // examples that do not work 
@@ -222,7 +222,7 @@ task runOnboardUserPostident02 (type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runOnboardUserViviswap09(type: JavaExec) {
@@ -231,7 +231,7 @@ task runOnboardUserViviswap09(type: JavaExec) {
     classpath = sourceSets.main.runtimeClasspath
     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../../target/release/")
+    systemProperty "java.library.path", file("../../../target/release/")
 }
 
 task runAllExamples(dependsOn: [
