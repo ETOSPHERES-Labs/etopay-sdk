@@ -178,8 +178,8 @@ mod tests {
         error::Result,
         testing_utils::{example_wallet_borrow, set_config, PIN, USERNAME},
         user::MockUserRepo,
+        wallet::wallet::MockWalletUser,
         wallet_manager::WalletBorrow,
-        wallet_user::MockWalletUser,
     };
     use api_types::api::dlt::ApiGetNetworksResponse;
     use api_types::api::networks::ApiNetwork;

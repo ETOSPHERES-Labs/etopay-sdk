@@ -4,9 +4,9 @@
 //!
 
 use super::share::Share;
-use super::wallet_user::WalletUser;
-use super::wallet_user_evm::{WalletImplEvm, WalletImplEvmErc20};
-use super::wallet_user_stardust::WalletImplStardust;
+use super::wallet::WalletUser;
+use super::wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
+use super::wallet_stardust::WalletImplStardust;
 use crate::core::{Config, UserRepoT};
 use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
 use crate::wallet::error::{ErrorKind, Result, WalletError};

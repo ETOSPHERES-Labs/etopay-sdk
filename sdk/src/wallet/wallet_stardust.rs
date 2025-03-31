@@ -1,5 +1,5 @@
 use super::error::{Result, WalletError};
-use super::wallet_user::{TransactionIntent, WalletUser};
+use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;

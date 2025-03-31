@@ -7,8 +7,8 @@ use crate::types::viviswap::{
     ViviswapAddressDetail, ViviswapPartiallyKycDetails, ViviswapState, ViviswapVerificationStatus,
     ViviswapVerificationStep,
 };
+use crate::wallet::wallet::MockWalletUser;
 use crate::wallet_manager::MockWalletManager;
-use crate::wallet_user::MockWalletUser;
 use crate::{
     core::Config,
     types::newtypes::{AccessToken, EncryptedPassword, EncryptionPin, PlainPassword},

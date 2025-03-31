@@ -8,13 +8,14 @@
 pub mod wallet_manager;
 
 /// wallet user definition
-pub(crate) mod wallet_user;
+#[allow(clippy::module_inception)]
+pub(crate) mod wallet;
 
 /// wallet user for Stardust protocol
-pub(crate) mod wallet_user_stardust;
+pub(crate) mod wallet_stardust;
 
 /// wallet user for EVM
-pub(crate) mod wallet_user_evm;
+pub(crate) mod wallet_evm;
 
 /// Module containing code related to the SSS secret sharing scheme
 pub mod share;
