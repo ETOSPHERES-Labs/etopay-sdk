@@ -1,4 +1,4 @@
-<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sdk/src/wallet/wallet_user_eth.rs`."><title>wallet_user_eth.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="etopay_sdk" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">etopay_sdk/wallet/</div>wallet_user_eth.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><meta name="generator" content="rustdoc"><meta name="description" content="Source of the Rust file `sdk/src/wallet/wallet_evm.rs`."><title>wallet_evm.rs - source</title><script>if(window.location.protocol!=="file:")document.head.insertAdjacentHTML("beforeend","SourceSerif4-Regular-6b053e98.ttf.woff2,FiraSans-Regular-0fe48ade.woff2,FiraSans-Medium-e1aa3f0a.woff2,SourceCodePro-Regular-8badfe75.ttf.woff2,SourceCodePro-Semibold-aa29a496.ttf.woff2".split(",").map(f=>`<link rel="preload" as="font" type="font/woff2" crossorigin href="../../../static.files/${f}">`).join(""))</script><link rel="stylesheet" href="../../../static.files/normalize-9960930a.css"><link rel="stylesheet" href="../../../static.files/rustdoc-46132b98.css"><meta name="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="etopay_sdk" data-themes="" data-resource-suffix="" data-rustdoc-version="1.85.1 (4eb161250 2025-03-15)" data-channel="1.85.1" data-search-js="search-75f5ac3e.js" data-settings-js="settings-0f613d39.js" ><script src="../../../static.files/storage-59e33391.js"></script><script defer src="../../../static.files/src-script-56102188.js"></script><script defer src="../../../src-files.js"></script><script defer src="../../../static.files/main-5f194d8c.js"></script><noscript><link rel="stylesheet" href="../../../static.files/noscript-893ab5e7.css"></noscript><link rel="alternate icon" type="image/png" href="../../../static.files/favicon-32x32-6580c154.png"><link rel="icon" type="image/svg+xml" href="../../../static.files/favicon-044be391.svg"></head><body class="rustdoc src"><!--[if lte IE 11]><div class="warning">This old browser is unsupported and will most likely display funky things.</div><![endif]--><nav class="sidebar"><div class="src-sidebar-title"><h2>Files</h2></div></nav><div class="sidebar-resizer"></div><main><rustdoc-search></rustdoc-search><section id="main-content" class="content"><div class="main-heading"><h1><div class="sub-heading">etopay_sdk/wallet/</div>wallet_evm.rs</h1><rustdoc-toolbar></rustdoc-toolbar></div><div class="example-wrap"><div data-nosnippet><pre class="src-line-numbers">
 <a href="#1" id="1">1</a>
 <a href="#2" id="2">2</a>
 <a href="#3" id="3">3</a>
@@ -1001,8 +1001,17 @@
 <a href="#1000" id="1000">1000</a>
 <a href="#1001" id="1001">1001</a>
 <a href="#1002" id="1002">1002</a>
-<a href="#1003" id="1003">1003</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
-<span class="kw">use </span><span class="kw">super</span>::wallet_user::{TransactionIntent, WalletUser};
+<a href="#1003" id="1003">1003</a>
+<a href="#1004" id="1004">1004</a>
+<a href="#1005" id="1005">1005</a>
+<a href="#1006" id="1006">1006</a>
+<a href="#1007" id="1007">1007</a>
+<a href="#1008" id="1008">1008</a>
+<a href="#1009" id="1009">1009</a>
+<a href="#1010" id="1010">1010</a>
+<a href="#1011" id="1011">1011</a>
+<a href="#1012" id="1012">1012</a></pre></div><pre class="rust"><code><span class="kw">use </span><span class="kw">super</span>::error::Result;
+<span class="kw">use </span><span class="kw">super</span>::wallet::{TransactionIntent, WalletUser};
 <span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
 <span class="kw">use </span><span class="kw">crate</span>::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::WalletError;
@@ -1043,9 +1052,9 @@
     RootProvider,
 &gt;;
 
-<span class="doccomment">/// [`WalletUser`] implementation for ETH
+<span class="doccomment">/// [`WalletUser`] implementation for EVM
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>WalletImplEth {
+</span><span class="kw">pub struct </span>WalletImplEvm {
     <span class="doccomment">/// ChainId for the transactions.
     </span>chain_id: u64,
 
@@ -1056,14 +1065,20 @@
     </span>provider: ProviderType,
 }
 
-<span class="kw">impl </span>WalletImplEth {
-    <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
-    </span><span class="kw">pub fn </span>new(mnemonic: Mnemonic, node_urls: Vec&lt;String&gt;, chain_id: u64, decimals: u32) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
+<span class="kw">impl </span>WalletImplEvm {
+    <span class="doccomment">/// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
+    </span><span class="kw">pub fn </span>new(
+        mnemonic: Mnemonic,
+        node_urls: Vec&lt;String&gt;,
+        chain_id: u64,
+        decimals: u32,
+        coin_type: u32,
+    ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="comment">// Ase mnemonic to create a Signer
-        // Child key at derivation path: m/44'/60'/0'/0/{index}.
         </span><span class="kw">let </span>wallet = MnemonicBuilder::&lt;English&gt;::default()
             .phrase(mnemonic.as_ref().to_string())
-            .index(<span class="number">0</span>)<span class="question-mark">?
+            <span class="comment">// Child key at derivation path: m/44'/{coin_type}'/{account}'/{change}/{index}.
+            </span>.derivation_path(<span class="macro">format!</span>(<span class="string">"m/44'/{}'/0'/0/0"</span>, coin_type))<span class="question-mark">?
             </span><span class="comment">// // Use this if your mnemonic is encrypted.
             // .password(password)
             </span>.build()<span class="question-mark">?</span>;
@@ -1079,7 +1094,7 @@
 
         <span class="macro">info!</span>(<span class="string">"Wallet creation successful"</span>);
 
-        <span class="prelude-val">Ok</span>(WalletImplEth {
+        <span class="prelude-val">Ok</span>(WalletImplEvm {
             chain_id,
             decimals,
             provider: http_provider,
@@ -1153,6 +1168,7 @@
         })
     }
 }
+
 <span class="doccomment">/// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
 </span><span class="kw">fn </span>convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -&gt; <span class="prelude-ty">Result</span>&lt;CryptoAmount&gt; {
     <span class="kw">let </span>value_u128 = u128::try_from(value)
@@ -1225,7 +1241,7 @@
 <span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
 #[cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), async_trait)]
 #[cfg_attr(test, mockall::automock)]
-</span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEth {
+</span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEvm {
     <span class="kw">async fn </span>get_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">self</span>.provider.default_signer_address().to_string())
     }
@@ -1318,23 +1334,24 @@
     <span class="string">"src/abi/erc20.json"
 </span>);
 
-<span class="doccomment">/// [`WalletUser`] implementation for ETH-ERC20
+<span class="doccomment">/// [`WalletUser`] implementation for EVM-ERC20
 </span><span class="attr">#[derive(Debug)]
-</span><span class="kw">pub struct </span>WalletImplEthErc20 {
-    inner: WalletImplEth,
+</span><span class="kw">pub struct </span>WalletImplEvmErc20 {
+    inner: WalletImplEvm,
     contract_address: Address,
 }
-<span class="kw">impl </span>WalletImplEthErc20 {
-    <span class="doccomment">/// Creates a new [`WalletImplEth`] from the specified [`Mnemonic`].
+<span class="kw">impl </span>WalletImplEvmErc20 {
+    <span class="doccomment">/// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
     </span><span class="kw">pub fn </span>new(
         mnemonic: Mnemonic,
         node_urls: Vec&lt;String&gt;,
         chain_id: u64,
         decimals: u32,
+        coin_type: u32,
         contract_address: String,
     ) -&gt; <span class="prelude-ty">Result</span>&lt;<span class="self">Self</span>&gt; {
         <span class="prelude-val">Ok</span>(<span class="self">Self </span>{
-            inner: WalletImplEth::new(mnemonic, node_urls, chain_id, decimals)<span class="question-mark">?</span>,
+            inner: WalletImplEvm::new(mnemonic, node_urls, chain_id, decimals, coin_type)<span class="question-mark">?</span>,
             contract_address: contract_address.parse()<span class="question-mark">?</span>,
         })
     }
@@ -1369,7 +1386,7 @@
 <span class="attr">#[cfg_attr(target_arch = <span class="string">"wasm32"</span>, async_trait(<span class="question-mark">?</span>Send))]
 #[cfg_attr(not(target_arch = <span class="string">"wasm32"</span>), async_trait)]
 #[cfg_attr(test, mockall::automock)]
-</span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEthErc20 {
+</span><span class="kw">impl </span>WalletUser <span class="kw">for </span>WalletImplEvmErc20 {
     <span class="kw">async fn </span>get_address(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;String&gt; {
         <span class="self">self</span>.inner.get_address().<span class="kw">await
     </span>}
@@ -1445,6 +1462,7 @@
     </span><span class="kw">pub const </span>HARDHAT_MNEMONIC: <span class="kw-2">&amp;</span>str = <span class="string">"test test test test test test test test test test test junk"</span>;
 
     <span class="kw">const </span>ETH_DECIMALS: u32 = <span class="number">18</span>;
+    <span class="kw">const </span>ETH_COIN_TYPE: u32 = <span class="number">60</span>;
 
     <span class="attr">#[rstest::rstest]
     #[case(<span class="prelude-val">Some</span>(CryptoAmount::try_from(<span class="macro">dec!</span>(<span class="number">1</span>)).unwrap()), <span class="number">3</span>, U256::from(<span class="number">1000</span>))]
@@ -1494,13 +1512,13 @@
     }
 
     <span class="doccomment">/// helper function to get a [`WalletUser`] instance.
-    </span><span class="kw">async fn </span>get_wallet_user(mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;) -&gt; (WalletImplEth, CleanUp) {
+    </span><span class="kw">async fn </span>get_wallet_user(mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;) -&gt; (WalletImplEvm, CleanUp) {
         <span class="kw">let </span>(<span class="kw">_</span>, cleanup) = Config::new_test_with_cleanup();
         <span class="kw">let </span>node_url = <span class="macro">vec!</span>[String::from(<span class="string">"https://sepolia.mode.network"</span>)];
         <span class="kw">let </span>chain_id = <span class="number">31337</span>;
 
-        <span class="kw">let </span>wallet =
-            WalletImplEth::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS).expect(<span class="string">"should initialize wallet"</span>);
+        <span class="kw">let </span>wallet = WalletImplEvm::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+            .expect(<span class="string">"should initialize wallet"</span>);
         (wallet, cleanup)
     }
 
@@ -1509,8 +1527,8 @@
         mnemonic: <span class="kw">impl </span>Into&lt;Mnemonic&gt;,
         node_url: String,
         chain_id: u64,
-    ) -&gt; WalletImplEth {
-        WalletImplEth::new(mnemonic.into(), <span class="macro">vec!</span>[node_url], chain_id, ETH_DECIMALS)
+    ) -&gt; WalletImplEvm {
+        WalletImplEvm::new(mnemonic.into(), <span class="macro">vec!</span>[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect(<span class="string">"could not initialize WalletImplEth"</span>)
     }
 

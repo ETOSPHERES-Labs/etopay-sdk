@@ -981,16 +981,22 @@
 <a href="#980" id="980">980</a>
 <a href="#981" id="981">981</a>
 <a href="#982" id="982">982</a>
-<a href="#983" id="983">983</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
+<a href="#983" id="983">983</a>
+<a href="#984" id="984">984</a>
+<a href="#985" id="985">985</a>
+<a href="#986" id="986">986</a>
+<a href="#987" id="987">987</a>
+<a href="#988" id="988">988</a>
+<a href="#989" id="989">989</a></pre></div><pre class="rust"><code><span class="doccomment">//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
 //! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
 //! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
 //!
 
 </span><span class="kw">use </span><span class="kw">super</span>::share::Share;
-<span class="kw">use </span><span class="kw">super</span>::wallet_user::{WalletImplStardust, WalletUser};
-<span class="kw">use </span><span class="kw">super</span>::wallet_user_eth::{WalletImplEth, WalletImplEthErc20};
+<span class="kw">use </span><span class="kw">super</span>::wallet::WalletUser;
+<span class="kw">use </span><span class="kw">super</span>::wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
+<span class="kw">use </span><span class="kw">super</span>::wallet_stardust::WalletImplStardust;
 <span class="kw">use </span><span class="kw">crate</span>::core::{Config, UserRepoT};
-<span class="kw">use </span><span class="kw">crate</span>::types::currencies::Currency;
 <span class="kw">use </span><span class="kw">crate</span>::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::{ErrorKind, <span class="prelude-ty">Result</span>, WalletError};
 <span class="kw">use </span>api_types::api::networks::{ApiNetwork, ApiProtocol};
@@ -1526,25 +1532,31 @@
 
         <span class="kw">let </span>bo = <span class="kw">match </span>network.protocol {
             ApiProtocol::Evm { chain_id } =&gt; {
-                <span class="kw">let </span>wallet = WalletImplEth::new(mnemonic, network.node_urls, chain_id, network.decimals)<span class="question-mark">?</span>;
+                <span class="kw">let </span>wallet = WalletImplEvm::new(
+                    mnemonic,
+                    network.node_urls,
+                    chain_id,
+                    network.decimals,
+                    network.coin_type,
+                )<span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
             ApiProtocol::EvmERC20 {
                 chain_id,
                 contract_address,
             } =&gt; {
-                <span class="kw">let </span>wallet = WalletImplEthErc20::new(
+                <span class="kw">let </span>wallet = WalletImplEvmErc20::new(
                     mnemonic,
                     network.node_urls,
                     chain_id,
                     network.decimals,
+                    network.coin_type,
                     contract_address,
                 )<span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
             ApiProtocol::Stardust {} =&gt; {
-                <span class="kw">let </span>currency = Currency::try_from(network.display_symbol)<span class="question-mark">?</span>;
-                <span class="kw">let </span>wallet = WalletImplStardust::new(mnemonic, <span class="kw-2">&amp;</span>path, currency, network.node_urls).<span class="kw">await</span><span class="question-mark">?</span>;
+                <span class="kw">let </span>wallet = WalletImplStardust::new(mnemonic, <span class="kw-2">&amp;</span>path, network.coin_type, network.node_urls).<span class="kw">await</span><span class="question-mark">?</span>;
                 Box::new(wallet) <span class="kw">as </span>Box&lt;<span class="kw">dyn </span>WalletUser + Sync + Send&gt;
             }
         };

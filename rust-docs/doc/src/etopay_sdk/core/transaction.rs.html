@@ -893,7 +893,7 @@
     transactions::{TxInfo, TxList},
 };
 <span class="kw">use </span><span class="kw">crate</span>::wallet::error::WalletError;
-<span class="kw">use </span><span class="kw">crate</span>::wallet_user::TransactionIntent;
+<span class="kw">use </span><span class="kw">crate</span>::wallet::wallet::TransactionIntent;
 <span class="kw">use </span>api_types::api::networks::{ApiNetwork, ApiProtocol};
 <span class="kw">use </span>api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 <span class="kw">use </span>log::{debug, info};
@@ -1276,8 +1276,8 @@
     <span class="kw">use crate</span>::{
         core::Sdk,
         user::MockUserRepo,
+        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
-        wallet_user::MockWalletUser,
     };
     <span class="kw">use </span>api_types::api::transactions::GetTxsDetailsResponse;
     <span class="kw">use </span>api_types::api::transactions::{

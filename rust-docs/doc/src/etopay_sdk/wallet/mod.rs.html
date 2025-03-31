@@ -21,7 +21,11 @@
 <a href="#20" id="20">20</a>
 <a href="#21" id="21">21</a>
 <a href="#22" id="22">22</a>
-<a href="#23" id="23">23</a></pre></div><pre class="rust"><code><span class="doccomment">//! Managing and using the wallet
+<a href="#23" id="23">23</a>
+<a href="#24" id="24">24</a>
+<a href="#25" id="25">25</a>
+<a href="#26" id="26">26</a>
+<a href="#27" id="27">27</a></pre></div><pre class="rust"><code><span class="doccomment">//! Managing and using the wallet
 //!
 //! Provides an abstraction for wallet setup via different methods
 //! and managing wallet for different application specific activities
@@ -30,11 +34,15 @@
 /// Wallet manager
 </span><span class="kw">pub mod </span>wallet_manager;
 
-<span class="doccomment">/// wallet user for IOTA and SMR
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>wallet_user;
+<span class="doccomment">/// wallet user definition
+</span><span class="attr">#[allow(clippy::module_inception)]
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>wallet;
 
-<span class="doccomment">/// wallet user for ETH
-</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>wallet_user_eth;
+<span class="doccomment">/// wallet user for Stardust protocol
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>wallet_stardust;
+
+<span class="doccomment">/// wallet user for EVM
+</span><span class="kw">pub</span>(<span class="kw">crate</span>) <span class="kw">mod </span>wallet_evm;
 
 <span class="doccomment">/// Module containing code related to the SSS secret sharing scheme
 </span><span class="kw">pub mod </span>share;
