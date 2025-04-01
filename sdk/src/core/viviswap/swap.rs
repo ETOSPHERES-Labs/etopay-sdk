@@ -914,7 +914,7 @@ mod tests {
         let exchange_rate_mock_response = example_exchange_rate_response();
         let body = serde_json::to_string(&exchange_rate_mock_response).unwrap();
         let get_exchange_rate = srv
-            .mock("GET", "/api/viviswap/courses?currency=Iota")
+            .mock("GET", "/api/viviswap/courses?network_key=IOTA")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
             .with_status(200)

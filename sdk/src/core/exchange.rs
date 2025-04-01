@@ -1,7 +1,6 @@
 use super::Sdk;
 use crate::backend::viviswap::get_viviswap_exchange_rate;
 use crate::error::Result;
-use crate::types::currencies::Currency;
 use log::info;
 use rust_decimal::Decimal;
 
@@ -22,8 +21,8 @@ impl Sdk {
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
         let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
-        let currency = Currency::try_from(network.display_symbol)?;
-        let exchange_rate = get_viviswap_exchange_rate(config, access_token, currency).await?;
+        let network_key = network.key;
+        let exchange_rate = get_viviswap_exchange_rate(config, access_token, network_key).await?;
         Ok(exchange_rate)
     }
 }
@@ -76,7 +75,7 @@ mod tests {
                     srv.mock("GET", "/api/viviswap/courses")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
-                        .match_query(Matcher::Exact("currency=Iota".to_string()))
+                        .match_query(Matcher::Exact("network_key=IOTA".to_string()))
                         .with_status(200)
                         .with_body(&body)
                         .expect(1)

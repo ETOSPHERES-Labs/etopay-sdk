@@ -8,7 +8,7 @@
 
 use super::error::{ApiError, Result};
 use crate::core::Config;
-use crate::types::currencies::{CryptoAmount, Currency};
+use crate::types::currencies::CryptoAmount;
 use crate::types::newtypes::AccessToken;
 use api_types::api::viviswap::contract::{ContractRequestBody, ViviswapContractCreationResponse};
 use api_types::api::viviswap::course::{GetCourseRequestQueries, GetCourseResponse};
@@ -614,13 +614,11 @@ pub async fn set_viviswap_contract(
 pub async fn get_viviswap_exchange_rate(
     config: &Config,
     access_token: &AccessToken,
-    currency: Currency,
+    network_key: String,
 ) -> Result<Decimal> {
-    info!("get_viviswap_exchange_rate for currency = {:?}", currency);
+    info!("get_viviswap_exchange_rate for network_key = {:?}", network_key);
 
-    let query = GetCourseRequestQueries {
-        currency: currency.into(),
-    };
+    let query = GetCourseRequestQueries { network_key };
 
     let response: GetCourseResponse = ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/courses")
         .with_query(&query)
@@ -1263,7 +1261,7 @@ mod tests {
             .mock("GET", "/api/viviswap/courses")
             .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
             .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
-            .match_query(Matcher::Exact("currency=Iota".to_string()))
+            .match_query(Matcher::Exact("network_key=IOTA".to_string()))
             .with_status(status_code);
         // Conditionally add the response body only for the 200 status code
         if status_code == 200 {
@@ -1272,7 +1270,7 @@ mod tests {
         let mock_server = mock_server.expect(1).create();
 
         // Act
-        let response = get_viviswap_exchange_rate(&config, &TOKEN, Currency::Iota).await;
+        let response = get_viviswap_exchange_rate(&config, &TOKEN, "IOTA".to_string()).await;
 
         // Assert
         match expected {
