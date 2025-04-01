@@ -86,21 +86,21 @@ zeroize = { version = "1.8", default-features = false, features = [
     "std",
     "zeroize_derive",
 ] }
-alloy = { version = "0.12", default-features = false, features = [
+alloy = { version = "0.13", default-features = false, features = [
     "providers",
     "rpc-types",
     "signer-mnemonic",
     "contract",
     "sol-types",
 ] }
-alloy-consensus = { version = "0.12", features = ["k256"] }
+alloy-consensus = { version = "0.13", features = ["k256"] }
 alloy-primitives = { version = "0.8", default-features = false }
-alloy-provider = { version = "0.12", default-features = false, features = [
+alloy-provider = { version = "0.13", default-features = false, features = [
     "reqwest",
     "reqwest-rustls-tls",
 ] }
-alloy-json-rpc = "0.12"
-alloy-transport = "0.12"
+alloy-json-rpc = "0.13"
+alloy-transport = "0.13"
 shadow-rs = { version = "1.0.1", default-features = false }
 
 [dependencies.rusty_secrets]
