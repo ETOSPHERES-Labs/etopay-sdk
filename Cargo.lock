@@ -289,6 +289,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "alloy-json-rpc"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bbcf26d02a72e23d5bc245425ea403c93ba17d254f20f9c23556a249c6c7e143"
+dependencies = [
+ "alloy-primitives",
+ "alloy-sol-types",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
 name = "alloy-network"
 version = "0.12.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -297,7 +311,7 @@ dependencies = [
  "alloy-consensus",
  "alloy-consensus-any",
  "alloy-eips",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.12.6",
  "alloy-network-primitives",
  "alloy-primitives",
  "alloy-rpc-types-any",
@@ -363,7 +377,7 @@ dependencies = [
  "alloy-chains",
  "alloy-consensus",
  "alloy-eips",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.12.6",
  "alloy-network",
  "alloy-network-primitives",
  "alloy-primitives",
@@ -419,7 +433,7 @@ version = "0.12.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "445a3298c14fae7afb5b9f2f735dead989f3dd83020c2ab8e48ed95d7b6d1acb"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.12.6",
  "alloy-primitives",
  "alloy-transport",
  "alloy-transport-http",
@@ -605,7 +619,7 @@ version = "0.12.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9aec325c2af8562ef355c02aeb527c755a07e9d8cf6a1e65dda8d0bf23e29b2c"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.12.6",
  "base64 0.22.1",
  "derive_more 2.0.1",
  "futures",
@@ -627,7 +641,7 @@ version = "0.12.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "a082c9473c6642cce8b02405a979496126a03b096997888e86229afad05db06c"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.12.6",
  "alloy-transport",
  "reqwest 0.12.15",
  "serde_json",
@@ -1955,7 +1969,7 @@ dependencies = [
  "aes-gcm",
  "alloy",
  "alloy-consensus",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.13.0",
  "alloy-primitives",
  "alloy-provider",
  "alloy-transport",
