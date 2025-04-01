@@ -100,7 +100,7 @@ alloy-provider = { version = "0.12", default-features = false, features = [
     "reqwest-rustls-tls",
 ] }
 alloy-json-rpc = "0.12"
-alloy-transport = "0.12"
+alloy-transport = "0.13"
 shadow-rs = { version = "1.0.1", default-features = false }
 
 [dependencies.rusty_secrets]
