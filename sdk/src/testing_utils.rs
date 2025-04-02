@@ -163,6 +163,7 @@ pub fn example_tx_details() -> GetTransactionDetailsResponse {
         status: ApiTxStatus::Completed,
         network: ApiNetwork {
             key: IOTA_NETWORK_KEY.to_string(),
+            is_testnet: true,
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
@@ -179,6 +180,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
     match key {
         val if val == *"IOTA" => ApiNetwork {
             key: IOTA_NETWORK_KEY.to_string(),
+            is_testnet: true,
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
@@ -190,6 +192,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
         },
         val if val == *"ETH" => ApiNetwork {
             key: ETH_NETWORK_KEY.to_string(),
+            is_testnet: true,
             display_name: String::from("Eth Sepolia"),
             display_symbol: String::from("ETH"),
             coin_type: 60,
@@ -201,6 +204,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
         },
         _ => ApiNetwork {
             key: String::new(),
+            is_testnet: true,
             display_name: String::new(),
             display_symbol: String::new(),
             coin_type: 0,
@@ -217,6 +221,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
     vec![
         ApiNetwork {
             key: IOTA_NETWORK_KEY.to_string(),
+            is_testnet: true,
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
@@ -228,6 +233,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
         },
         ApiNetwork {
             key: ETH_NETWORK_KEY.to_string(),
+            is_testnet: true,
             display_name: String::from("Eth Sepolia"),
             display_symbol: String::from("ETH"),
             coin_type: 60,
