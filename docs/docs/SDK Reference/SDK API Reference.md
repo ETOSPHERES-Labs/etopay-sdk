@@ -19,7 +19,7 @@
     - Viviswap and Postident KYC onboarding will not work if the user is already kyc verified.
     - KYC onboarding with another provider will not work if the user is already started kyc onboarding with one of the other providers.
     - Restoring a wallet backup may fail, if the wallet is already existing.
-    - Initializing User and initializing wallet may fail, if the user and wallet are already initialized. Since, there is no de-init function, the  SDK handle needs to be closed, or a new handle needs to be created to re init. 
+    - Initializing User and initializing wallet may fail, if the user and wallet are already initialized. Since, there is no de-init function, the  SDK handle needs to be closed, or a new handle needs to be created to re init.
     - Multiple handles to the wallet may also fail, since only atomic access are allowed.
     - Deleting a user may fail if the backend cannot be reached.
 
@@ -90,7 +90,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 | Get the supported networks. | | Returns a list of ApiNetwork. | | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk), [Set Configuration](./SDK%20API%20Reference.md#set-configuration), [Refresh access token](./SDK%20API%20Reference.md#refreshing-access-token), [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Basic | Handle |
 
 === "Rust"
-    [getNetworks](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_networks)
+    [get_networks](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_networks)
 
 === "Java"
     [getNetworks](../javadoc/com/etospheres/etopay/ETOPaySdk.html#get_networks())
@@ -109,7 +109,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Sets the network | `network_id` - The network_id as string.| | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
+| Sets the network | `network_key` - The key of the network as s string.| | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
 
 === "Rust"
     [set_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_network)
@@ -124,10 +124,10 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     Not available yet!
 
     ```swift
-    public func setNetwork(network_id: String) throws 
+    public func setNetwork(network_key: String) throws
     ```
 
-### Get build information 
+### Get build information
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
@@ -192,7 +192,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     Not available yet!
 
     ```swift
-    public func initUser(username: String) throws 
+    public func initUser(username: String) throws
     ```
 
 ### Refreshing access token
@@ -214,7 +214,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     Not available yet!
 
     ```swift
-    public func refreshAccessToken(access_token: String) throws 
+    public func refreshAccessToken(access_token: String) throws
     ```
 
 ### Checking KYC status
@@ -326,7 +326,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func restoreWalletFromBackup(pin: String, backup: RustVec<UInt8>, backup_password: String) throws
     ```
 
@@ -348,7 +348,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func createWalletBackup(backup_password: String) throws -> RustVec<UInt8>
     ```
 
@@ -370,7 +370,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func verifyMnemonic(pin: String, mnemonic: String) throws -> Bool
     ```
 
@@ -396,7 +396,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func deleteWallet(pin: String) throws
     ```
 
@@ -418,7 +418,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func verifyPin(pin: String) throws
     ```
 
@@ -440,8 +440,8 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
-    public func resetPin(pin: String, new_pin: String) throws 
+    ```swift
+    public func resetPin(pin: String, new_pin: String) throws
     ```
 
 ### Set wallet password
@@ -506,7 +506,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func generateNewAddress(pin: String) throws -> String
     ```
 
@@ -528,7 +528,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func getBalance(pin: String) throws -> Float
     ```
 
@@ -550,7 +550,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func getWalletTransactionList(pin: String, start: UInt64, limit: UInt64) throws -> Rustvec<WalletTxInfo>
     ```
 
@@ -642,11 +642,11 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func getWalletTransaction(pin: String, transactionId: String) throws -> WalletTxInfo
     ```
 
-### Set recovery share 
+### Set recovery share
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
@@ -668,7 +668,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     public func setRecoveryShare(share: String) throws
     ```
 
-### Get recovery share 
+### Get recovery share
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
@@ -710,7 +710,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func startKycVerificationForViviswap(mail: String, termsAccepted: Bool) throws -> String
     ```
 
@@ -758,7 +758,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 === "Swift"
     Not available yet!
 
-    ```swift    
+    ```swift
     public func getKycDetailsForViviswap() throws -> String
     ```
 
@@ -1910,7 +1910,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Sets the users preferred network, or resets it if an empty value is provided. | `network_id` - The preferred user network. Optional value. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
+| Sets the users preferred network, or resets it if an empty value is provided. | `network_key` - The preferred user network. Optional value. | | [User initialization](./SDK%20API%20Reference.md#initializing-a-user) | Usage | Application |
 
 === "Rust"
     [set_preferred_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_preferred_network)
@@ -1925,5 +1925,5 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
     Not available yet!
 
     ```swift
-    public func setPreferredNetwork(network_id: String) throws
+    public func setPreferredNetwork(network_key: String) throws
     ```
