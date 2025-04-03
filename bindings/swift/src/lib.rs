@@ -261,7 +261,7 @@ pub mod ffi {
         fn decimals(&self) -> u32;
         fn can_do_purchases(&self) -> bool;
         fn block_explorer_url(&self) -> String;
-        fn protocol(&self) -> Protocol;
+        fn protocol_type(&self) -> Protocol;
         fn protocol_chain_id(&self) -> Option<u64>;
         fn protocol_contract_address(&self) -> Option<String>;
     }

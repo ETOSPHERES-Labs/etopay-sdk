@@ -1590,7 +1590,7 @@ impl Network {
         self.block_explorer_url.clone()
     }
 
-    pub fn protocol(&self) -> Protocol {
+    pub fn protocol_type(&self) -> Protocol {
         match self.protocol {
             ApiProtocol::Evm { .. } => Protocol::Evm,
             ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,

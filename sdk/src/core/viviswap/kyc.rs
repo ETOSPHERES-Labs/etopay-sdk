@@ -515,7 +515,7 @@ impl Sdk {
     /// - `public_entry_reference` - if `is_public_entry` is `true`, then this must contain the resource link.
     /// - `has_no_official_document` - indicates if the client does not have any document verifying their address.
     /// - `document_residence_proof` - if `has_no_official_document` is `false`, then this must contain the document file
-    ///    that verifies that this person is currently living at the address submitted.
+    ///   that verifies that this person is currently living at the address submitted.
     ///
     ///
     /// # Errors
