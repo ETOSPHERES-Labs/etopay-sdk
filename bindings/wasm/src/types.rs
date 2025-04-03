@@ -98,7 +98,7 @@ pub struct Network {
     pub node_urls: Vec<String>,
     pub decimals: u32,
     pub can_do_purchases: bool,
-    pub protocol: Protocol,
+    pub protocol_type: Protocol,
     pub protocol_chain_id: Option<u64>,
     pub protocol_contract_address: Option<String>,
     pub block_explorer_url: String,
@@ -115,7 +115,7 @@ impl From<sdk::types::networks::ApiNetwork> for Network {
             node_urls: value.node_urls,
             decimals: value.decimals,
             can_do_purchases: value.can_do_purchases,
-            protocol: match value.protocol {
+            protocol_type: match value.protocol {
                 ApiProtocol::Evm { .. } => Protocol::Evm,
                 ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,
                 ApiProtocol::Stardust {} => Protocol::Stardust,
