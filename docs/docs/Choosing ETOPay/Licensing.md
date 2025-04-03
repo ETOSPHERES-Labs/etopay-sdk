@@ -1,11 +1,7 @@
 # Licensing
 
-## Software licensing and open source
+## Software licensing and Open Source
 
-We are planning to make the SDK open source and start accepting contribution from the community.
+The ETOPay SDK is licensed under the [AGPL-3.0 license](https://github.com/ETOSPHERES-Labs/etopay-sdk/blob/main/LICENSE) and available on [GitHub](https://github.com/ETOSPHERES-Labs/etopay-sdk).
+If you experience any issues or have a feature request, please [open an Issue](https://github.com/ETOSPHERES-Labs/etopay-sdk/issues/new). We are also happy to accept contributions from the community in the form of [Pull Requests](https://github.com/ETOSPHERES-Labs/etopay-sdk/pulls).
 
-However, till we decide on the best way to move forward with various open source licensing options available, that might suit our needs as well as benefit the developer community, we are currently delivering the SDK under a strict license as shown on the footer of this website.
-
-## License
-
-:fontawesome-regular-copyright: 2025 ETOSPHERES Labs GmbH, All rights reserved.
