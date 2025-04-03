@@ -1,4 +1,5 @@
 use crate::utils::{convert_enum, convert_simple_struct};
+use sdk::types::networks::ApiProtocol;
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
@@ -75,18 +76,59 @@ impl From<sdk::types::ApiTxStatus> for TxStatus {
     }
 }
 
+#[wasm_bindgen]
+#[derive(Clone, Serialize, Deserialize)]
+pub enum Protocol {
+    /// Represents an EVM-based network (e.g., Ethereum)
+    Evm,
+    /// Represents and EVM based ERC20 Smart Contract token
+    EvmERC20,
+    /// Represents a Stardust network
+    Stardust,
+}
+
 #[wasm_bindgen(getter_with_clone, inspectable)]
 #[derive(Serialize, Deserialize)]
 pub struct Network {
     pub key: String,
+    pub is_testnet: bool,
     pub display_name: String,
+    pub display_symbol: String,
+    pub coin_type: u32,
+    pub node_urls: Vec<String>,
+    pub decimals: u32,
+    pub can_do_purchases: bool,
+    pub protocol: Protocol,
+    pub protocol_chain_id: Option<u64>,
+    pub protocol_contract_address: Option<String>,
+    pub block_explorer_url: String,
 }
 
 impl From<sdk::types::networks::ApiNetwork> for Network {
     fn from(value: sdk::types::networks::ApiNetwork) -> Self {
         Network {
             key: value.key,
+            is_testnet: value.is_testnet,
             display_name: value.display_name,
+            display_symbol: value.display_symbol,
+            coin_type: value.coin_type,
+            node_urls: value.node_urls,
+            decimals: value.decimals,
+            can_do_purchases: value.can_do_purchases,
+            protocol: match value.protocol {
+                ApiProtocol::Evm { .. } => Protocol::Evm,
+                ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,
+                ApiProtocol::Stardust {} => Protocol::Stardust,
+            },
+            protocol_chain_id: match value.protocol {
+                ApiProtocol::Evm { chain_id } | ApiProtocol::EvmERC20 { chain_id, .. } => Some(chain_id),
+                ApiProtocol::Stardust {} => None,
+            },
+            protocol_contract_address: match &value.protocol {
+                ApiProtocol::EvmERC20 { contract_address, .. } => Some(contract_address.clone()),
+                _ => None,
+            },
+            block_explorer_url: value.block_explorer_url,
         }
     }
 }
