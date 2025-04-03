@@ -242,7 +242,15 @@ impl From<sdk::types::networks::ApiNetwork> for crate::ffi_functions::Network {
     fn from(value: sdk::types::networks::ApiNetwork) -> Self {
         crate::ffi_functions::Network {
             key: value.key,
+            is_testnet: value.is_testnet,
             display_name: value.display_name,
+            display_symbol: value.display_symbol,
+            coin_type: value.coin_type,
+            node_urls: value.node_urls,
+            decimals: value.decimals,
+            can_do_purchases: value.can_do_purchases,
+            protocol: value.protocol,
+            block_explorer_url: value.block_explorer_url,
         }
     }
 }

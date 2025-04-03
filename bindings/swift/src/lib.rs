@@ -243,11 +243,27 @@ pub mod ffi {
         fn explorer_url(&self) -> String;
     }
 
+    pub enum Protocol {
+        Evm,
+        EvmERC20,
+        Stardust,
+    }
+
     extern "Rust" {
         type Network;
 
         fn key(&self) -> String;
+        fn is_testnet(&self) -> bool;
         fn display_name(&self) -> String;
+        fn display_symbol(&self) -> String;
+        fn coin_type(&self) -> u32;
+        fn node_urls(&self) -> Vec<String>;
+        fn decimals(&self) -> u32;
+        fn can_do_purchases(&self) -> bool;
+        fn block_explorer_url(&self) -> String;
+        fn protocol(&self) -> Protocol;
+        fn protocol_chain_id(&self) -> Option<u64>;
+        fn protocol_contract_address(&self) -> Option<String>;
     }
 
     // Export Rust functions with the above shared types for Swift.
