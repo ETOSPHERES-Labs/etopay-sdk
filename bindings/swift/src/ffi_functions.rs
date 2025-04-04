@@ -15,11 +15,12 @@
 
 use crate::ffi::{
     CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, NewCaseIdResponse,
-    NewViviswapUser, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
+    NewViviswapUser, Protocol, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
     ViviswapPartiallyKycDetails, ViviswapWithdrawal,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
+use sdk::types::networks::ApiProtocol;
 use sdk::types::newtypes::{AccessToken, EncryptionPin, PlainPassword};
 use std::sync::Arc;
 use tokio::sync::RwLock;
@@ -1543,15 +1544,71 @@ impl WalletTxInfo {
 
 pub struct Network {
     pub key: String,
+    pub is_testnet: bool,
     pub display_name: String,
+    pub display_symbol: String,
+    pub coin_type: u32,
+    pub node_urls: Vec<String>,
+    pub decimals: u32,
+    pub can_do_purchases: bool,
+    pub protocol: ApiProtocol,
+    pub block_explorer_url: String,
 }
 
 impl Network {
     pub fn key(&self) -> String {
         self.key.clone()
     }
+    pub fn is_testnet(&self) -> bool {
+        self.is_testnet
+    }
 
     pub fn display_name(&self) -> String {
         self.display_name.clone()
+    }
+
+    pub fn display_symbol(&self) -> String {
+        self.display_symbol.clone()
+    }
+
+    pub fn coin_type(&self) -> u32 {
+        self.coin_type
+    }
+    pub fn node_urls(&self) -> Vec<String> {
+        self.node_urls.clone()
+    }
+
+    pub fn decimals(&self) -> u32 {
+        self.decimals
+    }
+
+    pub fn can_do_purchases(&self) -> bool {
+        self.can_do_purchases
+    }
+
+    pub fn block_explorer_url(&self) -> String {
+        self.block_explorer_url.clone()
+    }
+
+    pub fn protocol_type(&self) -> Protocol {
+        match self.protocol {
+            ApiProtocol::Evm { .. } => Protocol::Evm,
+            ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,
+            ApiProtocol::Stardust {} => Protocol::Stardust,
+        }
+    }
+
+    pub fn protocol_chain_id(&self) -> Option<u64> {
+        match self.protocol {
+            ApiProtocol::Evm { chain_id } | ApiProtocol::EvmERC20 { chain_id, .. } => Some(chain_id),
+            ApiProtocol::Stardust {} => None,
+        }
+    }
+
+    pub fn protocol_contract_address(&self) -> Option<String> {
+        match &self.protocol {
+            ApiProtocol::EvmERC20 { contract_address, .. } => Some(contract_address.clone()),
+            _ => None,
+        }
     }
 }
