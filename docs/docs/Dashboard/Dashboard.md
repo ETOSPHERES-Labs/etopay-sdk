@@ -48,7 +48,7 @@ Using the navigation on the left side you can also visit the following pages:
 - **Project Settings**: Here you can manage settings about your project instance. This has three tabs:
     - **General**: General settings like project name and description. This is also where you can archive your project.
     - **Wallet**: Here you see the list of pre-configured networks we support. In the future you will be able to add your own here.
-    - **Secrets**: This is where you [configure secrets](#configure-secrets) for integrating with [KYC providers](../SDK%20Modules/KYC%20Onboarding.md).
+    - **Secrets**: This is where you [configure secrets](#configuring-secrets) for integrating with [KYC providers](../SDK%20Modules/KYC%20Onboarding.md).
 
 
 ## Retrieving Configuration
