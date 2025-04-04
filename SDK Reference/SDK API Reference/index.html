@@ -1783,7 +1783,7 @@
 <li>Viviswap and Postident KYC onboarding will not work if the user is already kyc verified.</li>
 <li>KYC onboarding with another provider will not work if the user is already started kyc onboarding with one of the other providers.</li>
 <li>Restoring a wallet backup may fail, if the wallet is already existing.</li>
-<li>Initializing User and initializing wallet may fail, if the user and wallet are already initialized. Since, there is no de-init function, the  SDK handle needs to be closed, or a new handle needs to be created to re init. </li>
+<li>Initializing User and initializing wallet may fail, if the user and wallet are already initialized. Since, there is no de-init function, the  SDK handle needs to be closed, or a new handle needs to be created to re init.</li>
 <li>Multiple handles to the wallet may also fail, since only atomic access are allowed.</li>
 <li>Deleting a user may fail if the backend cannot be reached.</li>
 </ul>
@@ -1904,7 +1904,7 @@
 <div class="tabbed-set tabbed-alternate" data-tabs="3:4"><input checked="checked" id="__tabbed_3_1" name="__tabbed_3" type="radio" /><input id="__tabbed_3_2" name="__tabbed_3" type="radio" /><input id="__tabbed_3_3" name="__tabbed_3" type="radio" /><input id="__tabbed_3_4" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="__tabbed_3_1">Rust</label><label for="__tabbed_3_2">Java</label><label for="__tabbed_3_3">Typescript</label><label for="__tabbed_3_4">Swift</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p><a href="../../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_networks">getNetworks</a></p>
+<p><a href="../../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.get_networks">get_networks</a></p>
 </div>
 <div class="tabbed-block">
 <p><a href="../../javadoc/com/etospheres/etopay/ETOPaySdk.html#get_networks()">getNetworks</a></p>
@@ -1934,7 +1934,7 @@
 <tbody>
 <tr>
 <td>Sets the network</td>
-<td><code>network_id</code> - The network_id as string.</td>
+<td><code>network_key</code> - The key of the network as a string.</td>
 <td></td>
 <td><a href="./#instantiating-the-sdk">Constructor</a></td>
 <td>Basic</td>
@@ -1955,7 +1955,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setNetwork</span><span class="p">(</span><span class="n">network_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setNetwork</span><span class="p">(</span><span class="n">network_key</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -2079,7 +2079,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">initUser</span><span class="p">(</span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">initUser</span><span class="p">(</span><span class="n">username</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -2120,7 +2120,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">refreshAccessToken</span><span class="p">(</span><span class="n">access_token</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">refreshAccessToken</span><span class="p">(</span><span class="n">access_token</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -2536,7 +2536,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">resetPin</span><span class="p">(</span><span class="n">pin</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">new_pin</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span><span class="w"> </span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">resetPin</span><span class="p">(</span><span class="n">pin</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">,</span><span class="w"> </span><span class="n">new_pin</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -4556,7 +4556,7 @@
 <tbody>
 <tr>
 <td>Sets the users preferred network, or resets it if an empty value is provided.</td>
-<td><code>network_id</code> - The preferred user network. Optional value.</td>
+<td><code>network_key</code> - The preferred user network. Optional value.</td>
 <td></td>
 <td><a href="./#initializing-a-user">User initialization</a></td>
 <td>Usage</td>
@@ -4577,7 +4577,7 @@
 </div>
 <div class="tabbed-block">
 <p>Not available yet!</p>
-<div class="language-swift highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPreferredNetwork</span><span class="p">(</span><span class="n">network_id</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
+<div class="language-swift highlight"><pre><span></span><code><span id="__span-71-1"><a id="__codelineno-71-1" name="__codelineno-71-1" href="#__codelineno-71-1"></a><span class="kd">public</span><span class="w"> </span><span class="kd">func</span><span class="w"> </span><span class="nf">setPreferredNetwork</span><span class="p">(</span><span class="n">network_key</span><span class="p">:</span><span class="w"> </span><span class="nb">String</span><span class="p">)</span><span class="w"> </span><span class="kr">throws</span>
 </span></code></pre></div>
 </div>
 </div>
@@ -4604,7 +4604,7 @@
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 25, 2025 14:35:43">March 25, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 4, 2025 10:22:51">April 4, 2025</span>
   </span>
 
     
