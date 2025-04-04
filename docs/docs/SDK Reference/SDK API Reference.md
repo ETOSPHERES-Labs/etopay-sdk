@@ -109,7 +109,7 @@ The Rustdoc API reference is available [here](../rust-docs/doc/etopay_sdk/index.
 
 | Method | Arguments | Returns | Dependencies | Level | Repeat|
 |--------|-----------|---------|--------------|-------|-------|
-| Sets the network | `network_key` - The key of the network as s string.| | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
+| Sets the network | `network_key` - The key of the network as a string.| | [Constructor](./SDK%20API%20Reference.md#instantiating-the-sdk) | Basic | Handle |
 
 === "Rust"
     [set_network](../rust-docs/doc/etopay_sdk/core/struct.Sdk.html#method.set_network)
