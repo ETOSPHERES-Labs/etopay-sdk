@@ -1,4 +1,5 @@
 use super::networks::ApiNetwork;
+use crate::api::decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 /// Get/set system/user address query parameters
@@ -43,4 +44,45 @@ pub struct GetPreferredNetworkResponse {
 #[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
 pub struct ApiGetNetworksResponse {
     pub networks: Vec<ApiNetwork>,
+}
+
+// data objects
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
+pub struct Course {
+    pub course: Decimal,
+    pub date: String,
+}
+
+// requests
+
+// get course
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema, utoipa::IntoParams))]
+pub struct GetCourseRequestQueries {
+    pub network_key: String,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema, utoipa::IntoParams))]
+pub struct GetCourseResponse {
+    pub course: Course,
+}
+
+// get course history
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema, utoipa::IntoParams))]
+pub struct GetCourseHistoryRequestQueries {
+    pub network_key: String,
+    pub from_date: Option<String>,
+    pub to_date: Option<String>,
+}
+
+#[derive(Debug, Deserialize, Serialize)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
+pub struct GetCourseHistoryResponse {
+    pub courses: Vec<Course>,
 }

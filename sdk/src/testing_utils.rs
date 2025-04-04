@@ -15,6 +15,7 @@ use crate::{
     user::MockUserRepo,
     wallet_manager::WalletBorrow,
 };
+use api_types::api::dlt::{Course, GetCourseResponse};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use api_types::api::{
     postident::{CaseDetailsResponse, NewCaseIdResponse},
@@ -24,7 +25,6 @@ use api_types::api::{
             ViviswapApiContractBankDetails, ViviswapApiContractCryptoDetails, ViviswapApiContractDetails,
             ViviswapContract, ViviswapContractCreationResponse,
         },
-        course::{Course, GetCourseResponse},
         detail::{GetPaymentDetailsResponse, PaymentDetail, SwapPaymentDetailKey},
         order::Order,
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
