@@ -20,8 +20,7 @@ impl Sdk {
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
         let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
-        let network_key = network.key;
-        let exchange_rate = get_exchange_rate(config, access_token, network_key).await?;
+        let exchange_rate = get_exchange_rate(config, access_token, network.key).await?;
         Ok(exchange_rate)
     }
 }
