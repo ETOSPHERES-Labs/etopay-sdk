@@ -1,7 +1,5 @@
 use super::Sdk;
-use crate::backend::viviswap::get_viviswap_exchange_rate;
-use crate::error::Result;
-use crate::types::currencies::Currency;
+use crate::{backend::dlt::get_exchange_rate, error::Result};
 use log::info;
 use rust_decimal::Decimal;
 
@@ -22,8 +20,7 @@ impl Sdk {
             .ok_or(crate::error::Error::MissingAccessToken)?;
         let config = self.config.as_ref().ok_or(crate::Error::MissingConfig)?;
         let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
-        let currency = Currency::try_from(network.display_symbol)?;
-        let exchange_rate = get_viviswap_exchange_rate(config, access_token, currency).await?;
+        let exchange_rate = get_exchange_rate(config, access_token, network.key).await?;
         Ok(exchange_rate)
     }
 }
@@ -32,6 +29,7 @@ impl Sdk {
 mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{example_api_networks, IOTA_NETWORK_KEY};
+    use crate::types::users::ActiveUser;
     use crate::{
         core::Sdk,
         error::Result,
@@ -73,10 +71,10 @@ mod tests {
 
                 let body = serde_json::to_string(&example_exchange_rate_response()).unwrap();
                 mock_server = Some(
-                    srv.mock("GET", "/api/viviswap/courses")
+                    srv.mock("GET", "/api/courses")
                         .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
                         .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
-                        .match_query(Matcher::Exact("currency=Iota".to_string()))
+                        .match_query(Matcher::Exact("network_key=IOTA".to_string()))
                         .with_status(200)
                         .with_body(&body)
                         .expect(1)
@@ -102,6 +100,52 @@ mod tests {
         }
         if let Some(m) = mock_server {
             m.assert();
+        }
+    }
+
+    #[tokio::test]
+    async fn it_should_get_exchange_rate() {
+        // Arrange
+        let (mut srv, config, _cleanup) = set_config().await;
+        let mut sdk = Sdk::new(config).unwrap();
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
+
+        sdk.repo = Some(Box::new(example_get_user(
+            SwapPaymentDetailKey::Iota,
+            false,
+            1,
+            KycType::Viviswap,
+        )));
+        sdk.active_user = Some(get_active_user());
+        sdk.access_token = Some(TOKEN.clone());
+
+        // Get exchange rate
+        let exchange_rate_mock_response = example_exchange_rate_response();
+        let body = serde_json::to_string(&exchange_rate_mock_response).unwrap();
+        let get_exchange_rate = srv
+            .mock("GET", "/api/courses?network_key=IOTA")
+            .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
+            .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
+            .with_status(200)
+            .with_body(&body)
+            .with_header("content-type", "application/json")
+            .with_body(&body)
+            .create();
+
+        // Call function you want to test
+        let result = sdk.get_exchange_rate().await;
+
+        // Assert
+        result.unwrap();
+        get_exchange_rate.assert();
+    }
+
+    /// Create an active user
+    fn get_active_user() -> ActiveUser {
+        ActiveUser {
+            username: USERNAME.into(),
+            wallet_manager: Box::new(MockWalletManager::new()),
         }
     }
 }

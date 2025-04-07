@@ -8,10 +8,9 @@
 
 use super::error::{ApiError, Result};
 use crate::core::Config;
-use crate::types::currencies::{CryptoAmount, Currency};
+use crate::types::currencies::CryptoAmount;
 use crate::types::newtypes::AccessToken;
 use api_types::api::viviswap::contract::{ContractRequestBody, ViviswapContractCreationResponse};
-use api_types::api::viviswap::course::{GetCourseRequestQueries, GetCourseResponse};
 use api_types::api::viviswap::detail::{
     DeleteDetailRequestQueries, GetPaymentDetailsRequestQueries, GetPaymentDetailsResponse, SetDetailRequestBody,
     SetDetailRequestQueries, SetPaymentDetailResponse, SwapPaymentDetailKey,
@@ -26,7 +25,6 @@ use api_types::api::viviswap::payment::ViviPaymentMethodsResponse;
 use api_types::api::viviswap::user::{UserDataRequest, UserDataResponse};
 use log::{debug, error, info};
 use reqwest::{Method, StatusCode};
-use rust_decimal::Decimal;
 use std::future::Future;
 
 /// helper object for calling the backend (reduces boiler-plate code)
@@ -596,40 +594,6 @@ pub async fn set_viviswap_contract(
         .await
 }
 
-/// Get viviswap exchange rate.
-///
-/// # Arguments
-///
-/// * `config` - The configuration object.
-/// * `access_token` - The access token for authentication.
-/// * `username` - The username of the user.
-///
-/// # Returns
-///
-/// Returns a `Result` containing the exchange rate as `f32` if successful.
-///
-/// # Errors
-///
-/// This function can return an `Error` if the request fails or if the response status is unauthorized.
-pub async fn get_viviswap_exchange_rate(
-    config: &Config,
-    access_token: &AccessToken,
-    currency: Currency,
-) -> Result<Decimal> {
-    info!("get_viviswap_exchange_rate for currency = {:?}", currency);
-
-    let query = GetCourseRequestQueries {
-        currency: currency.into(),
-    };
-
-    let response: GetCourseResponse = ViviswapBackendCall::new(config, access_token, Method::GET, "/viviswap/courses")
-        .with_query(&query)
-        .execute_parse()
-        .await?;
-
-    Ok(response.course.course.0)
-}
-
 /// Get viviswap payment methods.
 ///
 /// # Arguments
@@ -725,10 +689,9 @@ pub async fn get_viviswap_orders(
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_bank_details, example_contract_response, example_exchange_rate_response,
-        example_get_payment_details_response, example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER,
-        HEADER_X_APP_NAME, PAYMENT_DETAIL_ID, PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY, PAYMENT_METHOD_KEY_SERIALIZED,
-        TOKEN, USERNAME,
+        example_bank_details, example_contract_response, example_get_payment_details_response,
+        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, PAYMENT_DETAIL_ID,
+        PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY, PAYMENT_METHOD_KEY_SERIALIZED, TOKEN, USERNAME,
     };
     use api_types::api::viviswap::{
         detail::PaymentDetail,
@@ -1233,51 +1196,6 @@ mod tests {
         match expected {
             Ok(resp) => {
                 assert_eq!(response.unwrap(), resp);
-            }
-            Err(ref expected_err) => {
-                assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());
-            }
-        }
-        mock_server.assert();
-    }
-
-    #[rstest::rstest]
-    #[case(200, Ok(example_exchange_rate_response()))]
-    #[case(401, Err(ApiError::MissingAccessToken))]
-    #[case(500, Err(ApiError::UnexpectedResponse {
-        code: StatusCode::INTERNAL_SERVER_ERROR,
-        body: "".to_string() 
-    }))]
-    #[case(501, Err(ApiError::UnexpectedResponse {
-        code: StatusCode::NOT_IMPLEMENTED,
-        body: "".to_string() 
-    }))]
-    #[tokio::test]
-    async fn test_get_exchange_rate(#[case] status_code: usize, #[case] expected: Result<GetCourseResponse>) {
-        // Arrange
-        let (mut srv, config, _cleanup) = set_config().await;
-
-        let body = serde_json::to_string(&example_exchange_rate_response()).unwrap();
-
-        let mut mock_server = srv
-            .mock("GET", "/api/viviswap/courses")
-            .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
-            .match_query(Matcher::Exact("currency=Iota".to_string()))
-            .with_status(status_code);
-        // Conditionally add the response body only for the 200 status code
-        if status_code == 200 {
-            mock_server = mock_server.with_body(&body);
-        }
-        let mock_server = mock_server.expect(1).create();
-
-        // Act
-        let response = get_viviswap_exchange_rate(&config, &TOKEN, Currency::Iota).await;
-
-        // Assert
-        match expected {
-            Ok(resp) => {
-                assert_eq!(response.unwrap(), resp.course.course.0);
             }
             Err(ref expected_err) => {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());

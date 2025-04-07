@@ -568,9 +568,9 @@ mod tests {
     use super::*;
     use crate::testing_utils::{
         example_api_network, example_api_networks, example_bank_details, example_contract_response,
-        example_crypto_details, example_exchange_rate_response, example_get_payment_details_response, example_get_user,
-        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME,
-        IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
+        example_crypto_details, example_get_payment_details_response, example_get_user, example_viviswap_oder_response,
+        set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN,
+        USERNAME,
     };
     use crate::types::users::KycType;
     use crate::{
@@ -891,43 +891,5 @@ mod tests {
         // Assert
         result.unwrap();
         create_viviswap_contract.assert();
-    }
-
-    #[tokio::test]
-    async fn it_should_get_exchange_rate() {
-        // Arrange
-        let (mut srv, config, _cleanup) = set_config().await;
-        let mut sdk = Sdk::new(config).unwrap();
-        sdk.set_networks(example_api_networks());
-        sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
-
-        sdk.repo = Some(Box::new(example_get_user(
-            SwapPaymentDetailKey::Iota,
-            false,
-            1,
-            KycType::Viviswap,
-        )));
-        sdk.active_user = Some(get_active_user());
-        sdk.access_token = Some(TOKEN.clone());
-
-        // Get exchange rate
-        let exchange_rate_mock_response = example_exchange_rate_response();
-        let body = serde_json::to_string(&exchange_rate_mock_response).unwrap();
-        let get_exchange_rate = srv
-            .mock("GET", "/api/viviswap/courses?currency=Iota")
-            .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-            .match_header("authorization", format!("Bearer {}", TOKEN.as_str()).as_str())
-            .with_status(200)
-            .with_body(&body)
-            .with_header("content-type", "application/json")
-            .with_body(&body)
-            .create();
-
-        // Call function you want to test
-        let result = sdk.get_exchange_rate().await;
-
-        // Assert
-        result.unwrap();
-        get_exchange_rate.assert();
     }
 }
