@@ -568,9 +568,9 @@
 <a href=#568 id=568 data-nosnippet>568</a>    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 <a href=#569 id=569 data-nosnippet>569</a>    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
 <a href=#570 id=570 data-nosnippet>570</a>        example_api_network, example_api_networks, example_bank_details, example_contract_response,
-<a href=#571 id=571 data-nosnippet>571</a>        example_crypto_details, example_exchange_rate_response, example_get_payment_details_response, example_get_user,
-<a href=#572 id=572 data-nosnippet>572</a>        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME,
-<a href=#573 id=573 data-nosnippet>573</a>        IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
+<a href=#571 id=571 data-nosnippet>571</a>        example_crypto_details, example_get_payment_details_response, example_get_user, example_viviswap_oder_response,
+<a href=#572 id=572 data-nosnippet>572</a>        set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN,
+<a href=#573 id=573 data-nosnippet>573</a>        USERNAME,
 <a href=#574 id=574 data-nosnippet>574</a>    };
 <a href=#575 id=575 data-nosnippet>575</a>    <span class="kw">use </span><span class="kw">crate</span>::types::users::KycType;
 <a href=#576 id=576 data-nosnippet>576</a>    <span class="kw">use crate</span>::{
@@ -892,42 +892,4 @@
 <a href=#892 id=892 data-nosnippet>892</a>        </span>result.unwrap();
 <a href=#893 id=893 data-nosnippet>893</a>        create_viviswap_contract.assert();
 <a href=#894 id=894 data-nosnippet>894</a>    }
-<a href=#895 id=895 data-nosnippet>895</a>
-<a href=#896 id=896 data-nosnippet>896</a>    <span class="attr">#[tokio::test]
-<a href=#897 id=897 data-nosnippet>897</a>    </span><span class="kw">async fn </span>it_should_get_exchange_rate() {
-<a href=#898 id=898 data-nosnippet>898</a>        <span class="comment">// Arrange
-<a href=#899 id=899 data-nosnippet>899</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>srv, config, _cleanup) = set_config().<span class="kw">await</span>;
-<a href=#900 id=900 data-nosnippet>900</a>        <span class="kw">let </span><span class="kw-2">mut </span>sdk = Sdk::new(config).unwrap();
-<a href=#901 id=901 data-nosnippet>901</a>        sdk.set_networks(example_api_networks());
-<a href=#902 id=902 data-nosnippet>902</a>        sdk.set_network(IOTA_NETWORK_KEY.to_string()).<span class="kw">await</span>.unwrap();
-<a href=#903 id=903 data-nosnippet>903</a>
-<a href=#904 id=904 data-nosnippet>904</a>        sdk.repo = <span class="prelude-val">Some</span>(Box::new(example_get_user(
-<a href=#905 id=905 data-nosnippet>905</a>            SwapPaymentDetailKey::Iota,
-<a href=#906 id=906 data-nosnippet>906</a>            <span class="bool-val">false</span>,
-<a href=#907 id=907 data-nosnippet>907</a>            <span class="number">1</span>,
-<a href=#908 id=908 data-nosnippet>908</a>            KycType::Viviswap,
-<a href=#909 id=909 data-nosnippet>909</a>        )));
-<a href=#910 id=910 data-nosnippet>910</a>        sdk.active_user = <span class="prelude-val">Some</span>(get_active_user());
-<a href=#911 id=911 data-nosnippet>911</a>        sdk.access_token = <span class="prelude-val">Some</span>(TOKEN.clone());
-<a href=#912 id=912 data-nosnippet>912</a>
-<a href=#913 id=913 data-nosnippet>913</a>        <span class="comment">// Get exchange rate
-<a href=#914 id=914 data-nosnippet>914</a>        </span><span class="kw">let </span>exchange_rate_mock_response = example_exchange_rate_response();
-<a href=#915 id=915 data-nosnippet>915</a>        <span class="kw">let </span>body = serde_json::to_string(<span class="kw-2">&amp;</span>exchange_rate_mock_response).unwrap();
-<a href=#916 id=916 data-nosnippet>916</a>        <span class="kw">let </span>get_exchange_rate = srv
-<a href=#917 id=917 data-nosnippet>917</a>            .mock(<span class="string">"GET"</span>, <span class="string">"/api/viviswap/courses?currency=Iota"</span>)
-<a href=#918 id=918 data-nosnippet>918</a>            .match_header(HEADER_X_APP_NAME, AUTH_PROVIDER)
-<a href=#919 id=919 data-nosnippet>919</a>            .match_header(<span class="string">"authorization"</span>, <span class="macro">format!</span>(<span class="string">"Bearer {}"</span>, TOKEN.as_str()).as_str())
-<a href=#920 id=920 data-nosnippet>920</a>            .with_status(<span class="number">200</span>)
-<a href=#921 id=921 data-nosnippet>921</a>            .with_body(<span class="kw-2">&amp;</span>body)
-<a href=#922 id=922 data-nosnippet>922</a>            .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-<a href=#923 id=923 data-nosnippet>923</a>            .with_body(<span class="kw-2">&amp;</span>body)
-<a href=#924 id=924 data-nosnippet>924</a>            .create();
-<a href=#925 id=925 data-nosnippet>925</a>
-<a href=#926 id=926 data-nosnippet>926</a>        <span class="comment">// Call function you want to test
-<a href=#927 id=927 data-nosnippet>927</a>        </span><span class="kw">let </span>result = sdk.get_exchange_rate().<span class="kw">await</span>;
-<a href=#928 id=928 data-nosnippet>928</a>
-<a href=#929 id=929 data-nosnippet>929</a>        <span class="comment">// Assert
-<a href=#930 id=930 data-nosnippet>930</a>        </span>result.unwrap();
-<a href=#931 id=931 data-nosnippet>931</a>        get_exchange_rate.assert();
-<a href=#932 id=932 data-nosnippet>932</a>    }
-<a href=#933 id=933 data-nosnippet>933</a>}</code></pre></div></section></main></body></html>
+<a href=#895 id=895 data-nosnippet>895</a>}</code></pre></div></section></main></body></html>
