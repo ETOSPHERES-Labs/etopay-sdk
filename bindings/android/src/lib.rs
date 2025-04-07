@@ -101,9 +101,9 @@ mod ffi {
         result.map_err(|e| format!("{e:#?}"))
     }
 
-    /// Fetch available currencies and corresponding node urls.
+    /// Fetch available currencies and corresponding networks.
     ///
-    /// @return Serialized string of a hashmap with currencies as key and node urls as value
+    /// @return Serialized string of ApiNetworks as value
     pub fn getNetworks() -> Result<String, String> {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;

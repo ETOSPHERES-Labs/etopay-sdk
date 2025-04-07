@@ -17,7 +17,7 @@ use rust_decimal::Decimal;
 ///
 /// # Arguments
 /// * `config` - The configuration object.
-/// * `username` - The username of the customer.
+/// * `network_key` - The input string representing the network key.
 /// * `access_token` - The access token for authentication.
 /// * `address` - The crypto currency address of the user from the wallet.
 ///
@@ -117,7 +117,7 @@ pub async fn get_networks(config: &Config, access_token: &AccessToken) -> Result
             let status = response.status();
             let text = response.text().await?;
             error!(
-                "Failed to get node urls from backend: Response status: {}, Response text: {:?}",
+                "Failed to get networks from backend: Response status: {}, Response text: {:?}",
                 status, text
             );
             Err(ApiError::UnexpectedResponse {
@@ -134,7 +134,7 @@ pub async fn get_networks(config: &Config, access_token: &AccessToken) -> Result
 ///
 /// * `config` - The configuration object.
 /// * `access_token` - The access token for authentication.
-/// * `username` - The username of the user.
+/// * `network_key` - The input string representing the network key.
 ///
 /// # Returns
 ///
@@ -171,7 +171,7 @@ pub async fn get_exchange_rate(config: &Config, access_token: &AccessToken, netw
             let status = response.status();
             let text = response.text().await?;
             error!(
-                "Failed to get node urls from backend: Response status: {}, Response text: {:?}",
+                "Failed to get exchange rate from backend: Response status: {}, Response text: {:?}",
                 status, text
             );
             Err(ApiError::UnexpectedResponse {
