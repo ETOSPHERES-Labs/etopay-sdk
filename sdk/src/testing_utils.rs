@@ -68,6 +68,8 @@ pub static ENCRYPTED_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::new(|| un
     ])
 });
 pub static BACKUP_PASSWORD: LazyLock<PlainPassword> =
+    LazyLock::new(|| PlainPassword::try_from_string("correcthorsebatterystaple").unwrap());
+pub static WEAK_BACKUP_PASSWORD: LazyLock<PlainPassword> =
     LazyLock::new(|| PlainPassword::try_from_string("B@ckupP@55w0rd").unwrap());
 pub const SALT: [u8; 12] = [241, 167, 131, 245, 166, 203, 63, 247, 211, 157, 138, 34];
 pub const PURCHASE_ID: &str = "123";

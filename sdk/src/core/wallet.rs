@@ -15,6 +15,8 @@ use crate::{
     wallet::error::{ErrorKind, WalletError},
 };
 use log::{debug, info, warn};
+extern crate zxcvbn;
+use zxcvbn::{zxcvbn, Score};
 
 impl Sdk {
     /// Create and store a wallet from a new random mnemonic
@@ -353,6 +355,15 @@ impl Sdk {
 
         let mut user = repo.get(&active_user.username)?;
 
+        // calculates the strength of the password based on entropy, using a number of different factors. In this case we use the user name.
+        // and returns the overall strength score from 0-4. Any score less than 3 should be considered too weak.
+        // a score of 3 can be cracked with 10^10 guesses or less. [Score](https://docs.rs/zxcvbn/latest/zxcvbn/enum.Score.html)
+        let password_strength = zxcvbn(new_password.as_str(), &[&user.username]).score();
+        if password_strength < Score::Three {
+            warn!("User attempted to set a weak passoword");
+            return Err(crate::error::Error::WeakPassword);
+        }
+
         // if password already exists, return an error!
         if let Some(encrypted_password) = user.encrypted_password {
             info!("Password exists, changing password");
@@ -567,6 +578,7 @@ mod tests {
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
         BACKUP_PASSWORD, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
+        WEAK_BACKUP_PASSWORD,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -929,11 +941,12 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(Ok(()))]
-    #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
-    #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
+    #[case::success(&BACKUP_PASSWORD, Ok(()))]
+    #[case::repo_init_error(&BACKUP_PASSWORD, Err(crate::Error::UserRepoNotInitialized))]
+    #[case::weak_passowrd(&WEAK_BACKUP_PASSWORD, Err(crate::Error::WeakPassword))]
+    #[case::user_init_error(&BACKUP_PASSWORD, Err(crate::Error::UserNotInitialized))]
     #[tokio::test]
-    async fn test_set_wallet_password(#[case] expected: Result<()>) {
+    async fn test_set_wallet_password(#[case] password: &LazyLock<PlainPassword>, #[case] expected: Result<()>) {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
@@ -969,7 +982,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.set_wallet_password(&PIN, &BACKUP_PASSWORD.clone()).await;
+        let response = sdk.set_wallet_password(&PIN, password).await;
 
         // Assert
         match expected {
