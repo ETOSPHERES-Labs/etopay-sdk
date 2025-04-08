@@ -1939,7 +1939,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-api-types"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "base64 0.22.1",
  "rstest",
@@ -1952,7 +1952,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "aes-gcm",
  "alloy",
@@ -1967,10 +1967,11 @@ dependencies = [
  "dotenvy",
  "env_logger",
  "etopay-api-types",
+ "etospheres-labs-iota-sdk",
+ "etospheres-labs-rusty_secrets",
  "fake",
  "fern-logger",
  "fluent-assertions",
- "iota-sdk",
  "jammdb",
  "kdbx-rs",
  "log",
@@ -1983,7 +1984,6 @@ dependencies = [
  "rstest_reuse",
  "rust_decimal",
  "rust_decimal_macros",
- "rusty_secrets",
  "secrecy",
  "serde",
  "serde_json",
@@ -1998,7 +1998,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-jni"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "etopay-sdk",
  "jni",
@@ -2012,7 +2012,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-swift"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "etopay-sdk",
  "serde_json",
@@ -2023,7 +2023,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-wasm"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
@@ -2037,6 +2037,100 @@ dependencies = [
  "wasm-bindgen",
  "wasm-bindgen-futures",
  "wasm-bindgen-test",
+]
+
+[[package]]
+name = "etospheres-labs-iota-sdk"
+version = "1.1.5"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c24e295438c1c8c929720b397e7b0c244163837e10f4a870b9fbcbc4654e3fc5"
+dependencies = [
+ "anymap3",
+ "async-trait",
+ "bech32",
+ "bitflags 2.9.0",
+ "bytemuck",
+ "cfg-if",
+ "derive_more 0.99.19",
+ "futures",
+ "getset",
+ "gloo-timers",
+ "hashbrown 0.14.5",
+ "heck 0.4.1",
+ "hex",
+ "instant",
+ "iota-crypto",
+ "iota_stronghold",
+ "iterator-sorted 0.2.0",
+ "itertools 0.12.1",
+ "jammdb",
+ "lazy_static",
+ "log",
+ "num_cpus",
+ "once_cell",
+ "packable",
+ "prefix-hex",
+ "primitive-types",
+ "rand 0.8.5",
+ "regex",
+ "reqwest 0.11.27",
+ "rumqttc",
+ "serde",
+ "serde_json",
+ "serde_repr",
+ "thiserror 1.0.69",
+ "time",
+ "tokio",
+ "url",
+ "web-sys",
+ "zeroize",
+]
+
+[[package]]
+name = "etospheres-labs-lamport_sigs"
+version = "0.7.1-pre"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "2d9d4e09c2d00087cb7137858455a982b7890bd3ea17e9ed800c28c52ffd27d8"
+dependencies = [
+ "ring",
+]
+
+[[package]]
+name = "etospheres-labs-merkle"
+version = "1.11.1-pre"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6948ceeb1d71d2c5ed9b1040fbd59c8c74bb6e3f92c729993bbcd26301c5e21b"
+dependencies = [
+ "prost",
+ "prost-build",
+ "ring",
+]
+
+[[package]]
+name = "etospheres-labs-merkle_sigs"
+version = "1.7.1-pre"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ba561cd85584e6eb757dba89da5d221fc2061fcfffc74d2786804a8d6df6320f"
+dependencies = [
+ "etospheres-labs-lamport_sigs",
+ "etospheres-labs-merkle",
+ "ring",
+]
+
+[[package]]
+name = "etospheres-labs-rusty_secrets"
+version = "0.2.3-pre"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e0ca139077b128d22edee67a317d8c0f9a6fc38572cd77cfb853922793825a90"
+dependencies = [
+ "base64 0.22.1",
+ "error-chain",
+ "etospheres-labs-merkle_sigs",
+ "prost",
+ "prost-build",
+ "rand 0.9.0",
+ "rand_chacha 0.9.0",
+ "ring",
 ]
 
 [[package]]
@@ -2971,52 +3065,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "iota-sdk"
-version = "1.1.5"
-source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/iota-sdk?branch=develop#867faffdd8c681d0c4b246e24144f40e36e551ee"
-dependencies = [
- "anymap3",
- "async-trait",
- "bech32",
- "bitflags 2.9.0",
- "bytemuck",
- "cfg-if",
- "derive_more 0.99.19",
- "futures",
- "getset",
- "gloo-timers",
- "hashbrown 0.14.5",
- "heck 0.4.1",
- "hex",
- "instant",
- "iota-crypto",
- "iota_stronghold",
- "iterator-sorted 0.2.0",
- "itertools 0.12.1",
- "jammdb",
- "lazy_static",
- "log",
- "num_cpus",
- "once_cell",
- "packable",
- "prefix-hex",
- "primitive-types",
- "rand 0.8.5",
- "regex",
- "reqwest 0.11.27",
- "rumqttc",
- "serde",
- "serde_json",
- "serde_repr",
- "thiserror 1.0.69",
- "time",
- "tokio",
- "url",
- "web-sys",
- "zeroize",
-]
-
-[[package]]
 name = "iota_stronghold"
 version = "2.1.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3172,7 +3220,7 @@ checksum = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
 
 [[package]]
 name = "jnigen-build"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "jnigen-common",
  "proc-macro2",
@@ -3182,7 +3230,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-common"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3191,7 +3239,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-integration-test"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "jni",
  "jnigen-build",
@@ -3200,7 +3248,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-macro"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "jnigen-common",
  "proc-macro2",
@@ -3275,14 +3323,6 @@ checksum = "505d1856a39b200489082f90d897c3f07c455563880bc5952e38eabf731c83b6"
 dependencies = [
  "digest 0.10.7",
  "sha3-asm",
-]
-
-[[package]]
-name = "lamport_sigs"
-version = "0.7.1-pre"
-source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/lamport_sigs.rs#d0bdc1032f87f8210a61e337fb6742a07c1ce6ff"
-dependencies = [
- "ring",
 ]
 
 [[package]]
@@ -3460,26 +3500,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "5aa361d4faea93603064a027415f07bd8e1d5c88c9fbf68bf56a285428fd79ce"
 dependencies = [
  "autocfg",
-]
-
-[[package]]
-name = "merkle"
-version = "1.11.1-pre"
-source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/merkle.rs#455be0c4f5e7518792f86e4cbd16eff77914c8f8"
-dependencies = [
- "prost",
- "prost-build",
- "ring",
-]
-
-[[package]]
-name = "merkle_sigs"
-version = "1.7.1-pre"
-source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/merkle_sigs.rs#d9776b4db0ff698e75c0a998816099b97d4fc490"
-dependencies = [
- "lamport_sigs",
- "merkle",
- "ring",
 ]
 
 [[package]]
@@ -4822,21 +4842,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "rusty_secrets"
-version = "0.2.3-pre"
-source = "git+https://github.com/ETO-GRUPPE-TECHNOLOGIES-GmbH/RustySecrets.git#0fb7ccd196e6298cd38857d412d0e8a08175b403"
-dependencies = [
- "base64 0.22.1",
- "error-chain",
- "merkle_sigs",
- "prost",
- "prost-build",
- "rand 0.9.0",
- "rand_chacha 0.9.0",
- "ring",
-]
-
-[[package]]
 name = "ryu"
 version = "1.0.20"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5461,7 +5466,7 @@ checksum = "8f50febec83f5ee1df3015341d8bd429f2d1cc62bcba7ea2076759d315084683"
 
 [[package]]
 name = "testing"
-version = "0.14.0"
+version = "0.14.0-rc0"
 dependencies = [
  "chrono",
  "fake",
