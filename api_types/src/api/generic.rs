@@ -17,7 +17,6 @@ pub struct HelloResponse {
     pub message: String,
     pub account_hash: String,
     pub dlt_hash: String,
-    pub kyc_hash: String,
     pub postident_hash: String,
     pub transaction_hash: String,
     pub viviswap_hash: String,
