@@ -508,7 +508,12 @@ impl Sdk {
                 // and finally, save the refreshed list back to the wallet
                 let mut wallet_transactions = user.wallet_transactions;
 
-                for transaction in wallet_transactions.iter_mut().skip(start).take(limit) {
+                for transaction in wallet_transactions
+                    .iter_mut()
+                    .filter(|tx| tx.network_key == network.key)
+                    .skip(start)
+                    .take(limit)
+                {
                     let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_id).await;
                     match synchronized_transaction {
                         Ok(stx) => *transaction = stx,
@@ -532,7 +537,17 @@ impl Sdk {
             api_types::api::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
         };
 
-        Ok(tx_list)
+        let tx_list_filtered = tx_list
+            .transactions
+            .into_iter()
+            .filter(|tx| tx.network_key == network.key)
+            .skip(start)
+            .take(limit)
+            .collect();
+
+        Ok(WalletTxInfoList {
+            transactions: tx_list_filtered,
+        })
     }
 
     /// wallet transaction
@@ -566,7 +581,8 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        BACKUP_PASSWORD, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
+        BACKUP_PASSWORD, ENCRYPTED_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT,
+        TOKEN, TX_INDEX, USERNAME,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -578,6 +594,7 @@ mod tests {
     };
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
@@ -1208,5 +1225,192 @@ mod tests {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());
             }
         }
+    }
+
+    #[tokio::test]
+    async fn test_filtering_of_get_wallet_tx_list() {
+        // Arrange
+        let (_srv, config, _cleanup) = set_config().await;
+        let mut sdk = Sdk::new(config).unwrap();
+
+        // during the test we are expecting Status of WalletTxInfo.transaction_id = 2
+        // to change from `Waiting` to `Complete` after synchronization
+        let mixed_wallet_transactions = vec![
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "some tx id".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 20.0,
+                network_key: "IOTA".to_string(),
+                status: "Complete".to_string(),
+                explorer_url: None,
+            },
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "1".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 1.0,
+                network_key: "ETH".to_string(),
+                status: "Waiting".to_string(),
+                explorer_url: None,
+            },
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "2".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 2.0,
+                network_key: "ETH".to_string(),
+                status: "Waiting".to_string(), // this one
+                explorer_url: None,
+            },
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "3".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 3.0,
+                network_key: "ETH".to_string(),
+                status: "Waiting".to_string(),
+                explorer_url: None,
+            },
+        ];
+
+        let mut mock_user_repo = MockUserRepo::new();
+        mock_user_repo.expect_get().returning(move |_| {
+            Ok(UserEntity {
+                user_id: None,
+                username: USERNAME.to_string(),
+                encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+                salt: SALT.into(),
+                is_kyc_verified: false,
+                kyc_type: KycType::Undefined,
+                viviswap_state: None,
+                local_share: None,
+                wallet_transactions: mixed_wallet_transactions.clone(),
+            })
+        });
+
+        let mixed_wallet_transactions_after_synchronization = vec![
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "some tx id".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 20.0,
+                network_key: "IOTA".to_string(),
+                status: "Complete".to_string(),
+                explorer_url: None,
+            },
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "1".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 1.0,
+                network_key: "ETH".to_string(),
+                status: "Waiting".to_string(),
+                explorer_url: None,
+            },
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "2".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 2.0,
+                network_key: "ETH".to_string(),
+                status: "Complete".to_string(),
+                explorer_url: None,
+            },
+            WalletTxInfo {
+                date: "some date".to_string(),
+                block_id: None,
+                transaction_id: "3".to_string(),
+                receiver: String::new(),
+                incoming: true,
+                amount: 3.0,
+                network_key: "ETH".to_string(),
+                status: "Waiting".to_string(),
+                explorer_url: None,
+            },
+        ];
+
+        mock_user_repo
+            .expect_set_wallet_transactions()
+            .once()
+            .with(
+                eq(USERNAME.to_string()),
+                eq(mixed_wallet_transactions_after_synchronization.clone()),
+            )
+            .returning(|_, _| Ok(()));
+
+        sdk.repo = Some(Box::new(mock_user_repo));
+
+        let mut mock_wallet_manager = MockWalletManager::new();
+        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+            let mut mock_wallet_user = MockWalletUser::new();
+            mock_wallet_user
+                .expect_get_wallet_tx()
+                .once()
+                .with(eq(String::from("2"))) // WalletTxInfo.transaction_id = 2
+                .returning(move |_| {
+                    Ok(WalletTxInfo {
+                        date: "some date".to_string(),
+                        block_id: None,
+                        transaction_id: "2".to_string(),
+                        receiver: String::new(),
+                        incoming: true,
+                        amount: 2.0,
+                        network_key: "ETH".to_string(),
+                        status: "Complete".to_string(), // Waiting -> Complete
+                        explorer_url: None,
+                    })
+                });
+            Ok(WalletBorrow::from(mock_wallet_user))
+        });
+
+        sdk.active_user = Some(crate::types::users::ActiveUser {
+            username: USERNAME.into(),
+            wallet_manager: Box::new(mock_wallet_manager),
+        });
+
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(ETH_NETWORK_KEY.to_string()).await.unwrap();
+
+        // Act
+
+        // We're requesting a single WalletTxInfo with get_wallet_tx_list(start = 1, limit = 1)
+        // We have [1 IOTA, 3 ETH] transactions stored
+        // Network key is ETH so we'll be searching through [3 ETH] transactions
+        // So we'll take this one:
+        // [WalletTxInfo{ ... }, -> WalletTxInfo{ id = 2 }, WalletTxInfo{ ... }]
+        let response = sdk.get_wallet_tx_list(&PIN, 1, 1).await;
+
+        // Assert
+        assert_eq!(
+            response.unwrap(),
+            WalletTxInfoList {
+                transactions: vec![WalletTxInfo {
+                    date: "some date".to_string(),
+                    block_id: None,
+                    transaction_id: "2".to_string(),
+                    receiver: String::new(),
+                    incoming: true,
+                    amount: 2.0,
+                    network_key: "ETH".to_string(),
+                    status: "Complete".to_string(),
+                    explorer_url: None,
+                }]
+            }
+        );
     }
 }
