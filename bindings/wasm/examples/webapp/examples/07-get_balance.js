@@ -5,7 +5,7 @@ async function main() {
     console.log("start");
     const sdk = await initSdk();
     let username = "satoshi";
-    let password = "StrongP@55w0rd";
+    let password = "correcthorsebatterystaple";
     let pin = "1234";
     let mnemonic = process.env.MNEMONIC;
 

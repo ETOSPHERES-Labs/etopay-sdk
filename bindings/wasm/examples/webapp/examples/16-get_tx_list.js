@@ -6,7 +6,7 @@ async function main() {
     let start = 0;
     let limit = 10;
     let pin = "1234";
-    let password = "StrongP@55w0rd";
+    let password = "correcthorsebatterystaple";
     let mnemonic = process.env.MNEMONIC;
 
     const sdk = await initSdk();

@@ -4,7 +4,7 @@ import { initSdk } from './util';
 async function main() {
 
     let username = "satoshi";
-    let password = "StrongP@55w0rd";
+    let password = "correcthorsebatterystaple";
     let pin = "1234";
     const sdk = await initSdk();
     let mnemonic = process.env.MNEMONIC;

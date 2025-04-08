@@ -198,7 +198,7 @@ mod tests {
         // Arrange
         let username = "hauju";
         let pin = EncryptionPin::try_from_string("1234").unwrap();
-        let plain_password = "StrongP@55w0rd";
+        let plain_password = "correcthorsebatterystaple";
 
         let user = create_user_entity(username, None);
 
