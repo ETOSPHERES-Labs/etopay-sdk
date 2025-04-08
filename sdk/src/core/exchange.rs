@@ -115,7 +115,7 @@ mod tests {
             SwapPaymentDetailKey::Iota,
             false,
             1,
-            KycType::Viviswap,
+            KycType::Undefined,
         )));
         sdk.active_user = Some(get_active_user());
         sdk.access_token = Some(TOKEN.clone());
