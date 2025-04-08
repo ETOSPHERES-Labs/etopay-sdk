@@ -126,7 +126,7 @@ shadow-rs = { version = "1.0.1", default-features = false, features = [
 
 [dev-dependencies]
 dotenvy = { workspace = true }
-env_logger = "0.11.6"
+env_logger = "0.11.8"
 fake = { workspace = true }
 fluent-assertions = { workspace = true }
 mockall = { workspace = true }
