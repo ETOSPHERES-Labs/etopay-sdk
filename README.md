@@ -1,6 +1,9 @@
 # Welcome to the ETOPay SDK – The Decentralized Payment Ecosystem
 
-Check out our [Documentation](https://docs.etospheres.com).
+[![CI](https://github.com/ETOSPHERES-Labs/etopay-sdk/actions/workflows/ci.yml/badge.svg)](https://github.com/ETOSPHERES-Labs/etopay-sdk/actions/workflows/ci.yml)
+![Crates.io Version](https://img.shields.io/crates/v/etopay-sdk)
+
+Check out our [Documentation](https://docs.etospheres.com), [Contribution Guidelines](./CONTRIBUTING.md) and [Code of Conduct](./CODE_OF_CONDUCT.md).
 
 For getting started, there are four quickstart repositories:
 
