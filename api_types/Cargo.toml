@@ -11,7 +11,7 @@ repository.workspace = true
 
 [dependencies]
 base64 = { workspace = true, features = ["std"] }
-serde = { workspace = true }
+serde = { workspace = true, features = ["alloc"] }
 rust_decimal = { workspace = true }
 utoipa = { version = "5.3", default-features = false, features = [
     "macros",
