@@ -49,7 +49,7 @@ expect_used = "deny"
 
 # Specify versions for shared dependencies
 [workspace.dependencies]
-api_types = { package = "api_types", path = "./api_types" }
+api_types = { package = "etopay-api-types", path = "./api_types" }
 base64 = { version = "0.22", default-features = false }
 chrono = { version = "0.4.40", default-features = false }
 dotenvy = { version = "0.15", default-features = false }

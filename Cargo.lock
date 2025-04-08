@@ -731,19 +731,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "170433209e817da6aae2c51aa0dd443009a613425dd041ebfb2492d1c4c11a25"
 
 [[package]]
-name = "api_types"
-version = "0.14.0"
-dependencies = [
- "base64 0.22.1",
- "rstest",
- "rust_decimal",
- "rust_decimal_macros",
- "serde",
- "serde_json",
- "utoipa",
-]
-
-[[package]]
 name = "arbitrary"
 version = "1.4.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1951,6 +1938,19 @@ dependencies = [
 ]
 
 [[package]]
+name = "etopay-api-types"
+version = "0.14.0"
+dependencies = [
+ "base64 0.22.1",
+ "rstest",
+ "rust_decimal",
+ "rust_decimal_macros",
+ "serde",
+ "serde_json",
+ "utoipa",
+]
+
+[[package]]
 name = "etopay-sdk"
 version = "0.14.0"
 dependencies = [
@@ -1961,12 +1961,12 @@ dependencies = [
  "alloy-primitives",
  "alloy-provider",
  "alloy-transport",
- "api_types",
  "async-trait",
  "base64 0.22.1",
  "chrono",
  "dotenvy",
  "env_logger",
+ "etopay-api-types",
  "fake",
  "fern-logger",
  "fluent-assertions",
