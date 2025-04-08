@@ -36,7 +36,7 @@ public class SdkUnitTest {
 
     private static final String USERNAME = "satoshi";
     private static final String PIN = "1234";
-    private static final String PASSWORD = "StrongP@55word";
+    private static final String PASSWORD = "correcthorsebatterystaple";
     private static final String BACKUP_PASSWORD = "BackupStrongP@55word";
     private static final String AUTH_PROVIDER = "standalone";
     private static final String CURRENCY = "Iota";
@@ -358,7 +358,6 @@ public class SdkUnitTest {
         double amount = 5.5;
         String status = "Pending";
         String network = "{\"key\":\"IOTA\",\"is_testnet\":true,\"display_name\":\"IOTA\",\"display_symbol\":\"IOTA\",\"coin_type\":4218,\"block_explorer_url\":\"https://explorer.shimmer.network/testnet/\",\"can_do_purchases\":true,\"decimals\":16,\"node_urls\":[\"https://api.testnet.iotaledger.net\"],\"protocol\":{\"Stardust\":{}}}";
-
 
         final String body = "{" + System.lineSeparator()
                 + String.format("\"system_address\":\"%s\",", mainAddress) +
