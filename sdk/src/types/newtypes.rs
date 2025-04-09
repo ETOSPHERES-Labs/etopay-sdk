@@ -55,6 +55,15 @@ impl PlainPassword {
             return Err(TypeError::EmptyPassword);
         }
 
+        // Validates the strength of the password.
+        // Any score less than 3 (can be cracked with 10^10 guesses or less) should be considered too weak. [Score](https://docs.rs/zxcvbn/latest/zxcvbn/enum.Score.html)
+        let password_strength = zxcvbn(password.as_str(), &[]).score();
+
+        if password_strength < Score::Three {
+            warn!("User attempted to set a weak password");
+            return Err(TypeError::WeakPassword);
+        }
+
         Ok(Self(password))
     }
 
@@ -91,20 +100,8 @@ impl PlainPassword {
     pub fn as_str(&self) -> &str {
         &self.0
     }
-
-    /// Validates the strength of the password.
-    /// Any score less than 3 (can be cracked with 10^10 guesses or less) should be considered too weak. [Score](https://docs.rs/zxcvbn/latest/zxcvbn/enum.Score.html)
-    pub fn validate(&self, username: &str) -> Result<()> {
-        let password_strength = zxcvbn(self.as_str(), &[username]).score();
-
-        if password_strength < Score::Three {
-            warn!("User attempted to set a weak password");
-            return Err(TypeError::WeakPassword);
-        }
-
-        Ok(())
-    }
 }
+
 impl TryFrom<String> for PlainPassword {
     type Error = TypeError;
     fn try_from(value: String) -> Result<Self> {
@@ -157,7 +154,7 @@ impl EncryptedPassword {
 }
 
 /// A non-empty pin used to encrypt the password.
-#[derive(zeroize::Zeroize, zeroize::ZeroizeOnDrop)]
+#[derive(zeroize::Zeroize, zeroize::ZeroizeOnDrop, Clone)]
 pub struct EncryptionPin(Box<[u8]>);
 impl_redacted_debug!(EncryptionPin);
 
@@ -168,17 +165,13 @@ impl EncryptionPin {
         if pin.is_empty() {
             return Err(TypeError::EmptyPin);
         }
-        Ok(Self(pin.as_bytes().into()))
-    }
 
-    /// Validate the PIN length
-    pub fn validate(&self) -> Result<()> {
-        if self.0.len() < 6 {
+        if pin.len() < 6 {
             warn!("Pin is less than 6 digits");
             return Err(TypeError::WeakPin);
         }
 
-        Ok(())
+        Ok(Self(pin.as_bytes().into()))
     }
 }
 impl TryFrom<String> for EncryptionPin {
@@ -259,14 +252,17 @@ mod test {
 
     #[test]
     fn test_debug_is_redacted() {
-        let debug = format!("{:?}", PlainPassword::try_from_string("hello").unwrap());
-        assert!(!debug.contains("hello"));
+        let debug = format!(
+            "{:?}",
+            PlainPassword::try_from_string("correcthorsebatterystaple").unwrap()
+        );
+        assert!(!debug.contains("correcthorsebatterystaple"));
     }
 
     #[test]
     fn test_encrypt_password_success() {
         let password = PlainPassword::try_from_string("strong_password").unwrap();
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let salt = EncryptionSalt::generate();
 
         let encrypted_password = password.encrypt(&pin, &salt).unwrap();
@@ -276,7 +272,7 @@ mod test {
     #[test]
     fn test_decrypt_password_success() {
         let password = PlainPassword::try_from_string("strong_password").unwrap();
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let salt = EncryptionSalt::generate();
 
         let encrypted_password = password.encrypt(&pin, &salt).unwrap();
@@ -288,7 +284,7 @@ mod test {
     #[test]
     fn test_encrypt_password_with_special_characters() {
         let password = PlainPassword::try_from_string("strong_password!@#$%^&*()").unwrap();
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let salt = EncryptionSalt::generate();
 
         let encrypted_password = password.encrypt(&pin, &salt).unwrap();
@@ -300,8 +296,8 @@ mod test {
     #[test]
     fn test_decrypt_password_failure_wrong_pin() {
         let password = PlainPassword::try_from_string("strong_password").unwrap();
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
-        let wrong_pin = EncryptionPin::try_from_string("54321").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
+        let wrong_pin = EncryptionPin::try_from_string("654321").unwrap();
         let salt = EncryptionSalt::generate();
 
         let encrypted_password = password.encrypt(&pin, &salt).unwrap();
@@ -312,7 +308,7 @@ mod test {
 
     #[test]
     fn test_decrypt_password_failure_invalid_data() {
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let salt = EncryptionSalt::generate();
 
         // SAFETY: this is only for testing purposes to make sure an invalid encrypted password gives an error

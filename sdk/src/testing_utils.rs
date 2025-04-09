@@ -70,10 +70,7 @@ pub static ENCRYPTED_WALLET_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::ne
 });
 pub static WALLET_PASSWORD: LazyLock<PlainPassword> =
     LazyLock::new(|| PlainPassword::try_from_string("correcthorsebatterystaple").unwrap());
-pub static WEAK_WALLET_PASSWORD: LazyLock<PlainPassword> =
-    LazyLock::new(|| PlainPassword::try_from_string("B@ckupP@55w0rd").unwrap());
 pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("123456").unwrap());
-pub static WEAK_PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("1234").unwrap());
 pub const SALT: [u8; 12] = [241, 167, 131, 245, 166, 203, 63, 247, 211, 157, 138, 34];
 
 pub const PURCHASE_ID: &str = "123";

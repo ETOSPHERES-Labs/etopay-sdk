@@ -353,11 +353,6 @@ impl Sdk {
 
         let mut user = repo.get(&active_user.username)?;
 
-        // validate password
-        new_password.validate(&user.username)?;
-        // validate pin
-        pin.validate()?;
-
         // if password already exists, return an error!
         if let Some(encrypted_password) = user.encrypted_password {
             info!("Password exists, changing password");
@@ -571,8 +566,7 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME, WALLET_PASSWORD, WEAK_PIN,
-        WEAK_WALLET_PASSWORD,
+        HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME, WALLET_PASSWORD,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -922,7 +916,7 @@ mod tests {
         }
 
         // Act
-        let new_pin: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("4321").unwrap());
+        let new_pin: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("432154").unwrap());
         let response = sdk.change_pin(&PIN, &new_pin).await;
 
         // Assert
@@ -937,8 +931,6 @@ mod tests {
     #[rstest]
     #[case::success(&WALLET_PASSWORD, &PIN, Ok(()))]
     #[case::repo_init_error(&WALLET_PASSWORD, &PIN, Err(crate::Error::UserRepoNotInitialized))]
-    #[case::weak_passowrd(&WEAK_WALLET_PASSWORD, &PIN, Err(crate::Error::Type(crate::types::error::TypeError::WeakPassword)))]
-    #[case::weak_pin(&WALLET_PASSWORD, &WEAK_PIN, Err(crate::Error::Type(crate::types::error::TypeError::WeakPin)))]
     #[case::user_init_error(&WALLET_PASSWORD, &PIN, Err(crate::Error::UserNotInitialized))]
     #[tokio::test]
     async fn test_set_wallet_password(

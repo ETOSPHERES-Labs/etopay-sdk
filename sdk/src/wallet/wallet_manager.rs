@@ -585,7 +585,7 @@ mod tests {
     use crate::{
         core::{Config, UserRepoT},
         kdbx::KdbxStorageError,
-        testing_utils::{example_api_network, IOTA_NETWORK_KEY, WALLET_PASSWORD},
+        testing_utils::{example_api_network, ENCRYPTED_WALLET_PASSWORD, IOTA_NETWORK_KEY, PIN, SALT, WALLET_PASSWORD},
         types::{
             newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -599,8 +599,8 @@ mod tests {
     const MNEMONIC:&str = "endorse answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river";
     const MNEMONIC_INCORRECT:&str = "answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river";
     const USERNAME: &str = "SuperAdmin";
-    static PASSWORD: LazyLock<PlainPassword> =
-        LazyLock::new(|| PlainPassword::try_from_string("StrongP@55w0rd").unwrap());
+    static INVALID_BACKUP_PASSWORD: LazyLock<PlainPassword> =
+        LazyLock::new(|| PlainPassword::try_from_string("correcthorsebatterystapleaa").unwrap());
 
     // share strings to use for testing the resemble-function
     const SHARE_LOCAL: &str = "ME-RS-N-Mi0xLUNBRVFBaGdESXFBRStPVUZYZTJnMTdLRFY1L2pWRllQTHdtZ0dCWExJbitjTERReFRyRHArWGNVMG5yY3UyVmFONFEvZkVoeXNadm5qNFhmRDVIZXZ3eHB2bENTYnZIZTFtOTlXdjJwby8zVWl0d2VhMnVWOTZaejB5WmhEdHlkRDFYcEg1R0RIYXFvZDBpTHdpcDZ3d1k5T0VWdEJhZmtkUVRGaTNNM3gvY2dsK0FDWVQ5WG50TlJycnRtWFRTUGZ4MG54R1lVc0NWUnNKY3h5Q0JxSHBlRGVRekpSTlFxVldMNGpJU3JCZkFRcEpYMnJoT1o4OXM1V3VLaW5PWFd0YUZncTRnd2t1VzR0ZkJJZzVUMjFlaXpGNEpWNzlMcXFXSDZoY3N0Z1huYzZYWTJvZjRvaytlYnJWOFBmR1lOU1NxRWQ4VFpqUzlBL0h0clJGNThEbUdaL2Z2Nmp5MjJjS01hUWllK1ZqdFZ4OUJyblJjWThYYTgxWmNTWlF4YlFLbFQ3MC9tRk5aQlN4ZXNLTWVTU24vV2hycEs0OU80ZW4zRkZJVTJqd2lLcGwybHpHMk0vdThJTzRZSlNCL1B6aVp4cGczcVk5Z25PRHNQR2lDZGNyejErcTVhYUdoMDdXUGlISFg5K1VpbVJjRThZS1BBNXUwNTBkQ2l2eVM2a2VhZkpFalQ0UXkxcElPaFRUd3ZrMWxrR0ZmeWp3bVBqL3JMRGY4YUc3ZXZlVWQveGwxbzlKMnh5ckhvQW9heTNVNVpHYjFCZGJ2OGFGNHJLb2wwTkorUlZBSTZJSHJCUnE4OGxJeGtzSlFxTm9GQ3o5b051N011OTVkMUJpZ3ErNjZiYzBuTWcyWXZYQXdaMkh3RjAzS0xRWEFWYjZVekZ1Lzc0MjYraElNUlR1M01mZDZoa01vMllMVzlxSS9odlBsaWg4RG5qaUFTUG9Fbkx2cVFidVpXaVBnQ3h2c1F4eXFBQWdDazlzckhwaG51UnpTck95M1JmZzRYa0lndHhlb3ArUmZJOVgyaDBRcEVmcjgzYzExd0xhQkxDUmgwMlFXazA2Ty8yM2s2cWZNZHBxNVZ2b0ZnTkNJYlY1V01sSFpaV3RnVXFzaGtXRVJycjduZnVvd1BQQ0NUaHdxMC9tbUQ1NDVDb0VNWU16bUtQYlIyYmF4RkVTbUswTlRRT3VWR3A2Y3JqNWlYOGxzaU9kZ3FVNHhuSVpRcDRsT1lJcTlBOUhFS3NZZ1RuYysxRlRNazJEN05ydThlalh4UUR3amFqUTFNTmJ5cldBS0MvZ3RTWW9ONTFKY25FWFlUOWI1MVZOWWF4anArTE9oeDA0M3RNUW9TejNvN1kxbWtORlJUTmJMZWhDKzV0UkNKNjdQYk5Va29DbWxXbjFYODZxVlVsRFU0MjkxaXVLaE1YQ0lsVHlscGU2dw==";
@@ -610,14 +610,11 @@ mod tests {
 
     fn get_user_repo() -> (EncryptionPin, UserRepoT) {
         let mut repo = Box::new(UserRepoImpl::new(MemoryUserStorage::new())) as UserRepoT;
-        let salt = EncryptionSalt::generate();
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
-        let encrypted_password = Some(PASSWORD.encrypt(&pin, &salt).unwrap());
         repo.create(&crate::types::users::UserEntity {
             user_id: None,
             username: USERNAME.to_string(),
-            encrypted_password,
-            salt,
+            encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
+            salt: SALT.into(),
             is_kyc_verified: false,
             kyc_type: KycType::Undefined,
             viviswap_state: None,
@@ -626,7 +623,7 @@ mod tests {
         })
         .unwrap();
 
-        (pin, repo)
+        (PIN.clone(), repo)
     }
 
     #[rstest]
@@ -656,7 +653,7 @@ mod tests {
 
     #[rstest]
     #[case(&WALLET_PASSWORD, Ok(()))]
-    #[case(&PASSWORD, Err(WalletError::KdbxStorage(KdbxStorageError::UnlockError(UnlockError::HmacInvalid))))]
+    #[case(&INVALID_BACKUP_PASSWORD, Err(WalletError::KdbxStorage(KdbxStorageError::UnlockError(UnlockError::HmacInvalid))))]
     #[tokio::test]
     async fn test_backup_and_restore(#[case] password: &LazyLock<PlainPassword>, #[case] should_succeed: Result<()>) {
         // Arrange
@@ -693,7 +690,6 @@ mod tests {
     #[tokio::test]
     async fn test_change_password() {
         //Arrange
-        //Arrange
         let (mut config, _cleanup) = Config::new_test_with_cleanup();
         let mut manager = WalletManagerImpl::new(USERNAME);
         let (pin, mut repo) = get_user_repo();
@@ -704,7 +700,7 @@ mod tests {
             .await
             .expect("should succeed to create new wallet");
 
-        let new_password = PlainPassword::try_from_string("new_password").unwrap();
+        let new_password = PlainPassword::try_from_string("new_correcthorsebatterystaple").unwrap();
         manager
             .change_wallet_password(&config, &None, &mut repo, &pin, &new_password)
             .await
@@ -918,7 +914,7 @@ mod tests {
         // setup shares if provided
 
         let salt = EncryptionSalt::generate();
-        let pin = EncryptionPin::try_from_string("12345").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let encrypted_password =
             password.map(|s| PlainPassword::try_from_string(s).unwrap().encrypt(&pin, &salt).unwrap());
         let user = crate::types::users::UserEntity {
