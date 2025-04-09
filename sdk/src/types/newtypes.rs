@@ -26,8 +26,11 @@ use aes_gcm::{
 };
 use iota_sdk::crypto::hashes::blake2b::Blake2b256;
 use iota_sdk::crypto::hashes::Digest;
+use log::warn;
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
+extern crate zxcvbn;
+use zxcvbn::{zxcvbn, Score};
 
 macro_rules! impl_redacted_debug {
     ($type:ty) => {
@@ -87,6 +90,19 @@ impl PlainPassword {
     /// Helper function to get the underlying string, use with caution!
     pub fn as_str(&self) -> &str {
         &self.0
+    }
+
+    /// Validates the strength of the password.
+    /// Any score less than 3 (can be cracked with 10^10 guesses or less) should be considered too weak. [Score](https://docs.rs/zxcvbn/latest/zxcvbn/enum.Score.html)
+    pub fn validate(&self, username: &str) -> Result<()> {
+        let password_strength = zxcvbn(self.as_str(), &[username]).score();
+
+        if password_strength < Score::Three {
+            warn!("User attempted to set a weak password");
+            return Err(TypeError::WeakPassword);
+        }
+
+        Ok(())
     }
 }
 impl TryFrom<String> for PlainPassword {
@@ -153,6 +169,16 @@ impl EncryptionPin {
             return Err(TypeError::EmptyPin);
         }
         Ok(Self(pin.as_bytes().into()))
+    }
+
+    /// Validate the PIN length
+    pub fn validate(&self) -> Result<()> {
+        if self.0.len() < 6 {
+            warn!("Pin is less than 6 digits");
+            return Err(TypeError::WeakPin);
+        }
+
+        Ok(())
     }
 }
 impl TryFrom<String> for EncryptionPin {

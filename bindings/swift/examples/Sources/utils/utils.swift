@@ -19,7 +19,7 @@ public struct Environment {
 
         self.username = username
         self.password = password
-        self.pin = "1234"
+        self.pin = "123456"
         self.mnemonic = mnemonic
     }
 }

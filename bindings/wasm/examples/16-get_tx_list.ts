@@ -6,7 +6,7 @@ async function main() {
     let username = "satoshi";
     let start = 0;
     let limit = 10;
-    let pin = "1234"; // Define the PIN
+    let pin = "123456"; // Define the PIN
     const sdk = await initSdk(username); // Initialize the SDK
     let mnemonic: string = (process.env.MNEMONIC as string);
     let password: string = (process.env.PASSWORD as string);

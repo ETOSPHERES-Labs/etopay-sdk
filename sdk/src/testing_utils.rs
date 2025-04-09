@@ -74,7 +74,8 @@ pub static WEAK_BACKUP_PASSWORD: LazyLock<PlainPassword> =
 pub const SALT: [u8; 12] = [241, 167, 131, 245, 166, 203, 63, 247, 211, 157, 138, 34];
 pub const PURCHASE_ID: &str = "123";
 pub const ORDER_ID: &str = "497f6eca-6276-4993-bfeb-53cbbbba6f08";
-pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("1234").unwrap());
+pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("123456").unwrap());
+pub static WEAK_PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("1234").unwrap());
 pub const IOTA_NETWORK_KEY: &str = "IOTA";
 pub const ETH_NETWORK_KEY: &str = "ETH";
 

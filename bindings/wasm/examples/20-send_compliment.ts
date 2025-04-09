@@ -11,7 +11,7 @@ const timeoutPromise = new Promise<never>((_, reject) =>
 
 async function main() {
     let username = "alice";
-    let pin = "1234";
+    let pin = "123456";
 
     // Initialize SDK
     const sdk = await initSdk(username);

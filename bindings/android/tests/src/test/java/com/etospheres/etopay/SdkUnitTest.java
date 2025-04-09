@@ -35,7 +35,7 @@ public class SdkUnitTest {
     private static final String token = "access_token";
 
     private static final String USERNAME = "satoshi";
-    private static final String PIN = "1234";
+    private static final String PIN = "123456";
     private static final String PASSWORD = "correcthorsebatterystaple";
     private static final String BACKUP_PASSWORD = "BackupStrongP@55word";
     private static final String AUTH_PROVIDER = "standalone";

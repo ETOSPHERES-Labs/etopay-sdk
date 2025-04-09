@@ -47,10 +47,6 @@ pub enum Error {
     #[error("User repositry is not initialized")]
     UserRepoNotInitialized,
 
-    /// Error occurs when the user passoword is weak
-    #[error("Weak password")]
-    WeakPassword,
-
     /// Error caused by conversions to/from Decimal and f64
     #[error("Decimal error: {0}")]
     #[serde(serialize_with = "display_string")]

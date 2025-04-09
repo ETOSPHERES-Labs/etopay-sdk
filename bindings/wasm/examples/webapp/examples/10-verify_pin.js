@@ -4,7 +4,7 @@ import * as wasm from "etopay-sdk-wasm";
 async function main() {
     const sdk = await initSdk();
     let username = "satoshi";
-    let pin = "1234";
+    let pin = "123456";
     let password = "correcthorsebatterystaple";
     let mnemonic = process.env.MNEMONIC;
 

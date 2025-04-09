@@ -7,7 +7,7 @@ async function main() {
 
     let username = "alice";
     let password = "correcthorsebatterystaple";
-    let pin = "1234";
+    let pin = "123456";
     let mnemonic = process.env.MNEMONIC;
 
     // ===========================================================================

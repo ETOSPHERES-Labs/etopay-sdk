@@ -5,7 +5,7 @@ async function main() {
 
     let username = "satoshi";
     let password = "correcthorsebatterystaple";
-    let pin = "1234";
+    let pin = "123456";
     const sdk = await initSdk();
     let mnemonic = process.env.MNEMONIC;
     await sdk.createNewUser(username);

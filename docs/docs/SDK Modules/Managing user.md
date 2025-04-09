@@ -195,7 +195,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
         sdk.refresh_access_token("access_token").await.unwrap();
         sdk.init_user("username").await.unwrap();
 
-        let pin = "1234"; 
+        let pin = "123456"; 
         // only if wallet was created by the user, a pin value is required.
         // otherwise, it is None.
         sdk.delete_user(Some(pin)).await.unwrap();
@@ -219,7 +219,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
                 sdk.refreshAccessToken("accessToken");
                 sdk.initializeUser("username");
                 
-                String pin = "1234"; 
+                String pin = "123456"; 
                 // only if wallet was created by the user, a pin value is required.
                 // otherwise, it is null.
                 sdk.deleteUser(pin)
@@ -245,7 +245,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
         try await sdk.refreshAccessToken(access_token: "access_token")
         try await sdk.initUser(username: "username")
         
-        let pin = "1234"; 
+        let pin = "123456"; 
         // only if wallet was created by the user, a pin value is required.
         // otherwise, it is nil.
         try await sdk.deleteUser(pin: pin)
@@ -266,7 +266,7 @@ Deleting the user is simply deleting the user entity from the local database, wh
     await sdk.refreshAccessToken("access_token");
     await sdk.initializeUser("username");
 
-    let pin = "1234"; 
+    let pin = "123456"; 
     // only if wallet was created by the user, a pin value is required.
     // otherwise, it is null.
     await sdk.deleteUser(pin);

@@ -611,7 +611,7 @@ mod tests {
         }
 
         // Act
-        let pin = EncryptionPin::try_from_string("1234").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let response = sdk.confirm_purchase_request(&pin, PURCHASE_ID).await;
 
         // Assert
@@ -734,7 +734,7 @@ mod tests {
         let amount = CryptoAmount::try_from(dec!(25.0)).unwrap();
         let response = sdk
             .send_amount(
-                &EncryptionPin::try_from_string("1234").unwrap(),
+                &EncryptionPin::try_from_string("123456").unwrap(),
                 "smrq1...",
                 amount,
                 Some(String::from("test message").into_bytes()),
@@ -810,7 +810,7 @@ mod tests {
         let amount = CryptoAmount::try_from(dec!(5.0)).unwrap();
         let response = sdk
             .send_amount(
-                &EncryptionPin::try_from_string("1234").unwrap(),
+                &EncryptionPin::try_from_string("123456").unwrap(),
                 "0xb0b...",
                 amount,
                 Some(String::from("test message").into_bytes()),

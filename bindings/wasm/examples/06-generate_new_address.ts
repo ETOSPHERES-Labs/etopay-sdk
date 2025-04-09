@@ -3,7 +3,7 @@ import { initSdk } from './utils';
 
 async function main() {
     let username = "satoshi";
-    let pin = "1234";
+    let pin = "123456";
 
     const sdk = await initSdk(username);
     let password: string = (process.env.PASSWORD as string);

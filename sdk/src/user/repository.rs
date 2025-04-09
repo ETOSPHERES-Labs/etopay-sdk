@@ -197,7 +197,7 @@ mod tests {
     fn it_should_set_wallet_password() {
         // Arrange
         let username = "hauju";
-        let pin = EncryptionPin::try_from_string("1234").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
         let plain_password = "correcthorsebatterystaple";
 
         let user = create_user_entity(username, None);

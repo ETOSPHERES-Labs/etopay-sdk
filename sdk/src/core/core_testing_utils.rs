@@ -1,5 +1,6 @@
 use super::Sdk;
 use crate::testing_utils::{example_api_networks, IOTA_NETWORK_KEY, SALT, TOKEN};
+use crate::types::error::TypeError;
 use crate::types::users::UserEntity;
 use crate::wallet_manager::MockWalletManager;
 use crate::{
@@ -109,7 +110,30 @@ pub async fn handle_error_test_cases(
                 wallet_manager: Box::new(MockWalletManager::new()),
             });
         }
-        crate::Error::WeakPassword => {
+        crate::Error::Type(TypeError::WeakPassword) => {
+            let mut mock_user_repo = MockUserRepo::new();
+            mock_user_repo.expect_get().times(1).returning(move |r1| {
+                assert_eq!(r1, USERNAME);
+                Ok(UserEntity {
+                    user_id: None,
+                    username: USERNAME.to_string(),
+                    encrypted_password: None,
+                    salt: SALT.into(),
+                    is_kyc_verified: true,
+                    kyc_type: KycType::Undefined,
+                    viviswap_state: None,
+                    local_share: None,
+                    wallet_transactions: Vec::new(),
+                })
+            });
+            sdk.repo = Some(Box::new(mock_user_repo));
+
+            sdk.active_user = Some(crate::types::users::ActiveUser {
+                username: USERNAME.into(),
+                wallet_manager: Box::new(MockWalletManager::new()),
+            });
+        }
+        crate::Error::Type(TypeError::WeakPin) => {
             let mut mock_user_repo = MockUserRepo::new();
             mock_user_repo.expect_get().times(1).returning(move |r1| {
                 assert_eq!(r1, USERNAME);

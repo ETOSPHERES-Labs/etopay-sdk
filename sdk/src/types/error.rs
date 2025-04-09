@@ -12,9 +12,17 @@ pub enum TypeError {
     #[error("Password should not be empty")]
     EmptyPassword,
 
+    /// Error occurs when the user password is weak
+    #[error("Weak password")]
+    WeakPassword,
+
     /// Error raises if the pin is empty
     #[error("Pin should not be empty")]
     EmptyPin,
+
+    /// Error occurs when the user pin is less than 6 digits
+    #[error("Weak pin")]
+    WeakPin,
 
     /// Error raises if the access token is empty
     #[error("Access token should not be empty")]

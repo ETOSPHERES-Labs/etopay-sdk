@@ -5,7 +5,7 @@ async function main() {
     let username = "satoshi";
     let start = 0;
     let limit = 10;
-    let pin = "1234";
+    let pin = "123456";
     let password = "correcthorsebatterystaple";
     let mnemonic = process.env.MNEMONIC;
 
