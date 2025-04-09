@@ -115,7 +115,7 @@ exceptions = [
     # Each entry is the crate and version constraint, and its specific allow
     # list
     { allow = ["AGPL-3.0"], crate = "etopay-sdk" },
-    { allow = ["AGPL-3.0"], crate = "api_types" },
+    { allow = ["AGPL-3.0"], crate = "etopay-api-types" },
 ]
 
 # Some crates don't have (easily) machine readable licensing information,
@@ -240,7 +240,7 @@ allow-git = []
 
 [sources.allow-org]
 # github.com organizations to allow git sources for
-github = ["ETO-GRUPPE-TECHNOLOGIES-GmbH"]
+github = []
 # gitlab.com organizations to allow git sources for
 gitlab = []
 # bitbucket.org organizations to allow git sources for
