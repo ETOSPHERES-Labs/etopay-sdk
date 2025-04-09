@@ -95,7 +95,7 @@ alloy = { version = "0.13", default-features = false, features = [
     "sol-types",
 ] }
 alloy-consensus = { version = "0.13", features = ["k256"] }
-alloy-primitives = { version = "0.8", default-features = false }
+alloy-primitives = { version = "1.0", default-features = false }
 alloy-provider = { version = "0.13", default-features = false, features = [
     "reqwest",
     "reqwest-rustls-tls",
