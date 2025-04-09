@@ -6,14 +6,14 @@ async function main() {
 
     const sdk = await initSdk(username);
     let mnemonic: string = (process.env.MNEMONIC as string);
-    let password: string = (process.env.PASSWORD as string);
+    let password: string = (process.env.WALLET_PASSWORD as string);
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
     await sdk.setWalletPassword(PIN, password);
     await sdk.createWalletFromMnemonic(PIN, mnemonic);
 
-    let new_password = "new password"
+    let new_password = "new_correcthorsebatterystaple"
     await sdk.setWalletPassword(PIN, new_password);
     console.log("change password successful");
 

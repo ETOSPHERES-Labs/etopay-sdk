@@ -9,7 +9,7 @@ public class GetTxList16 {
         // initialize the sdk
         ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
-        String password = utils.getEnvVariable("PASSWORD");
+        String password = utils.getEnvVariable("WALLET_PASSWORD");
 
         try {
             // create and init user

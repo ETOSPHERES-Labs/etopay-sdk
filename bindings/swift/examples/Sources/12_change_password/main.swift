@@ -14,7 +14,7 @@ Task {
     do {
         // Get environment variables from the Utils module
         let env = getEnvironment()
-        let new_password = "StrongP@ssw0rd"
+        let new_password = "correcthorsebatterystaple"
 
         // Initialize SDK
         let sdk = try await initSdk(username: env.username, password: env.password)
@@ -26,7 +26,7 @@ Task {
         print("initialized new user: \(env.username)")
 
         // Create new wallet
-        try await sdk.setWalletPassword(env.pin, env.password)
+        try await sdk.setWalletPassword(env.pin, env.wallet_password)
         let _ = try await sdk.createNewWallet(env.pin)
         print("created new wallet")
 

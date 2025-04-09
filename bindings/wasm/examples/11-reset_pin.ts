@@ -7,7 +7,7 @@ async function main() {
     let new_pin = "543216";
     const sdk = await initSdk(username);
     let mnemonic: string = (process.env.MNEMONIC as string);
-    let password: string = (process.env.PASSWORD as string);
+    let password: string = (process.env.WALLET_PASSWORD as string);
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);

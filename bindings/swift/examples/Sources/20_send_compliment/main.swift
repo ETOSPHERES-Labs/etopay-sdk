@@ -18,7 +18,7 @@ Task {
         let mnemonic_alice = ProcessInfo.processInfo.environment["MNEMONIC_ALICE"]!
 
         // Initialize SDK
-        let sdk = try await initSdk(username: username_alice, password: env.password)
+        let sdk = try await initSdk(username: username_alice, password: env.wallet_password)
 
         // Create new user
         try await sdk.createNewUser(username_alice)
@@ -27,7 +27,7 @@ Task {
         print("initialized new user: \(username_alice)")
 
         // Migrate wallet
-        try await sdk.setWalletPassword(env.pin, env.password)
+        try await sdk.setWalletPassword(env.pin, env.wallet_password)
         let _ = try await sdk.createWalletFromMnemonic(env.pin, mnemonic_alice)
         print("migrated wallet from mnemonic")
 

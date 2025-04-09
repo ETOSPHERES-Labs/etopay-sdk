@@ -13,7 +13,7 @@ async function main() {
     await sdk.setWalletPassword(PIN, password);
     await sdk.createWalletFromMnemonic(PIN, mnemonic);
 
-    let new_password = "new password"
+    let new_password = "new_correcthorsebatterystaple"
     await sdk.setWalletPassword(PIN, new_password);
     console.log("change password successful");
 
