@@ -23,7 +23,7 @@ public class ChangePassword12 {
             System.out.println("Created and initialized new wallet.");
 
             // change password
-            sdk.setWalletPassword(utils.PIN, "StrongP@ssw0rd");
+            sdk.setWalletPassword(utils.PIN, "new_correcthorsebatterystaple");
             System.out.println("Password changed");
 
         } catch (Exception e) {
