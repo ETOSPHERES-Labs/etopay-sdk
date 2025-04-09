@@ -1,4 +1,4 @@
-use etopay_sdk::types::newtypes::EncryptionPin;
+use etopay_sdk::types::newtypes::{EncryptionPin, PlainPassword};
 mod utils;
 use testing::USER_SATOSHI;
 use utils::init_sdk;

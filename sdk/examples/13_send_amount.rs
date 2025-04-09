@@ -1,4 +1,5 @@
 mod utils;
+use etopay_sdk::types::newtypes::PlainPassword;
 use rust_decimal_macros::dec;
 use testing::USER_SATOSHI;
 use utils::init_sdk;

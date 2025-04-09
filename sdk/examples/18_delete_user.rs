@@ -1,4 +1,4 @@
-use etopay_sdk::types::newtypes::AccessToken;
+use etopay_sdk::types::newtypes::{AccessToken, PlainPassword};
 mod utils;
 use testing::USER_ARCHIVEME;
 use utils::init_sdk;
