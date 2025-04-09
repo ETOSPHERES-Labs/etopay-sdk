@@ -653,7 +653,7 @@ mod tests {
                 "method": "eth_getTransactionCount",
                 "params": [
                     from,
-                    "pending"
+                    "latest"
                 ],
             })))
             .with_status(200)
