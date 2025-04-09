@@ -1,12 +1,12 @@
-# Welcome to Cawaena – The Decentralized Payment Ecosystem
+# Welcome to ETOPay – The Decentralized Payment Ecosystem
 
 ## Introduction 
 
-Cawaena is an open-source project designed to revolutionize P2P payments with decentralization at its core. By eliminating gatekeepers and respecting user rights, Cawaena provides a secure, legally compliant, and developer-friendly SDK that integrates seamlessly with **cryptocurrency** and **fiat** systems.
+ETOPay is an open-source project designed to revolutionize P2P payments with decentralization at its core. By eliminating gatekeepers and respecting user rights, ETOPay provides a secure, legally compliant, and developer-friendly SDK that integrates seamlessly with **cryptocurrency** and **fiat** systems.
 
-With Cawaena, we strive to empower developers, businesses, and end-users with tools that enable _secure payments_, _identity management_, and comprehensive _wallet solutions_, all within a Web3 context.
+With ETOPay, we strive to empower developers, businesses, and end-users with tools that enable _secure payments_, _identity management_, and comprehensive _wallet solutions_, all within a Web3 context.
 
-Our core principles of **Self-realization**, **Awareness**, **Fairness**, **Dexterity**, and **Community** guide us in building and growing this platform. By contributing to Cawaena, you become a part of this mission.
+Our core principles of **Self-realization**, **Awareness**, **Fairness**, **Dexterity**, and **Community** guide us in building and growing this platform. By contributing to ETOPay, you become a part of this mission.
 
 You can read more about our philosophy and principles [here](./sdk/docs/Choosing%20ETOPay/Philosophy.md).
 
