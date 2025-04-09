@@ -115,7 +115,7 @@ mod tests {
             SwapPaymentDetailKey::Iota,
             false,
             1,
-            KycType::Undefined,
+            KycType::Undefined, // changed to undefined because it was requiring the viviswap features
         )));
         sdk.active_user = Some(get_active_user());
         sdk.access_token = Some(TOKEN.clone());

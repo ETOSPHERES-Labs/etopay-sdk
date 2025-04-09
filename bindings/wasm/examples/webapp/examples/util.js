@@ -3,6 +3,8 @@ const sleep = (delay) => new Promise((resolve) => setTimeout(resolve, delay))
 
 export { sleep }
 
+export const PIN = "123456";
+
 // Function to initialize the SDK
 export async function initSdk() {
 

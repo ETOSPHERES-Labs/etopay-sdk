@@ -171,6 +171,8 @@ impl EncryptionPin {
             return Err(TypeError::WeakPin);
         }
 
+        // TODO: check numerical values?
+
         Ok(Self(pin.as_bytes().into()))
     }
 }

@@ -1,10 +1,9 @@
-import { initSdk } from './util';
+import { initSdk, PIN } from './util';
 import * as wasm from "etopay-sdk-wasm";
 
 async function main() {
-
     let username = "archiveme";
-    let pin = "123456";
+
     let password = "correcthorsebatterystaple";
     let mnemonic = process.env.MNEMONIC;
 
@@ -12,9 +11,9 @@ async function main() {
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setWalletPassword(pin, password);
-    await sdk.createWalletFromMnemonic(pin, mnemonic);
-    await sdk.deleteUser(pin);
+    await sdk.setWalletPassword(PIN, password);
+    await sdk.createWalletFromMnemonic(PIN, mnemonic);
+    await sdk.deleteUser(PIN);
 
     console.log("user deleted_successfully");
 }

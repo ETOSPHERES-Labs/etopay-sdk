@@ -929,15 +929,11 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(&WALLET_PASSWORD, &PIN, Ok(()))]
-    #[case::repo_init_error(&WALLET_PASSWORD, &PIN, Err(crate::Error::UserRepoNotInitialized))]
-    #[case::user_init_error(&WALLET_PASSWORD, &PIN, Err(crate::Error::UserNotInitialized))]
+    #[case::success(Ok(()))]
+    #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
+    #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[tokio::test]
-    async fn test_set_wallet_password(
-        #[case] password: &LazyLock<PlainPassword>,
-        #[case] pin: &EncryptionPin,
-        #[case] expected: Result<()>,
-    ) {
+    async fn test_set_wallet_password(#[case] expected: Result<()>) {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
@@ -973,7 +969,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.set_wallet_password(pin, password).await;
+        let response = sdk.set_wallet_password(&PIN, &WALLET_PASSWORD).await;
 
         // Assert
         match expected {

@@ -1,11 +1,11 @@
-import { initSdk } from './util';
+import { initSdk, PIN } from './util';
 import * as wasm from "etopay-sdk-wasm";
 
 async function main() {
     let username = "satoshi";
     let start = 0;
     let limit = 10;
-    let pin = "123456";
+
     let password = "correcthorsebatterystaple";
     let mnemonic = process.env.MNEMONIC;
 
@@ -13,8 +13,8 @@ async function main() {
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setWalletPassword(pin, password);
-    await sdk.createWalletFromMnemonic(pin, mnemonic);
+    await sdk.setWalletPassword(PIN, password);
+    await sdk.createWalletFromMnemonic(PIN, mnemonic);
     console.log("Wallet initialized!");
 
     // fetch networks from backend
@@ -22,7 +22,7 @@ async function main() {
     // set the network configuration for the wallet
     sdk.setNetwork(networks[0].key);
 
-    let txs = await sdk.getWalletTransactionList(pin, start, limit);
+    let txs = await sdk.getWalletTransactionList(PIN, start, limit);
     console.log("Wallet transactions list : " + JSON.stringify(txs));
 }
 
