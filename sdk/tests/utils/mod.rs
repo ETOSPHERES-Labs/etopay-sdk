@@ -75,7 +75,7 @@ pub async fn init_sdk(username: &str) -> (Sdk, CleanUp) {
 #[derive(Debug)]
 pub struct TestUser {
     pub username: String,
-    pub password: PlainPassword,
+    pub wallet_password: PlainPassword,
     pub pin: EncryptionPin,
     pub mnemonic: String,
     pub first_name: String,
@@ -89,7 +89,7 @@ impl From<testing::TestUser> for TestUser {
     fn from(value: testing::TestUser) -> Self {
         Self {
             username: value.username,
-            password: PlainPassword::try_from_string(value.password).unwrap(),
+            wallet_password: PlainPassword::try_from_string("correcthorsebatterystaple").unwrap(),
             pin: EncryptionPin::try_from_string(value.pin).unwrap(),
             mnemonic: value.mnemonic,
             first_name: value.first_name,
