@@ -63,8 +63,8 @@ pub const PAYMENT_DETAIL_ID: &str = "payment-detail-id";
 pub const CASE_ID: &str = "123";
 pub static ENCRYPTED_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::new(|| unsafe {
     EncryptedPassword::new_unchecked([
-        129, 21, 50, 74, 5, 69, 194, 252, 21, 186, 201, 175, 4, 80, 139, 188, 109, 5, 7, 17, 51, 134, 232, 183, 130,
-        121, 61, 192, 12, 13,
+        91, 105, 102, 64, 68, 93, 59, 70, 41, 198, 141, 36, 152, 135, 67, 77, 191, 58, 227, 216, 53, 74, 74, 1, 168,
+        243, 227, 153, 73, 141, 159, 91, 79, 39, 208, 59, 54, 101, 112, 107, 169,
     ])
 });
 pub static BACKUP_PASSWORD: LazyLock<PlainPassword> =
