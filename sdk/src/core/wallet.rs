@@ -571,8 +571,8 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        BACKUP_PASSWORD, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
-        WEAK_BACKUP_PASSWORD, WEAK_PIN,
+        HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME, WALLET_PASSWORD, WEAK_PIN,
+        WEAK_WALLET_PASSWORD,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -705,7 +705,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.create_wallet_backup(&PIN, &BACKUP_PASSWORD).await;
+        let response = sdk.create_wallet_backup(&PIN, &WALLET_PASSWORD).await;
 
         // Assert
         match expected {
@@ -748,7 +748,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.create_wallet_from_backup(&PIN, BACKUP, &BACKUP_PASSWORD).await;
+        let response = sdk.create_wallet_from_backup(&PIN, BACKUP, &WALLET_PASSWORD).await;
 
         // Assert
         match expected {
@@ -935,11 +935,11 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(&BACKUP_PASSWORD, &PIN, Ok(()))]
-    #[case::repo_init_error(&BACKUP_PASSWORD, &PIN, Err(crate::Error::UserRepoNotInitialized))]
-    #[case::weak_passowrd(&WEAK_BACKUP_PASSWORD, &PIN, Err(crate::Error::Type(crate::types::error::TypeError::WeakPassword)))]
-    #[case::weak_pin(&BACKUP_PASSWORD, &WEAK_PIN, Err(crate::Error::Type(crate::types::error::TypeError::WeakPin)))]
-    #[case::user_init_error(&BACKUP_PASSWORD, &PIN, Err(crate::Error::UserNotInitialized))]
+    #[case::success(&WALLET_PASSWORD, &PIN, Ok(()))]
+    #[case::repo_init_error(&WALLET_PASSWORD, &PIN, Err(crate::Error::UserRepoNotInitialized))]
+    #[case::weak_passowrd(&WEAK_WALLET_PASSWORD, &PIN, Err(crate::Error::Type(crate::types::error::TypeError::WeakPassword)))]
+    #[case::weak_pin(&WALLET_PASSWORD, &WEAK_PIN, Err(crate::Error::Type(crate::types::error::TypeError::WeakPin)))]
+    #[case::user_init_error(&WALLET_PASSWORD, &PIN, Err(crate::Error::UserNotInitialized))]
     #[tokio::test]
     async fn test_set_wallet_password(
         #[case] password: &LazyLock<PlainPassword>,

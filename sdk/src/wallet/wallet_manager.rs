@@ -585,7 +585,7 @@ mod tests {
     use crate::{
         core::{Config, UserRepoT},
         kdbx::KdbxStorageError,
-        testing_utils::{example_api_network, BACKUP_PASSWORD, IOTA_NETWORK_KEY},
+        testing_utils::{example_api_network, IOTA_NETWORK_KEY, WALLET_PASSWORD},
         types::{
             newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -655,7 +655,7 @@ mod tests {
     }
 
     #[rstest]
-    #[case(&BACKUP_PASSWORD, Ok(()))]
+    #[case(&WALLET_PASSWORD, Ok(()))]
     #[case(&PASSWORD, Err(WalletError::KdbxStorage(KdbxStorageError::UnlockError(UnlockError::HmacInvalid))))]
     #[tokio::test]
     async fn test_backup_and_restore(#[case] password: &LazyLock<PlainPassword>, #[case] should_succeed: Result<()>) {
@@ -672,7 +672,7 @@ mod tests {
 
         // Create backup
         let backup = manager
-            .create_wallet_backup(&config, &None, &mut repo, &pin, &BACKUP_PASSWORD)
+            .create_wallet_backup(&config, &None, &mut repo, &pin, &WALLET_PASSWORD)
             .await
             .expect("failed to create backup");
 
