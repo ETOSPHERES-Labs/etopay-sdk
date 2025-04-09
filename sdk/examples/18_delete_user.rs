@@ -27,7 +27,12 @@ async fn main() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Create new wallet
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(
+        &user.pin,
+        &PlainPassword::try_from_string("correcthorsebatterystaple").unwrap(),
+    )
+    .await
+    .unwrap();
     sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Delete user

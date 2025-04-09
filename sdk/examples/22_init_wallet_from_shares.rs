@@ -31,7 +31,12 @@ async fn main() {
 
         Err(etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))) => {
             // Wallet requires a password, try again with the password provided
-            sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+            sdk.set_wallet_password(
+                &user.pin,
+                &PlainPassword::try_from_string("correcthorsebatterystaple").unwrap(),
+            )
+            .await
+            .unwrap();
 
             let result = sdk.generate_new_address(&user.pin).await;
             if result.is_ok() {
@@ -56,7 +61,12 @@ async fn main() {
         }
 
         Err(etopay_sdk::Error::Wallet(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))) => {
-            sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+            sdk.set_wallet_password(
+                &user.pin,
+                &PlainPassword::try_from_string("correcthorsebatterystaple").unwrap(),
+            )
+            .await
+            .unwrap();
             sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
                 .await
                 .unwrap();
