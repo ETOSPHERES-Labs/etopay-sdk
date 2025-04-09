@@ -5,7 +5,7 @@ async function main() {
     let username = "satoshi";
 
     const sdk = await initSdk(username);
-    let password: string = (process.env.WALLET_PASSWORD as string);
+    let password = "correcthorsebatterystaple";
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
     await sdk.setWalletPassword(PIN, password);

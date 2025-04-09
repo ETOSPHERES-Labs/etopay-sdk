@@ -17,7 +17,7 @@ async function main() {
 
     // Get env variables
     let mnemonic: string = (process.env.MNEMONIC_ALICE as string);
-    let password: string = (process.env.WALLET_PASSWORD as string);
+    let password = "correcthorsebatterystaple";
 
     // Create new user and initialize it
     await sdk.createNewUser(username);

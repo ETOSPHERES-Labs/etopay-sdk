@@ -6,7 +6,7 @@ async function main() {
 
     const sdk = await initSdk(username);
     let mnemonic: string = (process.env.MNEMONIC as string);
-    let password: string = (process.env.WALLET_PASSWORD as string);
+    let password = "correcthorsebatterystaple";
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);

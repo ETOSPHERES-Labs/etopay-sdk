@@ -5,6 +5,7 @@ import Foundation
 public struct Environment {
     public let username: String
     public let password: String
+    public let wallet_password: String
     public let pin: String
     public let mnemonic: String
 
@@ -12,7 +13,6 @@ public struct Environment {
         guard
             let username = ProcessInfo.processInfo.environment["USERNAME"],
             let password = ProcessInfo.processInfo.environment["PASSWORD"],
-            let wallet_password = ProcessInfo.processInfo.environment["WALLET_PASSWORD"],
             let mnemonic = ProcessInfo.processInfo.environment["MNEMONIC"]
         else {
             fatalError("Missing environment variables")
@@ -20,7 +20,7 @@ public struct Environment {
 
         self.username = username
         self.password = password
-        self.wallet_password = wallet_password
+        self.wallet_password = "correcthorsebatterystaple"
         self.pin = "123456"
         self.mnemonic = mnemonic
     }
