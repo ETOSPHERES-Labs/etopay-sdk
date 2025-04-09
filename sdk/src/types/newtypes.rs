@@ -154,7 +154,7 @@ impl EncryptedPassword {
 }
 
 /// A non-empty pin used to encrypt the password.
-#[derive(zeroize::Zeroize, zeroize::ZeroizeOnDrop, Clone)]
+#[derive(zeroize::Zeroize, zeroize::ZeroizeOnDrop)]
 pub struct EncryptionPin(Box<[u8]>);
 impl_redacted_debug!(EncryptionPin);
 

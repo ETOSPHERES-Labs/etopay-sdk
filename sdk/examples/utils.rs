@@ -3,7 +3,7 @@
 
 use etopay_sdk::{
     core::{Config, Sdk},
-    types::newtypes::{AccessToken, EncryptionPin, PlainPassword},
+    types::newtypes::{AccessToken, EncryptionPin},
 };
 use std::path::Path;
 use testing::{CleanUp, USER_SATOSHI};
@@ -46,7 +46,7 @@ pub async fn init_sdk() -> (Sdk, CleanUp) {
 #[derive(Debug)]
 pub struct TestUser {
     pub username: String,
-    pub password: PlainPassword,
+    pub password: String,
     pub pin: EncryptionPin,
     pub mnemonic: String,
     pub first_name: String,
@@ -60,7 +60,7 @@ impl From<testing::TestUser> for TestUser {
     fn from(value: testing::TestUser) -> Self {
         Self {
             username: value.username,
-            password: PlainPassword::try_from_string(value.password).unwrap(),
+            password: value.password,
             pin: EncryptionPin::try_from_string(value.pin).unwrap(),
             mnemonic: value.mnemonic,
             first_name: value.first_name,

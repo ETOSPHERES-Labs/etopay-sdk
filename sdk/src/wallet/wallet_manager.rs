@@ -608,7 +608,7 @@ mod tests {
     const SHARE_RECOVERY: &str = "ME-RS-N-Mi0yLUNBSVFBaGdESXFBRWk3b296TFVtbzNscG1jZEIxMXFESnVHbUpRUGYxUk9nOG5WQVNkR1NSTE5YQk41VytwV1dUcWVNSnVOakN3ZVd4eFk0Ylh6Y0NWTlhzYWFLNmM5UEUxWHVFT2lNVW9BeHdQNkRtM3BCT29EVklHWlFYbXZxQk9FOVYyU3FCZTlsblVRcUZBak9SQUllQjFVcWEvdlJMbXN3VWNqZlNJN0pVQWgvL3ZKZVBvbUxGUVFYcjZVSUE5dnpsaDgxVVNjaXZHUXlnOVQydWRNS202RTdveXQvcVpGam1DdUlYSFlkR1FCdkxrK01oaEErVmh2NlM2a0FkSU5veWRGUlZTdXpnU25zT25wcUJxb21oRWZaNkdmb1dsaHM5UUFadXRmeUgzdkxRT0hQeXc1TEZLbUE3dnpOTTJmMkc2dGZaZGR1Q2dnT2gydmZCUnh1ZmJSdStHN2VGSGtLdnVoOW16ekQ3YUF2Z3BRbldKakdrai9paGcyR1EyQVlBWWkrM200SXR5V3J3Q1ZRNDZlUjJCRGpmZllQK3BOTFNnL2xKNlNmbUswd204R2cvL2ZpbVBHODF4alcrckdIQkczUTV4U1JnWnlUcmt0TEFBWlY0VndJOENzdTlmSUNlT0tTYm9UVTVrOFJoWnZRS0pUNnhGS1d1K0l3OTVoWUlUZUdmVGxLa1NtdW93WmVXcFI1TjIyQUEyWENaVWVqVVBLdHlQWUYxOVNGTjRjUDlvTURuUng3bkxkY3B6cGE3QmJWQm1jRGNhTENZVW1PeXJKcDQwK1hoekJHVmlxVnBJTS9qNTJJQTg1TSt1TDVtM0xNUk12UFc4cEliNkpVYVlKV0FXSldWV3JKdlpzUGJrdmh3T0NlOXo5VWJUTXE1WUJzOC9OcFJnN0F4L2lmSTJ5ZHdxbDRacXd4N29MM0ZrK0daK1FDeHRyTWJSK2oxTzhROXFXOEJ5eEcveXFBQWdDazlzckhwaG51UnpTck95M1JmZzRYa0lndHhlb3ArUmZJOVgyaDBRcEVmcjgzYzExd0xhQkxDUmgwMlFXazA2Ty8yM2s2cWZNZHBxNVZ2b0ZnTkNJYlY1V01sSFpaV3RnVXFzaGtXRVJycjduZnVvd1BQQ0NUaHdxMC9tbUQ1NDVDb0VNWU16bUtQYlIyYmF4RkVTbUswTlRRT3VWR3A2Y3JqNWlYOGxzaU9kZ3FVNHhuSVpRcDRsT1lJcTlBOUhFS3NZZ1RuYysxRlRNazJEN05ydThlalh4UUR3amFqUTFNTmJ5cldBS0MvZ3RTWW9ONTFKY25FWFlUOWI1MVZOWWF4anArTE9oeDA0M3RNUW9TejNvN1kxbWtORlJUTmJMZWhDKzV0UkNKNjdQYk5Va29DbWxXbjFYODZxVlVsRFU0MjkxaXVLaE1YQ0lsVHlscGU2dw==";
     const SHARE_PASSWORD: &str = "mnemonic share password";
 
-    fn get_user_repo() -> (EncryptionPin, UserRepoT) {
+    fn get_user_repo() -> (&'static EncryptionPin, UserRepoT) {
         let mut repo = Box::new(UserRepoImpl::new(MemoryUserStorage::new())) as UserRepoT;
         repo.create(&crate::types::users::UserEntity {
             user_id: None,
@@ -623,7 +623,7 @@ mod tests {
         })
         .unwrap();
 
-        (PIN.clone(), repo)
+        (&PIN, repo)
     }
 
     #[rstest]
@@ -639,7 +639,7 @@ mod tests {
 
         // Act
         let result = manager
-            .create_wallet_from_existing_mnemonic(&config, &None, &mut repo, &pin, mnemonic)
+            .create_wallet_from_existing_mnemonic(&config, &None, &mut repo, pin, mnemonic)
             .await;
 
         // Assert
@@ -663,19 +663,19 @@ mod tests {
 
         // Create wallet
         manager
-            .create_wallet_from_new_mnemonic(&config, &None, &mut repo, &pin)
+            .create_wallet_from_new_mnemonic(&config, &None, &mut repo, pin)
             .await
             .expect("failed to create new wallet");
 
         // Create backup
         let backup = manager
-            .create_wallet_backup(&config, &None, &mut repo, &pin, &WALLET_PASSWORD)
+            .create_wallet_backup(&config, &None, &mut repo, pin, &WALLET_PASSWORD)
             .await
             .expect("failed to create backup");
 
         // Backup restoration
         let restore_result = manager
-            .create_wallet_from_backup(&config, &None, &mut repo, &pin, &backup, password)
+            .create_wallet_from_backup(&config, &None, &mut repo, pin, &backup, password)
             .await;
 
         // Assert
@@ -696,13 +696,13 @@ mod tests {
 
         // create a wallet
         manager
-            .create_wallet_from_new_mnemonic(&config, &None, &mut repo, &pin)
+            .create_wallet_from_new_mnemonic(&config, &None, &mut repo, pin)
             .await
             .expect("should succeed to create new wallet");
 
         let new_password = PlainPassword::try_from_string("new_correcthorsebatterystaple").unwrap();
         manager
-            .change_wallet_password(&config, &None, &mut repo, &pin, &new_password)
+            .change_wallet_password(&config, &None, &mut repo, pin, &new_password)
             .await
             .expect("should succeed to change wallet password");
 
@@ -712,7 +712,7 @@ mod tests {
                 &None,
                 &mut repo,
                 example_api_network(IOTA_NETWORK_KEY.to_string()),
-                &pin,
+                pin,
             )
             .await
             .expect("should succeed to get wallet after password change");
@@ -729,7 +729,7 @@ mod tests {
 
         // create a wallet
         manager
-            .create_wallet_from_new_mnemonic(&config, &None, &mut repo, &pin)
+            .create_wallet_from_new_mnemonic(&config, &None, &mut repo, pin)
             .await
             .expect("should succeed to create new wallet");
 
@@ -740,7 +740,7 @@ mod tests {
                 &None,
                 &mut repo,
                 example_api_network(IOTA_NETWORK_KEY.to_string()),
-                &pin,
+                pin,
             )
             .await
             .expect("should succeed to get wallet");
