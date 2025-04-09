@@ -14,6 +14,7 @@ use crate::{
     },
     wallet::error::{ErrorKind, WalletError},
 };
+use iota_sdk::wallet::account::types::InclusionState;
 use log::{debug, info, warn};
 
 impl Sdk {
@@ -497,6 +498,8 @@ impl Sdk {
         let user = self.get_user().await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
+        let inclusion_state_confirmed = format!("{:?}", InclusionState::Confirmed);
+
         let tx_list = match network.protocol {
             crate::types::networks::ApiProtocol::EvmERC20 {
                 chain_id: _,
@@ -514,6 +517,12 @@ impl Sdk {
                     .skip(start)
                     .take(limit)
                 {
+                    // We don't need to query the network for the state of this transaction,
+                    // because it has already been synchronized earlier (as indicated by `InclusionState::Confirmed`).
+                    if transaction.status == inclusion_state_confirmed {
+                        continue;
+                    }
+
                     let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_id).await;
                     match synchronized_transaction {
                         Ok(stx) => *transaction = stx,
@@ -594,6 +603,7 @@ mod tests {
     };
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use iota_sdk::wallet::account::types::InclusionState;
     use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;
@@ -1228,13 +1238,13 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_filtering_of_get_wallet_tx_list() {
+    async fn test_get_wallet_tx_list_filters_transactions_correctly() {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        // during the test we are expecting Status of WalletTxInfo.transaction_id = 2
-        // to change from `Waiting` to `Complete` after synchronization
+        // During the test, we expect the status of WalletTxInfo with transaction_id = 2
+        // to transition from 'Pending' to 'Confirmed' after synchronization
         let mixed_wallet_transactions = vec![
             WalletTxInfo {
                 date: "some date".to_string(),
@@ -1244,7 +1254,7 @@ mod tests {
                 incoming: true,
                 amount: 20.0,
                 network_key: "IOTA".to_string(),
-                status: "Complete".to_string(),
+                status: format!("{:?}", InclusionState::Confirmed),
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1255,7 +1265,7 @@ mod tests {
                 incoming: true,
                 amount: 1.0,
                 network_key: "ETH".to_string(),
-                status: "Waiting".to_string(),
+                status: format!("{:?}", InclusionState::Pending),
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1266,7 +1276,7 @@ mod tests {
                 incoming: true,
                 amount: 2.0,
                 network_key: "ETH".to_string(),
-                status: "Waiting".to_string(), // this one
+                status: format!("{:?}", InclusionState::Pending), // this one
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1277,7 +1287,7 @@ mod tests {
                 incoming: true,
                 amount: 3.0,
                 network_key: "ETH".to_string(),
-                status: "Waiting".to_string(),
+                status: format!("{:?}", InclusionState::Pending),
                 explorer_url: None,
             },
         ];
@@ -1306,7 +1316,7 @@ mod tests {
                 incoming: true,
                 amount: 20.0,
                 network_key: "IOTA".to_string(),
-                status: "Complete".to_string(),
+                status: format!("{:?}", InclusionState::Confirmed),
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1317,7 +1327,7 @@ mod tests {
                 incoming: true,
                 amount: 1.0,
                 network_key: "ETH".to_string(),
-                status: "Waiting".to_string(),
+                status: format!("{:?}", InclusionState::Pending),
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1328,7 +1338,7 @@ mod tests {
                 incoming: true,
                 amount: 2.0,
                 network_key: "ETH".to_string(),
-                status: "Complete".to_string(),
+                status: format!("{:?}", InclusionState::Confirmed),
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1339,7 +1349,7 @@ mod tests {
                 incoming: true,
                 amount: 3.0,
                 network_key: "ETH".to_string(),
-                status: "Waiting".to_string(),
+                status: format!("{:?}", InclusionState::Pending),
                 explorer_url: None,
             },
         ];
@@ -1371,7 +1381,7 @@ mod tests {
                         incoming: true,
                         amount: 2.0,
                         network_key: "ETH".to_string(),
-                        status: "Complete".to_string(), // Waiting -> Complete
+                        status: format!("{:?}", InclusionState::Confirmed), // Pending -> Confirmed
                         explorer_url: None,
                     })
                 });
@@ -1388,11 +1398,11 @@ mod tests {
 
         // Act
 
-        // We're requesting a single WalletTxInfo with get_wallet_tx_list(start = 1, limit = 1)
-        // We have [1 IOTA, 3 ETH] transactions stored
-        // Network key is ETH so we'll be searching through [3 ETH] transactions
-        // So we'll take this one:
-        // [WalletTxInfo{ ... }, -> WalletTxInfo{ id = 2 }, WalletTxInfo{ ... }]
+        // We request a single WalletTxInfo using get_wallet_tx_list(start = 1, limit = 1)
+        // We have stored transactions: [1 IOTA, 3 ETH]
+        // The network key is ETH, so we search through the 3 ETH transactions
+        // We select this one:
+        // [WalletTxInfo{ ... }, -> WalletTxInfo{ transaction_id = 2 }, WalletTxInfo{ ... }]
         let response = sdk.get_wallet_tx_list(&PIN, 1, 1).await;
 
         // Assert
@@ -1407,10 +1417,72 @@ mod tests {
                     incoming: true,
                     amount: 2.0,
                     network_key: "ETH".to_string(),
-                    status: "Complete".to_string(),
+                    status: format!("{:?}", InclusionState::Confirmed),
                     explorer_url: None,
                 }]
             }
         );
+    }
+
+    #[tokio::test]
+    async fn test_get_wallet_tx_list_does_not_query_network_for_transaction_state() {
+        // Arrange
+        let (_srv, config, _cleanup) = set_config().await;
+        let mut sdk = Sdk::new(config).unwrap();
+
+        let wallet_transactions = vec![WalletTxInfo {
+            date: "some date".to_string(),
+            block_id: None,
+            transaction_id: "1".to_string(),
+            receiver: String::new(),
+            incoming: true,
+            amount: 1.0,
+            network_key: "ETH".to_string(),
+            status: format!("{:?}", InclusionState::Confirmed),
+            explorer_url: None,
+        }];
+
+        let mut mock_user_repo = MockUserRepo::new();
+        mock_user_repo.expect_get().returning(move |_| {
+            Ok(UserEntity {
+                user_id: None,
+                username: USERNAME.to_string(),
+                encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+                salt: SALT.into(),
+                is_kyc_verified: false,
+                kyc_type: KycType::Undefined,
+                viviswap_state: None,
+                local_share: None,
+                wallet_transactions: wallet_transactions.clone(),
+            })
+        });
+
+        mock_user_repo
+            .expect_set_wallet_transactions()
+            .once()
+            .returning(|_, _| Ok(()));
+
+        sdk.repo = Some(Box::new(mock_user_repo));
+
+        let mut mock_wallet_manager = MockWalletManager::new();
+        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+            let mut mock_wallet_user = MockWalletUser::new();
+            mock_wallet_user.expect_get_wallet_tx().never();
+            Ok(WalletBorrow::from(mock_wallet_user))
+        });
+
+        sdk.active_user = Some(crate::types::users::ActiveUser {
+            username: USERNAME.into(),
+            wallet_manager: Box::new(mock_wallet_manager),
+        });
+
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(ETH_NETWORK_KEY.to_string()).await.unwrap();
+
+        // Act
+        let response = sdk.get_wallet_tx_list(&PIN, 0, 1).await;
+
+        // Assert
+        assert!(response.is_ok())
     }
 }
