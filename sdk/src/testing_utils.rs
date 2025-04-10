@@ -62,18 +62,21 @@ pub const PAYMENT_METHOD_KEY_SERIALIZED: &str = "IOTA";
 pub const PAYMENT_METHOD_ID: &str = "payment-method-id";
 pub const PAYMENT_DETAIL_ID: &str = "payment-detail-id";
 pub const CASE_ID: &str = "123";
-pub static ENCRYPTED_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::new(|| unsafe {
+
+pub static ENCRYPTED_WALLET_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::new(|| unsafe {
     EncryptedPassword::new_unchecked([
-        129, 21, 50, 74, 5, 69, 194, 252, 21, 186, 201, 175, 4, 80, 139, 188, 109, 5, 7, 17, 51, 134, 232, 183, 130,
-        121, 61, 192, 12, 13,
+        91, 105, 102, 64, 68, 93, 59, 70, 41, 198, 141, 36, 152, 135, 67, 77, 191, 58, 227, 216, 53, 74, 74, 1, 168,
+        243, 227, 153, 73, 141, 159, 91, 79, 39, 208, 59, 54, 101, 112, 107, 169,
     ])
 });
-pub static BACKUP_PASSWORD: LazyLock<PlainPassword> =
-    LazyLock::new(|| PlainPassword::try_from_string("B@ckupP@55w0rd").unwrap());
+pub static WALLET_PASSWORD: LazyLock<PlainPassword> =
+    LazyLock::new(|| PlainPassword::try_from_string("correcthorsebatterystaple").unwrap());
+pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("123456").unwrap());
 pub const SALT: [u8; 12] = [241, 167, 131, 245, 166, 203, 63, 247, 211, 157, 138, 34];
+
 pub const PURCHASE_ID: &str = "123";
 pub const ORDER_ID: &str = "497f6eca-6276-4993-bfeb-53cbbbba6f08";
-pub static PIN: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("1234").unwrap());
+
 pub const IOTA_NETWORK_KEY: &str = "IOTA";
 pub const ETH_NETWORK_KEY: &str = "ETH";
 
@@ -98,7 +101,7 @@ pub fn example_get_user(key: SwapPaymentDetailKey, verified: bool, times: usize,
         Ok(UserEntity {
             user_id: None,
             username: USERNAME.to_string(),
-            encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+            encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
             salt: SALT.into(),
             is_kyc_verified: verified,
             kyc_type: kyc_type.to_owned(),

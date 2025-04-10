@@ -1,28 +1,27 @@
 import * as wasm from "etopay-sdk-wasm";
-import { initSdk } from './util';
+import { initSdk, PIN } from './util';
 
 async function main() {
     let username = "satoshi";
-    let password = "StrongP@55w0rd";
-    let pin = "1234";
+    let password = "correcthorsebatterystaple";
 
     const sdk = await initSdk();
     let mnemonic = process.env.MNEMONIC;
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setWalletPassword(pin, password);
+    await sdk.setWalletPassword(PIN, password);
 
-    await sdk.createWalletFromMnemonic(pin, mnemonic);
+    await sdk.createWalletFromMnemonic(PIN, mnemonic);
 
     // Create wallet backup and delete it
     let backup_password = "backup_password";
 
-    let backup = await sdk.createWalletBackup(pin, backup_password);
-    await sdk.deleteWallet(pin)
+    let backup = await sdk.createWalletBackup(PIN, backup_password);
+    await sdk.deleteWallet(PIN)
 
     // Migrate wallet from backup
-    await sdk.createWalletFromBackup(pin, backup, backup_password);
+    await sdk.createWalletFromBackup(PIN, backup, backup_password);
 
     // fetch networks from backend
     let networks = await sdk.getNetworks();
@@ -30,7 +29,7 @@ async function main() {
     sdk.setNetwork(networks[0].key);
 
     // use wallet
-    let _address = await sdk.generateNewAddress(pin);
+    let _address = await sdk.generateNewAddress(PIN);
 }
 
 export { main }

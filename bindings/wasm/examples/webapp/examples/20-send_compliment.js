@@ -1,13 +1,13 @@
 import * as wasm from "etopay-sdk-wasm";
-import { sleep, initSdk } from "./util";
+import { sleep, initSdk, PIN } from "./util";
 
 async function main() {
     console.log("start");
     const sdk = await initSdk();
 
     let username = "alice";
-    let password = "StrongP@55w0rd";
-    let pin = "1234";
+    let password = "correcthorsebatterystaple";
+
     let mnemonic = process.env.MNEMONIC;
 
     // ===========================================================================
@@ -16,18 +16,18 @@ async function main() {
 
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setWalletPassword(pin, password);
-    await sdk.initWalletFromMnemonic(pin, mnemonic);
+    await sdk.setWalletPassword(PIN, password);
+    await sdk.initWalletFromMnemonic(PIN, mnemonic);
 
     // fetch networks from backend
     let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
     sdk.setNetwork(networks[0].key);
 
-    let address = await sdk.generateNewAddress(pin);
+    let address = await sdk.generateNewAddress(PIN);
     console.log("Address:", address);
 
-    let balance = await sdk.getWalletBalance(pin);
+    let balance = await sdk.getWalletBalance(PIN);
     console.log("Balance:", balance);
 
     // ===========================================================================
@@ -64,7 +64,7 @@ async function main() {
     // ===========================================================================
 
     console.log("Confirming purchase request...");
-    await sdk.confirmPurchaseRequest(pin, purchase_id);
+    await sdk.confirmPurchaseRequest(PIN, purchase_id);
     console.log("Confirming purchase request done, monitoring the status for 60 seconds or until it is completed:");
     for (let i = 0; i < 6; i++) {
         await sleep(10000);
@@ -77,7 +77,7 @@ async function main() {
             break;
         }
     }
-    let new_balance = await sdk.getWalletBalance(pin);
+    let new_balance = await sdk.getWalletBalance(PIN);
     console.log("New Balance:", new_balance);
 
 }

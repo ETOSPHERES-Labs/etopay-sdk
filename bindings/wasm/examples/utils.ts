@@ -3,6 +3,8 @@ import * as dotenv from 'dotenv';
 import axios from 'axios';
 import { LocalStorage } from "node-localstorage";
 
+export const PIN = "123456";
+
 export async function initSdk(username: string) {
     dotenv.config();
 

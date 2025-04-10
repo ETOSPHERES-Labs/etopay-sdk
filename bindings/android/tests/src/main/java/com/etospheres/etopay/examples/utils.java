@@ -20,8 +20,8 @@ import com.etospheres.etopay.ETOPaySdk;
 
 public class utils {
     public static String USERNAME_SATOSHI = "satoshi";
-    public static String PIN = "1234";
-    public static String NEW_PIN = "4321";
+    public static String PIN = "123456";
+    public static String NEW_PIN = "432156";
     public static String USERNAME_ARCHIVEME = "archiveme";
     public static String USERNAME_HANS48 = "hans48";
 

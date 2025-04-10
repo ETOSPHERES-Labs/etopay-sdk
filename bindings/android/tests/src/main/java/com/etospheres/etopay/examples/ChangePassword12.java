@@ -9,7 +9,7 @@ public class ChangePassword12 {
         // initialize the sdk
         ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
-        String password = utils.getEnvVariable("PASSWORD");
+        String password = "correcthorsebatterystaple";
 
         try {
             // create and init user
@@ -23,7 +23,7 @@ public class ChangePassword12 {
             System.out.println("Created and initialized new wallet.");
 
             // change password
-            sdk.setWalletPassword(utils.PIN, "StrongP@ssw0rd");
+            sdk.setWalletPassword(utils.PIN, "new_correcthorsebatterystaple");
             System.out.println("Password changed");
 
         } catch (Exception e) {

@@ -9,7 +9,7 @@ public class VerifyPin10 {
         // initialize the sdk
         ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
-        String password = utils.getEnvVariable("PASSWORD");
+        String password = "correcthorsebatterystaple";
 
         try {
             // create and init user

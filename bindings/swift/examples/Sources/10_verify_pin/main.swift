@@ -25,7 +25,7 @@ Task {
         print("initialized new user: \(env.username)")
         
         // Create new wallet
-        try await sdk.setWalletPassword(env.pin, env.password)        
+        try await sdk.setWalletPassword(env.pin, env.wallet_password)        
         let _ = try await sdk.createNewWallet(env.pin)
         
         // Verify pin

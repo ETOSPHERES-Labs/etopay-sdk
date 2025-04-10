@@ -590,8 +590,8 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        BACKUP_PASSWORD, ENCRYPTED_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT,
-        TOKEN, TX_INDEX, USERNAME,
+        ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN,
+        TX_INDEX, USERNAME, WALLET_PASSWORD,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -726,7 +726,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.create_wallet_backup(&PIN, &BACKUP_PASSWORD).await;
+        let response = sdk.create_wallet_backup(&PIN, &WALLET_PASSWORD).await;
 
         // Assert
         match expected {
@@ -769,7 +769,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.create_wallet_from_backup(&PIN, BACKUP, &BACKUP_PASSWORD).await;
+        let response = sdk.create_wallet_from_backup(&PIN, BACKUP, &WALLET_PASSWORD).await;
 
         // Assert
         match expected {
@@ -834,7 +834,7 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let pin = EncryptionPin::try_from_string("1234").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
 
         match &expected {
             Ok(_) => {
@@ -943,7 +943,7 @@ mod tests {
         }
 
         // Act
-        let new_pin: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("4321").unwrap());
+        let new_pin: LazyLock<EncryptionPin> = LazyLock::new(|| EncryptionPin::try_from_string("432154").unwrap());
         let response = sdk.change_pin(&PIN, &new_pin).await;
 
         // Assert
@@ -996,7 +996,7 @@ mod tests {
         }
 
         // Act
-        let response = sdk.set_wallet_password(&PIN, &BACKUP_PASSWORD.clone()).await;
+        let response = sdk.set_wallet_password(&PIN, &WALLET_PASSWORD).await;
 
         // Assert
         match expected {
@@ -1297,7 +1297,7 @@ mod tests {
             Ok(UserEntity {
                 user_id: None,
                 username: USERNAME.to_string(),
-                encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+                encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
                 salt: SALT.into(),
                 is_kyc_verified: false,
                 kyc_type: KycType::Undefined,
@@ -1447,7 +1447,7 @@ mod tests {
             Ok(UserEntity {
                 user_id: None,
                 username: USERNAME.to_string(),
-                encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+                encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
                 salt: SALT.into(),
                 is_kyc_verified: false,
                 kyc_type: KycType::Undefined,
