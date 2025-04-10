@@ -25,22 +25,23 @@ jobs:
 
     env:
       GIT_DEPTH: 1000
-      DEPLOY_ONLY: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) || github.event_name == 'workflow_dispatch' }}
+      # only deploy if we push to main or a tag, or if it is manually triggered
+      DEPLOY_ONLY: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))) || github.event_name == 'workflow_dispatch' }}
 
     steps:
-      # take TAG_NAME from input variable
+      # take TAG_NAME from input variable, update alias "latest"
       - if: github.event_name == 'workflow_dispatch'
-        run: echo "TAG_NAME=${{ github.event.inputs.tag_name }}" | tee -a $GITHUB_ENV
+        run: echo "TAG_NAME=${{ github.event.inputs.tag_name }} latest" | tee -a $GITHUB_ENV
 
       # if this run is the push to main, it is the 'nightly' release
       - if: (github.event_name == 'push' && github.event.ref == 'refs/heads/main' ) || github.event_name == 'pull_request'
-        run: echo 'TAG_NAME=latest' | tee -a $GITHUB_ENV
+        run: echo 'TAG_NAME=devel' | tee -a $GITHUB_ENV
 
-        # if this run is not the push to main it is a tag, take the tag value
+      # if this run is not the push to main it is a tag, take the tag value, update alias "latest"
       - if: github.event_name == 'push' && github.event.ref != 'refs/heads/main'
         run: |
           TAG_NAME=${{ github.ref }}
-          echo "TAG_NAME=${TAG_NAME#refs/tags/}" | tee -a $GITHUB_ENV
+          echo "TAG_NAME=${TAG_NAME#refs/tags/} latest" | tee -a $GITHUB_ENV
 
       - name: Tag Name
         run: echo ${TAG_NAME}
