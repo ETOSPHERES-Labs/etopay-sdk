@@ -585,7 +585,7 @@
 <a href=#585 id=585 data-nosnippet>585</a>    <span class="kw">use crate</span>::{
 <a href=#586 id=586 data-nosnippet>586</a>        core::{Config, UserRepoT},
 <a href=#587 id=587 data-nosnippet>587</a>        kdbx::KdbxStorageError,
-<a href=#588 id=588 data-nosnippet>588</a>        testing_utils::{example_api_network, BACKUP_PASSWORD, IOTA_NETWORK_KEY},
+<a href=#588 id=588 data-nosnippet>588</a>        testing_utils::{example_api_network, ENCRYPTED_WALLET_PASSWORD, IOTA_NETWORK_KEY, PIN, SALT, WALLET_PASSWORD},
 <a href=#589 id=589 data-nosnippet>589</a>        types::{
 <a href=#590 id=590 data-nosnippet>590</a>            newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
 <a href=#591 id=591 data-nosnippet>591</a>            users::KycType,
@@ -599,8 +599,8 @@
 <a href=#599 id=599 data-nosnippet>599</a>    <span class="kw">const </span>MNEMONIC:<span class="kw-2">&amp;</span>str = <span class="string">"endorse answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river"</span>;
 <a href=#600 id=600 data-nosnippet>600</a>    <span class="kw">const </span>MNEMONIC_INCORRECT:<span class="kw-2">&amp;</span>str = <span class="string">"answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river"</span>;
 <a href=#601 id=601 data-nosnippet>601</a>    <span class="kw">const </span>USERNAME: <span class="kw-2">&amp;</span>str = <span class="string">"SuperAdmin"</span>;
-<a href=#602 id=602 data-nosnippet>602</a>    <span class="kw">static </span>PASSWORD: LazyLock&lt;PlainPassword&gt; =
-<a href=#603 id=603 data-nosnippet>603</a>        LazyLock::new(|| PlainPassword::try_from_string(<span class="string">"StrongP@55w0rd"</span>).unwrap());
+<a href=#602 id=602 data-nosnippet>602</a>    <span class="kw">static </span>INVALID_BACKUP_PASSWORD: LazyLock&lt;PlainPassword&gt; =
+<a href=#603 id=603 data-nosnippet>603</a>        LazyLock::new(|| PlainPassword::try_from_string(<span class="string">"correcthorsebatterystapleaa"</span>).unwrap());
 <a href=#604 id=604 data-nosnippet>604</a>
 <a href=#605 id=605 data-nosnippet>605</a>    <span class="comment">// share strings to use for testing the resemble-function
 <a href=#606 id=606 data-nosnippet>606</a>    </span><span class="kw">const </span>SHARE_LOCAL: <span class="kw-2">&amp;</span>str = <span class="string">"ME-RS-N-Mi0xLUNBRVFBaGdESXFBRStPVUZYZTJnMTdLRFY1L2pWRllQTHdtZ0dCWExJbitjTERReFRyRHArWGNVMG5yY3UyVmFONFEvZkVoeXNadm5qNFhmRDVIZXZ3eHB2bENTYnZIZTFtOTlXdjJwby8zVWl0d2VhMnVWOTZaejB5WmhEdHlkRDFYcEg1R0RIYXFvZDBpTHdpcDZ3d1k5T0VWdEJhZmtkUVRGaTNNM3gvY2dsK0FDWVQ5WG50TlJycnRtWFRTUGZ4MG54R1lVc0NWUnNKY3h5Q0JxSHBlRGVRekpSTlFxVldMNGpJU3JCZkFRcEpYMnJoT1o4OXM1V3VLaW5PWFd0YUZncTRnd2t1VzR0ZkJJZzVUMjFlaXpGNEpWNzlMcXFXSDZoY3N0Z1huYzZYWTJvZjRvaytlYnJWOFBmR1lOU1NxRWQ4VFpqUzlBL0h0clJGNThEbUdaL2Z2Nmp5MjJjS01hUWllK1ZqdFZ4OUJyblJjWThYYTgxWmNTWlF4YlFLbFQ3MC9tRk5aQlN4ZXNLTWVTU24vV2hycEs0OU80ZW4zRkZJVTJqd2lLcGwybHpHMk0vdThJTzRZSlNCL1B6aVp4cGczcVk5Z25PRHNQR2lDZGNyejErcTVhYUdoMDdXUGlISFg5K1VpbVJjRThZS1BBNXUwNTBkQ2l2eVM2a2VhZkpFalQ0UXkxcElPaFRUd3ZrMWxrR0ZmeWp3bVBqL3JMRGY4YUc3ZXZlVWQveGwxbzlKMnh5ckhvQW9heTNVNVpHYjFCZGJ2OGFGNHJLb2wwTkorUlZBSTZJSHJCUnE4OGxJeGtzSlFxTm9GQ3o5b051N011OTVkMUJpZ3ErNjZiYzBuTWcyWXZYQXdaMkh3RjAzS0xRWEFWYjZVekZ1Lzc0MjYraElNUlR1M01mZDZoa01vMllMVzlxSS9odlBsaWg4RG5qaUFTUG9Fbkx2cVFidVpXaVBnQ3h2c1F4eXFBQWdDazlzckhwaG51UnpTck95M1JmZzRYa0lndHhlb3ArUmZJOVgyaDBRcEVmcjgzYzExd0xhQkxDUmgwMlFXazA2Ty8yM2s2cWZNZHBxNVZ2b0ZnTkNJYlY1V01sSFpaV3RnVXFzaGtXRVJycjduZnVvd1BQQ0NUaHdxMC9tbUQ1NDVDb0VNWU16bUtQYlIyYmF4RkVTbUswTlRRT3VWR3A2Y3JqNWlYOGxzaU9kZ3FVNHhuSVpRcDRsT1lJcTlBOUhFS3NZZ1RuYysxRlRNazJEN05ydThlalh4UUR3amFqUTFNTmJ5cldBS0MvZ3RTWW9ONTFKY25FWFlUOWI1MVZOWWF4anArTE9oeDA0M3RNUW9TejNvN1kxbWtORlJUTmJMZWhDKzV0UkNKNjdQYk5Va29DbWxXbjFYODZxVlVsRFU0MjkxaXVLaE1YQ0lsVHlscGU2dw=="</span>;
@@ -608,382 +608,378 @@
 <a href=#608 id=608 data-nosnippet>608</a>    <span class="kw">const </span>SHARE_RECOVERY: <span class="kw-2">&amp;</span>str = <span class="string">"ME-RS-N-Mi0yLUNBSVFBaGdESXFBRWk3b296TFVtbzNscG1jZEIxMXFESnVHbUpRUGYxUk9nOG5WQVNkR1NSTE5YQk41VytwV1dUcWVNSnVOakN3ZVd4eFk0Ylh6Y0NWTlhzYWFLNmM5UEUxWHVFT2lNVW9BeHdQNkRtM3BCT29EVklHWlFYbXZxQk9FOVYyU3FCZTlsblVRcUZBak9SQUllQjFVcWEvdlJMbXN3VWNqZlNJN0pVQWgvL3ZKZVBvbUxGUVFYcjZVSUE5dnpsaDgxVVNjaXZHUXlnOVQydWRNS202RTdveXQvcVpGam1DdUlYSFlkR1FCdkxrK01oaEErVmh2NlM2a0FkSU5veWRGUlZTdXpnU25zT25wcUJxb21oRWZaNkdmb1dsaHM5UUFadXRmeUgzdkxRT0hQeXc1TEZLbUE3dnpOTTJmMkc2dGZaZGR1Q2dnT2gydmZCUnh1ZmJSdStHN2VGSGtLdnVoOW16ekQ3YUF2Z3BRbldKakdrai9paGcyR1EyQVlBWWkrM200SXR5V3J3Q1ZRNDZlUjJCRGpmZllQK3BOTFNnL2xKNlNmbUswd204R2cvL2ZpbVBHODF4alcrckdIQkczUTV4U1JnWnlUcmt0TEFBWlY0VndJOENzdTlmSUNlT0tTYm9UVTVrOFJoWnZRS0pUNnhGS1d1K0l3OTVoWUlUZUdmVGxLa1NtdW93WmVXcFI1TjIyQUEyWENaVWVqVVBLdHlQWUYxOVNGTjRjUDlvTURuUng3bkxkY3B6cGE3QmJWQm1jRGNhTENZVW1PeXJKcDQwK1hoekJHVmlxVnBJTS9qNTJJQTg1TSt1TDVtM0xNUk12UFc4cEliNkpVYVlKV0FXSldWV3JKdlpzUGJrdmh3T0NlOXo5VWJUTXE1WUJzOC9OcFJnN0F4L2lmSTJ5ZHdxbDRacXd4N29MM0ZrK0daK1FDeHRyTWJSK2oxTzhROXFXOEJ5eEcveXFBQWdDazlzckhwaG51UnpTck95M1JmZzRYa0lndHhlb3ArUmZJOVgyaDBRcEVmcjgzYzExd0xhQkxDUmgwMlFXazA2Ty8yM2s2cWZNZHBxNVZ2b0ZnTkNJYlY1V01sSFpaV3RnVXFzaGtXRVJycjduZnVvd1BQQ0NUaHdxMC9tbUQ1NDVDb0VNWU16bUtQYlIyYmF4RkVTbUswTlRRT3VWR3A2Y3JqNWlYOGxzaU9kZ3FVNHhuSVpRcDRsT1lJcTlBOUhFS3NZZ1RuYysxRlRNazJEN05ydThlalh4UUR3amFqUTFNTmJ5cldBS0MvZ3RTWW9ONTFKY25FWFlUOWI1MVZOWWF4anArTE9oeDA0M3RNUW9TejNvN1kxbWtORlJUTmJMZWhDKzV0UkNKNjdQYk5Va29DbWxXbjFYODZxVlVsRFU0MjkxaXVLaE1YQ0lsVHlscGU2dw=="</span>;
 <a href=#609 id=609 data-nosnippet>609</a>    <span class="kw">const </span>SHARE_PASSWORD: <span class="kw-2">&amp;</span>str = <span class="string">"mnemonic share password"</span>;
 <a href=#610 id=610 data-nosnippet>610</a>
-<a href=#611 id=611 data-nosnippet>611</a>    <span class="kw">fn </span>get_user_repo() -&gt; (EncryptionPin, UserRepoT) {
+<a href=#611 id=611 data-nosnippet>611</a>    <span class="kw">fn </span>get_user_repo() -&gt; (<span class="kw-2">&amp;</span><span class="lifetime">'static </span>EncryptionPin, UserRepoT) {
 <a href=#612 id=612 data-nosnippet>612</a>        <span class="kw">let </span><span class="kw-2">mut </span>repo = Box::new(UserRepoImpl::new(MemoryUserStorage::new())) <span class="kw">as </span>UserRepoT;
-<a href=#613 id=613 data-nosnippet>613</a>        <span class="kw">let </span>salt = EncryptionSalt::generate();
-<a href=#614 id=614 data-nosnippet>614</a>        <span class="kw">let </span>pin = EncryptionPin::try_from_string(<span class="string">"12345"</span>).unwrap();
-<a href=#615 id=615 data-nosnippet>615</a>        <span class="kw">let </span>encrypted_password = <span class="prelude-val">Some</span>(PASSWORD.encrypt(<span class="kw-2">&amp;</span>pin, <span class="kw-2">&amp;</span>salt).unwrap());
-<a href=#616 id=616 data-nosnippet>616</a>        repo.create(<span class="kw-2">&amp;</span><span class="kw">crate</span>::types::users::UserEntity {
-<a href=#617 id=617 data-nosnippet>617</a>            user_id: <span class="prelude-val">None</span>,
-<a href=#618 id=618 data-nosnippet>618</a>            username: USERNAME.to_string(),
-<a href=#619 id=619 data-nosnippet>619</a>            encrypted_password,
-<a href=#620 id=620 data-nosnippet>620</a>            salt,
-<a href=#621 id=621 data-nosnippet>621</a>            is_kyc_verified: <span class="bool-val">false</span>,
-<a href=#622 id=622 data-nosnippet>622</a>            kyc_type: KycType::Undefined,
-<a href=#623 id=623 data-nosnippet>623</a>            viviswap_state: <span class="prelude-val">None</span>,
-<a href=#624 id=624 data-nosnippet>624</a>            local_share: <span class="prelude-val">None</span>,
-<a href=#625 id=625 data-nosnippet>625</a>            wallet_transactions: Vec::new(),
-<a href=#626 id=626 data-nosnippet>626</a>        })
-<a href=#627 id=627 data-nosnippet>627</a>        .unwrap();
+<a href=#613 id=613 data-nosnippet>613</a>        repo.create(<span class="kw-2">&amp;</span><span class="kw">crate</span>::types::users::UserEntity {
+<a href=#614 id=614 data-nosnippet>614</a>            user_id: <span class="prelude-val">None</span>,
+<a href=#615 id=615 data-nosnippet>615</a>            username: USERNAME.to_string(),
+<a href=#616 id=616 data-nosnippet>616</a>            encrypted_password: <span class="prelude-val">Some</span>(ENCRYPTED_WALLET_PASSWORD.clone()),
+<a href=#617 id=617 data-nosnippet>617</a>            salt: SALT.into(),
+<a href=#618 id=618 data-nosnippet>618</a>            is_kyc_verified: <span class="bool-val">false</span>,
+<a href=#619 id=619 data-nosnippet>619</a>            kyc_type: KycType::Undefined,
+<a href=#620 id=620 data-nosnippet>620</a>            viviswap_state: <span class="prelude-val">None</span>,
+<a href=#621 id=621 data-nosnippet>621</a>            local_share: <span class="prelude-val">None</span>,
+<a href=#622 id=622 data-nosnippet>622</a>            wallet_transactions: Vec::new(),
+<a href=#623 id=623 data-nosnippet>623</a>        })
+<a href=#624 id=624 data-nosnippet>624</a>        .unwrap();
+<a href=#625 id=625 data-nosnippet>625</a>
+<a href=#626 id=626 data-nosnippet>626</a>        (<span class="kw-2">&amp;</span>PIN, repo)
+<a href=#627 id=627 data-nosnippet>627</a>    }
 <a href=#628 id=628 data-nosnippet>628</a>
-<a href=#629 id=629 data-nosnippet>629</a>        (pin, repo)
-<a href=#630 id=630 data-nosnippet>630</a>    }
-<a href=#631 id=631 data-nosnippet>631</a>
-<a href=#632 id=632 data-nosnippet>632</a>    <span class="attr">#[rstest]
-<a href=#633 id=633 data-nosnippet>633</a>    #[case(MNEMONIC, <span class="bool-val">true</span>)] </span><span class="comment">// Valid mnemonic
-<a href=#634 id=634 data-nosnippet>634</a>    </span><span class="attr">#[case(<span class="string">""</span>, <span class="bool-val">false</span>)] </span><span class="comment">// Empty mnemonic
-<a href=#635 id=635 data-nosnippet>635</a>    </span><span class="attr">#[case(MNEMONIC_INCORRECT, <span class="bool-val">false</span>)] </span><span class="comment">// Incorrect mnemonic
-<a href=#636 id=636 data-nosnippet>636</a>    </span><span class="attr">#[tokio::test]
-<a href=#637 id=637 data-nosnippet>637</a>    </span><span class="kw">async fn </span>test_create_wallet_from_mnemonic(<span class="attr">#[case] </span>mnemonic: <span class="kw-2">&amp;</span>str, <span class="attr">#[case] </span>should_succeed: bool) {
-<a href=#638 id=638 data-nosnippet>638</a>        <span class="comment">// Arrange
-<a href=#639 id=639 data-nosnippet>639</a>        </span><span class="kw">let </span>(config, _cleanup) = Config::new_test_with_cleanup();
-<a href=#640 id=640 data-nosnippet>640</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
-<a href=#641 id=641 data-nosnippet>641</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
-<a href=#642 id=642 data-nosnippet>642</a>
-<a href=#643 id=643 data-nosnippet>643</a>        <span class="comment">// Act
-<a href=#644 id=644 data-nosnippet>644</a>        </span><span class="kw">let </span>result = manager
-<a href=#645 id=645 data-nosnippet>645</a>            .create_wallet_from_existing_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin, mnemonic)
-<a href=#646 id=646 data-nosnippet>646</a>            .<span class="kw">await</span>;
-<a href=#647 id=647 data-nosnippet>647</a>
-<a href=#648 id=648 data-nosnippet>648</a>        <span class="comment">// Assert
-<a href=#649 id=649 data-nosnippet>649</a>        </span><span class="kw">if </span>should_succeed {
-<a href=#650 id=650 data-nosnippet>650</a>            result.expect(<span class="string">"should create wallet from valid mnemonic"</span>);
-<a href=#651 id=651 data-nosnippet>651</a>            <span class="macro">assert!</span>(manager.recovery_share.is_some(), <span class="string">"Wallet was successfully created"</span>);
-<a href=#652 id=652 data-nosnippet>652</a>        } <span class="kw">else </span>{
-<a href=#653 id=653 data-nosnippet>653</a>            result.expect_err(<span class="string">"should fail with invalid or empty mnemonic"</span>);
-<a href=#654 id=654 data-nosnippet>654</a>        }
-<a href=#655 id=655 data-nosnippet>655</a>    }
-<a href=#656 id=656 data-nosnippet>656</a>
-<a href=#657 id=657 data-nosnippet>657</a>    <span class="attr">#[rstest]
-<a href=#658 id=658 data-nosnippet>658</a>    #[case(<span class="kw-2">&amp;</span>BACKUP_PASSWORD, <span class="prelude-val">Ok</span>(()))]
-<a href=#659 id=659 data-nosnippet>659</a>    #[case(<span class="kw-2">&amp;</span>PASSWORD, <span class="prelude-val">Err</span>(WalletError::KdbxStorage(KdbxStorageError::UnlockError(UnlockError::HmacInvalid))))]
-<a href=#660 id=660 data-nosnippet>660</a>    #[tokio::test]
-<a href=#661 id=661 data-nosnippet>661</a>    </span><span class="kw">async fn </span>test_backup_and_restore(<span class="attr">#[case] </span>password: <span class="kw-2">&amp;</span>LazyLock&lt;PlainPassword&gt;, <span class="attr">#[case] </span>should_succeed: <span class="prelude-ty">Result</span>&lt;()&gt;) {
-<a href=#662 id=662 data-nosnippet>662</a>        <span class="comment">// Arrange
-<a href=#663 id=663 data-nosnippet>663</a>        </span><span class="kw">let </span>(config, _cleanup) = Config::new_test_with_cleanup();
-<a href=#664 id=664 data-nosnippet>664</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
-<a href=#665 id=665 data-nosnippet>665</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
-<a href=#666 id=666 data-nosnippet>666</a>
-<a href=#667 id=667 data-nosnippet>667</a>        <span class="comment">// Create wallet
-<a href=#668 id=668 data-nosnippet>668</a>        </span>manager
-<a href=#669 id=669 data-nosnippet>669</a>            .create_wallet_from_new_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin)
-<a href=#670 id=670 data-nosnippet>670</a>            .<span class="kw">await
-<a href=#671 id=671 data-nosnippet>671</a>            </span>.expect(<span class="string">"failed to create new wallet"</span>);
-<a href=#672 id=672 data-nosnippet>672</a>
-<a href=#673 id=673 data-nosnippet>673</a>        <span class="comment">// Create backup
-<a href=#674 id=674 data-nosnippet>674</a>        </span><span class="kw">let </span>backup = manager
-<a href=#675 id=675 data-nosnippet>675</a>            .create_wallet_backup(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin, <span class="kw-2">&amp;</span>BACKUP_PASSWORD)
-<a href=#676 id=676 data-nosnippet>676</a>            .<span class="kw">await
-<a href=#677 id=677 data-nosnippet>677</a>            </span>.expect(<span class="string">"failed to create backup"</span>);
-<a href=#678 id=678 data-nosnippet>678</a>
-<a href=#679 id=679 data-nosnippet>679</a>        <span class="comment">// Backup restoration
-<a href=#680 id=680 data-nosnippet>680</a>        </span><span class="kw">let </span>restore_result = manager
-<a href=#681 id=681 data-nosnippet>681</a>            .create_wallet_from_backup(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin, <span class="kw-2">&amp;</span>backup, password)
-<a href=#682 id=682 data-nosnippet>682</a>            .<span class="kw">await</span>;
-<a href=#683 id=683 data-nosnippet>683</a>
-<a href=#684 id=684 data-nosnippet>684</a>        <span class="comment">// Assert
-<a href=#685 id=685 data-nosnippet>685</a>        </span><span class="kw">match </span>should_succeed {
-<a href=#686 id=686 data-nosnippet>686</a>            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; restore_result.unwrap(),
-<a href=#687 id=687 data-nosnippet>687</a>            <span class="prelude-val">Err</span>(<span class="kw-2">ref </span>expected_err) =&gt; {
-<a href=#688 id=688 data-nosnippet>688</a>                <span class="macro">assert_eq!</span>(restore_result.err().unwrap().to_string(), expected_err.to_string());
-<a href=#689 id=689 data-nosnippet>689</a>            }
-<a href=#690 id=690 data-nosnippet>690</a>        }
-<a href=#691 id=691 data-nosnippet>691</a>    }
-<a href=#692 id=692 data-nosnippet>692</a>
-<a href=#693 id=693 data-nosnippet>693</a>    <span class="attr">#[tokio::test]
-<a href=#694 id=694 data-nosnippet>694</a>    </span><span class="kw">async fn </span>test_change_password() {
-<a href=#695 id=695 data-nosnippet>695</a>        <span class="comment">//Arrange
-<a href=#696 id=696 data-nosnippet>696</a>        //Arrange
-<a href=#697 id=697 data-nosnippet>697</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>config, _cleanup) = Config::new_test_with_cleanup();
-<a href=#698 id=698 data-nosnippet>698</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
-<a href=#699 id=699 data-nosnippet>699</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
-<a href=#700 id=700 data-nosnippet>700</a>
-<a href=#701 id=701 data-nosnippet>701</a>        <span class="comment">// create a wallet
-<a href=#702 id=702 data-nosnippet>702</a>        </span>manager
-<a href=#703 id=703 data-nosnippet>703</a>            .create_wallet_from_new_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin)
-<a href=#704 id=704 data-nosnippet>704</a>            .<span class="kw">await
-<a href=#705 id=705 data-nosnippet>705</a>            </span>.expect(<span class="string">"should succeed to create new wallet"</span>);
-<a href=#706 id=706 data-nosnippet>706</a>
-<a href=#707 id=707 data-nosnippet>707</a>        <span class="kw">let </span>new_password = PlainPassword::try_from_string(<span class="string">"new_password"</span>).unwrap();
-<a href=#708 id=708 data-nosnippet>708</a>        manager
-<a href=#709 id=709 data-nosnippet>709</a>            .change_wallet_password(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin, <span class="kw-2">&amp;</span>new_password)
-<a href=#710 id=710 data-nosnippet>710</a>            .<span class="kw">await
-<a href=#711 id=711 data-nosnippet>711</a>            </span>.expect(<span class="string">"should succeed to change wallet password"</span>);
-<a href=#712 id=712 data-nosnippet>712</a>
-<a href=#713 id=713 data-nosnippet>713</a>        <span class="kw">let </span>wallet = manager
-<a href=#714 id=714 data-nosnippet>714</a>            .try_get(
-<a href=#715 id=715 data-nosnippet>715</a>                <span class="kw-2">&amp;mut </span>config,
-<a href=#716 id=716 data-nosnippet>716</a>                <span class="kw-2">&amp;</span><span class="prelude-val">None</span>,
-<a href=#717 id=717 data-nosnippet>717</a>                <span class="kw-2">&amp;mut </span>repo,
-<a href=#718 id=718 data-nosnippet>718</a>                example_api_network(IOTA_NETWORK_KEY.to_string()),
-<a href=#719 id=719 data-nosnippet>719</a>                <span class="kw-2">&amp;</span>pin,
-<a href=#720 id=720 data-nosnippet>720</a>            )
-<a href=#721 id=721 data-nosnippet>721</a>            .<span class="kw">await
-<a href=#722 id=722 data-nosnippet>722</a>            </span>.expect(<span class="string">"should succeed to get wallet after password change"</span>);
-<a href=#723 id=723 data-nosnippet>723</a>
-<a href=#724 id=724 data-nosnippet>724</a>        wallet.get_address().<span class="kw">await</span>.expect(<span class="string">"wallet should return an address"</span>);
-<a href=#725 id=725 data-nosnippet>725</a>    }
-<a href=#726 id=726 data-nosnippet>726</a>
-<a href=#727 id=727 data-nosnippet>727</a>    <span class="attr">#[tokio::test]
-<a href=#728 id=728 data-nosnippet>728</a>    </span><span class="kw">async fn </span>delete_wallet_removes_files() {
-<a href=#729 id=729 data-nosnippet>729</a>        <span class="comment">//Arrange
-<a href=#730 id=730 data-nosnippet>730</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>config, _cleanup) = Config::new_test_with_cleanup();
-<a href=#731 id=731 data-nosnippet>731</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
-<a href=#732 id=732 data-nosnippet>732</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
-<a href=#733 id=733 data-nosnippet>733</a>
-<a href=#734 id=734 data-nosnippet>734</a>        <span class="comment">// create a wallet
-<a href=#735 id=735 data-nosnippet>735</a>        </span>manager
-<a href=#736 id=736 data-nosnippet>736</a>            .create_wallet_from_new_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin)
-<a href=#737 id=737 data-nosnippet>737</a>            .<span class="kw">await
-<a href=#738 id=738 data-nosnippet>738</a>            </span>.expect(<span class="string">"should succeed to create new wallet"</span>);
-<a href=#739 id=739 data-nosnippet>739</a>
-<a href=#740 id=740 data-nosnippet>740</a>        <span class="comment">// get the wallet instance to make sure any files are created
-<a href=#741 id=741 data-nosnippet>741</a>        </span><span class="kw">let </span>_wallet = manager
-<a href=#742 id=742 data-nosnippet>742</a>            .try_get(
-<a href=#743 id=743 data-nosnippet>743</a>                <span class="kw-2">&amp;mut </span>config,
-<a href=#744 id=744 data-nosnippet>744</a>                <span class="kw-2">&amp;</span><span class="prelude-val">None</span>,
-<a href=#745 id=745 data-nosnippet>745</a>                <span class="kw-2">&amp;mut </span>repo,
-<a href=#746 id=746 data-nosnippet>746</a>                example_api_network(IOTA_NETWORK_KEY.to_string()),
-<a href=#747 id=747 data-nosnippet>747</a>                <span class="kw-2">&amp;</span>pin,
-<a href=#748 id=748 data-nosnippet>748</a>            )
-<a href=#749 id=749 data-nosnippet>749</a>            .<span class="kw">await
-<a href=#750 id=750 data-nosnippet>750</a>            </span>.expect(<span class="string">"should succeed to get wallet"</span>);
-<a href=#751 id=751 data-nosnippet>751</a>
-<a href=#752 id=752 data-nosnippet>752</a>        <span class="kw">let </span>file_count_before = walkdir::WalkDir::new(<span class="kw-2">&amp;</span>config.path_prefix).into_iter().count();
-<a href=#753 id=753 data-nosnippet>753</a>
-<a href=#754 id=754 data-nosnippet>754</a>        <span class="comment">//Act
-<a href=#755 id=755 data-nosnippet>755</a>        </span>manager
-<a href=#756 id=756 data-nosnippet>756</a>            .delete_wallet(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo)
-<a href=#757 id=757 data-nosnippet>757</a>            .<span class="kw">await
-<a href=#758 id=758 data-nosnippet>758</a>            </span>.expect(<span class="string">"should delete wallet"</span>);
-<a href=#759 id=759 data-nosnippet>759</a>
-<a href=#760 id=760 data-nosnippet>760</a>        <span class="comment">// Assert
-<a href=#761 id=761 data-nosnippet>761</a>        </span><span class="kw">let </span>file_count_after = walkdir::WalkDir::new(<span class="kw-2">&amp;</span>config.path_prefix).into_iter().count();
-<a href=#762 id=762 data-nosnippet>762</a>        <span class="macro">assert!</span>(file_count_after &lt; file_count_before, <span class="string">"should remove files"</span>);
-<a href=#763 id=763 data-nosnippet>763</a>    }
-<a href=#764 id=764 data-nosnippet>764</a>
-<a href=#765 id=765 data-nosnippet>765</a>    <span class="comment">// Note: all test cases assume that there is no password stored in the user database (since a wallet was never created before)
-<a href=#766 id=766 data-nosnippet>766</a>    </span><span class="attr">#[rstest::rstest]
-<a href=#767 id=767 data-nosnippet>767</a>    </span><span class="comment">// ############### Test cases without the local storage available ###############
-<a href=#768 id=768 data-nosnippet>768</a>    // nothing available at all
-<a href=#769 id=769 data-nosnippet>769</a>    </span><span class="attr">#[case(
+<a href=#629 id=629 data-nosnippet>629</a>    <span class="attr">#[rstest]
+<a href=#630 id=630 data-nosnippet>630</a>    #[case(MNEMONIC, <span class="bool-val">true</span>)] </span><span class="comment">// Valid mnemonic
+<a href=#631 id=631 data-nosnippet>631</a>    </span><span class="attr">#[case(<span class="string">""</span>, <span class="bool-val">false</span>)] </span><span class="comment">// Empty mnemonic
+<a href=#632 id=632 data-nosnippet>632</a>    </span><span class="attr">#[case(MNEMONIC_INCORRECT, <span class="bool-val">false</span>)] </span><span class="comment">// Incorrect mnemonic
+<a href=#633 id=633 data-nosnippet>633</a>    </span><span class="attr">#[tokio::test]
+<a href=#634 id=634 data-nosnippet>634</a>    </span><span class="kw">async fn </span>test_create_wallet_from_mnemonic(<span class="attr">#[case] </span>mnemonic: <span class="kw-2">&amp;</span>str, <span class="attr">#[case] </span>should_succeed: bool) {
+<a href=#635 id=635 data-nosnippet>635</a>        <span class="comment">// Arrange
+<a href=#636 id=636 data-nosnippet>636</a>        </span><span class="kw">let </span>(config, _cleanup) = Config::new_test_with_cleanup();
+<a href=#637 id=637 data-nosnippet>637</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
+<a href=#638 id=638 data-nosnippet>638</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
+<a href=#639 id=639 data-nosnippet>639</a>
+<a href=#640 id=640 data-nosnippet>640</a>        <span class="comment">// Act
+<a href=#641 id=641 data-nosnippet>641</a>        </span><span class="kw">let </span>result = manager
+<a href=#642 id=642 data-nosnippet>642</a>            .create_wallet_from_existing_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin, mnemonic)
+<a href=#643 id=643 data-nosnippet>643</a>            .<span class="kw">await</span>;
+<a href=#644 id=644 data-nosnippet>644</a>
+<a href=#645 id=645 data-nosnippet>645</a>        <span class="comment">// Assert
+<a href=#646 id=646 data-nosnippet>646</a>        </span><span class="kw">if </span>should_succeed {
+<a href=#647 id=647 data-nosnippet>647</a>            result.expect(<span class="string">"should create wallet from valid mnemonic"</span>);
+<a href=#648 id=648 data-nosnippet>648</a>            <span class="macro">assert!</span>(manager.recovery_share.is_some(), <span class="string">"Wallet was successfully created"</span>);
+<a href=#649 id=649 data-nosnippet>649</a>        } <span class="kw">else </span>{
+<a href=#650 id=650 data-nosnippet>650</a>            result.expect_err(<span class="string">"should fail with invalid or empty mnemonic"</span>);
+<a href=#651 id=651 data-nosnippet>651</a>        }
+<a href=#652 id=652 data-nosnippet>652</a>    }
+<a href=#653 id=653 data-nosnippet>653</a>
+<a href=#654 id=654 data-nosnippet>654</a>    <span class="attr">#[rstest]
+<a href=#655 id=655 data-nosnippet>655</a>    #[case(<span class="kw-2">&amp;</span>WALLET_PASSWORD, <span class="prelude-val">Ok</span>(()))]
+<a href=#656 id=656 data-nosnippet>656</a>    #[case(<span class="kw-2">&amp;</span>INVALID_BACKUP_PASSWORD, <span class="prelude-val">Err</span>(WalletError::KdbxStorage(KdbxStorageError::UnlockError(UnlockError::HmacInvalid))))]
+<a href=#657 id=657 data-nosnippet>657</a>    #[tokio::test]
+<a href=#658 id=658 data-nosnippet>658</a>    </span><span class="kw">async fn </span>test_backup_and_restore(<span class="attr">#[case] </span>password: <span class="kw-2">&amp;</span>LazyLock&lt;PlainPassword&gt;, <span class="attr">#[case] </span>should_succeed: <span class="prelude-ty">Result</span>&lt;()&gt;) {
+<a href=#659 id=659 data-nosnippet>659</a>        <span class="comment">// Arrange
+<a href=#660 id=660 data-nosnippet>660</a>        </span><span class="kw">let </span>(config, _cleanup) = Config::new_test_with_cleanup();
+<a href=#661 id=661 data-nosnippet>661</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
+<a href=#662 id=662 data-nosnippet>662</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
+<a href=#663 id=663 data-nosnippet>663</a>
+<a href=#664 id=664 data-nosnippet>664</a>        <span class="comment">// Create wallet
+<a href=#665 id=665 data-nosnippet>665</a>        </span>manager
+<a href=#666 id=666 data-nosnippet>666</a>            .create_wallet_from_new_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin)
+<a href=#667 id=667 data-nosnippet>667</a>            .<span class="kw">await
+<a href=#668 id=668 data-nosnippet>668</a>            </span>.expect(<span class="string">"failed to create new wallet"</span>);
+<a href=#669 id=669 data-nosnippet>669</a>
+<a href=#670 id=670 data-nosnippet>670</a>        <span class="comment">// Create backup
+<a href=#671 id=671 data-nosnippet>671</a>        </span><span class="kw">let </span>backup = manager
+<a href=#672 id=672 data-nosnippet>672</a>            .create_wallet_backup(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin, <span class="kw-2">&amp;</span>WALLET_PASSWORD)
+<a href=#673 id=673 data-nosnippet>673</a>            .<span class="kw">await
+<a href=#674 id=674 data-nosnippet>674</a>            </span>.expect(<span class="string">"failed to create backup"</span>);
+<a href=#675 id=675 data-nosnippet>675</a>
+<a href=#676 id=676 data-nosnippet>676</a>        <span class="comment">// Backup restoration
+<a href=#677 id=677 data-nosnippet>677</a>        </span><span class="kw">let </span>restore_result = manager
+<a href=#678 id=678 data-nosnippet>678</a>            .create_wallet_from_backup(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin, <span class="kw-2">&amp;</span>backup, password)
+<a href=#679 id=679 data-nosnippet>679</a>            .<span class="kw">await</span>;
+<a href=#680 id=680 data-nosnippet>680</a>
+<a href=#681 id=681 data-nosnippet>681</a>        <span class="comment">// Assert
+<a href=#682 id=682 data-nosnippet>682</a>        </span><span class="kw">match </span>should_succeed {
+<a href=#683 id=683 data-nosnippet>683</a>            <span class="prelude-val">Ok</span>(<span class="kw">_</span>) =&gt; restore_result.unwrap(),
+<a href=#684 id=684 data-nosnippet>684</a>            <span class="prelude-val">Err</span>(<span class="kw-2">ref </span>expected_err) =&gt; {
+<a href=#685 id=685 data-nosnippet>685</a>                <span class="macro">assert_eq!</span>(restore_result.err().unwrap().to_string(), expected_err.to_string());
+<a href=#686 id=686 data-nosnippet>686</a>            }
+<a href=#687 id=687 data-nosnippet>687</a>        }
+<a href=#688 id=688 data-nosnippet>688</a>    }
+<a href=#689 id=689 data-nosnippet>689</a>
+<a href=#690 id=690 data-nosnippet>690</a>    <span class="attr">#[tokio::test]
+<a href=#691 id=691 data-nosnippet>691</a>    </span><span class="kw">async fn </span>test_change_password() {
+<a href=#692 id=692 data-nosnippet>692</a>        <span class="comment">//Arrange
+<a href=#693 id=693 data-nosnippet>693</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>config, _cleanup) = Config::new_test_with_cleanup();
+<a href=#694 id=694 data-nosnippet>694</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
+<a href=#695 id=695 data-nosnippet>695</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
+<a href=#696 id=696 data-nosnippet>696</a>
+<a href=#697 id=697 data-nosnippet>697</a>        <span class="comment">// create a wallet
+<a href=#698 id=698 data-nosnippet>698</a>        </span>manager
+<a href=#699 id=699 data-nosnippet>699</a>            .create_wallet_from_new_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin)
+<a href=#700 id=700 data-nosnippet>700</a>            .<span class="kw">await
+<a href=#701 id=701 data-nosnippet>701</a>            </span>.expect(<span class="string">"should succeed to create new wallet"</span>);
+<a href=#702 id=702 data-nosnippet>702</a>
+<a href=#703 id=703 data-nosnippet>703</a>        <span class="kw">let </span>new_password = PlainPassword::try_from_string(<span class="string">"new_correcthorsebatterystaple"</span>).unwrap();
+<a href=#704 id=704 data-nosnippet>704</a>        manager
+<a href=#705 id=705 data-nosnippet>705</a>            .change_wallet_password(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin, <span class="kw-2">&amp;</span>new_password)
+<a href=#706 id=706 data-nosnippet>706</a>            .<span class="kw">await
+<a href=#707 id=707 data-nosnippet>707</a>            </span>.expect(<span class="string">"should succeed to change wallet password"</span>);
+<a href=#708 id=708 data-nosnippet>708</a>
+<a href=#709 id=709 data-nosnippet>709</a>        <span class="kw">let </span>wallet = manager
+<a href=#710 id=710 data-nosnippet>710</a>            .try_get(
+<a href=#711 id=711 data-nosnippet>711</a>                <span class="kw-2">&amp;mut </span>config,
+<a href=#712 id=712 data-nosnippet>712</a>                <span class="kw-2">&amp;</span><span class="prelude-val">None</span>,
+<a href=#713 id=713 data-nosnippet>713</a>                <span class="kw-2">&amp;mut </span>repo,
+<a href=#714 id=714 data-nosnippet>714</a>                example_api_network(IOTA_NETWORK_KEY.to_string()),
+<a href=#715 id=715 data-nosnippet>715</a>                pin,
+<a href=#716 id=716 data-nosnippet>716</a>            )
+<a href=#717 id=717 data-nosnippet>717</a>            .<span class="kw">await
+<a href=#718 id=718 data-nosnippet>718</a>            </span>.expect(<span class="string">"should succeed to get wallet after password change"</span>);
+<a href=#719 id=719 data-nosnippet>719</a>
+<a href=#720 id=720 data-nosnippet>720</a>        wallet.get_address().<span class="kw">await</span>.expect(<span class="string">"wallet should return an address"</span>);
+<a href=#721 id=721 data-nosnippet>721</a>    }
+<a href=#722 id=722 data-nosnippet>722</a>
+<a href=#723 id=723 data-nosnippet>723</a>    <span class="attr">#[tokio::test]
+<a href=#724 id=724 data-nosnippet>724</a>    </span><span class="kw">async fn </span>delete_wallet_removes_files() {
+<a href=#725 id=725 data-nosnippet>725</a>        <span class="comment">//Arrange
+<a href=#726 id=726 data-nosnippet>726</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>config, _cleanup) = Config::new_test_with_cleanup();
+<a href=#727 id=727 data-nosnippet>727</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(USERNAME);
+<a href=#728 id=728 data-nosnippet>728</a>        <span class="kw">let </span>(pin, <span class="kw-2">mut </span>repo) = get_user_repo();
+<a href=#729 id=729 data-nosnippet>729</a>
+<a href=#730 id=730 data-nosnippet>730</a>        <span class="comment">// create a wallet
+<a href=#731 id=731 data-nosnippet>731</a>        </span>manager
+<a href=#732 id=732 data-nosnippet>732</a>            .create_wallet_from_new_mnemonic(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo, pin)
+<a href=#733 id=733 data-nosnippet>733</a>            .<span class="kw">await
+<a href=#734 id=734 data-nosnippet>734</a>            </span>.expect(<span class="string">"should succeed to create new wallet"</span>);
+<a href=#735 id=735 data-nosnippet>735</a>
+<a href=#736 id=736 data-nosnippet>736</a>        <span class="comment">// get the wallet instance to make sure any files are created
+<a href=#737 id=737 data-nosnippet>737</a>        </span><span class="kw">let </span>_wallet = manager
+<a href=#738 id=738 data-nosnippet>738</a>            .try_get(
+<a href=#739 id=739 data-nosnippet>739</a>                <span class="kw-2">&amp;mut </span>config,
+<a href=#740 id=740 data-nosnippet>740</a>                <span class="kw-2">&amp;</span><span class="prelude-val">None</span>,
+<a href=#741 id=741 data-nosnippet>741</a>                <span class="kw-2">&amp;mut </span>repo,
+<a href=#742 id=742 data-nosnippet>742</a>                example_api_network(IOTA_NETWORK_KEY.to_string()),
+<a href=#743 id=743 data-nosnippet>743</a>                pin,
+<a href=#744 id=744 data-nosnippet>744</a>            )
+<a href=#745 id=745 data-nosnippet>745</a>            .<span class="kw">await
+<a href=#746 id=746 data-nosnippet>746</a>            </span>.expect(<span class="string">"should succeed to get wallet"</span>);
+<a href=#747 id=747 data-nosnippet>747</a>
+<a href=#748 id=748 data-nosnippet>748</a>        <span class="kw">let </span>file_count_before = walkdir::WalkDir::new(<span class="kw-2">&amp;</span>config.path_prefix).into_iter().count();
+<a href=#749 id=749 data-nosnippet>749</a>
+<a href=#750 id=750 data-nosnippet>750</a>        <span class="comment">//Act
+<a href=#751 id=751 data-nosnippet>751</a>        </span>manager
+<a href=#752 id=752 data-nosnippet>752</a>            .delete_wallet(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span><span class="prelude-val">None</span>, <span class="kw-2">&amp;mut </span>repo)
+<a href=#753 id=753 data-nosnippet>753</a>            .<span class="kw">await
+<a href=#754 id=754 data-nosnippet>754</a>            </span>.expect(<span class="string">"should delete wallet"</span>);
+<a href=#755 id=755 data-nosnippet>755</a>
+<a href=#756 id=756 data-nosnippet>756</a>        <span class="comment">// Assert
+<a href=#757 id=757 data-nosnippet>757</a>        </span><span class="kw">let </span>file_count_after = walkdir::WalkDir::new(<span class="kw-2">&amp;</span>config.path_prefix).into_iter().count();
+<a href=#758 id=758 data-nosnippet>758</a>        <span class="macro">assert!</span>(file_count_after &lt; file_count_before, <span class="string">"should remove files"</span>);
+<a href=#759 id=759 data-nosnippet>759</a>    }
+<a href=#760 id=760 data-nosnippet>760</a>
+<a href=#761 id=761 data-nosnippet>761</a>    <span class="comment">// Note: all test cases assume that there is no password stored in the user database (since a wallet was never created before)
+<a href=#762 id=762 data-nosnippet>762</a>    </span><span class="attr">#[rstest::rstest]
+<a href=#763 id=763 data-nosnippet>763</a>    </span><span class="comment">// ############### Test cases without the local storage available ###############
+<a href=#764 id=764 data-nosnippet>764</a>    // nothing available at all
+<a href=#765 id=765 data-nosnippet>765</a>    </span><span class="attr">#[case(
+<a href=#766 id=766 data-nosnippet>766</a>        <span class="prelude-val">None</span>,
+<a href=#767 id=767 data-nosnippet>767</a>        <span class="prelude-val">None</span>,
+<a href=#768 id=768 data-nosnippet>768</a>        <span class="prelude-val">None</span>,
+<a href=#769 id=769 data-nosnippet>769</a>        <span class="prelude-val">None</span>,
 <a href=#770 id=770 data-nosnippet>770</a>        <span class="prelude-val">None</span>,
-<a href=#771 id=771 data-nosnippet>771</a>        <span class="prelude-val">None</span>,
-<a href=#772 id=772 data-nosnippet>772</a>        <span class="prelude-val">None</span>,
-<a href=#773 id=773 data-nosnippet>773</a>        <span class="prelude-val">None</span>,
-<a href=#774 id=774 data-nosnippet>774</a>        <span class="prelude-val">None</span>,
-<a href=#775 id=775 data-nosnippet>775</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))
-<a href=#776 id=776 data-nosnippet>776</a>    )]
-<a href=#777 id=777 data-nosnippet>777</a>    </span><span class="comment">// only recovery share available
-<a href=#778 id=778 data-nosnippet>778</a>    </span><span class="attr">#[case(
+<a href=#771 id=771 data-nosnippet>771</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))
+<a href=#772 id=772 data-nosnippet>772</a>    )]
+<a href=#773 id=773 data-nosnippet>773</a>    </span><span class="comment">// only recovery share available
+<a href=#774 id=774 data-nosnippet>774</a>    </span><span class="attr">#[case(
+<a href=#775 id=775 data-nosnippet>775</a>        <span class="prelude-val">None</span>,
+<a href=#776 id=776 data-nosnippet>776</a>        <span class="prelude-val">None</span>,
+<a href=#777 id=777 data-nosnippet>777</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#778 id=778 data-nosnippet>778</a>        <span class="prelude-val">None</span>,
 <a href=#779 id=779 data-nosnippet>779</a>        <span class="prelude-val">None</span>,
-<a href=#780 id=780 data-nosnippet>780</a>        <span class="prelude-val">None</span>,
-<a href=#781 id=781 data-nosnippet>781</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#782 id=782 data-nosnippet>782</a>        <span class="prelude-val">None</span>,
-<a href=#783 id=783 data-nosnippet>783</a>        <span class="prelude-val">None</span>,
-<a href=#784 id=784 data-nosnippet>784</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))
-<a href=#785 id=785 data-nosnippet>785</a>    )]
-<a href=#786 id=786 data-nosnippet>786</a>    </span><span class="comment">// only backup share available
-<a href=#787 id=787 data-nosnippet>787</a>    </span><span class="attr">#[case(
+<a href=#780 id=780 data-nosnippet>780</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::UseMnemonic))
+<a href=#781 id=781 data-nosnippet>781</a>    )]
+<a href=#782 id=782 data-nosnippet>782</a>    </span><span class="comment">// only backup share available
+<a href=#783 id=783 data-nosnippet>783</a>    </span><span class="attr">#[case(
+<a href=#784 id=784 data-nosnippet>784</a>        <span class="prelude-val">None</span>,
+<a href=#785 id=785 data-nosnippet>785</a>        <span class="prelude-val">None</span>,
+<a href=#786 id=786 data-nosnippet>786</a>        <span class="prelude-val">None</span>,
+<a href=#787 id=787 data-nosnippet>787</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
 <a href=#788 id=788 data-nosnippet>788</a>        <span class="prelude-val">None</span>,
-<a href=#789 id=789 data-nosnippet>789</a>        <span class="prelude-val">None</span>,
-<a href=#790 id=790 data-nosnippet>790</a>        <span class="prelude-val">None</span>,
-<a href=#791 id=791 data-nosnippet>791</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#792 id=792 data-nosnippet>792</a>        <span class="prelude-val">None</span>,
-<a href=#793 id=793 data-nosnippet>793</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::SetRecoveryShare))
-<a href=#794 id=794 data-nosnippet>794</a>    )]
-<a href=#795 id=795 data-nosnippet>795</a>    </span><span class="comment">// local recovery and backup share available, but no password
-<a href=#796 id=796 data-nosnippet>796</a>    </span><span class="attr">#[case(
+<a href=#789 id=789 data-nosnippet>789</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::SetRecoveryShare))
+<a href=#790 id=790 data-nosnippet>790</a>    )]
+<a href=#791 id=791 data-nosnippet>791</a>    </span><span class="comment">// local recovery and backup share available, but no password
+<a href=#792 id=792 data-nosnippet>792</a>    </span><span class="attr">#[case(
+<a href=#793 id=793 data-nosnippet>793</a>        <span class="prelude-val">None</span>,
+<a href=#794 id=794 data-nosnippet>794</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#795 id=795 data-nosnippet>795</a>        <span class="prelude-val">None</span>,
+<a href=#796 id=796 data-nosnippet>796</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
 <a href=#797 id=797 data-nosnippet>797</a>        <span class="prelude-val">None</span>,
-<a href=#798 id=798 data-nosnippet>798</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#799 id=799 data-nosnippet>799</a>        <span class="prelude-val">None</span>,
-<a href=#800 id=800 data-nosnippet>800</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
-<a href=#801 id=801 data-nosnippet>801</a>        <span class="prelude-val">None</span>,
-<a href=#802 id=802 data-nosnippet>802</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))
-<a href=#803 id=803 data-nosnippet>803</a>    )]
-<a href=#804 id=804 data-nosnippet>804</a>    </span><span class="comment">// local recovery and backup share available, and password
-<a href=#805 id=805 data-nosnippet>805</a>    </span><span class="attr">#[case(
-<a href=#806 id=806 data-nosnippet>806</a>        <span class="prelude-val">None</span>,
-<a href=#807 id=807 data-nosnippet>807</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#808 id=808 data-nosnippet>808</a>        <span class="prelude-val">None</span>,
-<a href=#809 id=809 data-nosnippet>809</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
-<a href=#810 id=810 data-nosnippet>810</a>        <span class="prelude-val">Some</span>(SHARE_PASSWORD),
-<a href=#811 id=811 data-nosnippet>811</a>        <span class="prelude-val">Ok</span>(Status {local: <span class="bool-val">false</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Local), backup: <span class="bool-val">true </span>})
-<a href=#812 id=812 data-nosnippet>812</a>    )]
-<a href=#813 id=813 data-nosnippet>813</a>    </span><span class="comment">// recovery and backup available but no password provided
-<a href=#814 id=814 data-nosnippet>814</a>    </span><span class="attr">#[case(
+<a href=#798 id=798 data-nosnippet>798</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))
+<a href=#799 id=799 data-nosnippet>799</a>    )]
+<a href=#800 id=800 data-nosnippet>800</a>    </span><span class="comment">// local recovery and backup share available, and password
+<a href=#801 id=801 data-nosnippet>801</a>    </span><span class="attr">#[case(
+<a href=#802 id=802 data-nosnippet>802</a>        <span class="prelude-val">None</span>,
+<a href=#803 id=803 data-nosnippet>803</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#804 id=804 data-nosnippet>804</a>        <span class="prelude-val">None</span>,
+<a href=#805 id=805 data-nosnippet>805</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
+<a href=#806 id=806 data-nosnippet>806</a>        <span class="prelude-val">Some</span>(SHARE_PASSWORD),
+<a href=#807 id=807 data-nosnippet>807</a>        <span class="prelude-val">Ok</span>(Status {local: <span class="bool-val">false</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Local), backup: <span class="bool-val">true </span>})
+<a href=#808 id=808 data-nosnippet>808</a>    )]
+<a href=#809 id=809 data-nosnippet>809</a>    </span><span class="comment">// recovery and backup available but no password provided
+<a href=#810 id=810 data-nosnippet>810</a>    </span><span class="attr">#[case(
+<a href=#811 id=811 data-nosnippet>811</a>        <span class="prelude-val">None</span>,
+<a href=#812 id=812 data-nosnippet>812</a>        <span class="prelude-val">None</span>,
+<a href=#813 id=813 data-nosnippet>813</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#814 id=814 data-nosnippet>814</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
 <a href=#815 id=815 data-nosnippet>815</a>        <span class="prelude-val">None</span>,
-<a href=#816 id=816 data-nosnippet>816</a>        <span class="prelude-val">None</span>,
-<a href=#817 id=817 data-nosnippet>817</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#818 id=818 data-nosnippet>818</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
-<a href=#819 id=819 data-nosnippet>819</a>        <span class="prelude-val">None</span>,
-<a href=#820 id=820 data-nosnippet>820</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))
-<a href=#821 id=821 data-nosnippet>821</a>    )]
-<a href=#822 id=822 data-nosnippet>822</a>    </span><span class="comment">// recovery and backup available and password provided
-<a href=#823 id=823 data-nosnippet>823</a>    </span><span class="attr">#[case(
-<a href=#824 id=824 data-nosnippet>824</a>        <span class="prelude-val">None</span>,
-<a href=#825 id=825 data-nosnippet>825</a>        <span class="prelude-val">None</span>,
-<a href=#826 id=826 data-nosnippet>826</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#827 id=827 data-nosnippet>827</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
-<a href=#828 id=828 data-nosnippet>828</a>        <span class="prelude-val">Some</span>(SHARE_PASSWORD),
-<a href=#829 id=829 data-nosnippet>829</a>        <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">false</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Remote), backup: <span class="bool-val">true </span>})
-<a href=#830 id=830 data-nosnippet>830</a>    )]
-<a href=#831 id=831 data-nosnippet>831</a>    </span><span class="comment">// ############### Test cases with the local storage available ###############
-<a href=#832 id=832 data-nosnippet>832</a>    </span><span class="attr">#[case(
-<a href=#833 id=833 data-nosnippet>833</a>        <span class="prelude-val">Some</span>(SHARE_LOCAL),
-<a href=#834 id=834 data-nosnippet>834</a>        <span class="prelude-val">None</span>,
-<a href=#835 id=835 data-nosnippet>835</a>        <span class="prelude-val">None</span>,
-<a href=#836 id=836 data-nosnippet>836</a>        <span class="prelude-val">None</span>,
-<a href=#837 id=837 data-nosnippet>837</a>        <span class="prelude-val">None</span>,
-<a href=#838 id=838 data-nosnippet>838</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::SetRecoveryShare))
-<a href=#839 id=839 data-nosnippet>839</a>    )]
-<a href=#840 id=840 data-nosnippet>840</a>    #[case(<span class="prelude-val">Some</span>(SHARE_LOCAL), <span class="prelude-val">Some</span>(SHARE_RECOVERY), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">true</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Local), backup: <span class="bool-val">false </span>}))]
-<a href=#841 id=841 data-nosnippet>841</a>    #[case(<span class="prelude-val">Some</span>(SHARE_LOCAL), <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(SHARE_RECOVERY), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">true</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Remote), backup: <span class="bool-val">false</span>}))]
-<a href=#842 id=842 data-nosnippet>842</a>    #[case(
-<a href=#843 id=843 data-nosnippet>843</a>        <span class="prelude-val">Some</span>(SHARE_LOCAL),
-<a href=#844 id=844 data-nosnippet>844</a>        <span class="prelude-val">None</span>,
-<a href=#845 id=845 data-nosnippet>845</a>        <span class="prelude-val">None</span>,
-<a href=#846 id=846 data-nosnippet>846</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#847 id=847 data-nosnippet>847</a>        <span class="prelude-val">None</span>,
-<a href=#848 id=848 data-nosnippet>848</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))
-<a href=#849 id=849 data-nosnippet>849</a>    )]
-<a href=#850 id=850 data-nosnippet>850</a>    #[case(
-<a href=#851 id=851 data-nosnippet>851</a>        <span class="prelude-val">Some</span>(SHARE_LOCAL),
-<a href=#852 id=852 data-nosnippet>852</a>        <span class="prelude-val">None</span>,
-<a href=#853 id=853 data-nosnippet>853</a>        <span class="prelude-val">None</span>,
-<a href=#854 id=854 data-nosnippet>854</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
-<a href=#855 id=855 data-nosnippet>855</a>        <span class="prelude-val">Some</span>(SHARE_PASSWORD),
-<a href=#856 id=856 data-nosnippet>856</a>        <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">true</span>, recovery: <span class="prelude-val">None</span>, backup: <span class="bool-val">true</span>})
-<a href=#857 id=857 data-nosnippet>857</a>    )]
-<a href=#858 id=858 data-nosnippet>858</a>    #[tokio::test]
-<a href=#859 id=859 data-nosnippet>859</a>    </span><span class="kw">async fn </span>test_resemble_shares(
-<a href=#860 id=860 data-nosnippet>860</a>        <span class="attr">#[case] </span>local_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
-<a href=#861 id=861 data-nosnippet>861</a>        <span class="attr">#[case] </span>local_recovery_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
-<a href=#862 id=862 data-nosnippet>862</a>        <span class="attr">#[case] </span>remote_recovery_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
-<a href=#863 id=863 data-nosnippet>863</a>        <span class="attr">#[case] </span>remote_backup_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
-<a href=#864 id=864 data-nosnippet>864</a>        <span class="attr">#[case] </span>password: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
-<a href=#865 id=865 data-nosnippet>865</a>        <span class="attr">#[case] </span>expected_result: <span class="prelude-ty">Result</span>&lt;Status&gt;,
-<a href=#866 id=866 data-nosnippet>866</a>    ) {
-<a href=#867 id=867 data-nosnippet>867</a>        <span class="kw">use crate</span>::{
-<a href=#868 id=868 data-nosnippet>868</a>            share::Share,
-<a href=#869 id=869 data-nosnippet>869</a>            wallet_manager::{WalletManager, WalletManagerImpl},
-<a href=#870 id=870 data-nosnippet>870</a>        };
+<a href=#816 id=816 data-nosnippet>816</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))
+<a href=#817 id=817 data-nosnippet>817</a>    )]
+<a href=#818 id=818 data-nosnippet>818</a>    </span><span class="comment">// recovery and backup available and password provided
+<a href=#819 id=819 data-nosnippet>819</a>    </span><span class="attr">#[case(
+<a href=#820 id=820 data-nosnippet>820</a>        <span class="prelude-val">None</span>,
+<a href=#821 id=821 data-nosnippet>821</a>        <span class="prelude-val">None</span>,
+<a href=#822 id=822 data-nosnippet>822</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#823 id=823 data-nosnippet>823</a>        <span class="prelude-val">Some</span>(SHARE_BACKUP),
+<a href=#824 id=824 data-nosnippet>824</a>        <span class="prelude-val">Some</span>(SHARE_PASSWORD),
+<a href=#825 id=825 data-nosnippet>825</a>        <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">false</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Remote), backup: <span class="bool-val">true </span>})
+<a href=#826 id=826 data-nosnippet>826</a>    )]
+<a href=#827 id=827 data-nosnippet>827</a>    </span><span class="comment">// ############### Test cases with the local storage available ###############
+<a href=#828 id=828 data-nosnippet>828</a>    </span><span class="attr">#[case(
+<a href=#829 id=829 data-nosnippet>829</a>        <span class="prelude-val">Some</span>(SHARE_LOCAL),
+<a href=#830 id=830 data-nosnippet>830</a>        <span class="prelude-val">None</span>,
+<a href=#831 id=831 data-nosnippet>831</a>        <span class="prelude-val">None</span>,
+<a href=#832 id=832 data-nosnippet>832</a>        <span class="prelude-val">None</span>,
+<a href=#833 id=833 data-nosnippet>833</a>        <span class="prelude-val">None</span>,
+<a href=#834 id=834 data-nosnippet>834</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::SetRecoveryShare))
+<a href=#835 id=835 data-nosnippet>835</a>    )]
+<a href=#836 id=836 data-nosnippet>836</a>    #[case(<span class="prelude-val">Some</span>(SHARE_LOCAL), <span class="prelude-val">Some</span>(SHARE_RECOVERY), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">true</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Local), backup: <span class="bool-val">false </span>}))]
+<a href=#837 id=837 data-nosnippet>837</a>    #[case(<span class="prelude-val">Some</span>(SHARE_LOCAL), <span class="prelude-val">None</span>, <span class="prelude-val">Some</span>(SHARE_RECOVERY), <span class="prelude-val">None</span>, <span class="prelude-val">None</span>, <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">true</span>, recovery: <span class="prelude-val">Some</span>(RecoveryUsed::Remote), backup: <span class="bool-val">false</span>}))]
+<a href=#838 id=838 data-nosnippet>838</a>    #[case(
+<a href=#839 id=839 data-nosnippet>839</a>        <span class="prelude-val">Some</span>(SHARE_LOCAL),
+<a href=#840 id=840 data-nosnippet>840</a>        <span class="prelude-val">None</span>,
+<a href=#841 id=841 data-nosnippet>841</a>        <span class="prelude-val">None</span>,
+<a href=#842 id=842 data-nosnippet>842</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#843 id=843 data-nosnippet>843</a>        <span class="prelude-val">None</span>,
+<a href=#844 id=844 data-nosnippet>844</a>        <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(ErrorKind::MissingPassword))
+<a href=#845 id=845 data-nosnippet>845</a>    )]
+<a href=#846 id=846 data-nosnippet>846</a>    #[case(
+<a href=#847 id=847 data-nosnippet>847</a>        <span class="prelude-val">Some</span>(SHARE_LOCAL),
+<a href=#848 id=848 data-nosnippet>848</a>        <span class="prelude-val">None</span>,
+<a href=#849 id=849 data-nosnippet>849</a>        <span class="prelude-val">None</span>,
+<a href=#850 id=850 data-nosnippet>850</a>        <span class="prelude-val">Some</span>(SHARE_RECOVERY),
+<a href=#851 id=851 data-nosnippet>851</a>        <span class="prelude-val">Some</span>(SHARE_PASSWORD),
+<a href=#852 id=852 data-nosnippet>852</a>        <span class="prelude-val">Ok</span>(Status{local: <span class="bool-val">true</span>, recovery: <span class="prelude-val">None</span>, backup: <span class="bool-val">true</span>})
+<a href=#853 id=853 data-nosnippet>853</a>    )]
+<a href=#854 id=854 data-nosnippet>854</a>    #[tokio::test]
+<a href=#855 id=855 data-nosnippet>855</a>    </span><span class="kw">async fn </span>test_resemble_shares(
+<a href=#856 id=856 data-nosnippet>856</a>        <span class="attr">#[case] </span>local_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+<a href=#857 id=857 data-nosnippet>857</a>        <span class="attr">#[case] </span>local_recovery_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+<a href=#858 id=858 data-nosnippet>858</a>        <span class="attr">#[case] </span>remote_recovery_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+<a href=#859 id=859 data-nosnippet>859</a>        <span class="attr">#[case] </span>remote_backup_share: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+<a href=#860 id=860 data-nosnippet>860</a>        <span class="attr">#[case] </span>password: <span class="prelude-ty">Option</span>&lt;<span class="kw-2">&amp;</span>str&gt;,
+<a href=#861 id=861 data-nosnippet>861</a>        <span class="attr">#[case] </span>expected_result: <span class="prelude-ty">Result</span>&lt;Status&gt;,
+<a href=#862 id=862 data-nosnippet>862</a>    ) {
+<a href=#863 id=863 data-nosnippet>863</a>        <span class="kw">use crate</span>::{
+<a href=#864 id=864 data-nosnippet>864</a>            share::Share,
+<a href=#865 id=865 data-nosnippet>865</a>            wallet_manager::{WalletManager, WalletManagerImpl},
+<a href=#866 id=866 data-nosnippet>866</a>        };
+<a href=#867 id=867 data-nosnippet>867</a>
+<a href=#868 id=868 data-nosnippet>868</a>        <span class="comment">// setup the sdk
+<a href=#869 id=869 data-nosnippet>869</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>srv = mockito::Server::new_async().<span class="kw">await</span>;
+<a href=#870 id=870 data-nosnippet>870</a>        <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{}/api"</span>, srv.url());
 <a href=#871 id=871 data-nosnippet>871</a>
-<a href=#872 id=872 data-nosnippet>872</a>        <span class="comment">// setup the sdk
-<a href=#873 id=873 data-nosnippet>873</a>        </span><span class="kw">let </span><span class="kw-2">mut </span>srv = mockito::Server::new_async().<span class="kw">await</span>;
-<a href=#874 id=874 data-nosnippet>874</a>        <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{}/api"</span>, srv.url());
-<a href=#875 id=875 data-nosnippet>875</a>
-<a href=#876 id=876 data-nosnippet>876</a>        <span class="kw">let </span>m1_body = remote_recovery_share.map(|s| <span class="macro">format!</span>(<span class="string">"{{ \"share\":\"{s}\" }}"</span>));
-<a href=#877 id=877 data-nosnippet>877</a>        <span class="kw">let </span>m1 = srv
-<a href=#878 id=878 data-nosnippet>878</a>            .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/shares/recovery"</span>)
-<a href=#879 id=879 data-nosnippet>879</a>            .expect(<span class="kw">if </span>local_recovery_share.is_none() {
-<a href=#880 id=880 data-nosnippet>880</a>                <span class="number">1 </span>+ <span class="kw">if </span>expected_result.is_ok() { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>} <span class="comment">// if Ok we try to create wallet
-<a href=#881 id=881 data-nosnippet>881</a>            </span>} <span class="kw">else </span>{
-<a href=#882 id=882 data-nosnippet>882</a>                <span class="number">0
-<a href=#883 id=883 data-nosnippet>883</a>            </span>}) <span class="comment">// do not download the recovery share if it exists locally
-<a href=#884 id=884 data-nosnippet>884</a>            </span>.with_status(<span class="kw">if </span>remote_recovery_share.is_some() { <span class="number">200 </span>} <span class="kw">else </span>{ <span class="number">404 </span>})
-<a href=#885 id=885 data-nosnippet>885</a>            .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-<a href=#886 id=886 data-nosnippet>886</a>            .with_body(m1_body.unwrap_or_default())
-<a href=#887 id=887 data-nosnippet>887</a>            .create();
-<a href=#888 id=888 data-nosnippet>888</a>
-<a href=#889 id=889 data-nosnippet>889</a>        <span class="kw">let </span>m2_body = remote_backup_share.map(|s| <span class="macro">format!</span>(<span class="string">"{{ \"share\":\"{s}\" }}"</span>));
-<a href=#890 id=890 data-nosnippet>890</a>        <span class="kw">let </span>m2 = srv
-<a href=#891 id=891 data-nosnippet>891</a>            .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/shares/backup"</span>)
-<a href=#892 id=892 data-nosnippet>892</a>            .expect(
-<a href=#893 id=893 data-nosnippet>893</a>                <span class="comment">// only expect a call if we don't have enough shares from the others
-<a href=#894 id=894 data-nosnippet>894</a>                </span><span class="kw">if </span>local_share.is_some() <span class="kw">as </span>usize
-<a href=#895 id=895 data-nosnippet>895</a>                    + local_recovery_share.is_some() <span class="kw">as </span>usize
-<a href=#896 id=896 data-nosnippet>896</a>                    + remote_recovery_share.is_some() <span class="kw">as </span>usize
-<a href=#897 id=897 data-nosnippet>897</a>                    &gt;= <span class="number">2
-<a href=#898 id=898 data-nosnippet>898</a>                </span>{
-<a href=#899 id=899 data-nosnippet>899</a>                    <span class="number">0
-<a href=#900 id=900 data-nosnippet>900</a>                </span>} <span class="kw">else </span>{
-<a href=#901 id=901 data-nosnippet>901</a>                    <span class="number">1 </span>+ <span class="kw">if </span>expected_result.is_ok() { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>} <span class="comment">// if Ok we try to create wallet
-<a href=#902 id=902 data-nosnippet>902</a>                </span>},
-<a href=#903 id=903 data-nosnippet>903</a>            )
-<a href=#904 id=904 data-nosnippet>904</a>            .with_status(<span class="kw">if </span>remote_backup_share.is_some() { <span class="number">200 </span>} <span class="kw">else </span>{ <span class="number">404 </span>})
-<a href=#905 id=905 data-nosnippet>905</a>            .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
-<a href=#906 id=906 data-nosnippet>906</a>            .with_body(m2_body.unwrap_or_default())
-<a href=#907 id=907 data-nosnippet>907</a>            .create();
+<a href=#872 id=872 data-nosnippet>872</a>        <span class="kw">let </span>m1_body = remote_recovery_share.map(|s| <span class="macro">format!</span>(<span class="string">"{{ \"share\":\"{s}\" }}"</span>));
+<a href=#873 id=873 data-nosnippet>873</a>        <span class="kw">let </span>m1 = srv
+<a href=#874 id=874 data-nosnippet>874</a>            .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/shares/recovery"</span>)
+<a href=#875 id=875 data-nosnippet>875</a>            .expect(<span class="kw">if </span>local_recovery_share.is_none() {
+<a href=#876 id=876 data-nosnippet>876</a>                <span class="number">1 </span>+ <span class="kw">if </span>expected_result.is_ok() { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>} <span class="comment">// if Ok we try to create wallet
+<a href=#877 id=877 data-nosnippet>877</a>            </span>} <span class="kw">else </span>{
+<a href=#878 id=878 data-nosnippet>878</a>                <span class="number">0
+<a href=#879 id=879 data-nosnippet>879</a>            </span>}) <span class="comment">// do not download the recovery share if it exists locally
+<a href=#880 id=880 data-nosnippet>880</a>            </span>.with_status(<span class="kw">if </span>remote_recovery_share.is_some() { <span class="number">200 </span>} <span class="kw">else </span>{ <span class="number">404 </span>})
+<a href=#881 id=881 data-nosnippet>881</a>            .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
+<a href=#882 id=882 data-nosnippet>882</a>            .with_body(m1_body.unwrap_or_default())
+<a href=#883 id=883 data-nosnippet>883</a>            .create();
+<a href=#884 id=884 data-nosnippet>884</a>
+<a href=#885 id=885 data-nosnippet>885</a>        <span class="kw">let </span>m2_body = remote_backup_share.map(|s| <span class="macro">format!</span>(<span class="string">"{{ \"share\":\"{s}\" }}"</span>));
+<a href=#886 id=886 data-nosnippet>886</a>        <span class="kw">let </span>m2 = srv
+<a href=#887 id=887 data-nosnippet>887</a>            .mock(<span class="string">"GET"</span>, <span class="string">"/api/user/shares/backup"</span>)
+<a href=#888 id=888 data-nosnippet>888</a>            .expect(
+<a href=#889 id=889 data-nosnippet>889</a>                <span class="comment">// only expect a call if we don't have enough shares from the others
+<a href=#890 id=890 data-nosnippet>890</a>                </span><span class="kw">if </span>local_share.is_some() <span class="kw">as </span>usize
+<a href=#891 id=891 data-nosnippet>891</a>                    + local_recovery_share.is_some() <span class="kw">as </span>usize
+<a href=#892 id=892 data-nosnippet>892</a>                    + remote_recovery_share.is_some() <span class="kw">as </span>usize
+<a href=#893 id=893 data-nosnippet>893</a>                    &gt;= <span class="number">2
+<a href=#894 id=894 data-nosnippet>894</a>                </span>{
+<a href=#895 id=895 data-nosnippet>895</a>                    <span class="number">0
+<a href=#896 id=896 data-nosnippet>896</a>                </span>} <span class="kw">else </span>{
+<a href=#897 id=897 data-nosnippet>897</a>                    <span class="number">1 </span>+ <span class="kw">if </span>expected_result.is_ok() { <span class="number">1 </span>} <span class="kw">else </span>{ <span class="number">0 </span>} <span class="comment">// if Ok we try to create wallet
+<a href=#898 id=898 data-nosnippet>898</a>                </span>},
+<a href=#899 id=899 data-nosnippet>899</a>            )
+<a href=#900 id=900 data-nosnippet>900</a>            .with_status(<span class="kw">if </span>remote_backup_share.is_some() { <span class="number">200 </span>} <span class="kw">else </span>{ <span class="number">404 </span>})
+<a href=#901 id=901 data-nosnippet>901</a>            .with_header(<span class="string">"content-type"</span>, <span class="string">"application/json"</span>)
+<a href=#902 id=902 data-nosnippet>902</a>            .with_body(m2_body.unwrap_or_default())
+<a href=#903 id=903 data-nosnippet>903</a>            .create();
+<a href=#904 id=904 data-nosnippet>904</a>
+<a href=#905 id=905 data-nosnippet>905</a>        <span class="comment">// Initialize your Sdk instance with necessary parameters
+<a href=#906 id=906 data-nosnippet>906</a>
+<a href=#907 id=907 data-nosnippet>907</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>config, _cleanup) = Config::new_test_with_cleanup_url(<span class="kw-2">&amp;</span>url);
 <a href=#908 id=908 data-nosnippet>908</a>
-<a href=#909 id=909 data-nosnippet>909</a>        <span class="comment">// Initialize your Sdk instance with necessary parameters
-<a href=#910 id=910 data-nosnippet>910</a>
-<a href=#911 id=911 data-nosnippet>911</a>        </span><span class="kw">let </span>(<span class="kw-2">mut </span>config, _cleanup) = Config::new_test_with_cleanup_url(<span class="kw-2">&amp;</span>url);
-<a href=#912 id=912 data-nosnippet>912</a>
-<a href=#913 id=913 data-nosnippet>913</a>        <span class="kw">let </span>access_token = <span class="prelude-val">Some</span>(AccessToken::try_from_string(<span class="string">"a fake token"</span>).unwrap());
-<a href=#914 id=914 data-nosnippet>914</a>        <span class="kw">let </span><span class="kw-2">mut </span>repo = MockUserRepo::new();
+<a href=#909 id=909 data-nosnippet>909</a>        <span class="kw">let </span>access_token = <span class="prelude-val">Some</span>(AccessToken::try_from_string(<span class="string">"a fake token"</span>).unwrap());
+<a href=#910 id=910 data-nosnippet>910</a>        <span class="kw">let </span><span class="kw-2">mut </span>repo = MockUserRepo::new();
+<a href=#911 id=911 data-nosnippet>911</a>
+<a href=#912 id=912 data-nosnippet>912</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(<span class="string">"share_user"</span>);
+<a href=#913 id=913 data-nosnippet>913</a>
+<a href=#914 id=914 data-nosnippet>914</a>        <span class="comment">// setup shares if provided
 <a href=#915 id=915 data-nosnippet>915</a>
-<a href=#916 id=916 data-nosnippet>916</a>        <span class="kw">let </span><span class="kw-2">mut </span>manager = WalletManagerImpl::new(<span class="string">"share_user"</span>);
-<a href=#917 id=917 data-nosnippet>917</a>
-<a href=#918 id=918 data-nosnippet>918</a>        <span class="comment">// setup shares if provided
-<a href=#919 id=919 data-nosnippet>919</a>
-<a href=#920 id=920 data-nosnippet>920</a>        </span><span class="kw">let </span>salt = EncryptionSalt::generate();
-<a href=#921 id=921 data-nosnippet>921</a>        <span class="kw">let </span>pin = EncryptionPin::try_from_string(<span class="string">"12345"</span>).unwrap();
-<a href=#922 id=922 data-nosnippet>922</a>        <span class="kw">let </span>encrypted_password =
-<a href=#923 id=923 data-nosnippet>923</a>            password.map(|s| PlainPassword::try_from_string(s).unwrap().encrypt(<span class="kw-2">&amp;</span>pin, <span class="kw-2">&amp;</span>salt).unwrap());
-<a href=#924 id=924 data-nosnippet>924</a>        <span class="kw">let </span>user = <span class="kw">crate</span>::types::users::UserEntity {
-<a href=#925 id=925 data-nosnippet>925</a>            user_id: <span class="prelude-val">None</span>,
-<a href=#926 id=926 data-nosnippet>926</a>            username: <span class="string">"share_user"</span>.to_string(),
-<a href=#927 id=927 data-nosnippet>927</a>            encrypted_password,
-<a href=#928 id=928 data-nosnippet>928</a>            salt,
-<a href=#929 id=929 data-nosnippet>929</a>            is_kyc_verified: <span class="bool-val">true</span>,
-<a href=#930 id=930 data-nosnippet>930</a>            kyc_type: KycType::Undefined,
-<a href=#931 id=931 data-nosnippet>931</a>            viviswap_state: <span class="prelude-val">None</span>,
-<a href=#932 id=932 data-nosnippet>932</a>            local_share: local_share.map(|s| s.to_string()),
-<a href=#933 id=933 data-nosnippet>933</a>            wallet_transactions: Vec::new(),
-<a href=#934 id=934 data-nosnippet>934</a>        };
+<a href=#916 id=916 data-nosnippet>916</a>        </span><span class="kw">let </span>salt = EncryptionSalt::generate();
+<a href=#917 id=917 data-nosnippet>917</a>        <span class="kw">let </span>pin = EncryptionPin::try_from_string(<span class="string">"123456"</span>).unwrap();
+<a href=#918 id=918 data-nosnippet>918</a>        <span class="kw">let </span>encrypted_password =
+<a href=#919 id=919 data-nosnippet>919</a>            password.map(|s| PlainPassword::try_from_string(s).unwrap().encrypt(<span class="kw-2">&amp;</span>pin, <span class="kw-2">&amp;</span>salt).unwrap());
+<a href=#920 id=920 data-nosnippet>920</a>        <span class="kw">let </span>user = <span class="kw">crate</span>::types::users::UserEntity {
+<a href=#921 id=921 data-nosnippet>921</a>            user_id: <span class="prelude-val">None</span>,
+<a href=#922 id=922 data-nosnippet>922</a>            username: <span class="string">"share_user"</span>.to_string(),
+<a href=#923 id=923 data-nosnippet>923</a>            encrypted_password,
+<a href=#924 id=924 data-nosnippet>924</a>            salt,
+<a href=#925 id=925 data-nosnippet>925</a>            is_kyc_verified: <span class="bool-val">true</span>,
+<a href=#926 id=926 data-nosnippet>926</a>            kyc_type: KycType::Undefined,
+<a href=#927 id=927 data-nosnippet>927</a>            viviswap_state: <span class="prelude-val">None</span>,
+<a href=#928 id=928 data-nosnippet>928</a>            local_share: local_share.map(|s| s.to_string()),
+<a href=#929 id=929 data-nosnippet>929</a>            wallet_transactions: Vec::new(),
+<a href=#930 id=930 data-nosnippet>930</a>        };
+<a href=#931 id=931 data-nosnippet>931</a>
+<a href=#932 id=932 data-nosnippet>932</a>        repo.expect_get().returning(<span class="kw">move </span>|<span class="kw">_</span>| <span class="prelude-val">Ok</span>(user.clone()));
+<a href=#933 id=933 data-nosnippet>933</a>
+<a href=#934 id=934 data-nosnippet>934</a>        manager.recovery_share = local_recovery_share.map(|s| s.parse::&lt;Share&gt;().unwrap());
 <a href=#935 id=935 data-nosnippet>935</a>
-<a href=#936 id=936 data-nosnippet>936</a>        repo.expect_get().returning(<span class="kw">move </span>|<span class="kw">_</span>| <span class="prelude-val">Ok</span>(user.clone()));
-<a href=#937 id=937 data-nosnippet>937</a>
-<a href=#938 id=938 data-nosnippet>938</a>        manager.recovery_share = local_recovery_share.map(|s| s.parse::&lt;Share&gt;().unwrap());
-<a href=#939 id=939 data-nosnippet>939</a>
-<a href=#940 id=940 data-nosnippet>940</a>        <span class="comment">// If the expected result is OK and there was no local share from the beginning, we expect
-<a href=#941 id=941 data-nosnippet>941</a>        // the local share to be set to a valid share.
-<a href=#942 id=942 data-nosnippet>942</a>        </span><span class="kw">if </span>expected_result.is_ok() &amp;&amp; local_share.is_none() {
-<a href=#943 id=943 data-nosnippet>943</a>            repo.expect_set_local_share().returning(|<span class="kw">_</span>, <span class="kw">_</span>| <span class="prelude-val">Ok</span>(()));
-<a href=#944 id=944 data-nosnippet>944</a>        }
-<a href=#945 id=945 data-nosnippet>945</a>        <span class="kw">let </span><span class="kw-2">mut </span>repo = Box::new(repo) <span class="kw">as </span>UserRepoT;
-<a href=#946 id=946 data-nosnippet>946</a>
-<a href=#947 id=947 data-nosnippet>947</a>        <span class="comment">// Function you want to test
-<a href=#948 id=948 data-nosnippet>948</a>        </span><span class="kw">let </span>result = manager
-<a href=#949 id=949 data-nosnippet>949</a>            .try_resemble_shares(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>access_token, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin)
-<a href=#950 id=950 data-nosnippet>950</a>            .<span class="kw">await
-<a href=#951 id=951 data-nosnippet>951</a>            </span>.map(|(_mnemonic, status)| status);
-<a href=#952 id=952 data-nosnippet>952</a>
-<a href=#953 id=953 data-nosnippet>953</a>        <span class="comment">// Assert
-<a href=#954 id=954 data-nosnippet>954</a>        </span><span class="kw">match </span>(<span class="kw-2">&amp;</span>result, expected_result) {
-<a href=#955 id=955 data-nosnippet>955</a>            (<span class="prelude-val">Ok</span>(s), <span class="prelude-val">Ok</span>(s2)) =&gt; <span class="macro">assert_eq!</span>(s, <span class="kw-2">&amp;</span>s2),
-<a href=#956 id=956 data-nosnippet>956</a>            (<span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(k)), <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(k2))) =&gt; {
-<a href=#957 id=957 data-nosnippet>957</a>                <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>k, k2)
-<a href=#958 id=958 data-nosnippet>958</a>            }
-<a href=#959 id=959 data-nosnippet>959</a>            (other, other2) =&gt; <span class="macro">panic!</span>(<span class="string">"Expected {other2:?} but got {other:?}"</span>),
-<a href=#960 id=960 data-nosnippet>960</a>        }
+<a href=#936 id=936 data-nosnippet>936</a>        <span class="comment">// If the expected result is OK and there was no local share from the beginning, we expect
+<a href=#937 id=937 data-nosnippet>937</a>        // the local share to be set to a valid share.
+<a href=#938 id=938 data-nosnippet>938</a>        </span><span class="kw">if </span>expected_result.is_ok() &amp;&amp; local_share.is_none() {
+<a href=#939 id=939 data-nosnippet>939</a>            repo.expect_set_local_share().returning(|<span class="kw">_</span>, <span class="kw">_</span>| <span class="prelude-val">Ok</span>(()));
+<a href=#940 id=940 data-nosnippet>940</a>        }
+<a href=#941 id=941 data-nosnippet>941</a>        <span class="kw">let </span><span class="kw-2">mut </span>repo = Box::new(repo) <span class="kw">as </span>UserRepoT;
+<a href=#942 id=942 data-nosnippet>942</a>
+<a href=#943 id=943 data-nosnippet>943</a>        <span class="comment">// Function you want to test
+<a href=#944 id=944 data-nosnippet>944</a>        </span><span class="kw">let </span>result = manager
+<a href=#945 id=945 data-nosnippet>945</a>            .try_resemble_shares(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>access_token, <span class="kw-2">&amp;mut </span>repo, <span class="kw-2">&amp;</span>pin)
+<a href=#946 id=946 data-nosnippet>946</a>            .<span class="kw">await
+<a href=#947 id=947 data-nosnippet>947</a>            </span>.map(|(_mnemonic, status)| status);
+<a href=#948 id=948 data-nosnippet>948</a>
+<a href=#949 id=949 data-nosnippet>949</a>        <span class="comment">// Assert
+<a href=#950 id=950 data-nosnippet>950</a>        </span><span class="kw">match </span>(<span class="kw-2">&amp;</span>result, expected_result) {
+<a href=#951 id=951 data-nosnippet>951</a>            (<span class="prelude-val">Ok</span>(s), <span class="prelude-val">Ok</span>(s2)) =&gt; <span class="macro">assert_eq!</span>(s, <span class="kw-2">&amp;</span>s2),
+<a href=#952 id=952 data-nosnippet>952</a>            (<span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(k)), <span class="prelude-val">Err</span>(WalletError::WalletNotInitialized(k2))) =&gt; {
+<a href=#953 id=953 data-nosnippet>953</a>                <span class="macro">assert_eq!</span>(<span class="kw-2">*</span>k, k2)
+<a href=#954 id=954 data-nosnippet>954</a>            }
+<a href=#955 id=955 data-nosnippet>955</a>            (other, other2) =&gt; <span class="macro">panic!</span>(<span class="string">"Expected {other2:?} but got {other:?}"</span>),
+<a href=#956 id=956 data-nosnippet>956</a>        }
+<a href=#957 id=957 data-nosnippet>957</a>
+<a href=#958 id=958 data-nosnippet>958</a>        <span class="comment">// if the result is Ok, make sure we have access to a valid wallet
+<a href=#959 id=959 data-nosnippet>959</a>        </span><span class="kw">if </span>result.is_ok() {
+<a href=#960 id=960 data-nosnippet>960</a>            tokio::time::sleep(std::time::Duration::from_secs(<span class="number">1</span>)).<span class="kw">await</span>;
 <a href=#961 id=961 data-nosnippet>961</a>
-<a href=#962 id=962 data-nosnippet>962</a>        <span class="comment">// if the result is Ok, make sure we have access to a valid wallet
-<a href=#963 id=963 data-nosnippet>963</a>        </span><span class="kw">if </span>result.is_ok() {
-<a href=#964 id=964 data-nosnippet>964</a>            tokio::time::sleep(std::time::Duration::from_secs(<span class="number">1</span>)).<span class="kw">await</span>;
-<a href=#965 id=965 data-nosnippet>965</a>
-<a href=#966 id=966 data-nosnippet>966</a>            <span class="kw">let </span>wallet = manager
-<a href=#967 id=967 data-nosnippet>967</a>                .try_get(
-<a href=#968 id=968 data-nosnippet>968</a>                    <span class="kw-2">&amp;mut </span>config,
-<a href=#969 id=969 data-nosnippet>969</a>                    <span class="kw-2">&amp;</span>access_token,
-<a href=#970 id=970 data-nosnippet>970</a>                    <span class="kw-2">&amp;mut </span>repo,
-<a href=#971 id=971 data-nosnippet>971</a>                    example_api_network(IOTA_NETWORK_KEY.to_string()),
-<a href=#972 id=972 data-nosnippet>972</a>                    <span class="kw-2">&amp;</span>pin,
-<a href=#973 id=973 data-nosnippet>973</a>                )
-<a href=#974 id=974 data-nosnippet>974</a>                .<span class="kw">await
-<a href=#975 id=975 data-nosnippet>975</a>                </span>.unwrap();
+<a href=#962 id=962 data-nosnippet>962</a>            <span class="kw">let </span>wallet = manager
+<a href=#963 id=963 data-nosnippet>963</a>                .try_get(
+<a href=#964 id=964 data-nosnippet>964</a>                    <span class="kw-2">&amp;mut </span>config,
+<a href=#965 id=965 data-nosnippet>965</a>                    <span class="kw-2">&amp;</span>access_token,
+<a href=#966 id=966 data-nosnippet>966</a>                    <span class="kw-2">&amp;mut </span>repo,
+<a href=#967 id=967 data-nosnippet>967</a>                    example_api_network(IOTA_NETWORK_KEY.to_string()),
+<a href=#968 id=968 data-nosnippet>968</a>                    <span class="kw-2">&amp;</span>pin,
+<a href=#969 id=969 data-nosnippet>969</a>                )
+<a href=#970 id=970 data-nosnippet>970</a>                .<span class="kw">await
+<a href=#971 id=971 data-nosnippet>971</a>                </span>.unwrap();
+<a href=#972 id=972 data-nosnippet>972</a>
+<a href=#973 id=973 data-nosnippet>973</a>            <span class="kw">let </span>address = wallet.get_address().<span class="kw">await</span>.unwrap();
+<a href=#974 id=974 data-nosnippet>974</a>            <span class="kw">let </span>balance = wallet.get_balance().<span class="kw">await</span>.unwrap();
+<a href=#975 id=975 data-nosnippet>975</a>            <span class="macro">println!</span>(<span class="string">"Recevier address: {address}, balance = {balance:?}"</span>);
 <a href=#976 id=976 data-nosnippet>976</a>
-<a href=#977 id=977 data-nosnippet>977</a>            <span class="kw">let </span>address = wallet.get_address().<span class="kw">await</span>.unwrap();
-<a href=#978 id=978 data-nosnippet>978</a>            <span class="kw">let </span>balance = wallet.get_balance().<span class="kw">await</span>.unwrap();
-<a href=#979 id=979 data-nosnippet>979</a>            <span class="macro">println!</span>(<span class="string">"Recevier address: {address}, balance = {balance:?}"</span>);
-<a href=#980 id=980 data-nosnippet>980</a>
-<a href=#981 id=981 data-nosnippet>981</a>            <span class="comment">// This check is nice, but does not play nice with nextest running the tests in parallel
-<a href=#982 id=982 data-nosnippet>982</a>            // from the CI, commented out for now.
-<a href=#983 id=983 data-nosnippet>983</a>            // assert!(balance.base_coin() &gt; 0);
-<a href=#984 id=984 data-nosnippet>984</a>        </span>}
-<a href=#985 id=985 data-nosnippet>985</a>
-<a href=#986 id=986 data-nosnippet>986</a>        m1.assert();
-<a href=#987 id=987 data-nosnippet>987</a>        m2.assert();
-<a href=#988 id=988 data-nosnippet>988</a>    }
-<a href=#989 id=989 data-nosnippet>989</a>}</code></pre></div></section></main></body></html>
+<a href=#977 id=977 data-nosnippet>977</a>            <span class="comment">// This check is nice, but does not play nice with nextest running the tests in parallel
+<a href=#978 id=978 data-nosnippet>978</a>            // from the CI, commented out for now.
+<a href=#979 id=979 data-nosnippet>979</a>            // assert!(balance.base_coin() &gt; 0);
+<a href=#980 id=980 data-nosnippet>980</a>        </span>}
+<a href=#981 id=981 data-nosnippet>981</a>
+<a href=#982 id=982 data-nosnippet>982</a>        m1.assert();
+<a href=#983 id=983 data-nosnippet>983</a>        m2.assert();
+<a href=#984 id=984 data-nosnippet>984</a>    }
+<a href=#985 id=985 data-nosnippet>985</a>}</code></pre></div></section></main></body></html>
