@@ -113,6 +113,10 @@ jobs:
         shell: bash
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
+      - name: Fetch the gh-pages branch
+        shell: bash
+        run: git fetch origin gh-pages
+
       - name: Deploy to GitHub Pages
         if: env.DEPLOY_ONLY == 'true'
         working-directory: docs
