@@ -179,7 +179,7 @@ async fn it_should_fail_get_balance_wrong_pin() {
     let _ = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
-    let wrong_pin = EncryptionPin::try_from_string("54321").unwrap();
+    let wrong_pin = EncryptionPin::try_from_string("543216").unwrap();
     let result = sdk.get_balance(&wrong_pin).await;
 
     // Assert
@@ -222,7 +222,7 @@ async fn it_should_reset_wallet_pin() {
     let _ = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
-    let new_pin = EncryptionPin::try_from_string("54321").unwrap();
+    let new_pin = EncryptionPin::try_from_string("543216").unwrap();
     let result = sdk.change_pin(&user.pin, &new_pin).await;
 
     // Assert
