@@ -590,8 +590,8 @@ mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
         example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME,
-        WALLET_PASSWORD,
+        ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN,
+        TX_INDEX, USERNAME, WALLET_PASSWORD,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -1297,7 +1297,7 @@ mod tests {
             Ok(UserEntity {
                 user_id: None,
                 username: USERNAME.to_string(),
-                encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+                encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
                 salt: SALT.into(),
                 is_kyc_verified: false,
                 kyc_type: KycType::Undefined,
@@ -1447,7 +1447,7 @@ mod tests {
             Ok(UserEntity {
                 user_id: None,
                 username: USERNAME.to_string(),
-                encrypted_password: Some(ENCRYPTED_PASSWORD.clone()),
+                encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
                 salt: SALT.into(),
                 is_kyc_verified: false,
                 kyc_type: KycType::Undefined,
