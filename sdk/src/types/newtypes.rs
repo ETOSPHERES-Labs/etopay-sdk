@@ -29,7 +29,6 @@ use iota_sdk::crypto::hashes::Digest;
 use log::warn;
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
-extern crate zxcvbn;
 use zxcvbn::{zxcvbn, Score};
 
 macro_rules! impl_redacted_debug {
@@ -171,7 +170,10 @@ impl EncryptionPin {
             return Err(TypeError::WeakPin);
         }
 
-        // TODO: check numerical values?
+        if !pin.chars().all(|c| c.is_ascii_digit()) {
+            warn!("Pin contains non-numeric characters");
+            return Err(TypeError::NonNumericPin);
+        }
 
         Ok(Self(pin.as_bytes().into()))
     }
@@ -325,5 +327,47 @@ mod test {
     fn test_generate_salt() {
         let salt = EncryptionSalt::generate();
         assert_eq!(salt.0.len(), 12);
+    }
+
+    #[test]
+    fn test_empty_password_fails() {
+        let result = PlainPassword::try_from_string("");
+        assert!(matches!(result, Err(TypeError::EmptyPassword)));
+    }
+
+    #[test]
+    fn test_weak_password_fails() {
+        let result = PlainPassword::try_from_string("weak pass");
+        assert!(matches!(result, Err(TypeError::WeakPassword)));
+    }
+
+    #[test]
+    fn test_strong_password_succeeds() {
+        let result = PlainPassword::try_from_string("Str0ngP@ssw0rd123!");
+        result.unwrap();
+    }
+
+    #[test]
+    fn test_empty_pin_fails() {
+        let result = EncryptionPin::try_from_string("");
+        assert!(matches!(result, Err(TypeError::EmptyPin)));
+    }
+
+    #[test]
+    fn test_short_pin_fails() {
+        let result = EncryptionPin::try_from_string("123");
+        assert!(matches!(result, Err(TypeError::WeakPin)));
+    }
+
+    #[test]
+    fn test_non_numeric_pin_fails() {
+        let result = EncryptionPin::try_from_string("abc123");
+        assert!(matches!(result, Err(TypeError::NonNumericPin)));
+    }
+
+    #[test]
+    fn test_valid_pin_succeeds() {
+        let result = EncryptionPin::try_from_string("123456");
+        result.unwrap();
     }
 }

@@ -24,6 +24,10 @@ pub enum TypeError {
     #[error("Weak pin")]
     WeakPin,
 
+    /// Error occurs when the user pin contains non numerical values
+    #[error("Pin should only contain numbers")]
+    NonNumericPin,
+
     /// Error raises if the access token is empty
     #[error("Access token should not be empty")]
     EmptyAccessToken,
