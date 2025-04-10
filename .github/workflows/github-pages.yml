@@ -25,7 +25,7 @@ jobs:
 
     env:
       GIT_DEPTH: 1000
-      DEPLOY_ONLY: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
+      DEPLOY_ONLY: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) || github.event_name == 'workflow_dispatch' }}
 
     steps:
       # take TAG_NAME from input variable
