@@ -30,6 +30,7 @@ use api_types::api::{
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
     },
 };
+use iota_sdk::wallet::account::types::InclusionState;
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;
@@ -361,8 +362,8 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         receiver: String::new(),
         incoming: true,
         amount: 20.0,
-        network_key: "some network".to_string(),
-        status: "Complete".to_string(),
+        network_key: "IOTA".to_string(),
+        status: format!("{:?}", InclusionState::Confirmed),
         explorer_url: None,
     }
 }
