@@ -1954,7 +1954,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-api-types"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "base64 0.22.1",
  "rstest",
@@ -1967,7 +1967,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "aes-gcm",
  "alloy",
@@ -2014,7 +2014,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-jni"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "etopay-sdk",
  "jni",
@@ -2028,7 +2028,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-swift"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "etopay-sdk",
  "serde_json",
@@ -2039,7 +2039,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-wasm"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
@@ -3256,7 +3256,7 @@ checksum = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
 
 [[package]]
 name = "jnigen-build"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "jnigen-common",
  "proc-macro2",
@@ -3266,7 +3266,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-common"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3275,7 +3275,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-integration-test"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "jni",
  "jnigen-build",
@@ -3284,7 +3284,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-macro"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "jnigen-common",
  "proc-macro2",
@@ -5502,7 +5502,7 @@ checksum = "8f50febec83f5ee1df3015341d8bd429f2d1cc62bcba7ea2076759d315084683"
 
 [[package]]
 name = "testing"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "chrono",
  "fake",
