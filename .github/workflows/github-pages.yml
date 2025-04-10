@@ -115,4 +115,5 @@ jobs:
 
       - name: Deploy to GitHub Pages
         if: env.DEPLOY_ONLY == 'true'
+        working-directory: docs
         run: mike deploy -p ${TAG_NAME}
