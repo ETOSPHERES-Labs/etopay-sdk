@@ -1,6 +1,8 @@
 //! This module defines methods for interacting with user-related functionality,
 //! such as getting user state, creating a new user, deleting a user, and more.
 
+use std::collections::HashSet;
+
 use super::Sdk;
 use crate::backend;
 use crate::backend::kyc::check_kyc_status;
@@ -9,7 +11,9 @@ use crate::types::newtypes::AccessToken;
 use crate::types::newtypes::EncryptionPin;
 use crate::types::newtypes::EncryptionSalt;
 use crate::types::users::{ActiveUser, KycType, UserEntity};
+use chrono::Utc;
 use log::{debug, info, warn};
+use uuid::Uuid;
 
 impl Sdk {
     /// Get user entity
@@ -34,6 +38,49 @@ impl Sdk {
 
         // load user state
         Ok(repo.get(active_user.username.as_str())?)
+    }
+
+    /// Debug config <temporary>
+    pub async fn debug_config(&self) -> Result<String> {
+        info!("calling debug_config");
+
+        Ok(format!("Config: {:?}", self.config))
+    }
+
+    /// Print time <temporary>
+    pub async fn print_time(&self) -> Result<String> {
+        info!("calling print_time");
+        let now = Utc::now();
+        let micros = now.timestamp_micros();
+
+        Ok(format!("print_time: {:?}", micros))
+    }
+
+    /// Check collision <temporary>
+    pub async fn check_collision(&self) -> Result<String> {
+        info!("calling check_collision");
+        let mut uuid_set = HashSet::new();
+        let mut collisions = Vec::new();
+
+        for _n in 1..10000 {
+            let uuid = Uuid::new_v4().to_string();
+            if !uuid_set.insert(uuid.clone()) {
+                collisions.push(uuid);
+            }
+        }
+
+        let collisions_str = collisions.clone().join(", ");
+
+        if collisions.is_empty() {
+            println!("no collision found.");
+        } else {
+            println!("Collisions:");
+            for collisions in collisions {
+                println!("{}", collisions);
+            }
+        }
+
+        Ok(format!("collisions_str: {:?}", collisions_str))
     }
 
     /// Create a new user

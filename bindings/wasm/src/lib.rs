@@ -112,6 +112,24 @@ impl ETOPaySdk {
         sdk.create_new_user(&username).await.map_err(|e| format!("{e:#?}"))
     }
 
+    #[wasm_bindgen(skip_jsdoc, js_name = "printTime")]
+    pub async fn print_time(&self) -> Result<String, String> {
+        let sdk = self.inner.write().await;
+        sdk.print_time().await.map_err(|e| format!("{e:#?}"))
+    }
+
+    #[wasm_bindgen(skip_jsdoc, js_name = "debugConfig")]
+    pub async fn debug_config(&self) -> Result<String, String> {
+        let sdk = self.inner.write().await;
+        sdk.debug_config().await.map_err(|e| format!("{e:#?}"))
+    }
+
+    #[wasm_bindgen(skip_jsdoc, js_name = "checkCollision")]
+    pub async fn check_collision(&self) -> Result<String, String> {
+        let sdk = self.inner.write().await;
+        sdk.check_collision().await.map_err(|e| format!("{e:#?}"))
+    }
+
     /// Initializes an existing user in the SDK
     ///
     /// @param {string} username - The input string representing the username.
