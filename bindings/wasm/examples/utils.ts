@@ -29,7 +29,7 @@ export async function initSdk(username: string) {
     await sdk.setConfig(`
     {
         "backend_url": "${url}",
-        "log_level": "info",
+        "log_level": "debug",
         "auth_provider": "standalone"
     }
     `);
