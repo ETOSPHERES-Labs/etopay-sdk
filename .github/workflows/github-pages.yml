@@ -2,10 +2,13 @@ name: Publish Wiki to GitHub Pages
 
 on:
   workflow_dispatch:
+    inputs:
+      tag_name:
+        description: "Tag name for release"
+        required: true
   push:
     branches:
       - main
-      - release/*
     tags:
       - v[0-9]+.[0-9]+.[0-9]+(-rc.+)?
   pull_request:
@@ -22,9 +25,27 @@ jobs:
 
     env:
       GIT_DEPTH: 1000
-      DEPLOY_ONLY: ${{ github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/heads/release/')) }}
+      # only deploy if we push to main or a tag, or if it is manually triggered
+      DEPLOY_ONLY: ${{ (github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))) || github.event_name == 'workflow_dispatch' }}
 
     steps:
+      # take TAG_NAME from input variable, update alias "latest"
+      - if: github.event_name == 'workflow_dispatch'
+        run: echo "TAG_NAME=${{ github.event.inputs.tag_name }} latest" | tee -a $GITHUB_ENV
+
+      # if this run is the push to main, it is the 'nightly' release
+      - if: (github.event_name == 'push' && github.event.ref == 'refs/heads/main' ) || github.event_name == 'pull_request'
+        run: echo 'TAG_NAME=devel' | tee -a $GITHUB_ENV
+
+      # if this run is not the push to main it is a tag, take the tag value, update alias "latest"
+      - if: github.event_name == 'push' && github.event.ref != 'refs/heads/main'
+        run: |
+          TAG_NAME=${{ github.ref }}
+          echo "TAG_NAME=${TAG_NAME#refs/tags/} latest" | tee -a $GITHUB_ENV
+
+      - name: Tag Name
+        run: echo ${TAG_NAME}
+
       - name: Checkout code
         uses: actions/checkout@v4
         with:
@@ -93,15 +114,14 @@ jobs:
         shell: bash
         run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
 
-      - name: Build the documentation
+      - name: Fetch the gh-pages branch
         shell: bash
-        working-directory: docs
-        run: mkdocs build
+        run: git fetch origin gh-pages
 
       - name: Deploy to GitHub Pages
         if: env.DEPLOY_ONLY == 'true'
-        uses: peaceiris/actions-gh-pages@v3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs/site
-          cname: docs.etospheres.com
+        working-directory: docs
+        run: mike deploy -p ${TAG_NAME}
+        env:
+          GIT_COMMITTER_NAME: ci-bot
+          GIT_COMMITTER_EMAIL: ci-bot@etospheres.com
