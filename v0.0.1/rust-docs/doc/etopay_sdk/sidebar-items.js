@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["ErrorKind","WalletError"],"macro":["require_feature"],"mod":["build","core","error","kdbx","share","types","wallet_manager"]};

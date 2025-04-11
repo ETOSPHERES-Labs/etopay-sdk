@@ -1,1 +1,0 @@
-window.SIDEBAR_ITEMS = {"enum":["KdbxStorageError"],"fn":["load_mnemonic","store_mnemonic"]};
