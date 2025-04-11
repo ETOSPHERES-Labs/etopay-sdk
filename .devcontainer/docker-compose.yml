@@ -7,7 +7,7 @@ networks:
 
 services:
   devcontainer:
-    image: ghcr.io/etospheres-labs/etopay-sdk-devcontainer:latest
+    image: ghcr.io/etospheres-labs/etopay-sdk-devcontainer:v1.0.0
 
     platform: "linux/amd64"
     volumes:
