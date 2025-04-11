@@ -2,12 +2,12 @@ version: '3.7'
 
 networks:
   default:
-    name: cryptpayrs_devcontainer_default
+    name: etopay_sdk_devcontainer
     driver: bridge
 
 services:
   devcontainer:
-    image: repo.farmunited.com/egdbz-docker/cryptpay/devcontainer:v1.6.0
+    image: ghcr.io/etospheres-labs/etopay-sdk-devcontainer:latest
 
     platform: "linux/amd64"
     volumes:
