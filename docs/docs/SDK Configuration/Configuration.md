@@ -101,7 +101,7 @@ The `backend_url` is the URL to the ETOPay backend system. Depending on if you a
 - Live: `https://api-etopay.etospheres.com`
 - Test: `https://api-test-etopay.etospheres.com`
 
-### Configuring the storage path prefix
+### Configuring the storage path
 
 For all platforms, except for when using the TypeScript/Javascript bindings, it is mandatory that the application has access to a file system where it is allowed read and write files and directories and sub-directories. This (existing) folder is specified as the `strorage_path` field in the configuration and accepts both releative and absolute paths. Absolute paths are, however, preferred and recommended.
 
