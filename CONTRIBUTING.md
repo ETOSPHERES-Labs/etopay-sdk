@@ -55,6 +55,33 @@ We appreciate clear and detailed bug reports—they help us understand and resol
 
 Please, check for duplicates to see if someone has already reported it. We *love* thorough bug reports.
 
+## Local Development with Dev Containers
+
+To streamline your development process, we provide a pre-configured development container hosted at [etopay-sdk-devcontainer](https://github.com/ETOSPHERES-Labs/etopay-sdk-devcontainer). This container includes all necessary dependencies and is ready to use with Visual Studio Code.
+
+### Steps to Use the Dev Container
+
+1. **Clone the Dev Container Repository**  
+   Clone the [etopay-sdk](https://github.com/ETOSPHERES-Labs/etopay-sdk) repository:
+   ```bash
+   git clone https://github.com/ETOSPHERES-Labs/etopay-sdk.git
+   ```
+
+2. **Open the Project in VS Code**  
+   Open the `etopay-sdk` project in Visual Studio Code.
+
+3. **Reopen in Container**  
+   Ensure you have the [Dev Containers extension](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) installed. Then, reopen the project in the dev container:
+   - Press `F1` in VS Code.
+   - Select **Dev Containers: Reopen in Container**.
+
+4. **Start Developing**  
+   Once the container is pulled and running, you can start developing immediately. The container includes all required tools and dependencies for the project.
+
+For more details on using dev containers, refer to the [official documentation](https://code.visualstudio.com/docs/devcontainers/containers).
+
+By using the dev container, you ensure a consistent development environment across all contributors. Happy coding!
+
 ## Community
 
 You can reach out to us via Github directly or email.
