@@ -441,7 +441,9 @@ impl Sdk {
 
         // if there is an access token, push the generated address to the backend
         if let Some(access_token) = self.access_token.as_ref() {
-            put_user_address(config, access_token, network.key, &address).await?;
+            if network.can_do_purchases {
+                put_user_address(config, access_token, network.key, &address).await?;
+            }
         }
         debug!("Generated address: {address}");
         Ok(address)
