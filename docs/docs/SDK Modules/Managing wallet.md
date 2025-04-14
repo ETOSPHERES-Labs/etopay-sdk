@@ -42,7 +42,7 @@ Before any interaction with the wallet and a network can be done, a network need
 
 ## Transaction Storage
 
-Due to the nature of blockains, and to avoid having to scan all the historical blocks, the SDK needs to locally keep track of all the transactions a user has performed. Therefore the wallet has a local database, which also stores all user information, that holds this information. This database is stored in a file on compatible platforms and in the browser local storage if used on the web. To configure the location of this database, please see [Configuring the SDK](../SDK%20Configuration/Configuration.md#configuring-the-storage-path-prefix).
+Due to the nature of blockains, and to avoid having to scan all the historical blocks, the SDK needs to locally keep track of all the transactions a user has performed. Therefore the wallet has a local database, which also stores all user information, that holds this information. This database is stored in a file on compatible platforms and in the browser local storage if used on the web. To configure the location of this database, please see [Configuring the SDK](../SDK%20Configuration/Configuration.md#configuring-the-storage-path).
 
 
 ## Wallet Lifecycle
