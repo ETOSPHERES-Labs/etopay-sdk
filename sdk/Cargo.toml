@@ -87,7 +87,7 @@ zeroize = { version = "1.8", default-features = false, features = [
     "std",
     "zeroize_derive",
 ] }
-alloy = { version = "0.13", default-features = false, features = [
+alloy = { version = "0.14", default-features = false, features = [
     "providers",
     "rpc-types",
     "signer-mnemonic",
