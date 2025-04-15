@@ -203,17 +203,7 @@ fn add_no_mangle(function: &mut syn::ItemFn) -> syn::Result<()> {
 
 /// adds an attribute to allow non_snake_case lint
 fn allow_non_snake_case(function: &mut syn::ItemFn) -> syn::Result<()> {
-    function.attrs.push(syn::Attribute {
-        pound_token: Default::default(),
-        style: syn::AttrStyle::Outer,
-        bracket_token: Default::default(),
-        meta: syn::Meta::List(syn::MetaList {
-            path: syn::parse_str("allow").unwrap(),
-            delimiter: syn::MacroDelimiter::Paren(Default::default()),
-            tokens: quote::quote! { non_snake_case },
-        }),
-    });
-
+    function.attrs.push(syn::parse_quote! { #[allow(non_snake_case)]});
     Ok(())
 }
 
