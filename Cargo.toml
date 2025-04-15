@@ -21,7 +21,7 @@ resolver = "2"
 
 [workspace.package]
 version = "0.14.2"
-edition = "2021"
+edition = "2024"
 authors = ["Team Lobster 🦞"]
 license = "AGPL-3.0-only"
 license-file = "LICENSE"
