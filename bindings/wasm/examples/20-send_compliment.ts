@@ -1,5 +1,5 @@
 import * as wasm from "../pkg/etopay_sdk_wasm";
-import { initSdk } from './utils';
+import { initSdk, PIN } from './utils';
 
 // Send compliment example with sender `alice` and receiver `satoshi`
 
@@ -11,23 +11,21 @@ const timeoutPromise = new Promise<never>((_, reject) =>
 
 async function main() {
     let username = "alice";
-    let pin = "1234";
 
     // Initialize SDK
     const sdk = await initSdk(username);
 
     // Get env variables
     let mnemonic: string = (process.env.MNEMONIC_ALICE as string);
-    let password: string = (process.env.PASSWORD as string);
+    let password = "correcthorsebatterystaple";
 
     // Create new user and initialize it
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
 
-
     // Create new wallet and initialize it
-    await sdk.setWalletPassword(pin, password);
-    await sdk.createWalletFromMnemonic(pin, mnemonic);
+    await sdk.setWalletPassword(PIN, password);
+    await sdk.createWalletFromMnemonic(PIN, mnemonic);
 
     // fetch networks from backend
     let networks = await sdk.getNetworks();
@@ -35,10 +33,10 @@ async function main() {
     sdk.setNetwork(networks[0].key);
 
     // Generate new receiver address and fetch current balance
-    let address = await sdk.generateNewAddress(pin);
+    let address = await sdk.generateNewAddress(PIN);
     console.log("Address:", address);
 
-    let balance = await sdk.getWalletBalance(pin);
+    let balance = await sdk.getWalletBalance(PIN);
     console.log("Balance:", balance);
 
     // Create new purchase request
@@ -71,7 +69,7 @@ async function main() {
     ]);
 
     // When the transaction is Valid, confirm it
-    await sdk.confirmPurchaseRequest(pin, purchase_id);
+    await sdk.confirmPurchaseRequest(PIN, purchase_id);
 
     // Wait 3 min while transaction status is `Complete`
     console.log("Waiting until transaction status is `Complete`..");
@@ -95,7 +93,7 @@ async function main() {
     ]);
 
     // Get new balance after sending the compliment
-    let new_balance = await sdk.getWalletBalance(pin);
+    let new_balance = await sdk.getWalletBalance(PIN);
     console.log("New Balance:", new_balance);
 
     // Forcefully exit the process to ensure it completes.

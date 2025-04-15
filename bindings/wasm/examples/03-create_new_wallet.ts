@@ -1,16 +1,16 @@
 import * as wasm from "../pkg/etopay_sdk_wasm";
-import { initSdk } from './utils';
+import { initSdk, PIN } from './utils';
 
 async function main() {
     let username = "satoshi";
-    let pin = "1234";
+
     const sdk = await initSdk(username);
-    let password: string = (process.env.PASSWORD as string);
+    let password = "correcthorsebatterystaple";
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setWalletPassword(pin, password);
+    await sdk.setWalletPassword(PIN, password);
 
-    let mnemonic = await sdk.createNewWallet(pin);
+    let mnemonic = await sdk.createNewWallet(PIN);
     console.log("Mnemonic: ", mnemonic);
 }
 

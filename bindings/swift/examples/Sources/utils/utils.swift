@@ -5,6 +5,7 @@ import Foundation
 public struct Environment {
     public let username: String
     public let password: String
+    public let wallet_password: String
     public let pin: String
     public let mnemonic: String
 
@@ -19,7 +20,8 @@ public struct Environment {
 
         self.username = username
         self.password = password
-        self.pin = "1234"
+        self.wallet_password = "correcthorsebatterystaple"
+        self.pin = "123456"
         self.mnemonic = mnemonic
     }
 }

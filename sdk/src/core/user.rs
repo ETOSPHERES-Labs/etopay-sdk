@@ -349,7 +349,7 @@ mod tests {
         let (mut srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let pin = EncryptionPin::try_from_string("1234").unwrap();
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
 
         let mut mock_server = None;
         match &expected {

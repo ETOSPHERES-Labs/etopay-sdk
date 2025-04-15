@@ -1,28 +1,28 @@
-import { initSdk } from './util';
+import { initSdk, PIN } from './util';
 import * as wasm from "etopay-sdk-wasm";
 
 async function main() {
     let username = "satoshi";
-    let pin = "1234";
-    let password = "StrongP@55w0rd";
+
+    let password = "correcthorsebatterystaple";
     let mnemonic = process.env.MNEMONIC;
     let receiver = "alice";
 
     const sdk = await initSdk();
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
-    await sdk.setWalletPassword(pin, password);
-    await sdk.createWalletFromMnemonic(pin, mnemonic);
+    await sdk.setWalletPassword(PIN, password);
+    await sdk.createWalletFromMnemonic(PIN, mnemonic);
 
     // fetch networks from backend
     let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
     sdk.setNetwork(networks[0].key);
 
-    let address = await sdk.generateNewAddress(pin);
+    let address = await sdk.generateNewAddress(PIN);
     console.debug(`Generated new IOTA receiver address: ${address}`);
 
-    let balance = await sdk.getWalletBalance(pin);
+    let balance = await sdk.getWalletBalance(PIN);
 
     console.log("balance : ", balance);
 

@@ -22,7 +22,7 @@ async fn it_should_change_password_with_wallet() {
 
     // Act
     assert!(!sdk.is_wallet_password_set().await.unwrap());
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
@@ -42,7 +42,7 @@ async fn it_should_change_password_without_wallet() {
 
     // Act
     assert!(!sdk.is_wallet_password_set().await.unwrap());
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     let new_password = PlainPassword::try_from_string("new_password!").unwrap();
     sdk.set_wallet_password(&user.pin, &new_password).await.unwrap();
@@ -56,7 +56,7 @@ async fn it_should_create_a_new_wallet_with_access_token() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     // Act
     let result = sdk.create_wallet_from_new_mnemonic(&user.pin).await;
@@ -77,7 +77,7 @@ async fn it_should_create_a_new_wallet_without_access_token() {
     sdk.refresh_access_token(None).await.unwrap();
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     // Act
     let result = sdk.create_wallet_from_new_mnemonic(&user.pin).await;
@@ -95,7 +95,7 @@ async fn it_should_verify_mnemonic() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
     let mnemonic = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
@@ -114,7 +114,7 @@ async fn it_should_initialize_from_mnemonic() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
@@ -135,7 +135,7 @@ async fn it_should_generate_new_receiver_address() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
@@ -155,7 +155,7 @@ async fn it_should_get_balance() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     let _ = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
     // Act
@@ -174,12 +174,12 @@ async fn it_should_fail_get_balance_wrong_pin() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     let _ = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
-    let wrong_pin = EncryptionPin::try_from_string("54321").unwrap();
+    let wrong_pin = EncryptionPin::try_from_string("543216").unwrap();
     let result = sdk.get_balance(&wrong_pin).await;
 
     // Assert
@@ -198,7 +198,7 @@ async fn it_should_create_wallet_backup() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
     let _ = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
@@ -218,11 +218,11 @@ async fn it_should_reset_wallet_pin() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
     let _ = sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
-    let new_pin = EncryptionPin::try_from_string("54321").unwrap();
+    let new_pin = EncryptionPin::try_from_string("543216").unwrap();
     let result = sdk.change_pin(&user.pin, &new_pin).await;
 
     // Assert
@@ -237,7 +237,7 @@ async fn it_should_get_wallet_transaction_list() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
@@ -265,7 +265,7 @@ async fn it_should_fail_getting_balance_without_creating_wallet() {
     let (mut sdk, _cleanup) = init_sdk(&user.username).await;
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.delete_wallet(&user.pin).await.unwrap(); // make sure the wallet does not exist
 
@@ -295,7 +295,7 @@ async fn it_should_delete_wallet() {
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
     sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
 
     // Act
@@ -320,7 +320,7 @@ async fn it_should_initialize_wallet_from_shares_no_access_token() {
     // create user and wallet
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
@@ -381,7 +381,7 @@ async fn it_should_initialize_wallet_from_shares_with_access_token() {
     // create user and wallet
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
@@ -436,7 +436,7 @@ async fn it_should_recreate_local_share() {
         // create user and wallet
         sdk.create_new_user(&user.username).await.unwrap();
         sdk.init_user(&user.username).await.unwrap();
-        sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+        sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
         sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
             .await
@@ -450,7 +450,7 @@ async fn it_should_recreate_local_share() {
     {
         sdk.create_new_user(&user.username).await.unwrap(); // recreate user since we cleaned the db
         sdk.init_user(&user.username).await.unwrap();
-        sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+        sdk.set_wallet_password(&user.pin, &user.wallet_password).await.unwrap();
 
         // initialization from shares should be able to use recovery and backup share with password
         let _ = sdk.generate_new_address(&user.pin).await.unwrap();

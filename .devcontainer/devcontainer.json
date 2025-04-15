@@ -1,14 +1,9 @@
 // cSpell:disable
 {
-	"name": "DaprDevEnv",
+	"name": "ETOPay SDK Dev Env",
 	"dockerComposeFile": "docker-compose.yml",
 	"service": "devcontainer",
 	"workspaceFolder": "/workspaces/${localWorkspaceFolderBasename}",
-	"features": {
-		"ghcr.io/dapr/cli/dapr-cli:0": {},
-		// Enable Docker (via Docker-in-Docker)
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
-	},
 	// Use this environment variable if you need to bind mount your local source code into a new container.
 	"mounts": [
 		"source=${localEnv:HOME}/.ssh,target=/home/vscode/.ssh,type=bind",
@@ -38,8 +33,6 @@
 				"mutantdino.resourcemonitor",
 				"ms-vscode.vscode-typescript-next",
 				"ms-vscode.makefile-tools",
-				"ms-dotnettools.csharp",
-				"humao.rest-client",
 				"usernamehw.errorlens",
 				"redhat.vscode-yaml",
 				"gruntfuggly.todo-tree",

@@ -20,7 +20,7 @@ public class SendCompliment20 {
         // initialize the sdk
         ETOPaySdk sdk = utils.initSdk(utils.USERNAME_HANS48);
 
-        String password = utils.getEnvVariable("PASSWORD");
+        String password = "correcthorsebatterystaple";
         String mnemonic_hans48 = utils.getEnvVariable("MNEMONIC_HANS48");
 
         try {

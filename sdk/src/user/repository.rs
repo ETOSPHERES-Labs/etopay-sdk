@@ -142,7 +142,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        testing_utils::{ENCRYPTED_PASSWORD, ETH_NETWORK_KEY},
+        testing_utils::{ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY},
         types::{
             newtypes::{EncryptedPassword, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -183,7 +183,7 @@ mod tests {
         // Arrange
         let username = "hauju";
 
-        let user = create_user_entity(username, Some(ENCRYPTED_PASSWORD.clone()));
+        let user = create_user_entity(username, Some(ENCRYPTED_WALLET_PASSWORD.clone()));
 
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
         user_repo.create(&user).unwrap();
@@ -197,8 +197,8 @@ mod tests {
     fn it_should_set_wallet_password() {
         // Arrange
         let username = "hauju";
-        let pin = EncryptionPin::try_from_string("1234").unwrap();
-        let plain_password = "StrongP@55w0rd";
+        let pin = EncryptionPin::try_from_string("123456").unwrap();
+        let plain_password = "correcthorsebatterystaple";
 
         let user = create_user_entity(username, None);
 

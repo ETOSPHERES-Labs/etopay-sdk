@@ -1,9 +1,8 @@
-import { initSdk } from './util';
+import { initSdk, PIN } from './util';
 import * as wasm from "etopay-sdk-wasm";
 
 async function main() {
     let username = "satoshi";
-    let pin = "1234";
 
     const sdk = await initSdk();
     await sdk.createNewUser(username);

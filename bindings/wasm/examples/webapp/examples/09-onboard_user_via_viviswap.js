@@ -1,4 +1,4 @@
-import { initSdk } from './util';
+import { initSdk, PIN } from './util';
 import * as wasm from "etopay-sdk-wasm";
 
 async function main() {

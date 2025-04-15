@@ -14,7 +14,7 @@ public class SendAmount13 {
         // initialize the sdk
         ETOPaySdk sdk = utils.initSdk(utils.USERNAME_SATOSHI);
 
-        String password = utils.getEnvVariable("PASSWORD");
+        String password = "correcthorsebatterystaple";
         String mnemonic = utils.getEnvVariable("MNEMONIC");
 
         try {

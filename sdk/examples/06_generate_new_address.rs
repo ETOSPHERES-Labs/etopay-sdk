@@ -1,3 +1,4 @@
+use etopay_sdk::types::newtypes::PlainPassword;
 use testing::USER_SATOSHI;
 mod utils;
 use utils::init_sdk;
@@ -14,7 +15,12 @@ async fn main() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Create / init new wallet from mnemonic
-    sdk.set_wallet_password(&user.pin, &user.password).await.unwrap();
+    sdk.set_wallet_password(
+        &user.pin,
+        &PlainPassword::try_from_string("correcthorsebatterystaple").unwrap(),
+    )
+    .await
+    .unwrap();
     sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();

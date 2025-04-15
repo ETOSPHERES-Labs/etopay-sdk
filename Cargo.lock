@@ -1034,12 +1034,27 @@ dependencies = [
 
 [[package]]
 name = "bit-set"
+version = "0.5.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "0700ddab506f33b20a03b13996eccd309a48e5ff77d0d95926aa0210fb4e95f1"
+dependencies = [
+ "bit-vec 0.6.3",
+]
+
+[[package]]
+name = "bit-set"
 version = "0.8.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "08807e080ed7f9d5433fa9b275196cfc35414f66a0c79d864dc51a0d825231a3"
 dependencies = [
- "bit-vec",
+ "bit-vec 0.8.0",
 ]
+
+[[package]]
+name = "bit-vec"
+version = "0.6.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "349f9b6a179ed607305526ca489b34ad0a41aed5f7980fa90eb03160b69598fb"
 
 [[package]]
 name = "bit-vec"
@@ -1939,7 +1954,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-api-types"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "base64 0.22.1",
  "rstest",
@@ -1952,7 +1967,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "aes-gcm",
  "alloy",
@@ -1994,11 +2009,12 @@ dependencies = [
  "walkdir",
  "web-sys",
  "zeroize",
+ "zxcvbn",
 ]
 
 [[package]]
 name = "etopay-sdk-jni"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "etopay-sdk",
  "jni",
@@ -2012,7 +2028,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-swift"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "etopay-sdk",
  "serde_json",
@@ -2023,7 +2039,7 @@ dependencies = [
 
 [[package]]
 name = "etopay-sdk-wasm"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "console_error_panic_hook",
  "console_log",
@@ -2143,6 +2159,17 @@ dependencies = [
  "deunicode",
  "dummy",
  "rand 0.9.0",
+]
+
+[[package]]
+name = "fancy-regex"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "531e46835a22af56d1e3b66f04844bed63158bc094a628bec1d321d9b4c44bf2"
+dependencies = [
+ "bit-set 0.5.3",
+ "regex-automata",
+ "regex-syntax",
 ]
 
 [[package]]
@@ -3143,6 +3170,15 @@ dependencies = [
 
 [[package]]
 name = "itertools"
+version = "0.13.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
+dependencies = [
+ "either",
+]
+
+[[package]]
+name = "itertools"
 version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "2b192c782037fadd9cfa75548310488aabdbf3d2da73885b31bd0abd03351285"
@@ -3220,7 +3256,7 @@ checksum = "8eaf4bc02d17cbdd7ff4c7438cafcdf7fb9a4613313ad11b4f8fefe7d3fa0130"
 
 [[package]]
 name = "jnigen-build"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "jnigen-common",
  "proc-macro2",
@@ -3230,7 +3266,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-common"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3239,7 +3275,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-integration-test"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "jni",
  "jnigen-build",
@@ -3248,7 +3284,7 @@ dependencies = [
 
 [[package]]
 name = "jnigen-macro"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "jnigen-common",
  "proc-macro2",
@@ -4113,8 +4149,8 @@ version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "14cae93065090804185d3b75f0bf93b8eeda30c7a9b4a33d3bdb3988d6229e50"
 dependencies = [
- "bit-set",
- "bit-vec",
+ "bit-set 0.8.0",
+ "bit-vec 0.8.0",
  "bitflags 2.9.0",
  "lazy_static",
  "num-traits",
@@ -5469,7 +5505,7 @@ checksum = "8f50febec83f5ee1df3015341d8bd429f2d1cc62bcba7ea2076759d315084683"
 
 [[package]]
 name = "testing"
-version = "0.14.0-rc0"
+version = "0.14.1"
 dependencies = [
  "chrono",
  "fake",
@@ -6847,4 +6883,20 @@ dependencies = [
  "log",
  "once_cell",
  "simd-adler32",
+]
+
+[[package]]
+name = "zxcvbn"
+version = "3.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ad76e35b00ad53688d6b90c431cabe3cbf51f7a4a154739e04b63004ab1c736c"
+dependencies = [
+ "chrono",
+ "fancy-regex",
+ "itertools 0.13.0",
+ "lazy_static",
+ "regex",
+ "time",
+ "wasm-bindgen",
+ "web-sys",
 ]

@@ -17,7 +17,7 @@ Task {
         let username_archive = ProcessInfo.processInfo.environment["ARCHIEVEME"]!;
 
         // Initialize SDK
-        let sdk = try await initSdk(username: username_archive, password: env.password)
+        let sdk = try await initSdk(username: username_archive, password: env.wallet_password)
         
         // Create new user
         try await sdk.createNewUser(username_archive)
@@ -26,7 +26,7 @@ Task {
         print("initialized new user: \(username_archive)")
         
         // Create new wallet
-        try await sdk.setWalletPassword(env.pin, env.password)
+        try await sdk.setWalletPassword(env.pin, env.wallet_password)
         let _ = try await sdk.createNewWallet(env.pin)
         print("created new wallet")
         
