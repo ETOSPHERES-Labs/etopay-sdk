@@ -5,10 +5,10 @@ use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoLi
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManager;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
-use iota_sdk::types::block::payload::transaction::TransactionId;
 use iota_sdk::types::block::payload::TaggedDataPayload;
-use iota_sdk::wallet::account::{Account, SyncOptions, TransactionOptions};
+use iota_sdk::types::block::payload::transaction::TransactionId;
 use iota_sdk::wallet::ClientOptions;
+use iota_sdk::wallet::account::{Account, SyncOptions, TransactionOptions};
 use log::{error, info};
 use rust_decimal_macros::dec;
 use std::fmt::Debug;

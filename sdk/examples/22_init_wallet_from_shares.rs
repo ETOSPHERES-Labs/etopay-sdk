@@ -1,4 +1,4 @@
-use etopay_sdk::{types::newtypes::PlainPassword, ErrorKind, WalletError};
+use etopay_sdk::{ErrorKind, WalletError, types::newtypes::PlainPassword};
 use testing::USER_SATOSHI;
 use utils::init_sdk;
 mod utils;

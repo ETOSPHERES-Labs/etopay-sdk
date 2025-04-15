@@ -6,8 +6,8 @@ use crate::wallet::error::WalletError;
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
-use alloy::signers::local::coins_bip39::English;
 use alloy::signers::local::MnemonicBuilder;
+use alloy::signers::local::coins_bip39::English;
 use alloy::sol_types::SolCall;
 use alloy::{
     primitives::Address,
@@ -25,8 +25,8 @@ use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::wallet::account::types::InclusionState;
 use log::info;
 use reqwest::Url;
-use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::Decimal;
+use rust_decimal::prelude::FromPrimitive;
 use std::fmt::Debug;
 use std::str::FromStr;
 

@@ -247,7 +247,7 @@ pub async fn delete_shares(config: &Config, access_token: &AccessToken, username
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        set_config, AUTH_PROVIDER, ENCRYPTED_SHARE, HEADER_X_APP_NAME, NOT_ENCRYPTED_SHARE, TOKEN, USERNAME,
+        AUTH_PROVIDER, ENCRYPTED_SHARE, HEADER_X_APP_NAME, NOT_ENCRYPTED_SHARE, TOKEN, USERNAME, set_config,
     };
     use mockito::Matcher;
     use secrecy::ExposeSecret;

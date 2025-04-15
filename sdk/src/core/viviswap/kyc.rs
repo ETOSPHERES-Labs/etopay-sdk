@@ -10,7 +10,7 @@ use crate::{
     types::viviswap::NewViviswapUser,
 };
 use crate::{
-    core::{viviswap::ViviswapError, Sdk},
+    core::{Sdk, viviswap::ViviswapError},
     error::Result,
 };
 use api_types::api::viviswap::kyc::{

@@ -2,8 +2,8 @@ use jnigen_common::ArgumentType;
 use jnigen_common::ReturnType;
 use proc_macro2::Span;
 use proc_macro2::TokenStream;
-use quote::quote;
 use quote::ToTokens;
+use quote::quote;
 use syn::spanned::Spanned;
 
 #[proc_macro_attribute]
@@ -48,7 +48,7 @@ fn generate_inner(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStre
             return Err(syn::Error::new(
                 item_span,
                 "The attribute can only be applied to `mod` items",
-            ))
+            ));
         }
     };
 
@@ -59,7 +59,7 @@ fn generate_inner(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStre
             return Err(syn::Error::new(
                 attr_span,
                 "The attribute must have a single string literal supplied to specify the namespace",
-            ))
+            ));
         }
     }
     .value();
@@ -79,7 +79,7 @@ fn generate_inner(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStre
                     return Err(syn::Error::new(
                         item_span,
                         "The attribute can only be applied to `mod` items containing functions",
-                    ))
+                    ));
                 }
             }
         }

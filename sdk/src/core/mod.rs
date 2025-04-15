@@ -176,7 +176,7 @@ mod tests {
     use crate::{
         core::Sdk,
         error::Result,
-        testing_utils::{example_wallet_borrow, set_config, PIN, USERNAME},
+        testing_utils::{PIN, USERNAME, example_wallet_borrow, set_config},
         user::MockUserRepo,
         wallet::wallet::MockWalletUser,
         wallet_manager::WalletBorrow,
@@ -186,7 +186,7 @@ mod tests {
     use rstest::rstest;
 
     use crate::{
-        testing_utils::{example_api_networks, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN},
+        testing_utils::{AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, example_api_networks},
         wallet_manager::MockWalletManager,
     };
 

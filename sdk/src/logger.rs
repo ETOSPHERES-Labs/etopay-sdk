@@ -5,7 +5,7 @@
 //!
 //!
 
-use fern_logger::{logger_init, LoggerConfig, LoggerOutputConfigBuilder};
+use fern_logger::{LoggerConfig, LoggerOutputConfigBuilder, logger_init};
 use log::warn;
 
 /// Initializes the logger

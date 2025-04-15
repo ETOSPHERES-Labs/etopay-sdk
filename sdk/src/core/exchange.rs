@@ -28,14 +28,14 @@ impl Sdk {
 #[cfg(test)]
 mod tests {
     use crate::core::core_testing_utils::handle_error_test_cases;
-    use crate::testing_utils::{example_api_networks, IOTA_NETWORK_KEY};
+    use crate::testing_utils::{IOTA_NETWORK_KEY, example_api_networks};
     use crate::types::users::ActiveUser;
     use crate::{
         core::Sdk,
         error::Result,
         testing_utils::{
-            example_exchange_rate_response, example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
-            USERNAME,
+            AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME, example_exchange_rate_response, example_get_user,
+            set_config,
         },
         types::users::KycType,
         wallet_manager::MockWalletManager,

@@ -82,7 +82,7 @@ pub const ETH_NETWORK_KEY: &str = "ETH";
 
 /// Mnemonic for testing.
 /// Iota: tst1qz7m7xtfppy9xd73xvsnpvlnx5rcewjz2k2gqh6w67tdleks83rh768k6rc
-pub const MNEMONIC:&str = "aware mirror sadness razor hurdle bus scout crisp close life science spy shell fine loop govern country strategy city soldier select diet brain return";
+pub const MNEMONIC: &str = "aware mirror sadness razor hurdle bus scout crisp close life science spy shell fine loop govern country strategy city soldier select diet brain return";
 
 // util function to set the config
 pub async fn set_config() -> (Server, Config, CleanUp) {

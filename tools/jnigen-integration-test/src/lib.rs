@@ -113,10 +113,6 @@ mod ffi {
     }
 
     pub fn optionStringReturn(is_none: bool) -> Option<String> {
-        if is_none {
-            None
-        } else {
-            Some("string".to_string())
-        }
+        if is_none { None } else { Some("string".to_string()) }
     }
 }
