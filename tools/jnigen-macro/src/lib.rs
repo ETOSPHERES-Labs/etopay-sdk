@@ -195,15 +195,9 @@ fn transform_return_type(function: &mut syn::ItemFn) -> syn::Result<ReturnType> 
     Ok(rtype)
 }
 
-/// Adds the #[no_mangle] attribute to a function
+/// Adds the #[unsafe(no_mangle)] attribute to a function
 fn add_no_mangle(function: &mut syn::ItemFn) -> syn::Result<()> {
-    function.attrs.push(syn::Attribute {
-        pound_token: Default::default(),
-        style: syn::AttrStyle::Outer,
-        bracket_token: Default::default(),
-        meta: syn::Meta::Path(syn::parse_str("no_mangle").unwrap()),
-    });
-
+    function.attrs.push(syn::parse_quote! { #[unsafe(no_mangle)]});
     Ok(())
 }
 
