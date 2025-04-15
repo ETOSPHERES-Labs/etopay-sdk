@@ -332,7 +332,7 @@ mod tests {
                 quote::quote! {
                     mod jni {
                         #prelude
-                        #[no_mangle]
+                        #[unsafe(no_mangle)]
                         #[allow(non_snake_case)]
                         pub extern "system" fn Java_com_example_Bar_myFunctionJni<'local>(mut env: JNIEnv<'local>, _class: JClass<'local>) {
 
