@@ -430,11 +430,11 @@
 <a href=#430 id=430 data-nosnippet>430</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.active_user <span class="kw">else </span>{
 <a href=#431 id=431 data-nosnippet>431</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
 <a href=#432 id=432 data-nosnippet>432</a>        };
-<a href=#433 id=433 data-nosnippet>433</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+<a href=#433 id=433 data-nosnippet>433</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 <a href=#434 id=434 data-nosnippet>434</a>        <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
 <a href=#435 id=435 data-nosnippet>435</a>        <span class="kw">let </span>wallet = active_user
 <a href=#436 id=436 data-nosnippet>436</a>            .wallet_manager
-<a href=#437 id=437 data-nosnippet>437</a>            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network.clone(), pin)
+<a href=#437 id=437 data-nosnippet>437</a>            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network, pin)
 <a href=#438 id=438 data-nosnippet>438</a>            .<span class="kw">await</span><span class="question-mark">?</span>;
 <a href=#439 id=439 data-nosnippet>439</a>
 <a href=#440 id=440 data-nosnippet>440</a>        <span class="kw">let </span>address = wallet.get_address().<span class="kw">await</span><span class="question-mark">?</span>;
@@ -442,7 +442,7 @@
 <a href=#442 id=442 data-nosnippet>442</a>        <span class="comment">// if there is an access token, push the generated address to the backend
 <a href=#443 id=443 data-nosnippet>443</a>        </span><span class="kw">if let </span><span class="prelude-val">Some</span>(access_token) = <span class="self">self</span>.access_token.as_ref() {
 <a href=#444 id=444 data-nosnippet>444</a>            <span class="kw">if </span>network.can_do_purchases {
-<a href=#445 id=445 data-nosnippet>445</a>                put_user_address(config, access_token, network.key, <span class="kw-2">&amp;</span>address).<span class="kw">await</span><span class="question-mark">?</span>;
+<a href=#445 id=445 data-nosnippet>445</a>                put_user_address(config, access_token, <span class="kw-2">&amp;</span>network.key, <span class="kw-2">&amp;</span>address).<span class="kw">await</span><span class="question-mark">?</span>;
 <a href=#446 id=446 data-nosnippet>446</a>            }
 <a href=#447 id=447 data-nosnippet>447</a>        }
 <a href=#448 id=448 data-nosnippet>448</a>        <span class="macro">debug!</span>(<span class="string">"Generated address: {address}"</span>);

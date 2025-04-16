@@ -29,13 +29,13 @@
 <a href=#29 id=29 data-nosnippet>29</a></span><span class="kw">pub async fn </span>put_user_address(
 <a href=#30 id=30 data-nosnippet>30</a>    config: <span class="kw-2">&amp;</span>Config,
 <a href=#31 id=31 data-nosnippet>31</a>    access_token: <span class="kw-2">&amp;</span>AccessToken,
-<a href=#32 id=32 data-nosnippet>32</a>    network_key: String,
+<a href=#32 id=32 data-nosnippet>32</a>    network_key: <span class="kw-2">&amp;</span>str,
 <a href=#33 id=33 data-nosnippet>33</a>    address: <span class="kw-2">&amp;</span>str,
 <a href=#34 id=34 data-nosnippet>34</a>) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt; {
 <a href=#35 id=35 data-nosnippet>35</a>    <span class="kw">let </span>base_url = <span class="kw-2">&amp;</span>config.backend_url;
 <a href=#36 id=36 data-nosnippet>36</a>    <span class="kw">let </span>url = <span class="macro">format!</span>(<span class="string">"{base_url}/user/address"</span>);
 <a href=#37 id=37 data-nosnippet>37</a>    <span class="kw">let </span>query = AddressQueryParameters {
-<a href=#38 id=38 data-nosnippet>38</a>        network_key: network_key.clone(),
+<a href=#38 id=38 data-nosnippet>38</a>        network_key: network_key.to_string(),
 <a href=#39 id=39 data-nosnippet>39</a>    };
 <a href=#40 id=40 data-nosnippet>40</a>
 <a href=#41 id=41 data-nosnippet>41</a>    <span class="macro">info!</span>(<span class="string">"Used url: {url:#?}"</span>);
@@ -225,7 +225,7 @@
 <a href=#225 id=225 data-nosnippet>225</a>            .create();
 <a href=#226 id=226 data-nosnippet>226</a>
 <a href=#227 id=227 data-nosnippet>227</a>        <span class="comment">// Act
-<a href=#228 id=228 data-nosnippet>228</a>        </span><span class="kw">let </span>response = put_user_address(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, IOTA_NETWORK_KEY.to_string(), ADDRESS).<span class="kw">await</span>;
+<a href=#228 id=228 data-nosnippet>228</a>        </span><span class="kw">let </span>response = put_user_address(<span class="kw-2">&amp;</span>config, <span class="kw-2">&amp;</span>TOKEN, IOTA_NETWORK_KEY, ADDRESS).<span class="kw">await</span>;
 <a href=#229 id=229 data-nosnippet>229</a>
 <a href=#230 id=230 data-nosnippet>230</a>        <span class="comment">// Assert
 <a href=#231 id=231 data-nosnippet>231</a>        </span><span class="kw">match </span>expected {

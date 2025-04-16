@@ -11,7 +11,7 @@
 <a href=#11 id=11 data-nosnippet>11</a>};
 <a href=#12 id=12 data-nosnippet>12</a><span class="kw">use </span><span class="kw">crate</span>::wallet::error::WalletError;
 <a href=#13 id=13 data-nosnippet>13</a><span class="kw">use </span><span class="kw">crate</span>::wallet::wallet::TransactionIntent;
-<a href=#14 id=14 data-nosnippet>14</a><span class="kw">use </span>api_types::api::networks::{ApiNetwork, ApiProtocol};
+<a href=#14 id=14 data-nosnippet>14</a><span class="kw">use </span>api_types::api::networks::ApiProtocol;
 <a href=#15 id=15 data-nosnippet>15</a><span class="kw">use </span>api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 <a href=#16 id=16 data-nosnippet>16</a><span class="kw">use </span>log::{debug, info};
 <a href=#17 id=17 data-nosnippet>17</a>
@@ -150,11 +150,11 @@
 <a href=#150 id=150 data-nosnippet>150</a>            )))<span class="question-mark">?</span>;
 <a href=#151 id=151 data-nosnippet>151</a>        }
 <a href=#152 id=152 data-nosnippet>152</a>
-<a href=#153 id=153 data-nosnippet>153</a>        <span class="kw">let </span>current_network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+<a href=#153 id=153 data-nosnippet>153</a>        <span class="kw">let </span>current_network = <span class="self">self</span>.active_network.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 <a href=#154 id=154 data-nosnippet>154</a>
 <a href=#155 id=155 data-nosnippet>155</a>        <span class="comment">// for now we check that the correct network_key is configured, in the future we might just
 <a href=#156 id=156 data-nosnippet>156</a>        // instantiate the correct wallet instead of throwing an error
-<a href=#157 id=157 data-nosnippet>157</a>        </span><span class="kw">let </span>network: ApiNetwork = tx_details.network.clone();
+<a href=#157 id=157 data-nosnippet>157</a>        </span><span class="kw">let </span>network = <span class="kw-2">&amp;</span>tx_details.network;
 <a href=#158 id=158 data-nosnippet>158</a>        <span class="kw">if </span>network.key != current_network.key {
 <a href=#159 id=159 data-nosnippet>159</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(WalletError::InvalidTransaction(<span class="macro">format!</span>(
 <a href=#160 id=160 data-nosnippet>160</a>                <span class="string">"Transaction to commit is in network_key {:?}, but {:?} is the currently active current_network_key."</span>,
@@ -239,11 +239,11 @@
 <a href=#239 id=239 data-nosnippet>239</a>        };
 <a href=#240 id=240 data-nosnippet>240</a>
 <a href=#241 id=241 data-nosnippet>241</a>        <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-<a href=#242 id=242 data-nosnippet>242</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+<a href=#242 id=242 data-nosnippet>242</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 <a href=#243 id=243 data-nosnippet>243</a>
 <a href=#244 id=244 data-nosnippet>244</a>        <span class="kw">let </span>wallet = active_user
 <a href=#245 id=245 data-nosnippet>245</a>            .wallet_manager
-<a href=#246 id=246 data-nosnippet>246</a>            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network.clone(), pin)
+<a href=#246 id=246 data-nosnippet>246</a>            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network, pin)
 <a href=#247 id=247 data-nosnippet>247</a>            .<span class="kw">await</span><span class="question-mark">?</span>;
 <a href=#248 id=248 data-nosnippet>248</a>
 <a href=#249 id=249 data-nosnippet>249</a>        <span class="comment">// create the transaction payload which holds a tag and associated data
@@ -310,11 +310,11 @@
 <a href=#310 id=310 data-nosnippet>310</a>        };
 <a href=#311 id=311 data-nosnippet>311</a>
 <a href=#312 id=312 data-nosnippet>312</a>        <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
-<a href=#313 id=313 data-nosnippet>313</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+<a href=#313 id=313 data-nosnippet>313</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 <a href=#314 id=314 data-nosnippet>314</a>
 <a href=#315 id=315 data-nosnippet>315</a>        <span class="kw">let </span>wallet = active_user
 <a href=#316 id=316 data-nosnippet>316</a>            .wallet_manager
-<a href=#317 id=317 data-nosnippet>317</a>            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network.clone(), pin)
+<a href=#317 id=317 data-nosnippet>317</a>            .try_get(config, <span class="kw-2">&amp;</span><span class="self">self</span>.access_token, repo, network, pin)
 <a href=#318 id=318 data-nosnippet>318</a>            .<span class="kw">await</span><span class="question-mark">?</span>;
 <a href=#319 id=319 data-nosnippet>319</a>
 <a href=#320 id=320 data-nosnippet>320</a>        <span class="comment">// create the transaction payload which holds a tag and associated data

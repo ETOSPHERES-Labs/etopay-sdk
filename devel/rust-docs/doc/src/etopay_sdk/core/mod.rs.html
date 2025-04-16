@@ -149,7 +149,7 @@
 <a href=#149 id=149 data-nosnippet>149</a>        <span class="kw">let </span><span class="prelude-val">Some</span>(active_user) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.active_user <span class="kw">else </span>{
 <a href=#150 id=150 data-nosnippet>150</a>            <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserNotInitialized);
 <a href=#151 id=151 data-nosnippet>151</a>        };
-<a href=#152 id=152 data-nosnippet>152</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.clone().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
+<a href=#152 id=152 data-nosnippet>152</a>        <span class="kw">let </span>network = <span class="self">self</span>.active_network.as_ref().ok_or(<span class="kw">crate</span>::Error::MissingNetwork)<span class="question-mark">?</span>;
 <a href=#153 id=153 data-nosnippet>153</a>        <span class="kw">let </span>config = <span class="self">self</span>.config.as_mut().ok_or(<span class="kw">crate</span>::Error::MissingConfig)<span class="question-mark">?</span>;
 <a href=#154 id=154 data-nosnippet>154</a>        <span class="kw">let </span>wallet = active_user
 <a href=#155 id=155 data-nosnippet>155</a>            .wallet_manager
