@@ -1,6 +1,6 @@
 # Welcome to ETOPay – The Decentralized Payment Ecosystem
 
-## Introduction 
+## Introduction
 
 ETOPay is an open-source project designed to revolutionize P2P payments with decentralization at its core. By eliminating gatekeepers and respecting user rights, ETOPay provides a secure, legally compliant, and developer-friendly SDK that integrates seamlessly with **cryptocurrency** and **fiat** systems.
 
@@ -22,7 +22,7 @@ You can read more about our philosophy and principles [here](./sdk/docs/Choosing
 - European Data Center
 - Cyber-Secure
 
-You can read more about our features and use-cases [here](./sdk/docs/Choosing%20ETOPay/Features.md). 
+You can read more about our features and use-cases [here](./sdk/docs/Choosing%20ETOPay/Features.md).
 
 ## We want to build with you
 
@@ -53,7 +53,7 @@ We appreciate clear and detailed bug reports—they help us understand and resol
 - Logs, screenshots, or any other relevant information.
 - Your environment details (e.g., browser version, OS, or app version).
 
-Please, check for duplicates to see if someone has already reported it. We *love* thorough bug reports.
+Please, check for duplicates to see if someone has already reported it. We _love_ thorough bug reports.
 
 ## Local Development with Dev Containers
 
@@ -63,6 +63,7 @@ To streamline your development process, we provide a pre-configured development 
 
 1. **Clone the Dev Container Repository**  
    Clone the [etopay-sdk](https://github.com/ETOSPHERES-Labs/etopay-sdk) repository:
+
    ```bash
    git clone https://github.com/ETOSPHERES-Labs/etopay-sdk.git
    ```
@@ -82,9 +83,49 @@ For more details on using dev containers, refer to the [official documentation](
 
 By using the dev container, you ensure a consistent development environment across all contributors. Happy coding!
 
+## Local development requirements (without devcontainer)
+
+### Building from source: Dependencies
+
+To build the ETOPay SDK from source, you will need to install the following dependencies:
+
+- `clang`: The C compiler
+- `llvm`: The LLVM compiler infrastructure
+- `lld`: The LLVM linker
+- `protoc`: The Protocol Buffers compiler used by ETOPay
+
+#### Ubuntu/Debian
+
+To install the dependencies on Ubuntu or Debian, run the following commands:
+
+```bash
+sudo apt update
+sudo apt install clang llvm lld protobuf-compiler
+```
+
+#### Fedora
+
+To install the dependencies on Fedora, run the following commands:
+
+```bash
+sudo dnf install clang llvm lld protobuf-compiler
+```
+
+#### macOS (with Homebrew)
+
+To install the dependencies on macOS using Homebrew, run the following commands:
+
+```bash
+brew install clang llvm lld protobuf
+```
+
+#### Windows
+
+We recommend using the [DevContainer](#local-development-with-dev-containers) with WSL2 to build the ETOPay SDK from source on Windows. This will provide a consistent and reliable build environment.
+
 ## Community
 
-You can reach out to us via Github directly or email.
+You can reach out to us via Github directly or [email](mailto:lobster@etospheres.com).
 
 ## Code of Conduct
 
