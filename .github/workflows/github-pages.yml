@@ -9,8 +9,7 @@ on:
   push:
     branches:
       - main
-    tags:
-      - v[0-9]+.[0-9]+.[0-9]+(-rc.+)?
+    tags: ["v[0-9]+.[0-9]+.[0-9]+*"]
   pull_request:
     paths:
       - ".github/workflows/github-pages.yml"
@@ -121,7 +120,7 @@ jobs:
       - name: Deploy to GitHub Pages
         if: env.DEPLOY_ONLY == 'true'
         working-directory: docs
-        run: mike deploy -p ${TAG_NAME}
+        run: mike deploy -u -p ${TAG_NAME}
         env:
           GIT_COMMITTER_NAME: ci-bot
           GIT_COMMITTER_EMAIL: ci-bot@etospheres.com
