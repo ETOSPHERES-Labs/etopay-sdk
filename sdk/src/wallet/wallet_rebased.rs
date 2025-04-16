@@ -54,7 +54,7 @@ impl WalletImplIotaRebased {
     }
 }
 
-/// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+/// Convert a [`u128`] to [`CryptoAmount`] while taking the decimals into account.
 fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmount> {
     let Some(mut result_decimal) = Decimal::from_u128(value) else {
         return Err(WalletError::ConversionError(format!(
@@ -74,6 +74,48 @@ fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmo
             "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
         ))
     })
+}
+/// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+fn convert_crypto_amount_to_u128(amount: CryptoAmount, decimals: u32) -> Result<u128> {
+    // normalize to remove trailing zeros
+    let value_decimal = amount.inner().normalize();
+
+    let scale = value_decimal.scale();
+
+    // if the Decimal has more decimals than we will store in the U256, we cannot accurately represent this value.
+    if scale > decimals {
+        return Err(WalletError::ConversionError(format!(
+            "cannot represent value of {} in a U256 with {} decimals.",
+            value_decimal, decimals
+        )));
+    }
+
+    if value_decimal.is_sign_negative() {
+        return Err(WalletError::ConversionError(format!(
+            "cannot represent negative values: {}",
+            value_decimal
+        )));
+    }
+
+    // create a i128 from all the mantissa bits, then we just need to multiply by 10^(decimals - scale) to get the scaled value
+    let mantissa = value_decimal.mantissa() as u128; // we checked that it is not negative
+
+    // the scale is 10^(decimals-scale). Since we checked for scale > decimals above, (decimals - scale) >= 0
+    let exponent = decimals - scale;
+    let scale = 10u128
+        .checked_pow(exponent)
+        .ok_or_else(|| WalletError::ConversionError(format!("10^{exponent} does not fit in u128")))?;
+
+    println!(
+        "decimals: {decimals}, value: {value_decimal}, mantissa: {}, scale: {}",
+        mantissa, scale
+    );
+
+    let value = mantissa.checked_mul(scale).ok_or_else(|| {
+        WalletError::ConversionError(format!("result does not fit in U256: {} * {}", mantissa, scale))
+    })?;
+
+    Ok(value)
 }
 
 #[allow(unused_variables)]
@@ -103,7 +145,8 @@ impl WalletUser for WalletImplIotaRebased {
             .parse::<IotaAddress>()
             .map_err(WalletError::IotaRebasedAnyhow)?;
 
-        let amount = 1000;
+        // TODO: actually check to make sure the u64 can handle the u128 value
+        let amount = convert_crypto_amount_to_u128(intent.amount, self.decimals)? as u64;
 
         let coins_page = self
             .client
@@ -156,6 +199,10 @@ impl WalletUser for WalletImplIotaRebased {
         log::info!("Balance changes:");
         for object_change in transaction_block_response.balance_changes.unwrap() {
             log::info!("{:?}", object_change);
+        }
+
+        if !transaction_block_response.errors.is_empty() {
+            log::warn!("Errors: {:?}", transaction_block_response.errors);
         }
 
         Ok(transaction_block_response.digest.to_string())
