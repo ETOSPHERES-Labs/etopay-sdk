@@ -30,12 +30,12 @@ pub async fn init_sdk() -> (Sdk, CleanUp) {
     };
     let mut sdk = Sdk::new(config).expect("should not fail to initialize sdk"); // set the backend url if the environment variable is set
 
-    // generate access token
-    let access_token = testing::get_access_token(&user.username, &user.password)
-        .await
-        .access_token;
-    let access_token = AccessToken::try_from(access_token).unwrap();
-    sdk.refresh_access_token(Some(access_token)).await.unwrap();
+    // // generate access token
+    // let access_token = testing::get_access_token(&user.username, &user.password)
+    //     .await
+    //     .access_token;
+    // let access_token = AccessToken::try_from(access_token).unwrap();
+    // sdk.refresh_access_token(Some(access_token)).await.unwrap();
 
     (sdk, cleanup)
 }

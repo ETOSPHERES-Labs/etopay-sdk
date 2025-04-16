@@ -6,6 +6,7 @@
 use super::share::Share;
 use super::wallet::WalletUser;
 use super::wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
+use super::wallet_rebased::WalletImplIotaRebased;
 use super::wallet_stardust::WalletImplStardust;
 use crate::core::{Config, UserRepoT};
 use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
@@ -568,6 +569,10 @@ impl WalletManager for WalletManagerImpl {
             }
             ApiProtocol::Stardust {} => {
                 let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
+                Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
+            }
+            ApiProtocol::IotaRebased {} => {
+                let wallet = WalletImplIotaRebased::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };

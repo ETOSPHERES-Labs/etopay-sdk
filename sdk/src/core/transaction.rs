@@ -269,7 +269,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
-            ApiProtocol::Stardust {} => wallet.send_amount(&intent).await?,
+            ApiProtocol::Stardust {} | ApiProtocol::IotaRebased {} => wallet.send_amount(&intent).await?,
         };
 
         Ok(tx_id)

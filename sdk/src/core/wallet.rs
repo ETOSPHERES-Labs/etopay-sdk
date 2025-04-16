@@ -550,6 +550,7 @@ impl Sdk {
                 }
             }
             api_types::api::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
+            api_types::api::networks::ApiProtocol::IotaRebased {} => todo!(),
         };
 
         let tx_list_filtered = tx_list

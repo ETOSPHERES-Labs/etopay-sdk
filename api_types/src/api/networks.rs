@@ -17,6 +17,7 @@ pub enum ApiProtocol {
     },
     /// Represents a Stardust network
     Stardust {},
+    IotaRebased {},
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
