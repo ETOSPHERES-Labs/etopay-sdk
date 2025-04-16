@@ -87,7 +87,7 @@ By using the dev container, you ensure a consistent development environment acro
 
 ### Building from source: Dependencies
 
-To build the ETOPay SDK from source, you will need to install the following dependencies:
+To build the ETOPay SDK from source, you will need to install the following dependencies in addition to rustlang:
 
 - `clang`: The C compiler
 - `llvm`: The LLVM compiler infrastructure
