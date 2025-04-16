@@ -149,7 +149,7 @@ impl Sdk {
         let Some(active_user) = &mut self.active_user else {
             return Err(crate::Error::UserNotInitialized);
         };
-        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager

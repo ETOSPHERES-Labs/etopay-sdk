@@ -137,7 +137,7 @@ pub trait WalletManager: std::fmt::Debug {
         config: &mut Config,
         access_token: &Option<AccessToken>,
         repo: &mut UserRepoT,
-        network: ApiNetwork,
+        network: &ApiNetwork,
         pin: &EncryptionPin,
     ) -> Result<WalletBorrow<'a>>;
 }
@@ -528,7 +528,7 @@ impl WalletManager for WalletManagerImpl {
         config: &mut Config,
         access_token: &Option<AccessToken>,
         repo: &mut UserRepoT,
-        network: ApiNetwork,
+        network: &ApiNetwork,
         pin: &EncryptionPin,
     ) -> Result<WalletBorrow<'a>> {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
@@ -541,12 +541,12 @@ impl WalletManager for WalletManagerImpl {
             .join(&self.username)
             .join(network.clone().key);
 
-        let bo = match network.protocol {
+        let bo = match &network.protocol {
             ApiProtocol::Evm { chain_id } => {
                 let wallet = WalletImplEvm::new(
                     mnemonic,
-                    network.node_urls,
-                    chain_id,
+                    &network.node_urls,
+                    *chain_id,
                     network.decimals,
                     network.coin_type,
                 )?;
@@ -558,8 +558,8 @@ impl WalletManager for WalletManagerImpl {
             } => {
                 let wallet = WalletImplEvmErc20::new(
                     mnemonic,
-                    network.node_urls,
-                    chain_id,
+                    &network.node_urls,
+                    *chain_id,
                     network.decimals,
                     network.coin_type,
                     contract_address,
@@ -567,7 +567,7 @@ impl WalletManager for WalletManagerImpl {
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             ApiProtocol::Stardust {} => {
-                let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, network.node_urls).await?;
+                let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };
@@ -711,7 +711,7 @@ mod tests {
                 &mut config,
                 &None,
                 &mut repo,
-                example_api_network(IOTA_NETWORK_KEY.to_string()),
+                &example_api_network(IOTA_NETWORK_KEY.to_string()),
                 pin,
             )
             .await
@@ -739,7 +739,7 @@ mod tests {
                 &mut config,
                 &None,
                 &mut repo,
-                example_api_network(IOTA_NETWORK_KEY.to_string()),
+                &example_api_network(IOTA_NETWORK_KEY.to_string()),
                 pin,
             )
             .await
@@ -964,7 +964,7 @@ mod tests {
                     &mut config,
                     &access_token,
                     &mut repo,
-                    example_api_network(IOTA_NETWORK_KEY.to_string()),
+                    &example_api_network(IOTA_NETWORK_KEY.to_string()),
                     &pin,
                 )
                 .await

@@ -55,13 +55,7 @@ pub struct WalletImplEvm {
 
 impl WalletImplEvm {
     /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
-    pub fn new(
-        mnemonic: Mnemonic,
-        node_urls: Vec<String>,
-        chain_id: u64,
-        decimals: u32,
-        coin_type: u32,
-    ) -> Result<Self> {
+    pub fn new(mnemonic: Mnemonic, node_urls: &[String], chain_id: u64, decimals: u32, coin_type: u32) -> Result<Self> {
         // Ase mnemonic to create a Signer
         let wallet = MnemonicBuilder::<English>::default()
             .phrase(mnemonic.as_ref().to_string())
@@ -332,11 +326,11 @@ impl WalletImplEvmErc20 {
     /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
     pub fn new(
         mnemonic: Mnemonic,
-        node_urls: Vec<String>,
+        node_urls: &[String],
         chain_id: u64,
         decimals: u32,
         coin_type: u32,
-        contract_address: String,
+        contract_address: &str,
     ) -> Result<Self> {
         Ok(Self {
             inner: WalletImplEvm::new(mnemonic, node_urls, chain_id, decimals, coin_type)?,
@@ -505,7 +499,7 @@ mod tests {
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet = WalletImplEvm::new(mnemonic.into(), node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+        let wallet = WalletImplEvm::new(mnemonic.into(), &node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("should initialize wallet");
         (wallet, cleanup)
     }
@@ -516,7 +510,7 @@ mod tests {
         node_url: String,
         chain_id: u64,
     ) -> WalletImplEvm {
-        WalletImplEvm::new(mnemonic.into(), vec![node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+        WalletImplEvm::new(mnemonic.into(), &[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("could not initialize WalletImplEth")
     }
 

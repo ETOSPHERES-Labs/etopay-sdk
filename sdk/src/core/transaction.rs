@@ -11,7 +11,7 @@ use crate::types::{
 };
 use crate::wallet::error::WalletError;
 use crate::wallet::wallet::TransactionIntent;
-use api_types::api::networks::{ApiNetwork, ApiProtocol};
+use api_types::api::networks::ApiProtocol;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 use log::{debug, info};
 
@@ -150,11 +150,11 @@ impl Sdk {
             )))?;
         }
 
-        let current_network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let current_network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
 
         // for now we check that the correct network_key is configured, in the future we might just
         // instantiate the correct wallet instead of throwing an error
-        let network: ApiNetwork = tx_details.network.clone();
+        let network = &tx_details.network;
         if network.key != current_network.key {
             return Err(WalletError::InvalidTransaction(format!(
                 "Transaction to commit is in network_key {:?}, but {:?} is the currently active current_network_key.",
@@ -239,11 +239,11 @@ impl Sdk {
         };
 
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
-        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
 
         let wallet = active_user
             .wallet_manager
-            .try_get(config, &self.access_token, repo, network.clone(), pin)
+            .try_get(config, &self.access_token, repo, network, pin)
             .await?;
 
         // create the transaction payload which holds a tag and associated data
@@ -310,11 +310,11 @@ impl Sdk {
         };
 
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
-        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
+        let network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
 
         let wallet = active_user
             .wallet_manager
-            .try_get(config, &self.access_token, repo, network.clone(), pin)
+            .try_get(config, &self.access_token, repo, network, pin)
             .await?;
 
         // create the transaction payload which holds a tag and associated data
