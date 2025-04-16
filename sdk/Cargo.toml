@@ -61,10 +61,13 @@ iota-sdk = { package = "etospheres-labs-iota-sdk", version = "1.1.5", default-fe
     # "jammdb",
 ] }
 
+# crates needed for iota-rebased integration, should be compatible versions
 iota-sdk-rebased = { package = "iota-sdk", git = "https://github.com/iotaledger/iota/", branch = "develop", default-features = false, features = []}
 iota-keys = { package = "iota-keys", git = "https://github.com/iotaledger/iota/", branch = "develop", default-features = false, features = []}
+iota-shared-crypto = { package = "shared-crypto", git = "https://github.com/iotaledger/iota/", branch = "develop", default-features = false, features = []}
 bip32 = "0.5"
 anyhow = "1"
+signature = "1.6.0"
 
 kdbx-rs = { version = "0.5.1", default-features = false }
 jammdb = { version = "0.11.0", optional = true }

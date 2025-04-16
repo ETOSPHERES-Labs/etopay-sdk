@@ -2904,6 +2904,8 @@ dependencies = [
  "serde",
  "serde_json",
  "shadow-rs",
+ "shared-crypto",
+ "signature 1.6.4",
  "testing",
  "thiserror 2.0.12",
  "tokio",

@@ -35,9 +35,11 @@ async fn main() {
         display_symbol: "IOTAR".to_string(),
         coin_type: 0,
         node_urls: vec!["http://127.0.0.1:9000".to_string()],
-        decimals: 1,
+        decimals: 9,
         can_do_purchases: false,
-        protocol: ApiProtocol::IotaRebased {},
+        protocol: ApiProtocol::IotaRebased {
+            coin_type: "0x2::iota::IOTA".to_string(),
+        },
         block_explorer_url: String::new(),
     }]);
     sdk.set_network("iota-rebased".to_string()).await.unwrap();
@@ -51,12 +53,12 @@ async fn main() {
     let amount = dec!(2.0).try_into().unwrap();
     let data = Some("test".to_string().into_bytes());
     // estimate gas
-    let estimate = sdk
-        .estimate_gas(&user.pin, &recipient_address, amount, data.clone())
-        .await
-        .unwrap();
-
-    println!("Estimated gas: {estimate:?}");
+    // let estimate = sdk
+    //     .estimate_gas(&user.pin, &recipient_address, amount, data.clone())
+    //     .await
+    //     .unwrap();
+    //
+    // println!("Estimated gas: {estimate:?}");
 
     let tx_id = sdk
         .send_amount(&user.pin, &recipient_address, amount, data)

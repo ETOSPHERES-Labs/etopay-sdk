@@ -143,6 +143,14 @@ pub enum WalletError {
     /// Iota Keys Error
     #[error("IotaKeys: {0}")]
     IotaKeys(anyhow::Error),
+
+    /// Iota Keys Error
+    #[error("IotaRebasedAnyhow: {0}")]
+    IotaRebasedAnyhow(anyhow::Error),
+
+    /// Iota signature
+    #[error("IotaSignature: {0}")]
+    IotaSignature(#[from] signature::Error),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {
