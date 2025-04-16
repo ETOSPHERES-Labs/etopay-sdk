@@ -281,8 +281,8 @@ pub async fn get_transactions_list(
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_tx_details, example_tx_metadata, set_config, AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME,
-        IOTA_NETWORK_KEY, LIMIT, RECEIVER, START, TOKEN, TX_INDEX,
+        AMOUNT, AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, LIMIT, RECEIVER, START, TOKEN, TX_INDEX,
+        example_tx_details, example_tx_metadata, set_config,
     };
     use mockito::Matcher;
 

@@ -1,5 +1,5 @@
-use super::error::Result;
 use super::UserKvStorageError;
+use super::error::Result;
 use crate::types::users::UserEntity;
 use base64::prelude::*;
 use web_sys::{js_sys, wasm_bindgen::JsValue};

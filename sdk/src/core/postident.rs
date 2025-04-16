@@ -106,8 +106,8 @@ mod tests {
     use super::*;
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
-        example_case_details, example_get_user, example_new_case_id, set_config, AUTH_PROVIDER, CASE_ID,
-        HEADER_X_APP_NAME, TOKEN, USERNAME,
+        AUTH_PROVIDER, CASE_ID, HEADER_X_APP_NAME, TOKEN, USERNAME, example_case_details, example_get_user,
+        example_new_case_id, set_config,
     };
     use crate::{core::Sdk, user::MockUserRepo, wallet_manager::MockWalletManager};
     use api_types::api::postident::{NewCaseIdResponse, UpdateCaseStatusRequest};

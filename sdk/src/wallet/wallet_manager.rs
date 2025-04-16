@@ -585,19 +585,19 @@ mod tests {
     use crate::{
         core::{Config, UserRepoT},
         kdbx::KdbxStorageError,
-        testing_utils::{example_api_network, ENCRYPTED_WALLET_PASSWORD, IOTA_NETWORK_KEY, PIN, SALT, WALLET_PASSWORD},
+        testing_utils::{ENCRYPTED_WALLET_PASSWORD, IOTA_NETWORK_KEY, PIN, SALT, WALLET_PASSWORD, example_api_network},
         types::{
             newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
         },
-        user::{memory_storage::MemoryUserStorage, repository::UserRepoImpl, MockUserRepo},
+        user::{MockUserRepo, memory_storage::MemoryUserStorage, repository::UserRepoImpl},
     };
     use kdbx_rs::errors::UnlockError;
     use rstest::rstest;
     use std::sync::LazyLock;
 
-    const MNEMONIC:&str = "endorse answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river";
-    const MNEMONIC_INCORRECT:&str = "answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river";
+    const MNEMONIC: &str = "endorse answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river";
+    const MNEMONIC_INCORRECT: &str = "answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river";
     const USERNAME: &str = "SuperAdmin";
     static INVALID_BACKUP_PASSWORD: LazyLock<PlainPassword> =
         LazyLock::new(|| PlainPassword::try_from_string("correcthorsebatterystapleaa").unwrap());

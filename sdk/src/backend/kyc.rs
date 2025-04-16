@@ -68,7 +68,7 @@ pub async fn check_kyc_status(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME};
+    use crate::testing_utils::{AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME, set_config};
 
     fn example_kyc_status_response() -> KycStatusResponse {
         KycStatusResponse {

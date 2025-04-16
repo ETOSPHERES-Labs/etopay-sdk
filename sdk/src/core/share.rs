@@ -49,7 +49,7 @@ mod tests {
         core::Sdk,
         error::Result,
         share::Share,
-        testing_utils::{set_config, USERNAME},
+        testing_utils::{USERNAME, set_config},
         wallet_manager::MockWalletManager,
     };
     use mockall::predicate::eq;

@@ -384,9 +384,9 @@ mod tests {
     use super::*;
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
+        AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
-        example_wallet_borrow, set_config, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
-        PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
+        example_wallet_borrow, set_config,
     };
     use crate::types::transactions::WalletTxInfo;
     use crate::types::users::KycType;

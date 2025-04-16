@@ -5,8 +5,8 @@ use std::path::Path;
 use std::process;
 use std::str::FromStr;
 use std::{fs::File, io::Read};
-use syn::spanned::Spanned;
 use syn::Attribute;
+use syn::spanned::Spanned;
 
 use jnigen_common::{ArgumentType, ReturnType};
 
@@ -96,7 +96,7 @@ fn parse_module(module: &syn::ItemMod, namespace: &str) -> syn::Result<ParsedBin
                     return Err(syn::Error::new(
                         unsupported.span(),
                         "The attribute can only be applied to `mod` items containing functions",
-                    ))
+                    ));
                 }
             }
         }

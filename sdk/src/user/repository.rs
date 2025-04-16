@@ -1,7 +1,7 @@
 //! Main implementation for the [`UserRepo`], which uses a simple storage abstraction internally.
 
-use super::error::Result;
 use super::UserRepo;
+use super::error::Result;
 use crate::{
     share::Share,
     types::{
@@ -89,7 +89,9 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
         monthly_limit_eur: f32,
         next_verification_step: ViviswapVerificationStep,
     ) -> Result<()> {
-        info!("Setting viviswap KYC state in user DB: {verification_status:?}, {monthly_limit_eur}, {next_verification_step:?}");
+        info!(
+            "Setting viviswap KYC state in user DB: {verification_status:?}, {monthly_limit_eur}, {next_verification_step:?}"
+        );
 
         let mut user = self.inner.get(username)?;
 
