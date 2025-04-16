@@ -29,13 +29,13 @@ use rust_decimal::Decimal;
 pub async fn put_user_address(
     config: &Config,
     access_token: &AccessToken,
-    network_key: String,
+    network_key: &str,
     address: &str,
 ) -> Result<()> {
     let base_url = &config.backend_url;
     let url = format!("{base_url}/user/address");
     let query = AddressQueryParameters {
-        network_key: network_key.clone(),
+        network_key: network_key.to_string(),
     };
 
     info!("Used url: {url:#?}");
@@ -225,7 +225,7 @@ mod tests {
             .create();
 
         // Act
-        let response = put_user_address(&config, &TOKEN, IOTA_NETWORK_KEY.to_string(), ADDRESS).await;
+        let response = put_user_address(&config, &TOKEN, IOTA_NETWORK_KEY, ADDRESS).await;
 
         // Assert
         match expected {

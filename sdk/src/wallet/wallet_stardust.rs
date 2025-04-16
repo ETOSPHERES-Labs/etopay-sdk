@@ -30,7 +30,7 @@ pub struct WalletImplStardust {
 
 impl WalletImplStardust {
     /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
-    pub async fn new(mnemonic: Mnemonic, path: &Path, coin_type: u32, node_url: Vec<String>) -> Result<Self> {
+    pub async fn new(mnemonic: Mnemonic, path: &Path, coin_type: u32, node_url: &[String]) -> Result<Self> {
         // we now have the mnemonic and can initialize a wallet
         let node_urls: Vec<&str> = node_url.iter().map(String::as_str).collect();
 
@@ -230,10 +230,14 @@ mod tests {
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user(mnemonic: impl Into<Mnemonic>, coin_type: u32) -> (WalletImplStardust, CleanUp) {
         let (_, cleanup) = Config::new_test_with_cleanup();
-        let node_url = vec![String::from("https://api.testnet.iotaledger.net")];
-        let wallet = WalletImplStardust::new(mnemonic.into(), Path::new(&cleanup.path_prefix), coin_type, node_url)
-            .await
-            .expect("should initialize wallet");
+        let wallet = WalletImplStardust::new(
+            mnemonic.into(),
+            Path::new(&cleanup.path_prefix),
+            coin_type,
+            &[String::from("https://api.testnet.iotaledger.net")],
+        )
+        .await
+        .expect("should initialize wallet");
         (wallet, cleanup)
     }
 
