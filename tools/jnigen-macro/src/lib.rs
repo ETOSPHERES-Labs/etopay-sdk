@@ -2,8 +2,8 @@ use jnigen_common::ArgumentType;
 use jnigen_common::ReturnType;
 use proc_macro2::Span;
 use proc_macro2::TokenStream;
-use quote::quote;
 use quote::ToTokens;
+use quote::quote;
 use syn::spanned::Spanned;
 
 #[proc_macro_attribute]
@@ -48,7 +48,7 @@ fn generate_inner(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStre
             return Err(syn::Error::new(
                 item_span,
                 "The attribute can only be applied to `mod` items",
-            ))
+            ));
         }
     };
 
@@ -59,7 +59,7 @@ fn generate_inner(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStre
             return Err(syn::Error::new(
                 attr_span,
                 "The attribute must have a single string literal supplied to specify the namespace",
-            ))
+            ));
         }
     }
     .value();
@@ -79,7 +79,7 @@ fn generate_inner(attr: TokenStream, item: TokenStream) -> syn::Result<TokenStre
                     return Err(syn::Error::new(
                         item_span,
                         "The attribute can only be applied to `mod` items containing functions",
-                    ))
+                    ));
                 }
             }
         }
@@ -195,31 +195,15 @@ fn transform_return_type(function: &mut syn::ItemFn) -> syn::Result<ReturnType> 
     Ok(rtype)
 }
 
-/// Adds the #[no_mangle] attribute to a function
+/// Adds the #[unsafe(no_mangle)] attribute to a function
 fn add_no_mangle(function: &mut syn::ItemFn) -> syn::Result<()> {
-    function.attrs.push(syn::Attribute {
-        pound_token: Default::default(),
-        style: syn::AttrStyle::Outer,
-        bracket_token: Default::default(),
-        meta: syn::Meta::Path(syn::parse_str("no_mangle").unwrap()),
-    });
-
+    function.attrs.push(syn::parse_quote! { #[unsafe(no_mangle)]});
     Ok(())
 }
 
 /// adds an attribute to allow non_snake_case lint
 fn allow_non_snake_case(function: &mut syn::ItemFn) -> syn::Result<()> {
-    function.attrs.push(syn::Attribute {
-        pound_token: Default::default(),
-        style: syn::AttrStyle::Outer,
-        bracket_token: Default::default(),
-        meta: syn::Meta::List(syn::MetaList {
-            path: syn::parse_str("allow").unwrap(),
-            delimiter: syn::MacroDelimiter::Paren(Default::default()),
-            tokens: quote::quote! { non_snake_case },
-        }),
-    });
-
+    function.attrs.push(syn::parse_quote! { #[allow(non_snake_case)]});
     Ok(())
 }
 
@@ -348,7 +332,7 @@ mod tests {
                 quote::quote! {
                     mod jni {
                         #prelude
-                        #[no_mangle]
+                        #[unsafe(no_mangle)]
                         #[allow(non_snake_case)]
                         pub extern "system" fn Java_com_example_Bar_myFunctionJni<'local>(mut env: JNIEnv<'local>, _class: JClass<'local>) {
 

@@ -4,8 +4,8 @@
 
 use super::Sdk;
 use crate::error::{Error, Result};
-use crate::user::repository::UserRepoImpl;
 use crate::user::UserRepo;
+use crate::user::repository::UserRepoImpl;
 use log::info;
 use std::path::Path;
 use std::str::FromStr;

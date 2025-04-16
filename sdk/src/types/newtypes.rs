@@ -21,15 +21,15 @@
 
 use super::error::{Result, TypeError};
 use aes_gcm::{
-    aead::{Aead, KeyInit},
     Aes256Gcm, Nonce,
+    aead::{Aead, KeyInit},
 };
-use iota_sdk::crypto::hashes::blake2b::Blake2b256;
 use iota_sdk::crypto::hashes::Digest;
+use iota_sdk::crypto::hashes::blake2b::Blake2b256;
 use log::warn;
 use rand::RngCore;
 use serde::{Deserialize, Serialize};
-use zxcvbn::{zxcvbn, Score};
+use zxcvbn::{Score, zxcvbn};
 
 macro_rules! impl_redacted_debug {
     ($type:ty) => {

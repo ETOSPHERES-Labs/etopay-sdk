@@ -1,6 +1,6 @@
 use proc_macro2::TokenStream;
-use quote::{quote, ToTokens};
-use syn::{parse::Parse, spanned::Spanned, Token};
+use quote::{ToTokens, quote};
+use syn::{Token, parse::Parse, spanned::Spanned};
 
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub enum ReturnType {

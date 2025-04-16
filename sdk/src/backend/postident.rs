@@ -155,7 +155,7 @@ pub async fn update_case_status(config: &Config, access_token: &AccessToken, cas
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_case_details, example_new_case_id, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
+        AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, example_case_details, example_new_case_id, set_config,
     };
     use mockito::Matcher;
 

@@ -20,13 +20,14 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.14.1"
-edition = "2021"
+version = "0.14.2"
+edition = "2024"
 authors = ["Team Lobster 🦞"]
 license = "AGPL-3.0-only"
 license-file = "LICENSE"
 homepage = "https://etospheres.com/"
 repository = "https://github.com/ETOSPHERES-Labs/etopay-sdk"
+rust-version = "1.85"
 
 [workspace.lints.rust]
 # Since we are using the deprecation annotation to mark things to remove later, it causes a lot of noise in the problems reported in vscode.
@@ -49,7 +50,7 @@ expect_used = "deny"
 
 # Specify versions for shared dependencies
 [workspace.dependencies]
-api_types = { package = "etopay-api-types", version = "0.14.1", path = "./api_types" }
+api_types = { package = "etopay-api-types", version = "0.14.2", path = "./api_types" }
 base64 = { version = "0.22", default-features = false }
 chrono = { version = "0.4.40", default-features = false }
 dotenvy = { version = "0.15", default-features = false }

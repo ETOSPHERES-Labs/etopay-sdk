@@ -2,8 +2,8 @@ use crate::backend::viviswap::{
     delete_viviswap_detail, get_viviswap_details, get_viviswap_order, get_viviswap_orders, get_viviswap_payment_method,
     set_viviswap_contract, set_viviswap_detail,
 };
-use crate::core::viviswap::ViviswapError;
 use crate::core::Sdk;
+use crate::core::viviswap::ViviswapError;
 use crate::error::Result;
 use crate::types::currencies::{CryptoAmount, Currency};
 use crate::types::newtypes::EncryptionPin;
@@ -567,10 +567,10 @@ impl Sdk {
 mod tests {
     use super::*;
     use crate::testing_utils::{
+        ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
         example_api_network, example_api_networks, example_bank_details, example_contract_response,
         example_crypto_details, example_get_payment_details_response, example_get_user, example_viviswap_oder_response,
-        set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN,
-        USERNAME,
+        set_config,
     };
     use crate::types::users::KycType;
     use crate::{
