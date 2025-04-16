@@ -219,16 +219,16 @@ impl WalletManagerImpl {
 
         if let Some(share) = user.local_share.map(|s| s.parse::<Share>()) {
             available_shares.push(share?);
-            log::info!("Local storage share available");
+            log::debug!("Local storage share available");
             local_used = true;
         }
 
         if let Some(share) = local_recovery_share {
             available_shares.push(share);
-            log::info!("Local recovery share available");
+            log::debug!("Local recovery share available");
             recovery_used = Some(RecoveryUsed::Local);
         } else {
-            log::info!("Local recovery share not available, checking if it can be downloaded");
+            log::debug!("Local recovery share not available, checking if it can be downloaded");
             recovery_share_available_with_user_action = true;
 
             // try getting the oauth share (not encrypted)
@@ -238,13 +238,13 @@ impl WalletManagerImpl {
                         available_shares.push(share);
                         recovery_share_available_with_user_action = false; // this share is now available
                         recovery_used = Some(RecoveryUsed::Remote);
-                        log::info!("Recovery share downloaded and available");
+                        log::debug!("Recovery share downloaded and available");
                     }
                     Ok(None) => log::info!("Recovery share not available"),
                     Err(e) => log::warn!("Error fetching recovery share: {e}"),
                 }
             } else {
-                log::info!("Access token not available, skipping recovery share download.");
+                log::debug!("Access token not available, skipping recovery share download.");
             }
         }
 
@@ -258,13 +258,13 @@ impl WalletManagerImpl {
                         available_shares.push(share);
                         password_required = true;
                         backup_used = true;
-                        log::info!("Backup share (encrypted) downloaded and available");
+                        log::debug!("Backup share (encrypted) downloaded and available");
                     }
-                    Ok(None) => log::info!("Backup share (encrypted) not available"),
+                    Ok(None) => log::debug!("Backup share (encrypted) not available"),
                     Err(e) => log::warn!("Error fetching backup share: {e}"),
                 }
             } else {
-                log::info!("Access token not available, skipping backup share download.");
+                log::debug!("Access token not available, skipping backup share download.");
             }
         }
 
@@ -273,7 +273,7 @@ impl WalletManagerImpl {
         let recovery_share_available_with_upload = recovery_share_available_with_user_action;
         let password_required = password_required;
 
-        log::info!(
+        log::debug!(
             "Done collecting shares. Got {} shares, recovery_share_available_with_user_action = {}, password_required = {}",
             available_shares.len(),
             recovery_share_available_with_upload,
@@ -304,7 +304,7 @@ impl WalletManagerImpl {
             )?;
 
             if !local_used {
-                log::info!("Local share not set, recreating shares and storing local share again");
+                log::debug!("Local share not set, recreating shares and storing local share again");
 
                 // create the shares again, and just use a random password since we are not interested
                 // in the backup share anyways (which is the only reason this needs a password)
@@ -317,7 +317,7 @@ impl WalletManagerImpl {
                 if let Err(e) = repo.set_local_share(username, Some(&shares.local)) {
                     log::warn!("Error storing local share again: {e:#}");
                 } else {
-                    log::info!("Done storing local share again");
+                    log::debug!("Done storing local share again");
                 }
             }
 
@@ -571,8 +571,9 @@ impl WalletManager for WalletManagerImpl {
                 let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
-            ApiProtocol::IotaRebased {} => {
-                let wallet = WalletImplIotaRebased::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
+            ApiProtocol::IotaRebased { coin_type } => {
+                let wallet =
+                    WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls).await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };
