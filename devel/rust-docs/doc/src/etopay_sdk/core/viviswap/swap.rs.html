@@ -2,8 +2,8 @@
 <a href=#2 id=2 data-nosnippet>2</a>    delete_viviswap_detail, get_viviswap_details, get_viviswap_order, get_viviswap_orders, get_viviswap_payment_method,
 <a href=#3 id=3 data-nosnippet>3</a>    set_viviswap_contract, set_viviswap_detail,
 <a href=#4 id=4 data-nosnippet>4</a>};
-<a href=#5 id=5 data-nosnippet>5</a><span class="kw">use </span><span class="kw">crate</span>::core::viviswap::ViviswapError;
-<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">crate</span>::core::Sdk;
+<a href=#5 id=5 data-nosnippet>5</a><span class="kw">use </span><span class="kw">crate</span>::core::Sdk;
+<a href=#6 id=6 data-nosnippet>6</a><span class="kw">use </span><span class="kw">crate</span>::core::viviswap::ViviswapError;
 <a href=#7 id=7 data-nosnippet>7</a><span class="kw">use </span><span class="kw">crate</span>::error::Result;
 <a href=#8 id=8 data-nosnippet>8</a><span class="kw">use </span><span class="kw">crate</span>::types::currencies::{CryptoAmount, Currency};
 <a href=#9 id=9 data-nosnippet>9</a><span class="kw">use </span><span class="kw">crate</span>::types::newtypes::EncryptionPin;
@@ -567,10 +567,10 @@
 <a href=#567 id=567 data-nosnippet>567</a></span><span class="kw">mod </span>tests {
 <a href=#568 id=568 data-nosnippet>568</a>    <span class="kw">use super</span>::<span class="kw-2">*</span>;
 <a href=#569 id=569 data-nosnippet>569</a>    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{
-<a href=#570 id=570 data-nosnippet>570</a>        example_api_network, example_api_networks, example_bank_details, example_contract_response,
-<a href=#571 id=571 data-nosnippet>571</a>        example_crypto_details, example_get_payment_details_response, example_get_user, example_viviswap_oder_response,
-<a href=#572 id=572 data-nosnippet>572</a>        set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN,
-<a href=#573 id=573 data-nosnippet>573</a>        USERNAME,
+<a href=#570 id=570 data-nosnippet>570</a>        ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, ORDER_ID, PIN, TOKEN, USERNAME,
+<a href=#571 id=571 data-nosnippet>571</a>        example_api_network, example_api_networks, example_bank_details, example_contract_response,
+<a href=#572 id=572 data-nosnippet>572</a>        example_crypto_details, example_get_payment_details_response, example_get_user, example_viviswap_oder_response,
+<a href=#573 id=573 data-nosnippet>573</a>        set_config,
 <a href=#574 id=574 data-nosnippet>574</a>    };
 <a href=#575 id=575 data-nosnippet>575</a>    <span class="kw">use </span><span class="kw">crate</span>::types::users::KycType;
 <a href=#576 id=576 data-nosnippet>576</a>    <span class="kw">use crate</span>::{

@@ -21,15 +21,15 @@
 <a href=#21 id=21 data-nosnippet>21</a>
 <a href=#22 id=22 data-nosnippet>22</a></span><span class="kw">use </span><span class="kw">super</span>::error::{<span class="prelude-ty">Result</span>, TypeError};
 <a href=#23 id=23 data-nosnippet>23</a><span class="kw">use </span>aes_gcm::{
-<a href=#24 id=24 data-nosnippet>24</a>    aead::{Aead, KeyInit},
-<a href=#25 id=25 data-nosnippet>25</a>    Aes256Gcm, Nonce,
+<a href=#24 id=24 data-nosnippet>24</a>    Aes256Gcm, Nonce,
+<a href=#25 id=25 data-nosnippet>25</a>    aead::{Aead, KeyInit},
 <a href=#26 id=26 data-nosnippet>26</a>};
-<a href=#27 id=27 data-nosnippet>27</a><span class="kw">use </span>iota_sdk::crypto::hashes::blake2b::Blake2b256;
-<a href=#28 id=28 data-nosnippet>28</a><span class="kw">use </span>iota_sdk::crypto::hashes::Digest;
+<a href=#27 id=27 data-nosnippet>27</a><span class="kw">use </span>iota_sdk::crypto::hashes::Digest;
+<a href=#28 id=28 data-nosnippet>28</a><span class="kw">use </span>iota_sdk::crypto::hashes::blake2b::Blake2b256;
 <a href=#29 id=29 data-nosnippet>29</a><span class="kw">use </span>log::warn;
 <a href=#30 id=30 data-nosnippet>30</a><span class="kw">use </span>rand::RngCore;
 <a href=#31 id=31 data-nosnippet>31</a><span class="kw">use </span>serde::{Deserialize, Serialize};
-<a href=#32 id=32 data-nosnippet>32</a><span class="kw">use </span>zxcvbn::{zxcvbn, Score};
+<a href=#32 id=32 data-nosnippet>32</a><span class="kw">use </span>zxcvbn::{Score, zxcvbn};
 <a href=#33 id=33 data-nosnippet>33</a>
 <a href=#34 id=34 data-nosnippet>34</a><span class="macro">macro_rules!</span> impl_redacted_debug {
 <a href=#35 id=35 data-nosnippet>35</a>    (<span class="macro-nonterminal">$</span><span class="kw">type</span>:<span class="macro-nonterminal">ty</span>) =&gt; {

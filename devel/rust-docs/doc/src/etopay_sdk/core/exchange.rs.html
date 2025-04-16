@@ -28,14 +28,14 @@
 <a href=#28 id=28 data-nosnippet>28</a><span class="attr">#[cfg(test)]
 <a href=#29 id=29 data-nosnippet>29</a></span><span class="kw">mod </span>tests {
 <a href=#30 id=30 data-nosnippet>30</a>    <span class="kw">use </span><span class="kw">crate</span>::core::core_testing_utils::handle_error_test_cases;
-<a href=#31 id=31 data-nosnippet>31</a>    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{example_api_networks, IOTA_NETWORK_KEY};
+<a href=#31 id=31 data-nosnippet>31</a>    <span class="kw">use </span><span class="kw">crate</span>::testing_utils::{IOTA_NETWORK_KEY, example_api_networks};
 <a href=#32 id=32 data-nosnippet>32</a>    <span class="kw">use </span><span class="kw">crate</span>::types::users::ActiveUser;
 <a href=#33 id=33 data-nosnippet>33</a>    <span class="kw">use crate</span>::{
 <a href=#34 id=34 data-nosnippet>34</a>        core::Sdk,
 <a href=#35 id=35 data-nosnippet>35</a>        error::Result,
 <a href=#36 id=36 data-nosnippet>36</a>        testing_utils::{
-<a href=#37 id=37 data-nosnippet>37</a>            example_exchange_rate_response, example_get_user, set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN,
-<a href=#38 id=38 data-nosnippet>38</a>            USERNAME,
+<a href=#37 id=37 data-nosnippet>37</a>            AUTH_PROVIDER, HEADER_X_APP_NAME, TOKEN, USERNAME, example_exchange_rate_response, example_get_user,
+<a href=#38 id=38 data-nosnippet>38</a>            set_config,
 <a href=#39 id=39 data-nosnippet>39</a>        },
 <a href=#40 id=40 data-nosnippet>40</a>        types::users::KycType,
 <a href=#41 id=41 data-nosnippet>41</a>        wallet_manager::MockWalletManager,

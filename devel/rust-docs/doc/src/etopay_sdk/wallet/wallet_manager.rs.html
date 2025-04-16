@@ -585,19 +585,19 @@
 <a href=#585 id=585 data-nosnippet>585</a>    <span class="kw">use crate</span>::{
 <a href=#586 id=586 data-nosnippet>586</a>        core::{Config, UserRepoT},
 <a href=#587 id=587 data-nosnippet>587</a>        kdbx::KdbxStorageError,
-<a href=#588 id=588 data-nosnippet>588</a>        testing_utils::{example_api_network, ENCRYPTED_WALLET_PASSWORD, IOTA_NETWORK_KEY, PIN, SALT, WALLET_PASSWORD},
+<a href=#588 id=588 data-nosnippet>588</a>        testing_utils::{ENCRYPTED_WALLET_PASSWORD, IOTA_NETWORK_KEY, PIN, SALT, WALLET_PASSWORD, example_api_network},
 <a href=#589 id=589 data-nosnippet>589</a>        types::{
 <a href=#590 id=590 data-nosnippet>590</a>            newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword},
 <a href=#591 id=591 data-nosnippet>591</a>            users::KycType,
 <a href=#592 id=592 data-nosnippet>592</a>        },
-<a href=#593 id=593 data-nosnippet>593</a>        user::{memory_storage::MemoryUserStorage, repository::UserRepoImpl, MockUserRepo},
+<a href=#593 id=593 data-nosnippet>593</a>        user::{MockUserRepo, memory_storage::MemoryUserStorage, repository::UserRepoImpl},
 <a href=#594 id=594 data-nosnippet>594</a>    };
 <a href=#595 id=595 data-nosnippet>595</a>    <span class="kw">use </span>kdbx_rs::errors::UnlockError;
 <a href=#596 id=596 data-nosnippet>596</a>    <span class="kw">use </span>rstest::rstest;
 <a href=#597 id=597 data-nosnippet>597</a>    <span class="kw">use </span>std::sync::LazyLock;
 <a href=#598 id=598 data-nosnippet>598</a>
-<a href=#599 id=599 data-nosnippet>599</a>    <span class="kw">const </span>MNEMONIC:<span class="kw-2">&amp;</span>str = <span class="string">"endorse answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river"</span>;
-<a href=#600 id=600 data-nosnippet>600</a>    <span class="kw">const </span>MNEMONIC_INCORRECT:<span class="kw-2">&amp;</span>str = <span class="string">"answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river"</span>;
+<a href=#599 id=599 data-nosnippet>599</a>    <span class="kw">const </span>MNEMONIC: <span class="kw-2">&amp;</span>str = <span class="string">"endorse answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river"</span>;
+<a href=#600 id=600 data-nosnippet>600</a>    <span class="kw">const </span>MNEMONIC_INCORRECT: <span class="kw-2">&amp;</span>str = <span class="string">"answer radar about source reunion marriage tag sausage weekend frost daring base attack because joke dream slender leisure group reason prepare broken river"</span>;
 <a href=#601 id=601 data-nosnippet>601</a>    <span class="kw">const </span>USERNAME: <span class="kw-2">&amp;</span>str = <span class="string">"SuperAdmin"</span>;
 <a href=#602 id=602 data-nosnippet>602</a>    <span class="kw">static </span>INVALID_BACKUP_PASSWORD: LazyLock&lt;PlainPassword&gt; =
 <a href=#603 id=603 data-nosnippet>603</a>        LazyLock::new(|| PlainPassword::try_from_string(<span class="string">"correcthorsebatterystapleaa"</span>).unwrap());
