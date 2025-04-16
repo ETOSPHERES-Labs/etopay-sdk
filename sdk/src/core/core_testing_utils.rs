@@ -1,13 +1,13 @@
 use super::Sdk;
-use crate::testing_utils::{example_api_networks, IOTA_NETWORK_KEY, SALT, TOKEN};
+use crate::testing_utils::{IOTA_NETWORK_KEY, SALT, TOKEN, example_api_networks};
 use crate::types::users::UserEntity;
 use crate::wallet_manager::MockWalletManager;
+use crate::{ErrorKind, WalletError};
 use crate::{
-    testing_utils::{example_get_user, USERNAME},
+    testing_utils::{USERNAME, example_get_user},
     types::users::KycType,
     user::MockUserRepo,
 };
-use crate::{ErrorKind, WalletError};
 use api_types::api::viviswap::detail::SwapPaymentDetailKey;
 
 pub async fn handle_error_test_cases(

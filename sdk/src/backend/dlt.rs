@@ -186,8 +186,8 @@ pub async fn get_exchange_rate(config: &Config, access_token: &AccessToken, netw
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_api_network, example_exchange_rate_response, set_config, ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY,
-        HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN,
+        ADDRESS, AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN, example_api_network,
+        example_exchange_rate_response, set_config,
     };
     use mockito::Matcher;
 

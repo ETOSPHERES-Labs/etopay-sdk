@@ -1,8 +1,8 @@
 use etopay_sdk::types::viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep};
 use fake::{
+    Fake,
     faker::name::{en::LastName, raw::FirstName},
     locales::EN,
-    Fake,
 };
 use std::io::Write;
 use testing::USER_SATOSHI;

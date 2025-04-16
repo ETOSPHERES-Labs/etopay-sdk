@@ -530,7 +530,11 @@ impl Sdk {
                         Ok(stx) => *transaction = stx,
                         Err(e) => {
                             // On error, return historical (cached) transaction data
-                            log::debug!("[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}", transaction.clone(), e);
+                            log::debug!(
+                                "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
+                                transaction.clone(),
+                                e
+                            );
                         }
                     }
                 }
@@ -591,9 +595,9 @@ mod tests {
     use super::*;
     use crate::core::core_testing_utils::handle_error_test_cases;
     use crate::testing_utils::{
-        example_api_networks, example_get_user, example_wallet_tx_info, set_config, ADDRESS, AUTH_PROVIDER,
-        ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, MNEMONIC, PIN, SALT, TOKEN,
-        TX_INDEX, USERNAME, WALLET_PASSWORD,
+        ADDRESS, AUTH_PROVIDER, ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
+        MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME, WALLET_PASSWORD, example_api_networks, example_get_user,
+        example_wallet_tx_info, set_config,
     };
     use crate::types::users::UserEntity;
     use crate::{

@@ -68,13 +68,13 @@ fn get_or_init_sdk() -> &'static SdkWrapper {
 mod ffi {
     use super::*;
     use sdk::{
+        WalletError,
         core::Config,
         share::Share,
         types::{
             currencies::CryptoAmount,
             newtypes::{AccessToken, EncryptionPin, PlainPassword},
         },
-        WalletError,
     };
     use type_conversions::PurchaseDetailsEntity;
 

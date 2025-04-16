@@ -1,12 +1,12 @@
 use chrono::{TimeZone, Utc};
 use fake::{
+    Fake,
     faker::{
         chrono::en::DateTimeBetween,
         internet::en::Username,
         name::{en::LastName, raw::FirstName},
     },
     locales::EN,
-    Fake,
 };
 use lazy_static::lazy_static;
 

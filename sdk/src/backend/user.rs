@@ -163,7 +163,7 @@ pub async fn get_preferred_network(config: &Config, access_token: &AccessToken) 
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::testing_utils::{set_config, AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN};
+    use crate::testing_utils::{AUTH_PROVIDER, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, TOKEN, set_config};
 
     #[rstest::rstest]
     #[case(202, Ok(()))]

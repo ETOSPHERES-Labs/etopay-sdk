@@ -689,9 +689,9 @@ pub async fn get_viviswap_orders(
 mod tests {
     use super::*;
     use crate::testing_utils::{
-        example_bank_details, example_contract_response, example_get_payment_details_response,
-        example_viviswap_oder_response, set_config, ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, PAYMENT_DETAIL_ID,
-        PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY, PAYMENT_METHOD_KEY_SERIALIZED, TOKEN, USERNAME,
+        ADDRESS, AUTH_PROVIDER, HEADER_X_APP_NAME, PAYMENT_DETAIL_ID, PAYMENT_METHOD_ID, PAYMENT_METHOD_KEY,
+        PAYMENT_METHOD_KEY_SERIALIZED, TOKEN, USERNAME, example_bank_details, example_contract_response,
+        example_get_payment_details_response, example_viviswap_oder_response, set_config,
     };
     use api_types::api::viviswap::{
         detail::PaymentDetail,

@@ -9,7 +9,7 @@ use crate::{
     backend::error::ApiError, core::viviswap::ViviswapError, types::error::TypeError, user::error::UserKvStorageError,
     wallet::error::WalletError,
 };
-use serde::{ser::Serializer, Serialize};
+use serde::{Serialize, ser::Serializer};
 use std::fmt::Display;
 
 /// A [`core::result::Result`] with [`Error`] as its error variant.
