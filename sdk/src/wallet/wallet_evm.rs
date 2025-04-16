@@ -338,7 +338,7 @@ impl WalletImplEvmErc20 {
         })
     }
 
-    fn get_contract(&self) -> Erc20Contract::Erc20ContractInstance<(), &ProviderType> {
+    fn get_contract(&self) -> Erc20Contract::Erc20ContractInstance<&ProviderType, Ethereum> {
         Erc20Contract::new(self.contract_address, &self.inner.provider)
     }
 
@@ -379,8 +379,7 @@ impl WalletUser for WalletImplEvmErc20 {
         let mut total = U256::ZERO;
         for addr in self.inner.provider.signer_addresses() {
             // call the smart contract here
-            let result = contract.balanceOf(addr).call().await?;
-            let balance = result.balance;
+            let balance = contract.balanceOf(addr).call().await?;
 
             log::info!("Balance for address {} = {}", addr, balance);
             total += balance;
@@ -414,7 +413,7 @@ impl WalletUser for WalletImplEvmErc20 {
             return Err(WalletError::TransactionNotFound);
         };
 
-        let args = Erc20Contract::transferCall::abi_decode(tx.inner.input(), true)?;
+        let args = Erc20Contract::transferCall::abi_decode(tx.inner.input())?;
 
         let value_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(args._value)?;
         info.amount = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
@@ -648,7 +647,7 @@ mod tests {
                 "method": "eth_getTransactionCount",
                 "params": [
                     from,
-                    "pending"
+                    "latest"
                 ],
             })))
             .with_status(200)
