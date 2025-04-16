@@ -9,6 +9,7 @@ use iota_keys::keystore::{AccountKeystore, InMemKeystore};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions;
 use iota_sdk_rebased::types::base_types::IotaAddress;
+use iota_sdk_rebased::types::digests::TransactionDigest;
 use iota_sdk_rebased::types::quorum_driver_types::ExecuteTransactionRequestType;
 use iota_sdk_rebased::types::transaction::Transaction;
 use iota_sdk_rebased::{IotaClient, IotaClientBuilder};
@@ -110,7 +111,14 @@ impl WalletUser for WalletImplIotaRebased {
             .get_coins(address, self.coin_type.clone(), None, None)
             .await?;
         let mut coins = coins_page.data.into_iter();
+        // for some reason I need to select the right coin to pay with, and only the second one has enough funds...
+        // TODO: make this selection automatic? Or is there a way to not having to do it at all?
         let gas_coin = coins.next().expect("missing gas coin");
+        log::info!("gas_coin1: {gas_coin:?}");
+        let gas_coin = coins.next().expect("missing gas coin");
+        log::info!("gas_coin2: {gas_coin:?}");
+        let gas_coin = coins.next().expect("missing gas coin");
+        log::info!("gas_coin3: {gas_coin:?}");
 
         let tx_data = self
             .client
@@ -154,11 +162,45 @@ impl WalletUser for WalletImplIotaRebased {
     }
 
     async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList> {
-        todo!()
+        Err(WalletError::WalletFeatureNotImplemented)
     }
 
     async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo> {
-        todo!()
+        let digest = tx_id
+            .parse::<TransactionDigest>()
+            .map_err(WalletError::IotaRebasedAnyhow)?;
+        let tx = self
+            .client
+            .read_api()
+            // .get_transaction_with_options(digest, IotaTransactionBlockResponseOptions::with_balance_changes())
+            .get_transaction_with_options(digest, IotaTransactionBlockResponseOptions::full_content())
+            .await?;
+
+        log::info!("Tx: {tx:#?}");
+
+        // TODO: get the information from the tx, most likely from the balance_changes
+
+        // if let Some(changes) = tx.balance_changes {
+        //     if changes.len() == 1 {
+        //         // TX to self, only single balance change
+        //     }
+        //
+        //     // for change in tx {
+        //     //     change.owner
+        //     // }
+        // }
+
+        Ok(WalletTxInfo {
+            date: String::new(),
+            block_id: None,
+            transaction_id: tx_id.to_string(),
+            incoming: false,
+            receiver: String::new(),
+            amount: 0.0,
+            network_key: String::new(),
+            status: String::new(),
+            explorer_url: None,
+        })
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
