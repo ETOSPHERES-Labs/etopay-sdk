@@ -93,6 +93,9 @@ theme:
 
 copyright: Copyright &copy; 2025 - ETOSPHERES Labs GmbH
 extra:
+  analytics:
+    provider: custom
+    site_id: 2
   social:
     - icon: fontawesome/solid/paper-plane
       link: mailto:contact@etospheres.com
