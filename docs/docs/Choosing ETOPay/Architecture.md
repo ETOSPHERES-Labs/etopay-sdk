@@ -18,7 +18,7 @@ The developers trying to integrate the ETOPay SaaS product accesses the dashboar
 
 Additionally, the dashboard allows the developers to configure their instance according to their application needs. It can be also used to undertake some application specific settings and modify them as well. For example, setting the identity provider urls and access points, which is owned by the application but may be used by ETOPay to authenticate users or setting a webhook receiver endpoint, where a notification server is already listening to ETOPay internal events, to push notifications to the end-user devices, etc...
 
-Currently, on the first request, a test and a production environment of a fresh ETOPay services instance is deployed. The test instance allows the developers to test their application flow and integration with ETOPay before moving to production.
+Currently, on the first request, a test and a live environment of a fresh ETOPay services instance is deployed. The test instance allows the developers to test their application flow and integration with ETOPay before moving to production.
 
 The infrastructure deploys in a private cloud hosted in the european data center. Deployments in client infrastructure and public clouds are currently not possible, however will be considered in the future, for example with client-owned kubernetes cluster or Azure/AWS depolyments. The ETOPay services are coded in software to be fully platform agnostic. Hence, the deployment architecture does not affect the features and working of the services.
 
