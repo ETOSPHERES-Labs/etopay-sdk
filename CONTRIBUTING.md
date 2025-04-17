@@ -99,7 +99,7 @@ To install the dependencies on Ubuntu or Debian, run the following commands:
 
 ```bash
 sudo apt update
-sudo apt install clang llvm lld protobuf-compiler
+sudo apt install clang lld protobuf-compiler
 ```
 
 #### Fedora
@@ -107,7 +107,7 @@ sudo apt install clang llvm lld protobuf-compiler
 To install the dependencies on Fedora, run the following commands:
 
 ```bash
-sudo dnf install clang llvm lld protobuf-compiler
+sudo dnf install clang lld protobuf-compiler
 ```
 
 #### macOS (with Homebrew)
@@ -115,7 +115,7 @@ sudo dnf install clang llvm lld protobuf-compiler
 To install the dependencies on macOS using Homebrew, run the following commands:
 
 ```bash
-brew install clang llvm lld protobuf
+brew install clang lld protobuf
 ```
 
 #### Windows
