@@ -27,6 +27,9 @@ impl std::fmt::Debug for WalletImplIotaRebased {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         f.debug_struct("WalletImplIotaRebased")
             .field("client", &"<IotaClient>")
+            .field("keystore", &"<KeyStore>")
+            .field("coin_type", &self.coin_type)
+            .field("decimals", &self.decimals)
             .finish()
     }
 }
@@ -106,11 +109,6 @@ fn convert_crypto_amount_to_u128(amount: CryptoAmount, decimals: u32) -> Result<
         .checked_pow(exponent)
         .ok_or_else(|| WalletError::ConversionError(format!("10^{exponent} does not fit in u128")))?;
 
-    println!(
-        "decimals: {decimals}, value: {value_decimal}, mantissa: {}, scale: {}",
-        mantissa, scale
-    );
-
     let value = mantissa.checked_mul(scale).ok_or_else(|| {
         WalletError::ConversionError(format!("result does not fit in U256: {} * {}", mantissa, scale))
     })?;
@@ -148,20 +146,22 @@ impl WalletUser for WalletImplIotaRebased {
         // TODO: actually check to make sure the u64 can handle the u128 value
         let amount = convert_crypto_amount_to_u128(intent.amount, self.decimals)? as u64;
 
+        let gas_budget = 5_000_000;
+
         let coins_page = self
             .client
             .coin_read_api()
             .get_coins(address, self.coin_type.clone(), None, None)
             .await?;
         let mut coins = coins_page.data.into_iter();
-        // for some reason I need to select the right coin to pay with, and only the second one has enough funds...
-        // TODO: make this selection automatic? Or is there a way to not having to do it at all?
-        let gas_coin = coins.next().expect("missing gas coin");
-        log::info!("gas_coin1: {gas_coin:?}");
-        let gas_coin = coins.next().expect("missing gas coin");
-        log::info!("gas_coin2: {gas_coin:?}");
-        let gas_coin = coins.next().expect("missing gas coin");
-        log::info!("gas_coin3: {gas_coin:?}");
+
+        // for now we just select _a_ coin object with enough balance, but at some point we probably need
+        // to automatically merge multiple objects into one to send them
+        let Some(gas_coin) = coins.find(|c| c.balance > (amount + gas_budget)) else {
+            return Err(WalletError::InsufficientBalance(String::new()));
+        };
+
+        log::info!("using gas_coin: {gas_coin:?}");
 
         let tx_data = self
             .client
@@ -172,7 +172,7 @@ impl WalletUser for WalletImplIotaRebased {
                 vec![recipient],
                 vec![amount],
                 // gas_coin.coin_object_id, // gas coin
-                5_000_000, // gas budget
+                gas_budget,
             )
             .await
             .map_err(WalletError::IotaRebasedAnyhow)?;
