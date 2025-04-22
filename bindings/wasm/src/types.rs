@@ -85,6 +85,8 @@ pub enum Protocol {
     EvmERC20,
     /// Represents a Stardust network
     Stardust,
+    /// Iota Rebased network.
+    IotaRebased,
 }
 
 #[wasm_bindgen(getter_with_clone, inspectable)]
@@ -119,13 +121,15 @@ impl From<sdk::types::networks::ApiNetwork> for Network {
                 ApiProtocol::Evm { .. } => Protocol::Evm,
                 ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,
                 ApiProtocol::Stardust {} => Protocol::Stardust,
+                ApiProtocol::IotaRebased { .. } => Protocol::IotaRebased,
             },
             protocol_chain_id: match value.protocol {
                 ApiProtocol::Evm { chain_id } | ApiProtocol::EvmERC20 { chain_id, .. } => Some(chain_id),
-                ApiProtocol::Stardust {} => None,
+                _ => None,
             },
             protocol_contract_address: match &value.protocol {
                 ApiProtocol::EvmERC20 { contract_address, .. } => Some(contract_address.clone()),
+                ApiProtocol::IotaRebased { coin_type, .. } => Some(coin_type.clone()),
                 _ => None,
             },
             block_explorer_url: value.block_explorer_url,

@@ -192,14 +192,7 @@ impl WalletUser for WalletImplIotaRebased {
             .await?;
 
         log::info!("Transaction sent {}", transaction_block_response.digest);
-        log::info!("Object changes:");
-        for object_change in transaction_block_response.object_changes.unwrap() {
-            log::info!("{:?}", object_change);
-        }
-        log::info!("Balance changes:");
-        for object_change in transaction_block_response.balance_changes.unwrap() {
-            log::info!("{:?}", object_change);
-        }
+        log::info!("Response:\n{transaction_block_response}");
 
         if !transaction_block_response.errors.is_empty() {
             log::warn!("Errors: {:?}", transaction_block_response.errors);
@@ -223,7 +216,7 @@ impl WalletUser for WalletImplIotaRebased {
             .get_transaction_with_options(digest, IotaTransactionBlockResponseOptions::full_content())
             .await?;
 
-        log::info!("Tx: {tx:#?}");
+        log::info!("Transaction Details:\n{tx}");
 
         // TODO: get the information from the tx, most likely from the balance_changes
 
