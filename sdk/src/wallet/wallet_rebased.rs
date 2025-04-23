@@ -10,7 +10,7 @@ use crate::types::{
 use async_trait::async_trait;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions;
-use iota_sdk_rebased::types::base_types::IotaAddress;
+// use iota_sdk_rebased::types::base_types::IotaAddress;
 use iota_sdk_rebased::types::digests::TransactionDigest;
 use iota_sdk_rebased::types::quorum_driver_types::ExecuteTransactionRequestType;
 use iota_sdk_rebased::types::transaction::Transaction;
@@ -145,7 +145,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let recipient = intent
             .address_to
-            .parse::<IotaAddress>()
+            .parse::<rebased::IotaAddress>()
             .map_err(WalletError::IotaRebasedAnyhow)?;
 
         // TODO: actually check to make sure the u64 can handle the u128 value
@@ -174,7 +174,7 @@ impl WalletUser for WalletImplIotaRebased {
             .pay_iota(
                 address.into(),
                 vec![gas_coin.coin_object_id.into()], // object to transfer
-                vec![recipient],
+                vec![recipient.into()],
                 vec![amount],
                 // gas_coin.coin_object_id, // gas coin
                 gas_budget,
