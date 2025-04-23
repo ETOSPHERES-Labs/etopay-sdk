@@ -151,6 +151,10 @@ pub enum WalletError {
     /// Iota signature
     #[error("IotaSignature: {0}")]
     IotaSignature(#[from] signature::Error),
+
+    /// Iota Rebased Web client
+    #[error("ClientError error: {0}")]
+    ClientError(#[from] jsonrpsee::core::client::Error),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {

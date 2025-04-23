@@ -27,3 +27,5 @@ pub mod kdbx;
 
 /// Errors related to sdk wallet
 pub mod error;
+
+mod rebased;

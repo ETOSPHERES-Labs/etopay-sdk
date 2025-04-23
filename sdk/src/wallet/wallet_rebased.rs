@@ -1,4 +1,7 @@
+use std::sync::Arc;
+
 use super::error::{Result, WalletError};
+use super::rebased::{CoinReadApiClient, RpcClient};
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
     currencies::CryptoAmount,
@@ -19,6 +22,7 @@ use rust_decimal::prelude::FromPrimitive;
 
 pub struct WalletImplIotaRebased {
     client: IotaClient,
+    client2: Arc<super::rebased::RpcClient>,
     keystore: InMemKeystore,
     coin_type: String,
     decimals: u32,
@@ -48,8 +52,11 @@ impl WalletImplIotaRebased {
             )
             .map_err(WalletError::IotaKeys)?;
 
+        let client2 = Arc::new(RpcClient::new(&node_url[0]));
+
         Ok(Self {
             client,
+            client2,
             keystore,
             coin_type: coin_type.to_string(),
             decimals,
@@ -125,11 +132,12 @@ impl WalletUser for WalletImplIotaRebased {
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
-        let address = self.keystore.addresses()[0];
+        let address = self.keystore.addresses()[0].into();
+
         let balance = self
+            .client2
             .client
-            .coin_read_api()
-            .get_balance(address, self.coin_type.clone())
+            .get_balance(address, Some(self.coin_type.clone()))
             .await?;
 
         convert_u128_to_crypto_amount(balance.total_balance, self.decimals)
