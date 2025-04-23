@@ -8,7 +8,6 @@ use crate::types::{
     transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList},
 };
 use async_trait::async_trait;
-use iota_keys::keystore::{AccountKeystore, InMemKeystore};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions;
 use iota_sdk_rebased::types::base_types::IotaAddress;
@@ -22,8 +21,7 @@ use rust_decimal::prelude::FromPrimitive;
 pub struct WalletImplIotaRebased {
     client: IotaClient,
     client2: Arc<super::rebased::RpcClient>,
-    keystore: InMemKeystore,
-    keystore2: rebased::InMemKeystore,
+    keystore: rebased::InMemKeystore,
     coin_type: String,
     decimals: u32,
 }
@@ -42,15 +40,6 @@ impl WalletImplIotaRebased {
     /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
     pub async fn new(mnemonic: Mnemonic, coin_type: &str, decimals: u32, node_url: &[String]) -> Result<Self> {
         let client = IotaClientBuilder::default().build(&node_url[0]).await?;
-        let mut keystore = InMemKeystore::default();
-        keystore
-            .import_from_mnemonic(
-                &mnemonic,
-                iota_sdk_rebased::types::crypto::SignatureScheme::ED25519,
-                Some("m/44'/4218'/0'/0'/0'".parse::<bip32::DerivationPath>().unwrap()),
-                None,
-            )
-            .map_err(WalletError::IotaKeys)?;
 
         let mut keystore2 = rebased::InMemKeystore::default();
         keystore2
@@ -65,8 +54,7 @@ impl WalletImplIotaRebased {
         Ok(Self {
             client,
             client2,
-            keystore,
-            keystore2,
+            keystore: keystore2,
             coin_type: coin_type.to_string(),
             decimals,
         })
@@ -137,11 +125,7 @@ fn convert_crypto_amount_to_u128(amount: CryptoAmount, decimals: u32) -> Result<
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 impl WalletUser for WalletImplIotaRebased {
     async fn get_address(&self) -> Result<String> {
-        let addr1 = self.keystore.addresses()[0].to_string();
-        let addr2 = self.keystore2.addresses()[0].to_string();
-        assert_eq!(addr1, addr2);
-
-        Ok(addr2)
+        Ok(self.keystore.addresses()[0].to_string())
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
@@ -172,7 +156,7 @@ impl WalletUser for WalletImplIotaRebased {
         let coins_page = self
             .client2
             .client
-            .get_coins(address.into(), Some(self.coin_type.clone()), None, None)
+            .get_coins(address, Some(self.coin_type.clone()), None, None)
             .await?;
         let mut coins = coins_page.data.into_iter();
 
@@ -188,7 +172,7 @@ impl WalletUser for WalletImplIotaRebased {
             .client
             .transaction_builder()
             .pay_iota(
-                address,
+                address.into(),
                 vec![gas_coin.coin_object_id.into()], // object to transfer
                 vec![recipient],
                 vec![amount],
@@ -199,8 +183,8 @@ impl WalletUser for WalletImplIotaRebased {
             .map_err(WalletError::IotaRebasedAnyhow)?;
 
         let signature = self
-            .keystore2
-            .sign_secure(&address.into(), &tx_data, rebased::Intent::iota_transaction())?;
+            .keystore
+            .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())?;
 
         let transaction_block_response = self
             .client

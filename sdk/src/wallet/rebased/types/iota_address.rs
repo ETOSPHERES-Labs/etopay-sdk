@@ -21,6 +21,12 @@ impl From<iota_sdk_rebased::types::base_types::IotaAddress> for IotaAddress {
     }
 }
 
+impl From<IotaAddress> for iota_sdk_rebased::types::base_types::IotaAddress {
+    fn from(value: IotaAddress) -> Self {
+        Self::new(value.0)
+    }
+}
+
 impl fmt::Display for IotaAddress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))
