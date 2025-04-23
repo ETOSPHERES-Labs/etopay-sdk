@@ -113,6 +113,8 @@ zxcvbn = { version = "3.1.0", default-features = false }
 # needed for custom iota-rebased impl
 jsonrpsee = { version = "0.24", default-features = false, features = ["http-client", "async-client", "macros"] }
 serde_with = { version = "3.12", features = ["macros", "hex"] }
+hex = { version = "0.4" }
+fastcrypto = "0.1.9"
 
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]

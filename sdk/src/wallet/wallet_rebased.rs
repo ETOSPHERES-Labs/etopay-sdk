@@ -157,9 +157,9 @@ impl WalletUser for WalletImplIotaRebased {
         let gas_budget = 5_000_000;
 
         let coins_page = self
+            .client2
             .client
-            .coin_read_api()
-            .get_coins(address, self.coin_type.clone(), None, None)
+            .get_coins(address.into(), Some(self.coin_type.clone()), None, None)
             .await?;
         let mut coins = coins_page.data.into_iter();
 
@@ -176,7 +176,7 @@ impl WalletUser for WalletImplIotaRebased {
             .transaction_builder()
             .pay_iota(
                 address,
-                vec![gas_coin.coin_object_id], // object to transfer
+                vec![gas_coin.coin_object_id.into()], // object to transfer
                 vec![recipient],
                 vec![amount],
                 // gas_coin.coin_object_id, // gas coin
