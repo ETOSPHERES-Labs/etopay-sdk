@@ -12,20 +12,12 @@ group.enter()
 
 Task {
     do {
-        print("start")
-
         // Get environment variables from the Utils module
         let env = getEnvironment()
-        print("env")
-        print("env: \(env)")
-
         let username_archive = ProcessInfo.processInfo.environment["ARCHIEVEME"]!;
-        print("username_archive")
-        print("username_archive: \(username_archive)")
 
         // Initialize SDK
         let sdk = try await initSdk(username: username_archive, password: env.password)
-        print("sdk initialized")
         
         // Create new user
         try await sdk.createNewUser(username_archive)
