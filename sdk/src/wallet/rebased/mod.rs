@@ -7,6 +7,7 @@
 mod bigint;
 mod keystore;
 mod rpc;
+mod serde;
 mod types;
 
 pub use rpc::*;
