@@ -1,7 +1,7 @@
 use std::sync::Arc;
 
 use super::error::{Result, WalletError};
-use super::rebased::{CoinReadApiClient, RpcClient};
+use super::rebased::{self, CoinReadApiClient, RpcClient};
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
     currencies::CryptoAmount,
@@ -24,6 +24,7 @@ pub struct WalletImplIotaRebased {
     client: IotaClient,
     client2: Arc<super::rebased::RpcClient>,
     keystore: InMemKeystore,
+    keystore2: rebased::InMemKeystore,
     coin_type: String,
     decimals: u32,
 }
@@ -52,12 +53,21 @@ impl WalletImplIotaRebased {
             )
             .map_err(WalletError::IotaKeys)?;
 
+        let mut keystore2 = rebased::InMemKeystore::default();
+        keystore2
+            .import_from_mnemonic(
+                &mnemonic,
+                "m/44'/4218'/0'/0'/0'".parse::<bip32::DerivationPath>().unwrap(),
+            )
+            .map_err(WalletError::IotaKeys)?;
+
         let client2 = Arc::new(RpcClient::new(&node_url[0]));
 
         Ok(Self {
             client,
             client2,
             keystore,
+            keystore2,
             coin_type: coin_type.to_string(),
             decimals,
         })
@@ -128,7 +138,11 @@ fn convert_crypto_amount_to_u128(amount: CryptoAmount, decimals: u32) -> Result<
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 impl WalletUser for WalletImplIotaRebased {
     async fn get_address(&self) -> Result<String> {
-        Ok(self.keystore.addresses()[0].to_string())
+        let addr1 = self.keystore.addresses()[0].to_string();
+        let addr2 = self.keystore2.addresses()[0].to_string();
+        assert_eq!(addr1, addr2);
+
+        Ok(addr2)
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {

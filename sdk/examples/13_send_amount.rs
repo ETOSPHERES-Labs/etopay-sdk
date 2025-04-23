@@ -51,7 +51,7 @@ async fn main() {
     let balance = sdk.get_balance(&user.pin).await.unwrap();
     println!("address: {recipient_address}, balance: {balance:?}");
 
-    let recipient_address = "0x393bdb466e8efc29ca5905f23d90b069d2b00f35016dd316039c97b0363ce217".to_string();
+    // let recipient_address = "0x393bdb466e8efc29ca5905f23d90b069d2b00f35016dd316039c97b0363ce217".to_string();
 
     // Send amount
     let amount = dec!(1.0).try_into().unwrap();

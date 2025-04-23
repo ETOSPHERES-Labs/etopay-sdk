@@ -1,5 +1,6 @@
 use std::fmt;
 
+use fastcrypto::encoding::Encoding;
 use hex::FromHex;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeAs, SerializeAs, serde_as};
@@ -19,6 +20,12 @@ pub struct IotaAddress(
 impl From<iota_sdk_rebased::types::base_types::IotaAddress> for IotaAddress {
     fn from(value: iota_sdk_rebased::types::base_types::IotaAddress) -> Self {
         Self(value.to_inner())
+    }
+}
+
+impl fmt::Display for IotaAddress {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))
     }
 }
 

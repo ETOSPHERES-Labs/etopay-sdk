@@ -5,11 +5,14 @@
 //!
 
 mod bigint;
+mod keystore;
 mod rpc;
 mod types;
 
 pub use rpc::*;
 pub use types::*;
+
+pub use keystore::InMemKeystore;
 
 use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClient, HttpClientBuilder};
 
