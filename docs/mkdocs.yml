@@ -113,6 +113,8 @@ extra:
     provider: mike
     default: latest
   consent:
+    cookies:
+      analytics: Analytics
     title: Cookie consent
     description: >-
       We use cookies to recognize your repeated visits and preferences, as well
@@ -122,5 +124,3 @@ extra:
     actions:
       - accept
       - manage
-  version:
-    provider: mike
