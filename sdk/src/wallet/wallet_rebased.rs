@@ -16,7 +16,6 @@ use iota_sdk_rebased::types::digests::TransactionDigest;
 use iota_sdk_rebased::types::quorum_driver_types::ExecuteTransactionRequestType;
 use iota_sdk_rebased::types::transaction::Transaction;
 use iota_sdk_rebased::{IotaClient, IotaClientBuilder};
-use iota_shared_crypto::intent::Intent;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 
@@ -200,14 +199,14 @@ impl WalletUser for WalletImplIotaRebased {
             .map_err(WalletError::IotaRebasedAnyhow)?;
 
         let signature = self
-            .keystore
-            .sign_secure(&address, &tx_data, Intent::iota_transaction())?;
+            .keystore2
+            .sign_secure(&address.into(), &tx_data, rebased::Intent::iota_transaction())?;
 
         let transaction_block_response = self
             .client
             .quorum_driver_api()
             .execute_transaction_block(
-                Transaction::from_data(tx_data, vec![signature]),
+                Transaction::from_data(tx_data, vec![signature.into()]),
                 IotaTransactionBlockResponseOptions::full_content(),
                 ExecuteTransactionRequestType::WaitForLocalExecution,
             )

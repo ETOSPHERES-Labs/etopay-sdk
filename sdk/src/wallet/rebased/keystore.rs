@@ -7,9 +7,10 @@ use fastcrypto::{
     ed25519::{Ed25519KeyPair, Ed25519PrivateKey},
     traits::ToFromBytes,
 };
+use serde::Serialize;
 use std::collections::BTreeMap;
 
-use super::IotaAddress;
+use super::{Intent, IntentMessage, IotaAddress, Signature};
 
 #[derive(Default)]
 pub struct InMemKeystore {
@@ -37,6 +38,18 @@ impl InMemKeystore {
     }
     pub fn addresses(&self) -> Vec<IotaAddress> {
         self.keys.keys().cloned().collect::<Vec<_>>()
+    }
+
+    pub fn sign_secure<T>(&self, address: &IotaAddress, msg: &T, intent: Intent) -> Result<Signature, signature::Error>
+    where
+        T: Serialize,
+    {
+        Ok(Signature::new_secure(
+            &IntentMessage::new(intent, msg),
+            self.keys
+                .get(address)
+                .ok_or_else(|| signature::Error::from_source(format!("Cannot find key for address: [{address}]")))?,
+        ))
     }
 }
 
