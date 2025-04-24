@@ -9,10 +9,7 @@ use fastcrypto::encoding::{Encoding, Hex};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use super::{
-    super::{bigint::BigInt, serde::Readable},
-    AccountAddress, HexAccountAddress, ObjectDigest,
-};
+use super::{super::serde::Readable, AccountAddress, HexAccountAddress, ObjectDigest, SequenceNumber};
 
 #[serde_as]
 #[derive(Eq, PartialEq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize)]
@@ -36,9 +33,5 @@ impl From<ObjectID> for iota_sdk_rebased::types::base_types::ObjectID {
         Self::new(value.0.to_inner())
     }
 }
-
-#[serde_as]
-#[derive(Eq, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Default, Debug, Serialize, Deserialize)]
-pub struct SequenceNumber(#[serde_as(as = "BigInt<u64>")] u64);
 
 pub type ObjectRef = (ObjectID, SequenceNumber, ObjectDigest);

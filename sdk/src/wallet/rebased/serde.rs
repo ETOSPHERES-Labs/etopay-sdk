@@ -7,8 +7,10 @@
 
 use std::marker::PhantomData;
 
-use serde::{Deserializer, Serializer};
-use serde_with::{DeserializeAs, SerializeAs};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde_with::{DeserializeAs, SerializeAs, serde_as};
+
+use super::bigint::BigInt;
 
 /// Use with serde_as to control serde for human-readable serialization and
 /// deserialization `H` : serde_as SerializeAs/DeserializeAs delegation for
@@ -61,5 +63,29 @@ where
         } else {
             R::deserialize_as(deserializer)
         }
+    }
+}
+
+#[serde_as]
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq, Eq, Copy)]
+pub struct SequenceNumber(u64);
+
+impl SerializeAs<super::types::SequenceNumber> for SequenceNumber {
+    fn serialize_as<S>(value: &super::types::SequenceNumber, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: Serializer,
+    {
+        let s = value.value().to_string();
+        s.serialize(serializer)
+    }
+}
+
+impl<'de> DeserializeAs<'de, super::types::SequenceNumber> for SequenceNumber {
+    fn deserialize_as<D>(deserializer: D) -> Result<super::types::SequenceNumber, D::Error>
+    where
+        D: Deserializer<'de>,
+    {
+        let b = BigInt::deserialize(deserializer)?;
+        Ok(super::types::SequenceNumber::from_u64(*b))
     }
 }

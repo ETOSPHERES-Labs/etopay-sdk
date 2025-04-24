@@ -7,7 +7,7 @@
 
 use std::{fmt, str::FromStr};
 
-use fastcrypto::encoding::Encoding;
+use fastcrypto::encoding::{Encoding, Hex};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -24,7 +24,7 @@ pub enum IotaError {
 
 #[serde_as]
 #[derive(Eq, Default, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Serialize, Deserialize)]
-pub struct IotaAddress(#[serde_as(as = "Readable<serde_with::hex::Hex, _>")] pub [u8; IOTA_ADDRESS_LENGTH]);
+pub struct IotaAddress(#[serde_as(as = "Readable<Hex, _>")] pub [u8; IOTA_ADDRESS_LENGTH]);
 
 impl IotaAddress {
     /// Parse a IotaAddress from a byte array or buffer.

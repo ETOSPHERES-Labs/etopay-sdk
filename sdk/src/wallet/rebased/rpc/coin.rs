@@ -13,6 +13,7 @@ use serde_with::serde_as;
 
 use super::super::ObjectID;
 use super::super::bigint::BigInt;
+use super::super::serde::SequenceNumber as AsSequenceNumber;
 use super::super::types::{IotaAddress, ObjectDigest, SequenceNumber, TransactionDigest};
 
 /// Provides access to coin-related data such as coins owned by an address,
@@ -65,6 +66,7 @@ pub type CoinPage = Page<Coin, ObjectID>;
 pub struct Coin {
     pub coin_type: String,
     pub coin_object_id: ObjectID,
+    #[serde_as(as = "AsSequenceNumber")]
     pub version: SequenceNumber,
     pub digest: ObjectDigest,
     #[serde_as(as = "BigInt<u64>")]

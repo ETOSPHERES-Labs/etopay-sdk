@@ -183,6 +183,7 @@ impl WalletUser for WalletImplIotaRebased {
             .map_err(WalletError::IotaRebasedAnyhow)?;
 
         log::info!("SDK:\n{_tx_data:?}");
+        log::info!("SDK JSON:\n{}", serde_json::to_string_pretty(&_tx_data).unwrap());
 
         let mut b = ProgrammableTransactionBuilder::new();
 
@@ -222,6 +223,7 @@ impl WalletUser for WalletImplIotaRebased {
         });
 
         log::info!("Our:\n{tx_data:?}");
+        log::info!("Our JSON:\n{}", serde_json::to_string_pretty(&tx_data).unwrap());
 
         let signature = self
             .keystore
