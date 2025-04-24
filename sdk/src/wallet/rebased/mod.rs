@@ -19,15 +19,26 @@ pub use types::*;
 pub use keystore::InMemKeystore;
 
 #[cfg(not(target_arch = "wasm32"))]
-pub use non_wasm::RpcClient;
+use jsonrpsee::http_client::HttpClient as Client;
+
+#[cfg(target_arch = "wasm32")]
+use jsonrpsee::wasm_client::Client;
+
+pub struct RpcClient {
+    client: Client,
+}
+
+impl std::ops::Deref for RpcClient {
+    type Target = Client;
+
+    fn deref(&self) -> &Self::Target {
+        &self.client
+    }
+}
 
 #[cfg(not(target_arch = "wasm32"))]
 mod non_wasm {
-    use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClient, HttpClientBuilder};
-
-    pub struct RpcClient {
-        pub client: HttpClient,
-    }
+    use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClientBuilder};
 
     const CLIENT_SDK_TYPE_HEADER: &str = "client-sdk-type";
     /// The version number of the SDK itself. This can be different from the API
@@ -37,7 +48,7 @@ mod non_wasm {
     /// target the same API version.
     const CLIENT_TARGET_API_VERSION_HEADER: &str = "client-target-api-version";
 
-    impl RpcClient {
+    impl super::RpcClient {
         pub async fn new(url: &str) -> Self {
             let client_version = "0.13.0-alpha"; // TODO: how to specify this?
 
@@ -63,24 +74,14 @@ mod non_wasm {
 }
 
 #[cfg(target_arch = "wasm32")]
-pub use wasm::RpcClient;
+impl RpcClient {
+    pub async fn new(url: &str) -> Self {
+        use jsonrpsee::wasm_client::WasmClientBuilder;
+        let http_builder = WasmClientBuilder::default();
+        // .request_timeout(self.request_timeout);
 
-#[cfg(target_arch = "wasm32")]
-mod wasm {
-    use jsonrpsee::wasm_client::{Client, WasmClientBuilder};
-
-    pub struct RpcClient {
-        pub client: Client,
-    }
-
-    impl RpcClient {
-        pub async fn new(url: &str) -> Self {
-            let http_builder = WasmClientBuilder::default();
-            // .request_timeout(self.request_timeout);
-
-            Self {
-                client: http_builder.build(url).await.expect("could not create client"),
-            }
+        Self {
+            client: http_builder.build(url).await.expect("could not create client"),
         }
     }
 }

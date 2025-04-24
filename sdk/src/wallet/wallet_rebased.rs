@@ -123,11 +123,7 @@ impl WalletUser for WalletImplIotaRebased {
     async fn get_balance(&self) -> Result<CryptoAmount> {
         let address = self.keystore.addresses()[0].into();
 
-        let balance = self
-            .client
-            .client
-            .get_balance(address, Some(self.coin_type.clone()))
-            .await?;
+        let balance = self.client.get_balance(address, Some(self.coin_type.clone())).await?;
 
         convert_u128_to_crypto_amount(balance.total_balance, self.decimals)
     }
@@ -146,7 +142,6 @@ impl WalletUser for WalletImplIotaRebased {
         let gas_budget = 5_000_000;
 
         let coins_page = self
-            .client
             .client
             .get_coins(address, Some(self.coin_type.clone()), None, None)
             .await?;
@@ -200,7 +195,7 @@ impl WalletUser for WalletImplIotaRebased {
         // create the object ref manually instead of fetching as in the official sdk
         let gas_coin_ref: rebased::ObjectRef = (gas_coin.coin_object_id, gas_coin.version, gas_coin.digest);
 
-        let gas_price = self.client.client.get_reference_gas_price().await?;
+        let gas_price = self.client.get_reference_gas_price().await?;
 
         let tx_data = rebased::TransactionData::V1(rebased::TransactionDataV1 {
             kind: TransactionKind::ProgrammableTransaction(pt),
@@ -227,7 +222,6 @@ impl WalletUser for WalletImplIotaRebased {
         let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures();
 
         let transaction_block_response = self
-            .client
             .client
             .execute_transaction_block(
                 tx_bytes.clone(),
@@ -271,7 +265,6 @@ impl WalletUser for WalletImplIotaRebased {
             .parse::<rebased::TransactionDigest>()
             .map_err(WalletError::IotaRebasedAnyhow)?;
         let tx = self
-            .client
             .client
             .get_transaction_block(
                 digest,
