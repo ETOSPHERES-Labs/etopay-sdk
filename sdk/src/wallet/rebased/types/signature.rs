@@ -248,20 +248,6 @@ impl Signer<Signature> for Ed25519KeyPair {
     }
 }
 
-// convenience from impl
-impl From<Signature> for iota_sdk_rebased::types::crypto::Signature {
-    fn from(value: Signature) -> Self {
-        match value {
-            Signature::Ed25519IotaSignature(ed25519_iota_signature) => Self::Ed25519IotaSignature(
-
-                <iota_sdk_rebased::types::crypto::Ed25519IotaSignature as iota_sdk_rebased::types::crypto::ToFromBytes>::from_bytes(ed25519_iota_signature.as_bytes()).unwrap()
-
-
-            )
-        }
-    }
-}
-
 /// Due to the incompatibility of [enum Signature] (which dispatches a trait
 /// that assumes signature and pubkey bytes for verification), here we add a
 /// wrapper enum where member can just implement a lightweight [trait

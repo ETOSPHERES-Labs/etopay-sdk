@@ -45,7 +45,7 @@ impl InMemKeystore {
         self.keys.keys().cloned().collect::<Vec<_>>()
     }
 
-    pub fn sign_secure<T>(&self, address: &IotaAddress, msg: &T, intent: Intent) -> Result<Signature, signature::Error>
+    pub fn sign_secure<T>(&self, address: &IotaAddress, msg: &T, intent: Intent) -> anyhow::Result<Signature>
     where
         T: Serialize,
     {
@@ -53,7 +53,7 @@ impl InMemKeystore {
             &IntentMessage::new(intent, msg),
             self.keys
                 .get(address)
-                .ok_or_else(|| signature::Error::from_source(format!("Cannot find key for address: [{address}]")))?,
+                .ok_or_else(|| anyhow::anyhow!("Cannot find key for address: [{address}]"))?,
         ))
     }
 }

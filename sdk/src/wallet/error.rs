@@ -136,10 +136,9 @@ pub enum WalletError {
     #[error("SolidityError error: {0}")]
     SolidityError(#[from] alloy::sol_types::Error),
 
-    /// Iota Rebased Error
-    #[error("IotaRebased error: {0}")]
-    IotaRebased(#[from] iota_sdk_rebased::error::Error),
-
+    // /// Iota Rebased Error
+    // #[error("IotaRebased error: {0}")]
+    // IotaRebased(#[from] iota_sdk_rebased::error::Error),
     /// Iota Keys Error
     #[error("IotaKeys: {0}")]
     IotaKeys(anyhow::Error),
@@ -148,10 +147,9 @@ pub enum WalletError {
     #[error("IotaRebasedAnyhow: {0}")]
     IotaRebasedAnyhow(anyhow::Error),
 
-    /// Iota signature
-    #[error("IotaSignature: {0}")]
-    IotaSignature(#[from] signature::Error),
-
+    // /// Iota signature
+    // #[error("IotaSignature: {0}")]
+    // IotaSignature(#[from] signature::Error),
     /// Iota Rebased Web client
     #[error("ClientError error: {0}")]
     ClientError(#[from] jsonrpsee::core::client::Error),

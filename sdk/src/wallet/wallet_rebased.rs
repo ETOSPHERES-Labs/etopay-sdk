@@ -2,24 +2,21 @@ use std::sync::Arc;
 
 use super::error::{Result, WalletError};
 use super::rebased::{
-    self, Argument, CoinReadApiClient, Command, GasData, ProgrammableTransaction, ProgrammableTransactionBuilder,
-    RpcClient, TransactionExpiration,
+    self, Argument, CoinReadApiClient, Command, GasData, ProgrammableTransactionBuilder, RpcClient,
+    TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
     currencies::CryptoAmount,
     transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList},
 };
-use crate::wallet::rebased::{CallArg, GovernanceReadApiClient, ReadApiClient, TransactionKind, WriteApiClient};
+use crate::wallet::rebased::{GovernanceReadApiClient, ReadApiClient, TransactionKind, WriteApiClient};
 use async_trait::async_trait;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
-use iota_sdk_rebased::types::digests::TransactionDigest;
-use iota_sdk_rebased::{IotaClient, IotaClientBuilder};
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 
 pub struct WalletImplIotaRebased {
-    client: IotaClient,
     client2: Arc<super::rebased::RpcClient>,
     keystore: rebased::InMemKeystore,
     coin_type: String,
@@ -39,8 +36,6 @@ impl std::fmt::Debug for WalletImplIotaRebased {
 impl WalletImplIotaRebased {
     /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
     pub async fn new(mnemonic: Mnemonic, coin_type: &str, decimals: u32, node_url: &[String]) -> Result<Self> {
-        let client = IotaClientBuilder::default().build(&node_url[0]).await?;
-
         let mut keystore2 = rebased::InMemKeystore::default();
         keystore2
             .import_from_mnemonic(
@@ -52,7 +47,6 @@ impl WalletImplIotaRebased {
         let client2 = Arc::new(RpcClient::new(&node_url[0]));
 
         Ok(Self {
-            client,
             client2,
             keystore: keystore2,
             coin_type: coin_type.to_string(),
@@ -168,22 +162,22 @@ impl WalletUser for WalletImplIotaRebased {
 
         log::info!("using gas_coin: {gas_coin:?}");
 
-        let _tx_data = self
-            .client
-            .transaction_builder()
-            .pay_iota(
-                address.into(),
-                vec![gas_coin.coin_object_id.into()], // object to transfer
-                vec![recipient.into()],
-                vec![amount],
-                // gas_coin.coin_object_id, // gas coin
-                gas_budget,
-            )
-            .await
-            .map_err(WalletError::IotaRebasedAnyhow)?;
-
-        log::info!("SDK:\n{_tx_data:?}");
-        log::info!("SDK JSON:\n{}", serde_json::to_string_pretty(&_tx_data).unwrap());
+        // let _tx_data = self
+        //     .client
+        //     .transaction_builder()
+        //     .pay_iota(
+        //         address.into(),
+        //         vec![gas_coin.coin_object_id.into()], // object to transfer
+        //         vec![recipient.into()],
+        //         vec![amount],
+        //         // gas_coin.coin_object_id, // gas coin
+        //         gas_budget,
+        //     )
+        //     .await
+        //     .map_err(WalletError::IotaRebasedAnyhow)?;
+        //
+        // log::info!("SDK:\n{_tx_data:?}");
+        // log::info!("SDK JSON:\n{}", serde_json::to_string_pretty(&_tx_data).unwrap());
 
         let mut b = ProgrammableTransactionBuilder::new();
 
@@ -222,12 +216,13 @@ impl WalletUser for WalletImplIotaRebased {
             expiration: TransactionExpiration::None,
         });
 
-        log::info!("Our:\n{tx_data:?}");
-        log::info!("Our JSON:\n{}", serde_json::to_string_pretty(&tx_data).unwrap());
+        // log::info!("Our:\n{tx_data:?}");
+        // log::info!("Our JSON:\n{}", serde_json::to_string_pretty(&tx_data).unwrap());
 
         let signature = self
             .keystore
-            .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())?;
+            .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())
+            .map_err(WalletError::IotaRebasedAnyhow)?;
 
         let tx = rebased::Transaction::from_data(tx_data, vec![signature.clone()]);
 
@@ -275,19 +270,18 @@ impl WalletUser for WalletImplIotaRebased {
 
     async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo> {
         let digest = tx_id
-            .parse::<TransactionDigest>()
+            .parse::<rebased::TransactionDigest>()
             .map_err(WalletError::IotaRebasedAnyhow)?;
         let tx = self
+            .client2
             .client
-            .read_api()
-            // .get_transaction_with_options(digest, IotaTransactionBlockResponseOptions::with_balance_changes())
-            .get_transaction_with_options(
+            .get_transaction_block(
                 digest,
-                iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions::full_content(),
+                Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
             )
             .await?;
 
-        log::info!("Transaction Details:\n{tx}");
+        log::info!("Transaction Details:\n{tx:?}");
 
         // TODO: get the information from the tx, most likely from the balance_changes
 

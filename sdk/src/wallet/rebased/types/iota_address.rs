@@ -51,19 +51,6 @@ impl FromStr for IotaAddress {
     }
 }
 
-/// temporary implementation to ease impl
-impl From<iota_sdk_rebased::types::base_types::IotaAddress> for IotaAddress {
-    fn from(value: iota_sdk_rebased::types::base_types::IotaAddress) -> Self {
-        Self(value.to_inner())
-    }
-}
-
-impl From<IotaAddress> for iota_sdk_rebased::types::base_types::IotaAddress {
-    fn from(value: IotaAddress) -> Self {
-        Self::new(value.0)
-    }
-}
-
 impl fmt::Display for IotaAddress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))

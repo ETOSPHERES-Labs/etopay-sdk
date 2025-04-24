@@ -62,10 +62,10 @@ iota-sdk = { package = "etospheres-labs-iota-sdk", version = "1.1.5", default-fe
 ] }
 
 # crates needed for iota-rebased integration, should be compatible versions
-iota-sdk-rebased = { package = "iota-sdk", git = "https://github.com/iotaledger/iota/", branch = "develop", default-features = false, features = []}
-bip32 = "0.5"
-anyhow = "1"
-signature = "1.6.0"
+# iota-sdk-rebased = { package = "iota-sdk", git = "https://github.com/iotaledger/iota/", branch = "develop", default-features = false, features = []}
+# bip32 = "0.5"
+# anyhow = "1"
+# signature = "1.6.0"
 
 kdbx-rs = { version = "0.5.1", default-features = false }
 jammdb = { version = "0.11.0", optional = true }
@@ -121,7 +121,9 @@ eyre = "0.6" # TODO: get rid of this?
 ref-cast = "1"
 serde-name = "0.2"
 indexmap = "2.9"
-
+bip32 = "0.5"
+anyhow = "1"
+# signature = "1.6.0"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 fern-logger = { version = "0.5.0", default-features = false }

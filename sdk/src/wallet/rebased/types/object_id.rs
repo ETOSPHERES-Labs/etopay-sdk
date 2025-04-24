@@ -27,11 +27,4 @@ impl fmt::Debug for ObjectID {
     }
 }
 
-/// temporary implementation to ease impl
-impl From<ObjectID> for iota_sdk_rebased::types::base_types::ObjectID {
-    fn from(value: ObjectID) -> Self {
-        Self::new(value.0.to_inner())
-    }
-}
-
 pub type ObjectRef = (ObjectID, SequenceNumber, ObjectDigest);
