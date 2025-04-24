@@ -114,7 +114,9 @@ extra:
     default: latest
   consent:
     cookies:
-      analytics: Analytics
+      analytics:
+        name: Analytics
+        checked: true
     title: Cookie consent
     description: >-
       We use cookies to recognize your repeated visits and preferences, as well
@@ -124,3 +126,6 @@ extra:
     actions:
       - accept
       - manage
+
+extra_javascript:
+  - javascripts/consent.js
