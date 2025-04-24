@@ -1,9 +1,15 @@
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
+// SPDX-License-Identifier: Apache-2.0
+//
+// From https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/iota_serde.rs#L65
+
 use std::marker::PhantomData;
 
 use serde::{Deserializer, Serializer};
 use serde_with::{DeserializeAs, SerializeAs};
 
-/// From https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/iota_serde.rs#L65
 /// Use with serde_as to control serde for human-readable serialization and
 /// deserialization `H` : serde_as SerializeAs/DeserializeAs delegation for
 /// human readable in/output `R` : serde_as SerializeAs/DeserializeAs delegation

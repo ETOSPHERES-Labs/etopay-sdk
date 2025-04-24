@@ -7,13 +7,13 @@
 //     balance::Supply,
 //     base_types::{IotaAddress, ObjectID},
 // };
-use jsonrpsee::{core::RpcResult, proc_macros::rpc};
+use jsonrpsee::proc_macros::rpc;
 use serde::Deserialize;
 use serde_with::serde_as;
 
-use super::ObjectID;
-use super::bigint::BigInt;
-use super::types::IotaAddress;
+use super::super::ObjectID;
+use super::super::bigint::BigInt;
+use super::super::types::{IotaAddress, ObjectDigest, SequenceNumber, TransactionDigest};
 
 /// Provides access to coin-related data such as coins owned by an address,
 /// balances, or metadata.
@@ -60,21 +60,16 @@ pub struct Page<T, C> {
 pub type CoinPage = Page<Coin, ObjectID>;
 
 #[serde_as]
-#[derive(Debug, Deserialize, Clone, PartialEq, Eq, Copy)]
-pub struct SequenceNumber(#[serde_as(as = "BigInt<u64>")] u64);
-
-#[serde_as]
 #[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct Coin {
     pub coin_type: String,
     pub coin_object_id: ObjectID,
-    // #[serde_as(as = "AsSequenceNumber")]
     pub version: SequenceNumber,
-    // pub digest: ObjectDigest,
+    pub digest: ObjectDigest,
     #[serde_as(as = "BigInt<u64>")]
     pub balance: u64,
-    // pub previous_transaction: TransactionDigest,
+    pub previous_transaction: TransactionDigest,
 }
 
 #[serde_as]

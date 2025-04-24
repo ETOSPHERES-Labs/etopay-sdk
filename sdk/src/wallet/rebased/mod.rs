@@ -4,6 +4,9 @@
 //! from the rest of the sdk crate!
 //!
 
+#![allow(clippy::expect_used, clippy::unwrap_used)] // used in some serialize/deserialize locations
+#![allow(dead_code)] // TEMP
+
 mod bigint;
 mod keystore;
 mod rpc;

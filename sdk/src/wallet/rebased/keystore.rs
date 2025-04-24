@@ -1,3 +1,8 @@
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
+// SPDX-License-Identifier: Apache-2.0
+
 use bip32::DerivationPath;
 use bip39::{Language, Mnemonic, Seed};
 use fastcrypto::ed25519::Ed25519PublicKey;

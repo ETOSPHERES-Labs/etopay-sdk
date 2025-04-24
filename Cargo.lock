@@ -371,7 +371,7 @@ dependencies = [
  "derive_more 2.0.1",
  "foldhash",
  "hashbrown 0.15.2",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "itoa",
  "k256",
  "keccak-asm",
@@ -582,7 +582,7 @@ dependencies = [
  "alloy-sol-macro-input",
  "const-hex",
  "heck 0.5.0",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "proc-macro-error2",
  "proc-macro2",
  "quote",
@@ -2899,6 +2899,7 @@ dependencies = [
  "fern-logger",
  "fluent-assertions",
  "hex",
+ "indexmap 2.9.0",
  "iota-sdk 0.12.0-alpha",
  "jammdb",
  "jsonrpsee",
@@ -2907,6 +2908,7 @@ dependencies = [
  "mockall",
  "mockito",
  "rand 0.9.1",
+ "ref-cast",
  "reqwest 0.12.15",
  "rmp-serde",
  "rstest",
@@ -2915,6 +2917,7 @@ dependencies = [
  "rust_decimal_macros",
  "secrecy",
  "serde",
+ "serde-name",
  "serde_json",
  "serde_repr",
  "serde_with",
@@ -3810,7 +3813,7 @@ dependencies = [
  "futures-sink",
  "futures-util",
  "http 0.2.12",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "slab",
  "tokio",
  "tokio-util",
@@ -3829,7 +3832,7 @@ dependencies = [
  "futures-core",
  "futures-sink",
  "http 1.3.1",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "slab",
  "tokio",
  "tokio-util",
@@ -4396,9 +4399,9 @@ dependencies = [
 
 [[package]]
 name = "indexmap"
-version = "2.8.0"
+version = "2.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3954d50fe15b02142bf25d3b8bdadb634ec3948f103d04ffe3031bc8fe9d7058"
+checksum = "cea70ddb795996207ad57735b50c5982d8844f38ba9ee5f1aedcfb708a2aa11e"
 dependencies = [
  "equivalent",
  "hashbrown 0.15.2",
@@ -4695,7 +4698,7 @@ dependencies = [
  "fastcrypto 0.1.8",
  "fastcrypto-vdf",
  "fastcrypto-zkp",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "iota-protocol-config",
  "iota-types",
  "move-binary-format",
@@ -4937,7 +4940,7 @@ dependencies = [
  "fastcrypto-zkp",
  "hex",
  "im",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "iota-enum-compat-util",
  "iota-macros",
  "iota-metrics",
@@ -5869,7 +5872,7 @@ version = "0.1.0"
 source = "git+https://github.com/iotaledger/iota/?branch=develop#74a1c7f9b66d8afd97e8403758b28910fdb78aef"
 dependencies = [
  "anyhow",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "move-binary-format",
  "move-core-types",
  "petgraph 0.5.1",
@@ -5990,7 +5993,7 @@ dependencies = [
  "clap",
  "codespan",
  "colored 2.2.0",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "move-abstract-interpreter",
  "move-binary-format",
  "move-bytecode-source-map",
@@ -6788,7 +6791,7 @@ dependencies = [
  "data-encoding",
  "getrandom 0.2.15",
  "hmac",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "rand 0.8.5",
  "serde",
  "serde_json",
@@ -6902,7 +6905,7 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "3672b37090dbd86368a4145bc067582552b29c27377cad4e0a306c97f9bd7772"
 dependencies = [
  "fixedbitset 0.5.7",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
 ]
 
 [[package]]
@@ -8536,7 +8539,7 @@ version = "1.0.140"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "20068b6e96dc6c9bd23e01df8827e6c7e1f2fddd43c21810382803c136b99373"
 dependencies = [
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "itoa",
  "memchr",
  "ryu",
@@ -8586,7 +8589,7 @@ dependencies = [
  "chrono",
  "hex",
  "indexmap 1.9.3",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "serde",
  "serde_derive",
  "serde_json",
@@ -9570,7 +9573,7 @@ version = "0.19.15"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "1b5bb770da30e5cbfde35a2d7b9b8a2c4b8ef89548a7a6aeab5c9a576e3e7421"
 dependencies = [
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "toml_datetime",
  "winnow 0.5.40",
 ]
@@ -9581,7 +9584,7 @@ version = "0.22.24"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "17b4795ff5edd201c7cd6dca065ae59972ce77d1b80fa0a84d94950ece7d1474"
 dependencies = [
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "toml_datetime",
  "winnow 0.7.4",
 ]
@@ -10024,7 +10027,7 @@ version = "5.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "435c6f69ef38c9017b4b4eea965dfb91e71e53d869e896db40d1cf2441dd75c0"
 dependencies = [
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "serde",
  "serde_json",
  "utoipa-gen",
@@ -11055,7 +11058,7 @@ dependencies = [
  "crossbeam-utils",
  "displaydoc",
  "flate2",
- "indexmap 2.8.0",
+ "indexmap 2.9.0",
  "memchr",
  "thiserror 2.0.12",
  "zopfli",

@@ -1,19 +1,19 @@
 use std::sync::Arc;
 
 use super::error::{Result, WalletError};
-use super::rebased::{self, CoinReadApiClient, RpcClient};
+use super::rebased::{
+    self, Argument, CoinReadApiClient, Command, GasData, ProgrammableTransaction, ProgrammableTransactionBuilder,
+    RpcClient, TransactionExpiration,
+};
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
     currencies::CryptoAmount,
     transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList},
 };
+use crate::wallet::rebased::{CallArg, GovernanceReadApiClient, ReadApiClient, TransactionKind, WriteApiClient};
 use async_trait::async_trait;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
-use iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions;
-// use iota_sdk_rebased::types::base_types::IotaAddress;
 use iota_sdk_rebased::types::digests::TransactionDigest;
-use iota_sdk_rebased::types::quorum_driver_types::ExecuteTransactionRequestType;
-use iota_sdk_rebased::types::transaction::Transaction;
 use iota_sdk_rebased::{IotaClient, IotaClientBuilder};
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
@@ -168,7 +168,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         log::info!("using gas_coin: {gas_coin:?}");
 
-        let tx_data = self
+        let _tx_data = self
             .client
             .transaction_builder()
             .pay_iota(
@@ -182,22 +182,83 @@ impl WalletUser for WalletImplIotaRebased {
             .await
             .map_err(WalletError::IotaRebasedAnyhow)?;
 
+        log::info!("SDK:\n{_tx_data:?}");
+
+        let mut b = ProgrammableTransactionBuilder::new();
+
+        // provide the inputs
+        let input_amount = b.pure(amount).unwrap();
+        let input_receiver = b.pure(recipient).unwrap();
+
+        // split the gas coin depending on the amount to send
+        let Argument::Result(split_primary) = b.command(Command::SplitCoins(Argument::GasCoin, vec![input_amount]))
+        else {
+            panic!("self.command should always give a Argument::Result")
+        };
+
+        // actually transfer the object that resulted from the split
+        b.command(Command::TransferObjects(
+            vec![Argument::NestedResult(split_primary, 0)],
+            input_receiver,
+        ));
+
+        let pt = b.finish();
+
+        // create the object ref manually instead of fetching as in the official sdk
+        let gas_coin_ref: rebased::ObjectRef = (gas_coin.coin_object_id, gas_coin.version, gas_coin.digest);
+
+        let gas_price = self.client2.client.get_reference_gas_price().await?;
+
+        let tx_data = rebased::TransactionData::V1(rebased::TransactionDataV1 {
+            kind: TransactionKind::ProgrammableTransaction(pt),
+            sender: address.clone(),
+            gas_data: GasData {
+                payment: vec![gas_coin_ref],
+                owner: address.clone(),
+                price: *gas_price,
+                budget: gas_budget,
+            },
+            expiration: TransactionExpiration::None,
+        });
+
+        log::info!("Our:\n{tx_data:?}");
+
         let signature = self
             .keystore
             .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())?;
 
+        let tx = rebased::Transaction::from_data(tx_data, vec![signature.clone()]);
+
+        let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures();
+
         let transaction_block_response = self
+            .client2
             .client
-            .quorum_driver_api()
             .execute_transaction_block(
-                Transaction::from_data(tx_data, vec![signature.into()]),
-                IotaTransactionBlockResponseOptions::full_content(),
-                ExecuteTransactionRequestType::WaitForLocalExecution,
+                tx_bytes.clone(),
+                signatures.clone(),
+                Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
+                // Ignore the request type as we emulate WaitForLocalExecution below.
+                // It will default to WaitForEffectsCert on the RPC nodes.
+                None,
             )
             .await?;
 
+        // let signature = self
+        //     .keystore
+        //     .sign_secure(&address, &_tx_data, rebased::Intent::iota_transaction())?;
+        // let transaction_block_response = self
+        //     .client
+        //     .quorum_driver_api()
+        //     .execute_transaction_block(
+        //         iota_sdk_rebased::types::transaction::Transaction::from_data(_tx_data, vec![signature.into()]),
+        //         iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions::full_content(),
+        //         iota_sdk_rebased::types::quorum_driver_types::ExecuteTransactionRequestType::WaitForLocalExecution,
+        //     )
+        //     .await?;
+
         log::info!("Transaction sent {}", transaction_block_response.digest);
-        log::info!("Response:\n{transaction_block_response}");
+        log::info!("Response:\n{transaction_block_response:?}");
 
         if !transaction_block_response.errors.is_empty() {
             log::warn!("Errors: {:?}", transaction_block_response.errors);
@@ -218,7 +279,10 @@ impl WalletUser for WalletImplIotaRebased {
             .client
             .read_api()
             // .get_transaction_with_options(digest, IotaTransactionBlockResponseOptions::with_balance_changes())
-            .get_transaction_with_options(digest, IotaTransactionBlockResponseOptions::full_content())
+            .get_transaction_with_options(
+                digest,
+                iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions::full_content(),
+            )
             .await?;
 
         log::info!("Transaction Details:\n{tx}");

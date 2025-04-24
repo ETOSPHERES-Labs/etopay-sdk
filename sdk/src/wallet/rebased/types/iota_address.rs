@@ -1,3 +1,8 @@
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
+// SPDX-License-Identifier: Apache-2.0
+//
 // https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/base_types.rs#L642
 
 use std::{fmt, str::FromStr};
@@ -14,6 +19,7 @@ pub const IOTA_ADDRESS_LENGTH: usize = 32;
 
 pub enum IotaError {
     InvalidAddress,
+    KeyConversion(String),
 }
 
 #[serde_as]
@@ -60,6 +66,12 @@ impl From<IotaAddress> for iota_sdk_rebased::types::base_types::IotaAddress {
 
 impl fmt::Display for IotaAddress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))
+    }
+}
+
+impl fmt::Debug for IotaAddress {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))
     }
 }

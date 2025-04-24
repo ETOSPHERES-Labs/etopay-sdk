@@ -1,6 +1,11 @@
 //! BigInt for Serialization/Deserialization.
 //! https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/iota_serde.rs#L244
 
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
+// SPDX-License-Identifier: Apache-2.0
+
 use std::fmt::Formatter;
 use std::ops::Deref;
 use std::{fmt::Display, str::FromStr};

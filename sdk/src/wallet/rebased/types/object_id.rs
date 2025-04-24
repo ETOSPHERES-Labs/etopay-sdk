@@ -1,11 +1,34 @@
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
+// SPDX-License-Identifier: Apache-2.0
+
+use std::fmt;
+
+use fastcrypto::encoding::{Encoding, Hex};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use super::{super::serde::Readable, AccountAddress, HexAccountAddress};
+use super::{
+    super::{bigint::BigInt, serde::Readable},
+    AccountAddress, HexAccountAddress, ObjectDigest,
+};
 
 #[serde_as]
-#[derive(Debug, Eq, PartialEq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Clone, Copy, PartialOrd, Ord, Hash, Serialize, Deserialize)]
 pub struct ObjectID(#[serde_as(as = "Readable<HexAccountAddress, _>")] AccountAddress);
+
+impl fmt::Display for ObjectID {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        write!(f, "0x{}", Hex::encode(self.0))
+    }
+}
+
+impl fmt::Debug for ObjectID {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
+        write!(f, "0x{}", Hex::encode(self.0))
+    }
+}
 
 /// temporary implementation to ease impl
 impl From<ObjectID> for iota_sdk_rebased::types::base_types::ObjectID {
@@ -13,3 +36,9 @@ impl From<ObjectID> for iota_sdk_rebased::types::base_types::ObjectID {
         Self::new(value.0.to_inner())
     }
 }
+
+#[serde_as]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Default, Debug, Serialize, Deserialize)]
+pub struct SequenceNumber(#[serde_as(as = "BigInt<u64>")] u64);
+
+pub type ObjectRef = (ObjectID, SequenceNumber, ObjectDigest);
