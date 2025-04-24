@@ -52,7 +52,7 @@ expect_used = "deny"
 [workspace.dependencies]
 api_types = { package = "etopay-api-types", version = "0.14.2", path = "./api_types" }
 base64 = { version = "0.22", default-features = false }
-chrono = { version = "=0.4.39", default-features = false }
+chrono = { version = "0.4.40", default-features = false }
 dotenvy = { version = "0.15", default-features = false }
 fluent-assertions = { version = "0.4", default-features = false }
 mockall = { version = "0.13", default-features = false }
