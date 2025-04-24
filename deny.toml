@@ -74,6 +74,7 @@ ignore = [
     { id = "RUSTSEC-2024-0370", reason = "affected unmaintained crate proc-macro-error used by iota-sdk" },
     { id = "RUSTSEC-2024-0384", reason = "affected unmaintained crate instant used by iota-sdk" },
     { id = "RUSTSEC-2024-0436", reason = "affected unmaintained crate paste used by alloy and rmp crates" },
+    { id = "RUSTSEC-2023-0071", reason = "only affects RSA and we are not using that in fastcrypto crate" },
     #"a-crate-that-is-yanked@0.1.1", # you can also ignore yanked crate versions if you wish
     #{ crate = "a-crate-that-is-yanked@0.1.1", reason = "you can specify why you are ignoring the yanked crate" },
 ]
