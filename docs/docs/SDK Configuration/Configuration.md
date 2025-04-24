@@ -2,7 +2,6 @@
 
 The ETOPay SDK needs to be configured correctly for secure and functional usage. Misconfiguration might lead to potential information leaks as well as bad end-user experience.
 
-
 ## Static Configuration
 
 The static configuration is provided by passing a JSON formatted string to the SDK using the [`set_config`](../SDK%20Reference/SDK%20API%20Reference.md#set-configuration) function. It has the following format, whose fields are described in the sections below.
@@ -27,7 +26,6 @@ The value of the auth provider is related to the Keycloak realm created for you 
 ???+ info
 
     The control of the client credentials, the flows used to fetch the JWT as well as the entire user management including user registration, email verification and user settings is out of scope for ETOPay backend and SDK. This should be managed by applications using the SDK themselves.
-
 
 Every time the OAuth client refreshes or fetches a new access token for the user, the access token can be updated in the SDK using the [`refresh_access_token`](../SDK%20Reference/SDK%20API%20Reference.md#refreshing-access-token) function.
 
@@ -103,8 +101,7 @@ The `backend_url` is the URL to the ETOPay backend system. Depending on if you a
 
 ### Configuring the storage path
 
-For all platforms, except for when using the TypeScript/Javascript bindings, it is mandatory that the application has access to a file system where it is allowed read and write files and directories and sub-directories. This (existing) folder is specified as the `strorage_path` field in the configuration and accepts both releative and absolute paths. Absolute paths are, however, preferred and recommended.
-
+For all platforms, except for when using the TypeScript/Javascript bindings, it is mandatory that the application has access to a file system where it is allowed read and write files and directories and sub-directories. This (existing) folder is specified as the `storage_path` field in the configuration and accepts both releative and absolute paths. Absolute paths are, however, preferred and recommended.
 
 ???+ tip
 
@@ -114,16 +111,13 @@ For all platforms, except for when using the TypeScript/Javascript bindings, it 
 
     For use in Android applications, it is important to extract the path where the app has permissions to create files and directories and use it as the storage path. This is generally something like `\data\data\org.example.app\` if the application package is `org.example.app`.
 
-
 ### Logging in the SDK and validating configuration
 
 Whenever the SDK is configured, the logger is automatically initialized. For all platforms except TypeScript/Javascript, whenever a valid log level is specified in the `log_level` field, the logger is initialized to append log messages to a `etopay_sdk.log` file in the specified `storage_path` folder. The different log levels that can be set for the logger are: `trace`, `debug`, `info`, `warn`, `error` and allow for fine-tuning the amount of log messages that are generated. A value of `off` can also be specified to disable logging completely. It is important and recommended to enable the logger since this information can be exported and analyzed during testing and integration, which can help diagnose any issues.
 
-
 ## Complete example
 
 For a complete example of how to setup and configure the SDK before using any of its module functions, please see [Example 0. Shared Setup Code](../SDK%20Examples/Examples.md#0-shared-setup-code).
-
 
 [^1]:
     The following information links could be used as reference for OAuth2.0 and OpenID Connect
