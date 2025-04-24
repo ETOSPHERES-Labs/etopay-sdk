@@ -1,3 +1,8 @@
+// Copyright (c) Mysten Labs, Inc.
+// Modifications Copyright (c) 2024 IOTA Stiftung
+// Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
+// SPDX-License-Identifier: Apache-2.0
+
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/read.rs
 
 use jsonrpsee::proc_macros::rpc;
