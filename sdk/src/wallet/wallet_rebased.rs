@@ -1,5 +1,3 @@
-use std::sync::Arc;
-
 use super::error::{Result, WalletError};
 use super::rebased::{
     self, Argument, CoinReadApiClient, Command, GasData, ProgrammableTransactionBuilder, RpcClient,
@@ -17,7 +15,7 @@ use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 
 pub struct WalletImplIotaRebased {
-    client2: Arc<super::rebased::RpcClient>,
+    client: super::rebased::RpcClient,
     keystore: rebased::InMemKeystore,
     coin_type: String,
     decimals: u32,
@@ -44,10 +42,10 @@ impl WalletImplIotaRebased {
             )
             .map_err(WalletError::IotaKeys)?;
 
-        let client2 = Arc::new(RpcClient::new(&node_url[0]));
+        let client = RpcClient::new(&node_url[0]).await;
 
         Ok(Self {
-            client2,
+            client,
             keystore: keystore2,
             coin_type: coin_type.to_string(),
             decimals,
@@ -126,7 +124,7 @@ impl WalletUser for WalletImplIotaRebased {
         let address = self.keystore.addresses()[0].into();
 
         let balance = self
-            .client2
+            .client
             .client
             .get_balance(address, Some(self.coin_type.clone()))
             .await?;
@@ -148,7 +146,7 @@ impl WalletUser for WalletImplIotaRebased {
         let gas_budget = 5_000_000;
 
         let coins_page = self
-            .client2
+            .client
             .client
             .get_coins(address, Some(self.coin_type.clone()), None, None)
             .await?;
@@ -202,7 +200,7 @@ impl WalletUser for WalletImplIotaRebased {
         // create the object ref manually instead of fetching as in the official sdk
         let gas_coin_ref: rebased::ObjectRef = (gas_coin.coin_object_id, gas_coin.version, gas_coin.digest);
 
-        let gas_price = self.client2.client.get_reference_gas_price().await?;
+        let gas_price = self.client.client.get_reference_gas_price().await?;
 
         let tx_data = rebased::TransactionData::V1(rebased::TransactionDataV1 {
             kind: TransactionKind::ProgrammableTransaction(pt),
@@ -229,7 +227,7 @@ impl WalletUser for WalletImplIotaRebased {
         let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures();
 
         let transaction_block_response = self
-            .client2
+            .client
             .client
             .execute_transaction_block(
                 tx_bytes.clone(),
@@ -273,7 +271,7 @@ impl WalletUser for WalletImplIotaRebased {
             .parse::<rebased::TransactionDigest>()
             .map_err(WalletError::IotaRebasedAnyhow)?;
         let tx = self
-            .client2
+            .client
             .client
             .get_transaction_block(
                 digest,

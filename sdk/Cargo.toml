@@ -109,15 +109,14 @@ shadow-rs = { version = "1.0.1", default-features = false }
 zxcvbn = { version = "3.1.0", default-features = false }
 
 # needed for custom iota-rebased impl
-jsonrpsee = { version = "0.24", default-features = false, features = ["http-client", "async-client", "macros"] }
 serde_with = { version = "3.12", features = ["macros", "hex"] }
 hex = { version = "0.4" }
-fastcrypto = "0.1.9"
+fastcrypto = { version = "0.1.9", default-features = false }
 tiny-bip39 = "2"
 slip10_ed25519 = "0.1.3"
 bcs = "0.1.6"
 serde_repr = "0.1.20"
-eyre = "0.6" # TODO: get rid of this?
+eyre = "0.6"                                                    # TODO: get rid of this?
 ref-cast = "1"
 serde-name = "0.2"
 indexmap = "2.9"
@@ -128,7 +127,21 @@ anyhow = "1"
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 fern-logger = { version = "0.5.0", default-features = false }
 
+# needed for iota-rebased impl
+jsonrpsee = { version = "0.24", default-features = false, features = [
+    "macros",
+    "async-client",
+    "http-client",
+] }
+
 [target.'cfg(target_arch = "wasm32")'.dependencies]
+# needed for iota-rebased impl
+jsonrpsee = { version = "0.24", default-features = false, features = [
+    "macros",
+    "async-wasm-client",
+    "wasm-client",
+] }
+
 rmp-serde = { version = "1.3.0", default-features = false }
 web-sys = { version = "0.3", default-features = false, features = [
     "Window",
@@ -170,4 +183,4 @@ required-features = ["viviswap-kyc"]
 
 # cargo-machete thinks that `alloy-consensus` is unused, but it is actually needed
 [package.metadata.cargo-machete]
-ignored = ["alloy-consensus", "deranged"]
+ignored = ["deranged", "tiny-bip39"]
