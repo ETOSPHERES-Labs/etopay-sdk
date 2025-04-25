@@ -1,16 +1,31 @@
 mod utils;
+use std::path::Path;
+
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
-use etopay_sdk::types::newtypes::PlainPassword;
+use etopay_sdk::{
+    core::{Config, Sdk},
+    types::newtypes::PlainPassword,
+};
 use rust_decimal_macros::dec;
 use testing::USER_SATOSHI;
-use utils::init_sdk;
 
 #[allow(clippy::unwrap_used, clippy::expect_used)]
 #[tokio::main]
 async fn main() {
-    // Initialize SDK
+    env_logger::builder().filter_level(log::LevelFilter::Info).init();
+
     let user: utils::TestUser = (*USER_SATOSHI).clone().into();
-    let (mut sdk, _cleanup) = init_sdk().await;
+
+    let cleanup = testing::CleanUp::default();
+
+    // Initialize SDK
+    let config = Config {
+        backend_url: "https://localhost/".parse().unwrap(),
+        path_prefix: Path::new(&cleanup.path_prefix).into(),
+        auth_provider: "standalone".to_string(),
+        log_level: log::LevelFilter::Debug,
+    };
+    let mut sdk = Sdk::new(config).expect("should not fail to initialize sdk");
 
     // Create new user
     sdk.create_new_user(&user.username).await.unwrap();
