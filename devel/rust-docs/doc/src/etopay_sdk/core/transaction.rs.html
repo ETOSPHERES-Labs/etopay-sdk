@@ -269,7 +269,7 @@
 <a href=#269 id=269 data-nosnippet>269</a>                <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>active_user.username, wallet_transactions);
 <a href=#270 id=270 data-nosnippet>270</a>                tx_id
 <a href=#271 id=271 data-nosnippet>271</a>            }
-<a href=#272 id=272 data-nosnippet>272</a>            ApiProtocol::Stardust {} =&gt; wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>,
+<a href=#272 id=272 data-nosnippet>272</a>            ApiProtocol::Stardust {} | ApiProtocol::IotaRebased { .. } =&gt; wallet.send_amount(<span class="kw-2">&amp;</span>intent).<span class="kw">await</span><span class="question-mark">?</span>,
 <a href=#273 id=273 data-nosnippet>273</a>        };
 <a href=#274 id=274 data-nosnippet>274</a>
 <a href=#275 id=275 data-nosnippet>275</a>        <span class="prelude-val">Ok</span>(tx_id)
