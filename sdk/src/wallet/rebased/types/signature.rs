@@ -126,7 +126,7 @@ impl Signature {
         Signer::sign(secret, hashed_msg)
     }
 
-    pub fn new_secure<T>(value: &IntentMessage<T>, secret: &dyn Signer<Signature>) -> Self
+    pub fn new_secure<T>(value: &IntentMessage<T>, secret: &dyn Signer<Signature>) -> Result<Self, RebasedError>
     where
         T: Serialize,
     {
@@ -136,9 +136,9 @@ impl Signature {
         // hash of the Rust type prefix and `struct TransactionData`.
         // (See `fn digest` in `impl Message for SenderSignedData`).
         let mut hasher = Blake2b256::default();
-        hasher.update(bcs::to_bytes(&value).expect("Message serialization should not fail"));
+        hasher.update(bcs::to_bytes(&value)?);
 
-        Signer::sign(secret, &hasher.finalize().digest)
+        Ok(Signer::sign(secret, &hasher.finalize().digest))
     }
 }
 
@@ -243,6 +243,10 @@ impl Signer<Signature> for Ed25519KeyPair {
         signature_bytes.extend_from_slice(&[Ed25519IotaSignature::SCHEME.flag()]);
         signature_bytes.extend_from_slice(sig.as_ref());
         signature_bytes.extend_from_slice(self.public().as_ref());
+        #[allow(
+            clippy::expect_used,
+            reason = "the required length is constant, thus this is acceptable"
+        )]
         let sign = Ed25519IotaSignature::from_bytes(&signature_bytes[..])
             .expect("Serialized signature did not have expected size");
 

@@ -4,8 +4,7 @@
 //! from the rest of the sdk crate!
 //!
 
-#![allow(clippy::expect_used, clippy::unwrap_used)] // used in some serialize/deserialize locations
-#![allow(dead_code)] // TEMP
+#![allow(dead_code, reason = "Not all copied methods are needed but kept for the future")]
 
 mod bigint;
 mod client;

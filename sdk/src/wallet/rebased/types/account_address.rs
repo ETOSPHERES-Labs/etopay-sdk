@@ -74,7 +74,7 @@ impl AccountAddress {
             .map(Self)
     }
 
-    pub fn to_hex(&self) -> String {
+    pub fn to_hex(self) -> String {
         format!("{:x}", self)
     }
 

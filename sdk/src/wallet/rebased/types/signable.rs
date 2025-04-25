@@ -46,6 +46,7 @@ where
     T: bcs_signable::BcsSignable,
     W: std::io::Write,
 {
+    #[allow(clippy::expect_used, reason = "invariant guaranteed by the sealed trait above")]
     fn write(&self, writer: &mut W) {
         let name = serde_name::trace_name::<Self>().expect("Self must be a struct or an enum");
         // Note: This assumes that names never contain the separator `::`.

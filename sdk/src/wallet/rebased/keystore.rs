@@ -49,12 +49,12 @@ impl InMemKeystore {
     where
         T: Serialize,
     {
-        Ok(Signature::new_secure(
+        Signature::new_secure(
             &IntentMessage::new(intent, msg),
             self.keys
                 .get(address)
                 .ok_or_else(|| RebasedError::KeyNotFound { address: *address })?,
-        ))
+        )
     }
 }
 

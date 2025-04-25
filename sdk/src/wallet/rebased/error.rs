@@ -47,4 +47,7 @@ pub enum RebasedError {
 
     #[error("BuilderError: {0}")]
     BuilderError(#[from] super::BuilderError),
+
+    #[error("Bcs: {0}")]
+    Bcs(#[from] bcs::Error),
 }

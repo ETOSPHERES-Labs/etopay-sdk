@@ -6,8 +6,9 @@
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/transaction.rs
 
 use fastcrypto::encoding::Base64;
-use fastcrypto::traits::Signer;
 use serde::{Deserialize, Serialize};
+
+use crate::wallet::rebased::RebasedError;
 
 use super::super::{Intent, IntentMessage};
 use super::{
@@ -179,25 +180,9 @@ impl Message for SenderSignedData {
 }
 
 impl Transaction {
-    pub fn from_data_and_signer(data: TransactionData, signers: Vec<&dyn Signer<Signature>>) -> Self {
-        let signatures = {
-            let intent_msg = IntentMessage::new(Intent::iota_transaction(), &data);
-            signers
-                .into_iter()
-                .map(|s| Signature::new_secure(&intent_msg, s))
-                .collect()
-        };
-        Self::from_data(data, signatures)
-    }
-
     // TODO: Rename this function and above to make it clearer.
     pub fn from_data(data: TransactionData, signatures: Vec<Signature>) -> Self {
         Self::from_generic_sig_data(data, signatures.into_iter().map(|s| s.into()).collect())
-    }
-
-    pub fn signature_from_signer(data: TransactionData, intent: Intent, signer: &dyn Signer<Signature>) -> Signature {
-        let intent_msg = IntentMessage::new(intent, data);
-        Signature::new_secure(&intent_msg, signer)
     }
 
     pub fn from_generic_sig_data(data: TransactionData, signatures: Vec<GenericSignature>) -> Self {
@@ -206,16 +191,16 @@ impl Transaction {
 
     /// Returns the Base64 encoded tx_bytes
     /// and a list of Base64 encoded [enum GenericSignature].
-    pub fn to_tx_bytes_and_signatures(&self) -> (Base64, Vec<Base64>) {
-        (
-            Base64::from_bytes(&bcs::to_bytes(&self.data().intent_message().value).unwrap()),
+    pub fn to_tx_bytes_and_signatures(&self) -> Result<(Base64, Vec<Base64>), RebasedError> {
+        Ok((
+            Base64::from_bytes(&bcs::to_bytes(&self.data().intent_message().value)?),
             self.data()
                 .inner()
                 .tx_signatures
                 .iter()
                 .map(|s| Base64::from_bytes(s.as_ref()))
                 .collect(),
-        )
+        ))
     }
 }
 

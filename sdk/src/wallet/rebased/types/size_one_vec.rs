@@ -61,6 +61,7 @@ impl<T> TryFrom<Vec<T>> for SizeOneVec<T> {
         if v.len() != 1 {
             Err(RebasedError::SizeOneVecSize)
         } else {
+            #[allow(clippy::unwrap_used, reason = "invariant is upheld by length check")]
             Ok(SizeOneVec { e: v.pop().unwrap() })
         }
     }

@@ -13,10 +13,9 @@ use serde_with::serde_as;
 
 use super::super::RebasedError;
 use super::super::serde::Readable;
+use super::AccountAddress;
 
-/// An address formatted as a string
-
-pub const IOTA_ADDRESS_LENGTH: usize = 32;
+pub const IOTA_ADDRESS_LENGTH: usize = AccountAddress::LENGTH;
 
 #[serde_as]
 #[derive(Eq, Default, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Serialize, Deserialize)]

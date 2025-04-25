@@ -116,7 +116,7 @@ impl WalletUser for WalletImplIotaRebased {
     }
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
-        let address = self.keystore.addresses()[0].into();
+        let address = self.keystore.addresses()[0];
 
         let balance = self
             .client
@@ -200,10 +200,10 @@ impl WalletUser for WalletImplIotaRebased {
 
         let tx_data = rebased::TransactionData::V1(rebased::TransactionDataV1 {
             kind: TransactionKind::ProgrammableTransaction(pt),
-            sender: address.clone(),
+            sender: address,
             gas_data: GasData {
                 payment: vec![gas_coin_ref],
-                owner: address.clone(),
+                owner: address,
                 price: *gas_price,
                 budget: gas_budget,
             },
@@ -219,7 +219,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let tx = rebased::Transaction::from_data(tx_data, vec![signature.clone()]);
 
-        let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures();
+        let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures()?;
 
         let transaction_block_response = self
             .client

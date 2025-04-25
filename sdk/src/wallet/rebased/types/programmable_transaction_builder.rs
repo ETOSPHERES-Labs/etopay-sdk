@@ -182,36 +182,39 @@ impl ProgrammableTransactionBuilder {
         })))
     }
 
-    pub fn transfer_arg(&mut self, recipient: IotaAddress, arg: Argument) {
+    pub fn transfer_arg(&mut self, recipient: IotaAddress, arg: Argument) -> Result<(), BuilderError> {
         self.transfer_args(recipient, vec![arg])
     }
 
-    pub fn transfer_args(&mut self, recipient: IotaAddress, args: Vec<Argument>) {
-        let rec_arg = self.pure(recipient).unwrap();
+    pub fn transfer_args(&mut self, recipient: IotaAddress, args: Vec<Argument>) -> Result<(), BuilderError> {
+        let rec_arg = self.pure(recipient)?;
         self.commands.push(Command::TransferObjects(args, rec_arg));
+        Ok(())
     }
 
     pub fn transfer_object(&mut self, recipient: IotaAddress, object_ref: ObjectRef) -> Result<(), BuilderError> {
-        let rec_arg = self.pure(recipient).unwrap();
+        let rec_arg = self.pure(recipient)?;
         let obj_arg = self.obj(ObjectArg::ImmOrOwnedObject(object_ref));
         self.commands.push(Command::TransferObjects(vec![obj_arg?], rec_arg));
         Ok(())
     }
 
-    pub fn transfer_iota(&mut self, recipient: IotaAddress, amount: Option<u64>) {
-        let rec_arg = self.pure(recipient).unwrap();
+    pub fn transfer_iota(&mut self, recipient: IotaAddress, amount: Option<u64>) -> Result<(), BuilderError> {
+        let rec_arg = self.pure(recipient)?;
         let coin_arg = if let Some(amount) = amount {
-            let amt_arg = self.pure(amount).unwrap();
+            let amt_arg = self.pure(amount)?;
             self.command(Command::SplitCoins(Argument::GasCoin, vec![amt_arg]))
         } else {
             Argument::GasCoin
         };
         self.command(Command::TransferObjects(vec![coin_arg], rec_arg));
+        Ok(())
     }
 
-    pub fn pay_all_iota(&mut self, recipient: IotaAddress) {
-        let rec_arg = self.pure(recipient).unwrap();
+    pub fn pay_all_iota(&mut self, recipient: IotaAddress) -> Result<(), BuilderError> {
+        let rec_arg = self.pure(recipient)?;
         self.command(Command::TransferObjects(vec![Argument::GasCoin], rec_arg));
+        Ok(())
     }
 
     /// Will fail to generate if recipients and amounts do not have the same
@@ -271,7 +274,7 @@ impl ProgrammableTransactionBuilder {
             panic!("self.command should always give a Argument::Result")
         };
         for (recipient, split_secondaries) in recipient_map {
-            let rec_arg = self.pure(recipient).unwrap();
+            let rec_arg = self.pure(recipient)?;
             let coins = split_secondaries
                 .into_iter()
                 .map(|j| Argument::NestedResult(split_primary, j as u16))
