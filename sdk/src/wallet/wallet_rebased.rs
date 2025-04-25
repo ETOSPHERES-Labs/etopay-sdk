@@ -227,9 +227,7 @@ impl WalletUser for WalletImplIotaRebased {
                 tx_bytes.clone(),
                 signatures.clone(),
                 Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
-                // Ignore the request type as we emulate WaitForLocalExecution below.
-                // It will default to WaitForEffectsCert on the RPC nodes.
-                None,
+                Some(rebased::ExecuteTransactionRequestType::WaitForLocalExecution),
             )
             .await
             .map_err(RebasedError::RpcError)?;
