@@ -17,8 +17,6 @@ mod types;
 pub use rpc::*;
 pub use types::*;
 
-pub use error::RebasedError;
-
-pub use keystore::InMemKeystore;
-
 pub use client::RpcClient;
+pub use error::RebasedError;
+pub use keystore::InMemKeystore;
