@@ -9,7 +9,7 @@ use iota_sdk::types::block::payload::TaggedDataPayload;
 use iota_sdk::types::block::payload::transaction::TransactionId;
 use iota_sdk::wallet::ClientOptions;
 use iota_sdk::wallet::account::{Account, SyncOptions, TransactionOptions};
-use log::{error, info};
+use log::info;
 use rust_decimal_macros::dec;
 use std::fmt::Debug;
 use std::path::Path;
@@ -43,7 +43,7 @@ impl WalletImplStardust {
         // we need to make sure the path exists, or we will get IO errors, but only if we are not on wasm
         #[cfg(not(target_arch = "wasm32"))]
         if let Err(e) = std::fs::create_dir_all(path) {
-            error!("Could not create the wallet directory: {e:?}");
+            log::error!("Could not create the wallet directory: {e:?}");
         }
 
         let account_manager = {

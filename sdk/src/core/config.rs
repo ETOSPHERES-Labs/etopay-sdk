@@ -10,9 +10,6 @@ use log::info;
 use std::path::Path;
 use std::str::FromStr;
 
-/// The default log file used by the sdk to write logs
-const ETOPAY_LOGFILE: &str = "etopay_sdk.log";
-
 /// Struct to configure the SDK
 #[derive(Debug)]
 pub struct Config {
@@ -119,7 +116,7 @@ impl Sdk {
         // initialize the logger if we are not on wasm
         #[cfg(not(target_arch = "wasm32"))]
         {
-            let log_file = config.path_prefix.join(ETOPAY_LOGFILE);
+            let log_file = config.path_prefix.join("etopay_sdk.log");
             let log_file_str = log_file
                 .to_str()
                 .ok_or_else(|| crate::Error::SetConfig(format!("config file path is not valid utf-8: {log_file:?}")))?;

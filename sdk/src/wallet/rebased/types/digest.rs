@@ -9,9 +9,7 @@ use fastcrypto::encoding::{Base58, Encoding};
 use serde::{Deserialize, Serialize};
 use serde_with::{Bytes, serde_as};
 
-use crate::wallet::rebased::RebasedError;
-
-use super::super::serde::Readable;
+use super::super::{RebasedError, serde::Readable};
 
 /// A representation of a 32 byte digest
 #[serde_as]

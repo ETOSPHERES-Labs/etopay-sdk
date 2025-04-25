@@ -19,9 +19,7 @@ use fastcrypto::{
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{Bytes, serde_as};
 
-use crate::wallet::rebased::RebasedError;
-
-use super::super::serde::Readable;
+use super::super::{RebasedError, serde::Readable};
 use super::IntentMessage;
 
 #[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq)]

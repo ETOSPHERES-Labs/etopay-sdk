@@ -9,7 +9,7 @@ use fastcrypto::encoding::decode_bytes_hex;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
-use crate::wallet::rebased::RebasedError;
+use super::super::RebasedError;
 
 pub const INTENT_PREFIX_LENGTH: usize = 3;
 
