@@ -1,7 +1,7 @@
 use super::error::{Result, WalletError};
 use super::rebased::{
-    self, Argument, CoinReadApiClient, Command, GasData, ProgrammableTransactionBuilder, RebasedError, RpcClient,
-    TransactionExpiration,
+    self, Argument, CoinReadApiClient, Command, GasData, ObjectArg, ProgrammableTransactionBuilder, RebasedError,
+    RpcClient, TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
@@ -137,7 +137,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let gas_budget = 5_000_000;
 
-        let coins = self
+        let mut coins = self
             .client
             .get_coins(address, Some(self.coin_type.clone()), None, None)
             .await
@@ -169,18 +169,79 @@ impl WalletUser for WalletImplIotaRebased {
             ));
 
             let pt = b.finish();
-            (pt, gas_coin)
+            (pt, gas_coin.clone())
         } else {
             // we do not have a single coin to cover amount + gas budget. Try to merge multiple
             // coins until we have enough.
 
-            // coins[0];
+            // first find a coin to cover the gas budget (probably must be iota coin)
+            let Some(gas_coin_idx) = coins.iter().position(|c| c.balance > gas_budget) else {
+                // not found -> no way to cover the costs!
+                return Err(WalletError::InsufficientBalance(String::new()));
+            };
 
-            return Err(WalletError::InsufficientBalance(String::new()));
+            // take out the gas coin
+            let gas_coin = coins.swap_remove(gas_coin_idx);
+
+            let mut total = gas_coin.balance;
+
+            let mut other_coins = Vec::new();
+
+            for coin in coins.into_iter() {
+                // if we have enough, stop here
+                if total > (amount + gas_budget) {
+                    break;
+                }
+                // otherwise add this coin to the list
+                total += coin.balance;
+                other_coins.push(coin);
+            }
+
+            // we now have:
+            // - gas_coin that can cover the gas costs
+            // - a list of other coins that, when merged with the gas_coin, covers the total amount
+
+            log::info!("Gas Coin: {gas_coin:?}");
+            log::info!("Other Coins: {other_coins:?}");
+            log::info!("Total balance: {total}");
+
+            let mut b = ProgrammableTransactionBuilder::new();
+
+            // provide the inputs
+            let input_amount = b.pure(amount).map_err(RebasedError::BuilderError)?;
+            let input_receiver = b.pure(recipient).map_err(RebasedError::BuilderError)?;
+
+            // put all other coins into the arguments
+            let input_other_coins = other_coins
+                .iter()
+                .map(|c| {
+                    b.obj(ObjectArg::ImmOrOwnedObject(c.obj_ref()))
+                        .map_err(RebasedError::BuilderError)
+                })
+                .collect::<core::result::Result<Vec<_>, rebased::RebasedError>>()?;
+
+            // Merge the other coins into the GasCoin
+            b.command(Command::MergeCoins(Argument::GasCoin, input_other_coins));
+
+            // split the gas coin depending on the amount to send
+            let Argument::Result(split_primary) = b.command(Command::SplitCoins(Argument::GasCoin, vec![input_amount]))
+            else {
+                panic!("self.command should always give a Argument::Result")
+            };
+
+            // actually transfer the object that resulted from the split
+            b.command(Command::TransferObjects(
+                vec![Argument::NestedResult(split_primary, 0)],
+                input_receiver,
+            ));
+
+            let pt = b.finish();
+
+            (pt, gas_coin)
         };
 
         // create the object ref manually instead of fetching as in the official sdk
-        let gas_coin_ref: rebased::ObjectRef = (gas_coin.coin_object_id, gas_coin.version, gas_coin.digest);
+        let gas_coin_ref = gas_coin.obj_ref();
 
         let gas_price = self
             .client
