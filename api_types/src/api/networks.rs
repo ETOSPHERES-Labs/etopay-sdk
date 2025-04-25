@@ -17,6 +17,11 @@ pub enum ApiProtocol {
     },
     /// Represents a Stardust network
     Stardust {},
+    /// Represents an IOTA Rebased network
+    IotaRebased {
+        /// The IOTA Rebased Coin Type to interact with (eg. `0x2::iota::IOTA`) for the iota mainnet
+        coin_type: String,
+    },
 }
 
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]

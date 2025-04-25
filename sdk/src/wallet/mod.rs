@@ -17,6 +17,8 @@ pub(crate) mod wallet_stardust;
 /// wallet user for EVM
 pub(crate) mod wallet_evm;
 
+pub(crate) mod wallet_rebased;
+
 /// Module containing code related to the SSS secret sharing scheme
 pub mod share;
 
@@ -25,3 +27,5 @@ pub mod kdbx;
 
 /// Errors related to sdk wallet
 pub mod error;
+
+mod rebased;

@@ -1,0 +1,3 @@
+[advisories]
+# ignore RSA timing sidechannel attack (see deny.toml)
+ignore = ["RUSTSEC-2023-0071"]

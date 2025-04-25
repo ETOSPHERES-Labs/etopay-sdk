@@ -247,6 +247,7 @@ pub mod ffi {
         Evm,
         EvmERC20,
         Stardust,
+        IotaRebased,
     }
 
     extern "Rust" {
