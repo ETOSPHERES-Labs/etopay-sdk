@@ -5,10 +5,11 @@
 
 use std::str::FromStr;
 
-use eyre::eyre;
 use fastcrypto::encoding::decode_bytes_hex;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
+
+use crate::wallet::rebased::RebasedError;
 
 pub const INTENT_PREFIX_LENGTH: usize = 3;
 
@@ -22,9 +23,9 @@ pub enum IntentVersion {
 }
 
 impl TryFrom<u8> for IntentVersion {
-    type Error = eyre::Report;
+    type Error = RebasedError;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        bcs::from_bytes(&[value]).map_err(|_| eyre!("Invalid IntentVersion"))
+        bcs::from_bytes(&[value]).map_err(|_| RebasedError::InvalidIntentVersion)
     }
 }
 
@@ -42,9 +43,9 @@ pub enum AppId {
 
 // TODO(joyqvq): Use num_derive
 impl TryFrom<u8> for AppId {
-    type Error = eyre::Report;
+    type Error = RebasedError;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        bcs::from_bytes(&[value]).map_err(|_| eyre!("Invalid AppId"))
+        bcs::from_bytes(&[value]).map_err(|_| RebasedError::InvalidAppId)
     }
 }
 
@@ -72,9 +73,9 @@ pub enum IntentScope {
 }
 
 impl TryFrom<u8> for IntentScope {
-    type Error = eyre::Report;
+    type Error = RebasedError;
     fn try_from(value: u8) -> Result<Self, Self::Error> {
-        bcs::from_bytes(&[value]).map_err(|_| eyre!("Invalid IntentScope"))
+        bcs::from_bytes(&[value]).map_err(|_| RebasedError::InvalidIntentScope)
     }
 }
 
@@ -98,9 +99,9 @@ impl Intent {
         [self.scope as u8, self.version as u8, self.app_id as u8]
     }
 
-    pub fn from_bytes(bytes: &[u8]) -> Result<Self, eyre::Report> {
+    pub fn from_bytes(bytes: &[u8]) -> Result<Self, RebasedError> {
         if bytes.len() != INTENT_PREFIX_LENGTH {
-            return Err(eyre!("Invalid Intent"));
+            return Err(RebasedError::InvalidIntent);
         }
         Ok(Self {
             scope: bytes[0].try_into()?,
@@ -111,9 +112,9 @@ impl Intent {
 }
 
 impl FromStr for Intent {
-    type Err = eyre::Report;
+    type Err = RebasedError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let bytes: Vec<u8> = decode_bytes_hex(s).map_err(|_| eyre!("Invalid Intent"))?;
+        let bytes: Vec<u8> = decode_bytes_hex(s).map_err(|_| RebasedError::InvalidIntent)?;
         Self::from_bytes(bytes.as_slice())
     }
 }

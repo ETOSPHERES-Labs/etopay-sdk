@@ -9,6 +9,8 @@ use fastcrypto::encoding::{Base58, Encoding};
 use serde::{Deserialize, Serialize};
 use serde_with::{Bytes, serde_as};
 
+use crate::wallet::rebased::RebasedError;
+
 use super::super::serde::Readable;
 
 /// A representation of a 32 byte digest
@@ -239,13 +241,13 @@ impl fmt::UpperHex for TransactionDigest {
 // }
 
 impl std::str::FromStr for TransactionDigest {
-    type Err = anyhow::Error;
+    type Err = RebasedError;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut result = [0; 32];
-        let buffer = Base58::decode(s).map_err(|e| anyhow::anyhow!(e))?;
+        let buffer = Base58::decode(s)?;
         if buffer.len() != 32 {
-            return Err(anyhow::anyhow!("Invalid digest length. Expected 32 bytes"));
+            return Err(RebasedError::InvalidDigestLength);
         }
         result.copy_from_slice(&buffer);
         Ok(TransactionDigest::new(result))

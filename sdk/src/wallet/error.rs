@@ -1,4 +1,4 @@
-use super::{kdbx::KdbxStorageError, share::ShareError};
+use super::{kdbx::KdbxStorageError, rebased, share::ShareError};
 use crate::{backend::error::ApiError, types::error::TypeError, user::error::UserKvStorageError};
 use iota_sdk::types::block;
 use serde::Serialize;
@@ -100,6 +100,10 @@ pub enum WalletError {
     #[error("Bip39 error: {0:?}")]
     Bip39(iota_sdk::crypto::keys::bip39::Error),
 
+    /// Error occurred while handling bip32 compliant derivation paths
+    #[error("Bip32: {0:?}")]
+    Bip32(#[from] bip32::Error),
+
     /// Error occurs in sdk backend (api)
     #[error("BackendApi errors: {0}")]
     BackendApi(#[from] ApiError),
@@ -136,23 +140,9 @@ pub enum WalletError {
     #[error("SolidityError error: {0}")]
     SolidityError(#[from] alloy::sol_types::Error),
 
-    // /// Iota Rebased Error
-    // #[error("IotaRebased error: {0}")]
-    // IotaRebased(#[from] iota_sdk_rebased::error::Error),
-    /// Iota Keys Error
-    #[error("IotaKeys: {0}")]
-    IotaKeys(anyhow::Error),
-
-    /// Iota Keys Error
-    #[error("IotaRebasedAnyhow: {0}")]
-    IotaRebasedAnyhow(anyhow::Error),
-
-    // /// Iota signature
-    // #[error("IotaSignature: {0}")]
-    // IotaSignature(#[from] signature::Error),
-    /// Iota Rebased Web client
-    #[error("ClientError error: {0}")]
-    ClientError(#[from] jsonrpsee::core::client::Error),
+    /// Iota Rebased Error
+    #[error("IotaRebased: {0}")]
+    IotaRebased(#[from] rebased::RebasedError),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {

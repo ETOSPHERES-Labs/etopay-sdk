@@ -11,16 +11,12 @@ use fastcrypto::encoding::{Encoding, Hex};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
+use super::super::RebasedError;
 use super::super::serde::Readable;
 
 /// An address formatted as a string
 
 pub const IOTA_ADDRESS_LENGTH: usize = 32;
-
-pub enum IotaError {
-    InvalidAddress,
-    KeyConversion(String),
-}
 
 #[serde_as]
 #[derive(Eq, Default, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Serialize, Deserialize)]
@@ -28,26 +24,26 @@ pub struct IotaAddress(#[serde_as(as = "Readable<Hex, _>")] pub [u8; IOTA_ADDRES
 
 impl IotaAddress {
     /// Parse a IotaAddress from a byte array or buffer.
-    pub fn from_bytes<T: AsRef<[u8]>>(bytes: T) -> Result<Self, IotaError> {
+    pub fn from_bytes<T: AsRef<[u8]>>(bytes: T) -> Result<Self, RebasedError> {
         <[u8; IOTA_ADDRESS_LENGTH]>::try_from(bytes.as_ref())
-            .map_err(|_| IotaError::InvalidAddress)
+            .map_err(|_| RebasedError::InvalidAddress)
             .map(IotaAddress)
     }
 }
 
 impl TryFrom<&[u8]> for IotaAddress {
-    type Error = IotaError;
+    type Error = RebasedError;
 
     /// Tries to convert the provided byte array into a IotaAddress.
-    fn try_from(bytes: &[u8]) -> Result<Self, IotaError> {
+    fn try_from(bytes: &[u8]) -> Result<Self, RebasedError> {
         Self::from_bytes(bytes)
     }
 }
 
 impl FromStr for IotaAddress {
-    type Err = anyhow::Error;
+    type Err = RebasedError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        fastcrypto::encoding::decode_bytes_hex(s).map_err(|e| anyhow::anyhow!(e))
+        Ok(fastcrypto::encoding::decode_bytes_hex(s)?)
     }
 }
 

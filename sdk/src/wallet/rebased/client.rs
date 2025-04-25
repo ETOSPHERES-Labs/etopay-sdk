@@ -29,7 +29,7 @@ mod non_wasm {
     const CLIENT_TARGET_API_VERSION_HEADER: &str = "client-target-api-version";
 
     impl super::RpcClient {
-        pub async fn new(url: &str) -> Self {
+        pub async fn new(url: &str) -> Result<Self, super::super::RebasedError> {
             let client_version = "0.13.0-alpha"; // TODO: how to specify this?
 
             let mut headers = HeaderMap::new();
@@ -46,22 +46,22 @@ mod non_wasm {
                 .set_headers(headers);
             // .request_timeout(self.request_timeout);
 
-            Self {
-                client: http_builder.build(url).expect("could not create client"),
-            }
+            Ok(Self {
+                client: http_builder.build(url)?,
+            })
         }
     }
 }
 
 #[cfg(target_arch = "wasm32")]
 impl RpcClient {
-    pub async fn new(url: &str) -> Self {
+    pub async fn new(url: &str) -> Result<Self, super::RebasedError> {
         use jsonrpsee::wasm_client::WasmClientBuilder;
         let http_builder = WasmClientBuilder::default();
         // .request_timeout(self.request_timeout);
 
-        Self {
-            client: http_builder.build(url).await.expect("could not create client"),
-        }
+        Ok(Self {
+            client: http_builder.build(url).await?,
+        })
     }
 }

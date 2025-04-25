@@ -9,6 +9,8 @@ use std::{borrow::Borrow, ops::Deref, str::FromStr};
 use ref_cast::RefCast;
 use serde::{Deserialize, Serialize};
 
+use crate::wallet::rebased::RebasedError;
+
 /// An owned identifier.
 ///
 /// For more details, see the module level documentation.
@@ -19,12 +21,12 @@ pub struct Identifier(Box<str>);
 
 impl Identifier {
     /// Creates a new `Identifier` instance.
-    pub fn new(s: impl Into<Box<str>>) -> anyhow::Result<Self> {
+    pub fn new(s: impl Into<Box<str>>) -> Result<Self, RebasedError> {
         let s = s.into();
         if Self::is_valid(&s) {
             Ok(Self(s))
         } else {
-            anyhow::bail!("Invalid identifier '{}'", s);
+            Err(RebasedError::InvalidIdentifier(s.to_string()))
         }
     }
 
@@ -52,7 +54,7 @@ impl Identifier {
     }
 
     /// Converts a vector of bytes to an `Identifier`.
-    pub fn from_utf8(vec: Vec<u8>) -> anyhow::Result<Self> {
+    pub fn from_utf8(vec: Vec<u8>) -> Result<Self, RebasedError> {
         let s = String::from_utf8(vec)?;
         Self::new(s)
     }
@@ -77,9 +79,9 @@ impl Identifier {
 }
 
 impl FromStr for Identifier {
-    type Err = anyhow::Error;
+    type Err = RebasedError;
 
-    fn from_str(data: &str) -> anyhow::Result<Self> {
+    fn from_str(data: &str) -> Result<Self, Self::Err> {
         Self::new(data)
     }
 }
@@ -120,11 +122,11 @@ impl fmt::Display for Identifier {
 pub struct IdentStr(str);
 
 impl IdentStr {
-    pub fn new(s: &str) -> anyhow::Result<&IdentStr> {
+    pub fn new(s: &str) -> Result<&IdentStr, RebasedError> {
         if Self::is_valid(s) {
             Ok(IdentStr::ref_cast(s))
         } else {
-            anyhow::bail!("Invalid identifier '{}'", s);
+            Err(RebasedError::InvalidIdentifier(s.to_string()))
         }
     }
 

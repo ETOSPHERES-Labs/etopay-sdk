@@ -15,7 +15,7 @@ use fastcrypto::{
 use serde::Serialize;
 use std::collections::BTreeMap;
 
-use super::{Intent, IntentMessage, IotaAddress, Signature};
+use super::{Intent, IntentMessage, IotaAddress, RebasedError, Signature};
 
 #[derive(Default)]
 pub struct InMemKeystore {
@@ -26,13 +26,13 @@ impl InMemKeystore {
         &mut self,
         phrase: &str,
         derivation_path: DerivationPath,
-    ) -> Result<IotaAddress, anyhow::Error> {
-        let mnemonic = Mnemonic::from_phrase(phrase, Language::English).unwrap();
+    ) -> Result<IotaAddress, RebasedError> {
+        let mnemonic = Mnemonic::from_phrase(phrase, Language::English)?;
         let seed = Seed::new(&mnemonic, "");
 
         let indexes = derivation_path.into_iter().map(|i| i.into()).collect::<Vec<_>>();
         let derived = slip10_ed25519::derive_ed25519_private_key(seed.as_bytes(), &indexes);
-        let sk = Ed25519PrivateKey::from_bytes(&derived).unwrap();
+        let sk = Ed25519PrivateKey::from_bytes(&derived)?;
 
         let kp: Ed25519KeyPair = sk.into();
 
@@ -45,7 +45,7 @@ impl InMemKeystore {
         self.keys.keys().cloned().collect::<Vec<_>>()
     }
 
-    pub fn sign_secure<T>(&self, address: &IotaAddress, msg: &T, intent: Intent) -> anyhow::Result<Signature>
+    pub fn sign_secure<T>(&self, address: &IotaAddress, msg: &T, intent: Intent) -> Result<Signature, RebasedError>
     where
         T: Serialize,
     {
@@ -53,7 +53,7 @@ impl InMemKeystore {
             &IntentMessage::new(intent, msg),
             self.keys
                 .get(address)
-                .ok_or_else(|| anyhow::anyhow!("Cannot find key for address: [{address}]"))?,
+                .ok_or_else(|| RebasedError::KeyNotFound { address: *address })?,
         ))
     }
 }

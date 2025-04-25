@@ -9,6 +9,7 @@
 
 mod bigint;
 mod client;
+mod error;
 mod keystore;
 mod rpc;
 mod serde;
@@ -17,6 +18,7 @@ mod types;
 pub use rpc::*;
 pub use types::*;
 
+pub use error::RebasedError;
 
 pub use keystore::InMemKeystore;
 

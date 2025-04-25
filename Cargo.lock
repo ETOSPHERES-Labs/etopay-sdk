@@ -2166,7 +2166,6 @@ dependencies = [
  "alloy-primitives",
  "alloy-provider",
  "alloy-transport",
- "anyhow",
  "async-trait",
  "base64 0.22.1",
  "bcs",
@@ -2177,7 +2176,6 @@ dependencies = [
  "etopay-api-types",
  "etospheres-labs-iota-sdk",
  "etospheres-labs-rusty_secrets",
- "eyre",
  "fake",
  "fastcrypto",
  "fern-logger",
@@ -2351,16 +2349,6 @@ dependencies = [
  "rand 0.9.1",
  "rand_chacha 0.9.0",
  "ring",
-]
-
-[[package]]
-name = "eyre"
-version = "0.6.12"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7cd915d99f24784cdc19fd37ef22b97e3ff0ae756c7e492e9fbfe897d61e2aec"
-dependencies = [
- "indenter",
- "once_cell",
 ]
 
 [[package]]
@@ -3367,12 +3355,6 @@ dependencies = [
  "quote",
  "syn 2.0.100",
 ]
-
-[[package]]
-name = "indenter"
-version = "0.3.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ce23b50ad8242c51a442f3ff322d56b02f08852c77e4c0b4d3fd684abc89c683"
 
 [[package]]
 name = "indexmap"

@@ -19,8 +19,10 @@ use fastcrypto::{
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{Bytes, serde_as};
 
+use crate::wallet::rebased::RebasedError;
+
 use super::super::serde::Readable;
-use super::{IntentMessage, IotaError};
+use super::IntentMessage;
 
 #[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq)]
 pub enum SignatureScheme {
@@ -57,14 +59,14 @@ impl SignatureScheme {
         };
     }
 
-    pub fn from_flag(flag: &str) -> Result<SignatureScheme, IotaError> {
+    pub fn from_flag(flag: &str) -> Result<SignatureScheme, RebasedError> {
         let byte_int = flag
             .parse::<u8>()
-            .map_err(|_| IotaError::KeyConversion("Invalid key scheme".to_string()))?;
+            .map_err(|_| RebasedError::KeyConversion("Invalid key scheme".to_string()))?;
         Self::from_flag_byte(&byte_int)
     }
 
-    pub fn from_flag_byte(byte_int: &u8) -> Result<SignatureScheme, IotaError> {
+    pub fn from_flag_byte(byte_int: &u8) -> Result<SignatureScheme, RebasedError> {
         match byte_int {
             0x00 => Ok(SignatureScheme::ED25519),
             // 0x01 => Ok(SignatureScheme::Secp256k1),
@@ -73,7 +75,7 @@ impl SignatureScheme {
             // 0x04 => Ok(SignatureScheme::BLS12381),
             // 0x05 => Ok(SignatureScheme::ZkLoginAuthenticator),
             // 0x06 => Ok(SignatureScheme::PasskeyAuthenticator),
-            _ => Err(IotaError::KeyConversion("Invalid key scheme".to_string())),
+            _ => Err(RebasedError::KeyConversion("Invalid key scheme".to_string())),
         }
     }
 }

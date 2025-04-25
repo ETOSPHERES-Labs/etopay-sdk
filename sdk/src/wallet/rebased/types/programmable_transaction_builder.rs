@@ -6,7 +6,6 @@
 //! Utility for generating programmable transactions, either by specifying a
 //! command or for migrating legacy transactions
 
-use anyhow::Context;
 use indexmap::IndexMap;
 use serde::Serialize;
 
@@ -14,6 +13,22 @@ use super::{
     Argument, CallArg, Command, Identifier, IotaAddress, ObjectArg, ObjectID, ObjectRef, ProgrammableMoveCall,
     ProgrammableTransaction, TypeTag,
 };
+
+/// Wrapper for Iota Rebased Errors
+#[derive(thiserror::Error, Debug)]
+pub enum BuilderError {
+    #[error("InvariantViolation: {0}")]
+    InvariantViolation(String),
+
+    #[error("LengthMismatch: {0}")]
+    LengthMismatch(String),
+
+    #[error("Argument: {0}")]
+    Mismatch(String),
+
+    #[error("Bcs: {0}")]
+    Bcs(#[from] bcs::Error),
+}
 
 #[derive(PartialEq, Eq, Hash)]
 enum BuilderArg {
@@ -49,28 +64,30 @@ impl ProgrammableTransactionBuilder {
         Argument::Input(i as u16)
     }
 
-    pub fn pure<T: Serialize>(&mut self, value: T) -> anyhow::Result<Argument> {
+    pub fn pure<T: Serialize>(&mut self, value: T) -> Result<Argument, BuilderError> {
         Ok(self.pure_bytes(
-            bcs::to_bytes(&value).context("Serializing pure argument.")?,
+            bcs::to_bytes(&value)?,
             // force separate
             false,
         ))
     }
 
     /// Like pure but forces a separate input entry
-    pub fn force_separate_pure<T: Serialize>(&mut self, value: T) -> anyhow::Result<Argument> {
+    pub fn force_separate_pure<T: Serialize>(&mut self, value: T) -> Result<Argument, BuilderError> {
         Ok(self.pure_bytes(
-            bcs::to_bytes(&value).context("Serializing pure argument.")?,
+            bcs::to_bytes(&value)?,
             // force separate
             true,
         ))
     }
 
-    pub fn obj(&mut self, obj_arg: ObjectArg) -> anyhow::Result<Argument> {
+    pub fn obj(&mut self, obj_arg: ObjectArg) -> Result<Argument, BuilderError> {
         let id = obj_arg.id();
         let obj_arg = if let Some(old_value) = self.inputs.get(&BuilderArg::Object(id)) {
             let old_obj_arg = match old_value {
-                CallArg::Pure(_) => anyhow::bail!("invariant violation! object has pure argument"),
+                CallArg::Pure(_) => {
+                    return Err(BuilderError::InvariantViolation("object has pure argument".to_string()));
+                }
                 CallArg::Object(arg) => arg,
             };
             match (old_obj_arg, obj_arg) {
@@ -86,10 +103,11 @@ impl ProgrammableTransactionBuilder {
                         mutable: mut2,
                     },
                 ) if v1 == &v2 => {
-                    anyhow::ensure!(
-                        id1 == &id2 && id == id2,
-                        "invariant violation! object has id does not match call arg"
-                    );
+                    if !(id1 == &id2 && id == id2) {
+                        return Err(BuilderError::InvariantViolation(
+                            "object has id does not match call arg".to_string(),
+                        ));
+                    }
                     ObjectArg::SharedObject {
                         id,
                         initial_shared_version: v2,
@@ -97,11 +115,12 @@ impl ProgrammableTransactionBuilder {
                     }
                 }
                 (old_obj_arg, obj_arg) => {
-                    anyhow::ensure!(
-                        old_obj_arg == &obj_arg,
-                        "Mismatched Object argument kind for object {id}. \
+                    if old_obj_arg != &obj_arg {
+                        return Err(BuilderError::Mismatch(format!(
+                            "Mismatched Object argument kind for object {id}. \
                         {old_value:?} is not compatible with {obj_arg:?}"
-                    );
+                        )));
+                    }
                     obj_arg
                 }
             }
@@ -114,14 +133,14 @@ impl ProgrammableTransactionBuilder {
         Ok(Argument::Input(i as u16))
     }
 
-    pub fn input(&mut self, call_arg: CallArg) -> anyhow::Result<Argument> {
+    pub fn input(&mut self, call_arg: CallArg) -> Result<Argument, BuilderError> {
         match call_arg {
             CallArg::Pure(bytes) => Ok(self.pure_bytes(bytes, /* force separate */ false)),
             CallArg::Object(obj) => self.obj(obj),
         }
     }
 
-    pub fn make_obj_vec(&mut self, objs: impl IntoIterator<Item = ObjectArg>) -> anyhow::Result<Argument> {
+    pub fn make_obj_vec(&mut self, objs: impl IntoIterator<Item = ObjectArg>) -> Result<Argument, BuilderError> {
         let make_vec_args = objs.into_iter().map(|obj| self.obj(obj)).collect::<Result<_, _>>()?;
         Ok(self.command(Command::MakeMoveVec(None, make_vec_args)))
     }
@@ -140,7 +159,7 @@ impl ProgrammableTransactionBuilder {
         function: Identifier,
         type_arguments: Vec<TypeTag>,
         call_args: Vec<CallArg>,
-    ) -> anyhow::Result<()> {
+    ) -> Result<(), BuilderError> {
         let arguments = call_args.into_iter().map(|a| self.input(a)).collect::<Result<_, _>>()?;
         self.command(Command::move_call(package, module, function, type_arguments, arguments));
         Ok(())
@@ -172,7 +191,7 @@ impl ProgrammableTransactionBuilder {
         self.commands.push(Command::TransferObjects(args, rec_arg));
     }
 
-    pub fn transfer_object(&mut self, recipient: IotaAddress, object_ref: ObjectRef) -> anyhow::Result<()> {
+    pub fn transfer_object(&mut self, recipient: IotaAddress, object_ref: ObjectRef) -> Result<(), BuilderError> {
         let rec_arg = self.pure(recipient).unwrap();
         let obj_arg = self.obj(ObjectArg::ImmOrOwnedObject(object_ref));
         self.commands.push(Command::TransferObjects(vec![obj_arg?], rec_arg));
@@ -197,7 +216,7 @@ impl ProgrammableTransactionBuilder {
 
     /// Will fail to generate if recipients and amounts do not have the same
     /// lengths
-    pub fn pay_iota(&mut self, recipients: Vec<IotaAddress>, amounts: Vec<u64>) -> anyhow::Result<()> {
+    pub fn pay_iota(&mut self, recipients: Vec<IotaAddress>, amounts: Vec<u64>) -> Result<(), BuilderError> {
         self.pay_impl(recipients, amounts, Argument::GasCoin)
     }
 
@@ -208,10 +227,10 @@ impl ProgrammableTransactionBuilder {
         coins: Vec<ObjectRef>,
         recipients: Vec<IotaAddress>,
         amounts: Vec<u64>,
-    ) -> anyhow::Result<()> {
+    ) -> Result<(), BuilderError> {
         let mut coins = coins.into_iter();
         let Some(coin) = coins.next() else {
-            anyhow::bail!("coins vector is empty");
+            return Err(BuilderError::LengthMismatch("coins vector is empty".to_string()));
         };
         let coin_arg = self.obj(ObjectArg::ImmOrOwnedObject(coin))?;
         let merge_args: Vec<_> = coins
@@ -223,13 +242,18 @@ impl ProgrammableTransactionBuilder {
         self.pay_impl(recipients, amounts, coin_arg)
     }
 
-    fn pay_impl(&mut self, recipients: Vec<IotaAddress>, amounts: Vec<u64>, coin: Argument) -> anyhow::Result<()> {
+    fn pay_impl(
+        &mut self,
+        recipients: Vec<IotaAddress>,
+        amounts: Vec<u64>,
+        coin: Argument,
+    ) -> Result<(), BuilderError> {
         if recipients.len() != amounts.len() {
-            anyhow::bail!(
+            return Err(BuilderError::LengthMismatch(format!(
                 "Recipients and amounts mismatch. Got {} recipients but {} amounts",
                 recipients.len(),
                 amounts.len()
-            )
+            )));
         }
         if amounts.is_empty() {
             return Ok(());

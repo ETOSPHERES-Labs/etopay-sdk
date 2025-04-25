@@ -5,6 +5,8 @@
 
 use serde::{Deserialize, Serialize, Serializer, ser::SerializeSeq};
 
+use super::super::RebasedError;
+
 // SizeOneVec is a wrapper around Vec<T> that enforces the size of the vec to be
 // 1. This seems pointless, but it allows us to have fields in protocol messages
 // that are current enforced to be of size 1, but might later allow other sizes,
@@ -53,11 +55,11 @@ where
 }
 
 impl<T> TryFrom<Vec<T>> for SizeOneVec<T> {
-    type Error = anyhow::Error;
+    type Error = RebasedError;
 
     fn try_from(mut v: Vec<T>) -> Result<Self, Self::Error> {
         if v.len() != 1 {
-            Err(anyhow::anyhow!("Expected a vec of size 1"))
+            Err(RebasedError::SizeOneVecSize)
         } else {
             Ok(SizeOneVec { e: v.pop().unwrap() })
         }
