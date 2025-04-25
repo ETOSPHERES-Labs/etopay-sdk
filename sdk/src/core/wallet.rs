@@ -502,12 +502,9 @@ impl Sdk {
 
         let inclusion_state_confirmed = format!("{:?}", InclusionState::Confirmed);
 
+        // TODO: we need to support this better for all networks with a unified logic and interface
         let tx_list = match network.protocol {
-            crate::types::networks::ApiProtocol::EvmERC20 {
-                chain_id: _,
-                contract_address: _,
-            } => wallet.get_wallet_tx_list(start, limit).await?,
-            crate::types::networks::ApiProtocol::Evm { chain_id: _ } => {
+            crate::types::networks::ApiProtocol::Evm { .. } => {
                 // We retrieve the transaction list from the wallet,
                 // then synchronize selected transactions (by fetching their current status from the network),
                 // and finally, save the refreshed list back to the wallet
@@ -549,8 +546,9 @@ impl Sdk {
                     transactions: wallet_transactions,
                 }
             }
-            api_types::api::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
-            api_types::api::networks::ApiProtocol::IotaRebased { .. } => todo!(),
+            crate::types::networks::ApiProtocol::EvmERC20 { .. } => wallet.get_wallet_tx_list(start, limit).await?,
+            crate::types::networks::ApiProtocol::IotaRebased { .. } => wallet.get_wallet_tx_list(start, limit).await?,
+            crate::types::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
         };
 
         let tx_list_filtered = tx_list
