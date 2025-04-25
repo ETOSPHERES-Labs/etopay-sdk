@@ -152,23 +152,6 @@ impl WalletUser for WalletImplIotaRebased {
 
         log::info!("using gas_coin: {gas_coin:?}");
 
-        // let _tx_data = self
-        //     .client
-        //     .transaction_builder()
-        //     .pay_iota(
-        //         address.into(),
-        //         vec![gas_coin.coin_object_id.into()], // object to transfer
-        //         vec![recipient.into()],
-        //         vec![amount],
-        //         // gas_coin.coin_object_id, // gas coin
-        //         gas_budget,
-        //     )
-        //     .await
-        //     .map_err(WalletError::IotaRebasedAnyhow)?;
-        //
-        // log::info!("SDK:\n{_tx_data:?}");
-        // log::info!("SDK JSON:\n{}", serde_json::to_string_pretty(&_tx_data).unwrap());
-
         let mut b = ProgrammableTransactionBuilder::new();
 
         // provide the inputs
@@ -210,9 +193,6 @@ impl WalletUser for WalletImplIotaRebased {
             expiration: TransactionExpiration::None,
         });
 
-        // log::info!("Our:\n{tx_data:?}");
-        // log::info!("Our JSON:\n{}", serde_json::to_string_pretty(&tx_data).unwrap());
-
         let signature = self
             .keystore
             .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())?;
@@ -231,19 +211,6 @@ impl WalletUser for WalletImplIotaRebased {
             )
             .await
             .map_err(RebasedError::RpcError)?;
-
-        // let signature = self
-        //     .keystore
-        //     .sign_secure(&address, &_tx_data, rebased::Intent::iota_transaction())?;
-        // let transaction_block_response = self
-        //     .client
-        //     .quorum_driver_api()
-        //     .execute_transaction_block(
-        //         iota_sdk_rebased::types::transaction::Transaction::from_data(_tx_data, vec![signature.into()]),
-        //         iota_sdk_rebased::rpc_types::IotaTransactionBlockResponseOptions::full_content(),
-        //         iota_sdk_rebased::types::quorum_driver_types::ExecuteTransactionRequestType::WaitForLocalExecution,
-        //     )
-        //     .await?;
 
         log::info!("Transaction sent {}", transaction_block_response.digest);
         log::info!("Response:\n{transaction_block_response:?}");
