@@ -33,7 +33,7 @@ async fn main() {
         key: "iota-rebased".to_string(),
         is_testnet: true,
         display_name: "IOTA Rebased".to_string(),
-        display_symbol: "IOTAR".to_string(),
+        display_symbol: "IOTA".to_string(),
         coin_type: 0,
         // node_urls: vec!["http://127.0.0.1:9000".to_string()],
         // node_urls: vec!["https://api.devnet.iota.cafe".to_string()],
@@ -52,12 +52,10 @@ async fn main() {
     let balance = sdk.get_balance(&user.pin).await.unwrap();
     println!("address: {recipient_address}, balance: {balance:?}");
 
-    // let recipient_address = "0x393bdb466e8efc29ca5905f23d90b069d2b00f35016dd316039c97b0363ce217".to_string();
-
     // Send amount
     let amount = dec!(1.0).try_into().unwrap();
     let data = Some("test".to_string().into_bytes());
-    // estimate gas
+    // estimate gas (uncomment this once gas estimation is implemented)
     // let estimate = sdk
     //     .estimate_gas(&user.pin, &recipient_address, amount, data.clone())
     //     .await
