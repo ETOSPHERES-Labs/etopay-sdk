@@ -5,11 +5,11 @@
 
 use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
+use super::super::encoding::Base64;
 use super::ExecuteTransactionRequestType;
 use crate::wallet::rebased::CheckpointSequenceNumber;
 use crate::wallet::rebased::IotaTransactionBlockEffects;
 use crate::wallet::rebased::Owner;
-use fastcrypto::encoding::Base64;
 use serde::{Deserialize, Serialize};
 use serde_with::DisplayFromStr;
 use serde_with::serde_as;

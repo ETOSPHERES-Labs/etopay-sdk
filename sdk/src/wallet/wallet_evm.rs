@@ -72,7 +72,7 @@ impl WalletImplEvm {
         // build a Provider that has the default fillers for GasEstimation, Nonce providing and chain_id fetcher
         let http_provider = ProviderBuilder::<_, _, Ethereum>::new()
             .wallet(wallet.clone())
-            .on_http(url);
+            .connect_http(url);
 
         info!("Wallet creation successful");
 

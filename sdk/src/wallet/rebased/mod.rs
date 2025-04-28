@@ -8,11 +8,16 @@
 
 mod bigint;
 mod client;
+mod encoding;
 mod error;
+mod hash;
 mod keystore;
 mod rpc;
 mod serde;
+mod traits;
 mod types;
+
+pub mod crypto;
 
 pub use rpc::*;
 pub use types::*;

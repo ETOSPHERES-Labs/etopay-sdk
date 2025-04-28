@@ -5,7 +5,7 @@
 
 use std::fmt;
 
-use fastcrypto::encoding::{Encoding, Hex};
+use super::super::encoding::{Encoding, Hex};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
