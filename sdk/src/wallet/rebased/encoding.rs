@@ -100,10 +100,6 @@ macro_rules! impl_try_from_string {
 pub struct Base64(String);
 
 impl Base64 {
-    // /// Decodes this Base64 encoding to bytes.
-    // pub fn to_vec(&self) -> FastCryptoResult<Vec<u8>> {
-    //     Self::decode(&self.0)
-    // }
     /// Encodes bytes as a Base64.
     pub fn from_bytes(bytes: &[u8]) -> Self {
         Self(Self::encode(bytes))
@@ -129,24 +125,6 @@ impl Encoding for Base64 {
 pub struct Hex(String);
 
 impl Hex {
-    // /// Create a hex encoding from a string.
-    // #[cfg(test)]
-    // pub fn from_string(s: &str) -> Self {
-    //     Hex(s.to_string())
-    // }
-    // /// Decodes this hex encoding to bytes.
-    // pub fn to_vec(&self) -> FastCryptoResult<Vec<u8>> {
-    //     Self::decode(&self.0)
-    // }
-    // /// Encodes bytes as a hex string.
-    // pub fn from_bytes(bytes: &[u8]) -> Self {
-    //     Self(Self::encode(bytes))
-    // }
-    // /// Encode bytes as a hex string with a "0x" prefix.
-    // pub fn encode_with_format<T: AsRef<[u8]>>(bytes: T) -> String {
-    //     Self::format(&Self::encode(bytes))
-    // }
-
     /// Get a string representation of this Hex encoding with a "0x" prefix.
     pub fn encoded_with_format(&self) -> String {
         Self::format(&self.0)
