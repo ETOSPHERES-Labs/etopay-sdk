@@ -12,7 +12,14 @@ use fastcrypto::encoding::{Base64, Encoding};
 
 use super::super::RebasedError;
 
-use super::{Signer, ToFromBytes};
+use super::super::traits::ToFromBytes;
+
+/// Trait impl'd by a key/keypair that can create signatures.
+///
+pub trait Signer<Sig> {
+    /// Create a new signature over a message.
+    fn sign(&self, msg: &[u8]) -> Sig;
+}
 
 /// The length of a private key in bytes.
 pub const ED25519_PRIVATE_KEY_LENGTH: usize = 32;
