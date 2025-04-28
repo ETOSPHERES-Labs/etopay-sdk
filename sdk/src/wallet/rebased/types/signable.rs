@@ -3,7 +3,7 @@
 // Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
 // SPDX-License-Identifier: Apache-2.0
 
-use fastcrypto::hash::{Blake2b256, HashFunction};
+use super::super::hash::{Blake2b256, HashFunction};
 
 /// Something that we know how to hash and sign.
 pub trait Signable<W> {

@@ -9,6 +9,8 @@ use hex::FromHex;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeAs, SerializeAs};
 
+use super::super::encoding;
+
 pub struct HexAccountAddress;
 
 impl SerializeAs<AccountAddress> for HexAccountAddress {
@@ -16,7 +18,7 @@ impl SerializeAs<AccountAddress> for HexAccountAddress {
     where
         S: Serializer,
     {
-        fastcrypto::encoding::Hex::serialize_as(value, serializer)
+        encoding::Hex::serialize_as(value, serializer)
     }
 }
 
