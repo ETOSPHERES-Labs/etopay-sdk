@@ -5,10 +5,10 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/write.rs
 
-use fastcrypto::encoding::Base64;
 use jsonrpsee::proc_macros::rpc;
 use serde::{Deserialize, Serialize};
 
+use super::super::encoding::Base64;
 use super::{IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions};
 
 /// Provides methods for executing and testing transactions.
