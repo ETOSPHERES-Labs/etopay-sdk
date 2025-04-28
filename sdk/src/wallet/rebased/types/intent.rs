@@ -5,11 +5,11 @@
 
 use std::str::FromStr;
 
-use fastcrypto::encoding::decode_bytes_hex;
 use serde::{Deserialize, Serialize};
 use serde_repr::{Deserialize_repr, Serialize_repr};
 
 use super::super::RebasedError;
+use super::super::encoding::{Encoding, Hex};
 
 pub const INTENT_PREFIX_LENGTH: usize = 3;
 
@@ -114,7 +114,7 @@ impl Intent {
 impl FromStr for Intent {
     type Err = RebasedError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        let bytes: Vec<u8> = decode_bytes_hex(s).map_err(|_| RebasedError::InvalidIntent)?;
+        let bytes = Hex::decode(s).map_err(|_| RebasedError::InvalidIntent)?;
         Self::from_bytes(bytes.as_slice())
     }
 }

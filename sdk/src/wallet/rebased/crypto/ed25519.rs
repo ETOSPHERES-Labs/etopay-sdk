@@ -8,11 +8,12 @@ use std::{cell::OnceCell, fmt};
 
 // it seems ed25519_consensus still uses an old version of rand, so we takeit from aes_gcm crate :D
 use aes_gcm::aead::rand_core::{CryptoRng, RngCore};
-use fastcrypto::encoding::{Base64, Encoding};
 
-use super::super::RebasedError;
-
-use super::super::traits::ToFromBytes;
+use super::super::{
+    RebasedError,
+    encoding::{Base64, Encoding},
+    traits::ToFromBytes,
+};
 
 /// Trait impl'd by a key/keypair that can create signatures.
 ///
@@ -105,7 +106,7 @@ impl ToFromBytes for Ed25519PrivateKey {
     fn from_bytes(bytes: &[u8]) -> Result<Self, RebasedError> {
         ed25519_consensus::SigningKey::try_from(bytes)
             .map(Ed25519PrivateKey)
-            .map_err(|_| RebasedError::InvalidCryptoInput)
+            .map_err(|_| RebasedError::InvalidInput)
     }
 }
 //

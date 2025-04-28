@@ -7,9 +7,10 @@
 use std::fmt;
 
 use digest::{generic_array::GenericArray, typenum};
-use fastcrypto::encoding::{Base64, Encoding};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
+
+use super::encoding::{Base64, Encoding};
 
 /// Represents a digest of `DIGEST_LEN` bytes.
 #[serde_as]

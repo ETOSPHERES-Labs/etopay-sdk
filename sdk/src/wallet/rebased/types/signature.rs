@@ -5,19 +5,17 @@
 //
 // https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/crypto.rs#L700
 
-use fastcrypto::traits::EncodeDecodeBase64;
-use fastcrypto::{
-    encoding::{Base64, Encoding},
-    error::FastCryptoError,
-    traits::ToFromBytes,
-};
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{Bytes, serde_as};
 
-use super::super::RebasedError;
-use super::super::crypto::{Ed25519KeyPair, Ed25519PublicKey, Ed25519Signature, Signer};
-use super::super::hash::{Blake2b256, HashFunction};
-use super::super::serde::Readable;
+use super::super::{
+    RebasedError,
+    crypto::{Ed25519KeyPair, Ed25519PublicKey, Ed25519Signature, Signer},
+    encoding::{Base64, EncodeDecodeBase64, Encoding},
+    hash::{Blake2b256, HashFunction},
+    serde::Readable,
+    traits::ToFromBytes,
+};
 use super::IntentMessage;
 
 #[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq)]
@@ -158,7 +156,7 @@ impl AsMut<[u8]> for Signature {
 }
 
 impl ToFromBytes for Signature {
-    fn from_bytes(bytes: &[u8]) -> Result<Self, FastCryptoError> {
+    fn from_bytes(bytes: &[u8]) -> Result<Self, RebasedError> {
         match bytes.first() {
             Some(x) => {
                 if x == &Ed25519IotaSignature::SCHEME.flag() {
@@ -170,10 +168,10 @@ impl ToFromBytes for Signature {
                 // } else if x == &Secp256r1IotaSignature::SCHEME.flag() {
                 //     Ok(<Secp256r1IotaSignature as ToFromBytes>::from_bytes(bytes)?.into())
                 } else {
-                    Err(FastCryptoError::InvalidInput)
+                    Err(RebasedError::InvalidInput)
                 }
             }
-            _ => Err(FastCryptoError::InvalidInput),
+            _ => Err(RebasedError::InvalidInput),
         }
     }
 }
@@ -221,9 +219,9 @@ impl Ed25519IotaSignature {
 // }
 
 impl ToFromBytes for Ed25519IotaSignature {
-    fn from_bytes(bytes: &[u8]) -> Result<Self, FastCryptoError> {
+    fn from_bytes(bytes: &[u8]) -> Result<Self, RebasedError> {
         if bytes.len() != Self::LENGTH {
-            return Err(FastCryptoError::InputLengthWrong(Self::LENGTH));
+            return Err(RebasedError::InputLengthWrong(Self::LENGTH));
         }
         let mut sig_bytes = [0; Self::LENGTH];
         sig_bytes.copy_from_slice(bytes);
@@ -276,13 +274,13 @@ impl From<Signature> for GenericSignature {
 /// the MultiSig flag (0x03) concat with the bcs serializedbytes of [struct
 /// Multisig] i.e. `flag || bcs_bytes(Multisig)`.
 impl ToFromBytes for GenericSignature {
-    fn from_bytes(bytes: &[u8]) -> Result<Self, FastCryptoError> {
-        match SignatureScheme::from_flag_byte(bytes.first().ok_or(FastCryptoError::InputTooShort(0))?) {
+    fn from_bytes(bytes: &[u8]) -> Result<Self, RebasedError> {
+        match SignatureScheme::from_flag_byte(bytes.first().ok_or(RebasedError::InputTooShort(0))?) {
             Ok(x) => match x {
                 SignatureScheme::ED25519 => {
                     //| SignatureScheme::Secp256k1 | SignatureScheme::Secp256r1 => {
                     Ok(GenericSignature::Signature(
-                        Signature::from_bytes(bytes).map_err(|_| FastCryptoError::InvalidSignature)?,
+                        Signature::from_bytes(bytes).map_err(|_| RebasedError::InvalidSignature)?,
                     ))
                 } // SignatureScheme::MultiSig => Ok(GenericSignature::MultiSig(MultiSig::from_bytes(bytes)?)),
                   // SignatureScheme::ZkLoginAuthenticator => {
@@ -295,7 +293,7 @@ impl ToFromBytes for GenericSignature {
                   // }
                   // _ => Err(FastCryptoError::InvalidInput),
             },
-            Err(_) => Err(FastCryptoError::InvalidInput),
+            Err(_) => Err(RebasedError::InvalidInput),
         }
     }
 }

@@ -16,7 +16,16 @@ pub enum RebasedError {
     InvalidIntent,
 
     #[error("InvalidCryptoInput")]
-    InvalidCryptoInput,
+    InvalidInput,
+
+    #[error("InputLengthWrong: {0}")]
+    InputLengthWrong(usize),
+
+    #[error("InputTooShort: {0}")]
+    InputTooShort(usize),
+
+    #[error("InvalidSignature")]
+    InvalidSignature,
 
     #[error("RpcError: {0}")]
     RpcError(#[from] jsonrpsee::core::client::Error),
@@ -39,9 +48,6 @@ pub enum RebasedError {
     #[error("InvalidIdentifier: `{0}`")]
     InvalidIdentifier(String),
 
-    #[error("FastCrypto: {0}")]
-    FastCrypto(#[from] fastcrypto::error::FastCryptoError),
-
     #[error("Mnemonic: {0}")]
     Mnemonic(#[from] bip39::ErrorKind),
 
@@ -53,4 +59,13 @@ pub enum RebasedError {
 
     #[error("Bcs: {0}")]
     Bcs(#[from] bcs::Error),
+
+    #[error("Base64: {0}")]
+    Base64(#[from] base64ct::Error),
+
+    #[error("Hex: {0}")]
+    Hex(#[from] hex::FromHexError),
+
+    #[error("Base58: {0}")]
+    Base58(#[from] bs58::decode::Error),
 }

@@ -8,6 +8,7 @@
 
 mod bigint;
 mod client;
+mod encoding;
 mod error;
 mod hash;
 mod keystore;
