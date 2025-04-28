@@ -10,9 +10,11 @@ use crate::types::{
 };
 use crate::wallet::rebased::{GovernanceReadApiClient, ReadApiClient, TransactionKind, WriteApiClient};
 use async_trait::async_trait;
+use chrono::{TimeZone, Utc};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
+use rust_decimal::prelude::ToPrimitive;
 
 pub struct WalletImplIotaRebased {
     client: super::rebased::RpcClient,
@@ -314,17 +316,63 @@ impl WalletUser for WalletImplIotaRebased {
         //     // }
         // }
 
-        let date = tx.timestamp_ms;
-        // let amount = tx.balance_changes.unwrap_or_default().amount;
+        // The timestamp is in milliseconds but we make it into a human-readable format
+        let date = tx
+            .timestamp_ms
+            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single())
+            .map(|dt| dt.to_rfc3339())
+            .unwrap_or_default(); // default is going to be an empty String here
+
+        // For block id we use the checkpoint number which shows when the tx was finalized.
+        let block_id = tx.checkpoint.map(|n| n.to_string());
+
+        // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses
+        let (sender, receiver, raw_amount, raw_fee) = match tx.balance_changes.as_ref() {
+            Some(changes) => {
+                // a) Find the negative change (spent = amount + fee)
+                if let Some(neg) = changes.iter().find(|bc| bc.amount < 0) {
+                    let sender = Some(neg.owner);
+                    // convert to positive u128
+                    let spent = (-neg.amount) as u128;
+
+                    // b) See if there’s a positive change (external send)
+                    if let Some(pos) = changes.iter().find(|bc| bc.amount > 0) {
+                        let receiver = Some(pos.owner);
+                        let amount = pos.amount as u128;
+                        let fee = spent.saturating_sub(amount);
+                        (sender, receiver, amount, fee)
+                    } else {
+                        // no positive entry → self-send
+                        // amount = 0, fee = everything they “spent”
+                        // sender and receiver is the same
+                        (sender, sender, 0, spent)
+                    }
+                } else {
+                    // no negative entry → malformed or zero-change tx
+                    (None, None, 0, 0)
+                }
+            }
+            None => {
+                // no balance_changes at all
+                (None, None, 0, 0)
+            }
+        };
+
+        // 2) Turn amount into f64
+        let amount: f64 = convert_u128_to_crypto_amount(raw_amount, self.decimals)
+            .unwrap_or(CryptoAmount::ZERO)
+            .inner()
+            .to_f64()
+            .unwrap_or(0.0);
 
         Ok(WalletTxInfo {
-            date: String::new(),
-            block_id: None,
+            date,
+            block_id,
             transaction_id: tx_id.to_string(),
             incoming: false,
-            receiver: String::new(),
-            amount: 0.0,
-            network_key: String::new(),
+            receiver: receiver.map(|o| format!("{o:?}")).unwrap_or_default(),
+            amount,
+            network_key: String::from("IOTA"),
             status: String::new(),
             explorer_url: None,
         })

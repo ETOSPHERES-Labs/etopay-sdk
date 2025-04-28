@@ -6,6 +6,7 @@
 use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::ExecuteTransactionRequestType;
+use crate::wallet::rebased::CheckpointSequenceNumber;
 use crate::wallet::rebased::Owner;
 use fastcrypto::encoding::Base64;
 use serde::{Deserialize, Serialize};
@@ -41,9 +42,9 @@ pub struct IotaTransactionBlockResponse {
     /// The checkpoint number when this transaction was included and hence
     /// finalized. This is only returned in the read api, not in the
     /// transaction execution api.
-    // #[serde_as(as = "Option<BigInt<u64>>")]
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub checkpoint: Option<CheckpointSequenceNumber>,
+    #[serde_as(as = "Option<BigInt<u64>>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub checkpoint: Option<CheckpointSequenceNumber>,
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub errors: Vec<String>,
     #[serde(skip_serializing_if = "Vec::is_empty", default)]

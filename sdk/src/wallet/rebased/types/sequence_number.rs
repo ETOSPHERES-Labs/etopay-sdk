@@ -85,3 +85,5 @@ impl fmt::Display for SequenceNumber {
         write!(f, "{:#x}", self.0)
     }
 }
+
+pub type CheckpointSequenceNumber = u64;
