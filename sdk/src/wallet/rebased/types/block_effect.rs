@@ -1,3 +1,5 @@
+use std::fmt::{self, Display, Formatter};
+
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -69,4 +71,22 @@ pub enum IotaExecutionStatus {
     Success,
     // Gas used in the failed case, and the error.
     Failure { error: String },
+}
+
+impl Display for IotaExecutionStatus {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Success => write!(f, "success"),
+            Self::Failure { error } => write!(f, "failure due to {error}"),
+        }
+    }
+}
+
+impl IotaExecutionStatus {
+    pub fn is_ok(&self) -> bool {
+        matches!(self, IotaExecutionStatus::Success)
+    }
+    pub fn is_err(&self) -> bool {
+        matches!(self, IotaExecutionStatus::Failure { .. })
+    }
 }

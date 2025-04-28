@@ -8,10 +8,13 @@ use crate::types::{
     currencies::CryptoAmount,
     transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList},
 };
-use crate::wallet::rebased::{GovernanceReadApiClient, ReadApiClient, TransactionKind, WriteApiClient};
+use crate::wallet::rebased::{
+    GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind, WriteApiClient,
+};
 use async_trait::async_trait;
 use chrono::{TimeZone, Utc};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
+use iota_sdk::wallet::account::types::InclusionState;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::prelude::ToPrimitive;
@@ -326,7 +329,13 @@ impl WalletUser for WalletImplIotaRebased {
         // For block id we use the checkpoint number which shows when the tx was finalized.
         let block_id = tx.checkpoint.map(|n| n.to_string());
 
-        let status = tx.effects;
+        let status = match tx.effects.map(|effects| match effects {
+            IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
+        }) {
+            Some(true) => InclusionState::Confirmed,
+            Some(false) => InclusionState::Conflicting,
+            None => InclusionState::Pending,
+        };
 
         // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses
         let (sender, receiver, raw_amount, raw_fee) = match tx.balance_changes.as_ref() {
@@ -361,8 +370,7 @@ impl WalletUser for WalletImplIotaRebased {
         };
 
         // 2) Turn amount into f64
-        let amount: f64 = convert_u128_to_crypto_amount(raw_amount, self.decimals)
-            .unwrap_or(CryptoAmount::ZERO)
+        let amount: f64 = convert_u128_to_crypto_amount(raw_amount, self.decimals)?
             .inner()
             .to_f64()
             .unwrap_or(0.0);
@@ -372,7 +380,14 @@ impl WalletUser for WalletImplIotaRebased {
             block_id,
             transaction_id: tx_id.to_string(),
             incoming: false,
-            receiver: receiver.map(|o| format!("{o:?}")).unwrap_or_default(),
+            receiver: receiver
+                .map(|owner| match owner {
+                    Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => addr.to_string(),
+                    Owner::Shared { .. } | Owner::Immutable => {
+                        unimplemented!("Unsupported Owner type for receiver address")
+                    }
+                })
+                .unwrap_or_default(),
             amount,
             network_key: String::from("IOTA"),
             status: format!("{:?}", status),
