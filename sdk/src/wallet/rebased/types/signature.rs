@@ -5,12 +5,10 @@
 //
 // https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/crypto.rs#L700
 
-use fastcrypto::hash::HashFunction;
 use fastcrypto::traits::EncodeDecodeBase64;
 use fastcrypto::{
     encoding::{Base64, Encoding},
     error::FastCryptoError,
-    hash::Blake2b256,
     traits::ToFromBytes,
 };
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
@@ -18,6 +16,7 @@ use serde_with::{Bytes, serde_as};
 
 use super::super::RebasedError;
 use super::super::crypto::{Ed25519KeyPair, Ed25519PublicKey, Ed25519Signature, Signer};
+use super::super::hash::{Blake2b256, HashFunction};
 use super::super::serde::Readable;
 use super::IntentMessage;
 

@@ -5,11 +5,11 @@
 
 use bip32::DerivationPath;
 use bip39::{Language, Mnemonic, Seed};
-use fastcrypto::hash::{Blake2b256, HashFunction};
 use serde::Serialize;
 use std::collections::BTreeMap;
 
 use super::crypto::{Ed25519KeyPair, Ed25519PrivateKey, Ed25519PublicKey, ToFromBytes};
+use super::hash::{Blake2b256, HashFunction};
 use super::{Intent, IntentMessage, IotaAddress, RebasedError, Signature};
 
 #[derive(Default)]

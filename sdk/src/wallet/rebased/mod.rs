@@ -9,6 +9,7 @@
 mod bigint;
 mod client;
 mod error;
+mod hash;
 mod keystore;
 mod rpc;
 mod serde;
