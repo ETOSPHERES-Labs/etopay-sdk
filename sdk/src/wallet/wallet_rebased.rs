@@ -314,6 +314,9 @@ impl WalletUser for WalletImplIotaRebased {
         //     // }
         // }
 
+        let date = tx.timestamp_ms;
+        // let amount = tx.balance_changes.unwrap_or_default().amount;
+
         Ok(WalletTxInfo {
             date: String::new(),
             block_id: None,

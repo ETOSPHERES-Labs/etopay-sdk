@@ -3,14 +3,14 @@
 // Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
 // SPDX-License-Identifier: Apache-2.0
 
-use fastcrypto::encoding::Base64;
-use serde::{Deserialize, Serialize};
-
-use serde_with::serde_as;
-
 use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::ExecuteTransactionRequestType;
+use crate::wallet::rebased::Owner;
+use fastcrypto::encoding::Base64;
+use serde::{Deserialize, Serialize};
+use serde_with::DisplayFromStr;
+use serde_with::serde_as;
 
 #[serde_as]
 #[derive(Deserialize, Debug, Clone, Default)]
@@ -31,8 +31,8 @@ pub struct IotaTransactionBlockResponse {
     // pub events: Option<IotaTransactionBlockEvents>,
     // #[serde(skip_serializing_if = "Option::is_none")]
     // pub object_changes: Option<Vec<ObjectChange>>,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub balance_changes: Option<Vec<BalanceChange>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub balance_changes: Option<Vec<BalanceChange>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde_as(as = "Option<BigInt<u64>>")]
     pub timestamp_ms: Option<u64>,
@@ -151,4 +151,20 @@ impl IotaTransactionBlockResponseOptions {
     pub fn only_digest(&self) -> bool {
         self == &Self::default()
     }
+}
+
+#[serde_as]
+#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct BalanceChange {
+    /// Owner of the balance change
+    pub owner: Owner,
+    // #[serde_as(as = "IotaTypeTag")]
+    // pub coin_type: TypeTag,
+    pub coin_type: serde_json::Value,
+    /// The amount indicate the balance value changes,
+    /// negative amount means spending coin value and positive means receiving
+    /// coin value.
+    #[serde_as(as = "DisplayFromStr")]
+    pub amount: i128,
 }
