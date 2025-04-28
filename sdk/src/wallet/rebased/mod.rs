@@ -14,6 +14,8 @@ mod rpc;
 mod serde;
 mod types;
 
+pub mod crypto;
+
 pub use rpc::*;
 pub use types::*;
 

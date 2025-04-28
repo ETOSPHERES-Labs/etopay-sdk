@@ -5,21 +5,20 @@
 //
 // https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/crypto.rs#L700
 
-use fastcrypto::ed25519::Ed25519KeyPair;
 use fastcrypto::hash::HashFunction;
 use fastcrypto::traits::EncodeDecodeBase64;
-use fastcrypto::traits::KeyPair;
 use fastcrypto::{
-    ed25519::{Ed25519PublicKey, Ed25519Signature},
     encoding::{Base64, Encoding},
     error::FastCryptoError,
     hash::Blake2b256,
-    traits::{Authenticator, Signer, ToFromBytes, VerifyingKey},
+    traits::ToFromBytes,
 };
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{Bytes, serde_as};
 
-use super::super::{RebasedError, serde::Readable};
+use super::super::RebasedError;
+use super::super::crypto::{Ed25519KeyPair, Ed25519PublicKey, Ed25519Signature, Signer};
+use super::super::serde::Readable;
 use super::IntentMessage;
 
 #[derive(Clone, Copy, Deserialize, Serialize, Debug, PartialEq, Eq)]
@@ -235,7 +234,7 @@ impl ToFromBytes for Ed25519IotaSignature {
 
 impl Signer<Signature> for Ed25519KeyPair {
     fn sign(&self, msg: &[u8]) -> Signature {
-        let sig: Ed25519Signature = self.sign(msg);
+        let sig: Ed25519Signature = <Self as Signer<Ed25519Signature>>::sign(self, msg);
 
         let mut signature_bytes: Vec<u8> = Vec::new();
         signature_bytes.extend_from_slice(&[Ed25519IotaSignature::SCHEME.flag()]);

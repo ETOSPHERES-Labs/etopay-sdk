@@ -15,6 +15,9 @@ pub enum RebasedError {
     #[error("InvalidIntent")]
     InvalidIntent,
 
+    #[error("InvalidCryptoInput")]
+    InvalidCryptoInput,
+
     #[error("RpcError: {0}")]
     RpcError(#[from] jsonrpsee::core::client::Error),
 

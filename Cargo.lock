@@ -2172,6 +2172,7 @@ dependencies = [
  "bip32",
  "chrono",
  "dotenvy",
+ "ed25519-consensus",
  "env_logger",
  "etopay-api-types",
  "etospheres-labs-iota-sdk",
