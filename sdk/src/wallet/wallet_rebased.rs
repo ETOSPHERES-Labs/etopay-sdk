@@ -326,6 +326,8 @@ impl WalletUser for WalletImplIotaRebased {
         // For block id we use the checkpoint number which shows when the tx was finalized.
         let block_id = tx.checkpoint.map(|n| n.to_string());
 
+        let status = tx.effects;
+
         // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses
         let (sender, receiver, raw_amount, raw_fee) = match tx.balance_changes.as_ref() {
             Some(changes) => {
@@ -373,7 +375,7 @@ impl WalletUser for WalletImplIotaRebased {
             receiver: receiver.map(|o| format!("{o:?}")).unwrap_or_default(),
             amount,
             network_key: String::from("IOTA"),
-            status: String::new(),
+            status: format!("{:?}", status),
             explorer_url: None,
         })
     }

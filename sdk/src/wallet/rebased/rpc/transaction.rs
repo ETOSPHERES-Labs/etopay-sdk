@@ -7,6 +7,7 @@ use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::ExecuteTransactionRequestType;
 use crate::wallet::rebased::CheckpointSequenceNumber;
+use crate::wallet::rebased::IotaTransactionBlockEffects;
 use crate::wallet::rebased::Owner;
 use fastcrypto::encoding::Base64;
 use serde::{Deserialize, Serialize};
@@ -26,8 +27,8 @@ pub struct IotaTransactionBlockResponse {
     #[serde_as(as = "Base64")]
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub raw_transaction: Vec<u8>,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub effects: Option<IotaTransactionBlockEffects>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub effects: Option<IotaTransactionBlockEffects>,
     // #[serde(skip_serializing_if = "Option::is_none")]
     // pub events: Option<IotaTransactionBlockEvents>,
     // #[serde(skip_serializing_if = "Option::is_none")]
