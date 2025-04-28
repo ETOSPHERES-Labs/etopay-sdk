@@ -7,11 +7,10 @@ use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::super::encoding::Base64;
 use super::ExecuteTransactionRequestType;
+use crate::wallet::rebased::BalanceChange;
 use crate::wallet::rebased::CheckpointSequenceNumber;
 use crate::wallet::rebased::IotaTransactionBlockEffects;
-use crate::wallet::rebased::Owner;
 use serde::{Deserialize, Serialize};
-use serde_with::DisplayFromStr;
 use serde_with::serde_as;
 
 #[serde_as]
@@ -153,20 +152,4 @@ impl IotaTransactionBlockResponseOptions {
     pub fn only_digest(&self) -> bool {
         self == &Self::default()
     }
-}
-
-#[serde_as]
-#[derive(Debug, Clone, Deserialize, Serialize, PartialEq, Eq)]
-#[serde(rename_all = "camelCase")]
-pub struct BalanceChange {
-    /// Owner of the balance change
-    pub owner: Owner,
-    // #[serde_as(as = "IotaTypeTag")]
-    // pub coin_type: TypeTag,
-    pub coin_type: serde_json::Value,
-    /// The amount indicate the balance value changes,
-    /// negative amount means spending coin value and positive means receiving
-    /// coin value.
-    #[serde_as(as = "DisplayFromStr")]
-    pub amount: i128,
 }

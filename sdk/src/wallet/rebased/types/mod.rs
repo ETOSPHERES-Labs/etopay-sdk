@@ -1,4 +1,5 @@
 mod account_address;
+mod balance_change;
 mod block_effect;
 mod digest;
 mod identifier;
@@ -17,6 +18,7 @@ mod transaction;
 mod type_tag;
 
 pub use account_address::*;
+pub use balance_change::*;
 pub use block_effect::*;
 pub use digest::*;
 pub use identifier::*;

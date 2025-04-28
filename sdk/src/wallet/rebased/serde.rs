@@ -87,5 +87,3 @@ impl<'de> DeserializeAs<'de, super::types::SequenceNumber> for SequenceNumber {
         Ok(super::types::SequenceNumber::from_u64(*b))
     }
 }
-
-pub struct IotaTypeTag;
