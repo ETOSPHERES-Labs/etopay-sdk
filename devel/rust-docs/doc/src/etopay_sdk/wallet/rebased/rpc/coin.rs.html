@@ -15,10 +15,10 @@
 <a href=#15 id=15 data-nosnippet>15</a><span class="kw">use </span>serde::Deserialize;
 <a href=#16 id=16 data-nosnippet>16</a><span class="kw">use </span>serde_with::serde_as;
 <a href=#17 id=17 data-nosnippet>17</a>
-<a href=#18 id=18 data-nosnippet>18</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::ObjectID;
-<a href=#19 id=19 data-nosnippet>19</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::bigint::BigInt;
-<a href=#20 id=20 data-nosnippet>20</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::serde::SequenceNumber <span class="kw">as </span>AsSequenceNumber;
-<a href=#21 id=21 data-nosnippet>21</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::types::{IotaAddress, ObjectDigest, SequenceNumber, TransactionDigest};
+<a href=#18 id=18 data-nosnippet>18</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::bigint::BigInt;
+<a href=#19 id=19 data-nosnippet>19</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::serde::SequenceNumber <span class="kw">as </span>AsSequenceNumber;
+<a href=#20 id=20 data-nosnippet>20</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::types::{IotaAddress, ObjectDigest, SequenceNumber, TransactionDigest};
+<a href=#21 id=21 data-nosnippet>21</a><span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::{ObjectID, ObjectRef};
 <a href=#22 id=22 data-nosnippet>22</a>
 <a href=#23 id=23 data-nosnippet>23</a><span class="doccomment">/// Provides access to coin-related data such as coins owned by an address,
 <a href=#24 id=24 data-nosnippet>24</a>/// balances, or metadata.
@@ -78,12 +78,18 @@
 <a href=#78 id=78 data-nosnippet>78</a>    <span class="kw">pub </span>previous_transaction: TransactionDigest,
 <a href=#79 id=79 data-nosnippet>79</a>}
 <a href=#80 id=80 data-nosnippet>80</a>
-<a href=#81 id=81 data-nosnippet>81</a><span class="attr">#[serde_as]
-<a href=#82 id=82 data-nosnippet>82</a>#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
-<a href=#83 id=83 data-nosnippet>83</a>#[serde(rename_all = <span class="string">"camelCase"</span>)]
-<a href=#84 id=84 data-nosnippet>84</a></span><span class="kw">pub struct </span>Balance {
-<a href=#85 id=85 data-nosnippet>85</a>    <span class="kw">pub </span>coin_type: String,
-<a href=#86 id=86 data-nosnippet>86</a>    <span class="kw">pub </span>coin_object_count: usize,
-<a href=#87 id=87 data-nosnippet>87</a>    <span class="attr">#[serde_as(<span class="kw">as </span>= <span class="string">"BigInt&lt;u128&gt;"</span>)]
-<a href=#88 id=88 data-nosnippet>88</a>    </span><span class="kw">pub </span>total_balance: u128,
-<a href=#89 id=89 data-nosnippet>89</a>}</code></pre></div></section></main></body></html>
+<a href=#81 id=81 data-nosnippet>81</a><span class="kw">impl </span>Coin {
+<a href=#82 id=82 data-nosnippet>82</a>    <span class="kw">pub fn </span>obj_ref(<span class="kw-2">&amp;</span><span class="self">self</span>) -&gt; ObjectRef {
+<a href=#83 id=83 data-nosnippet>83</a>        (<span class="self">self</span>.coin_object_id, <span class="self">self</span>.version, <span class="self">self</span>.digest)
+<a href=#84 id=84 data-nosnippet>84</a>    }
+<a href=#85 id=85 data-nosnippet>85</a>}
+<a href=#86 id=86 data-nosnippet>86</a>
+<a href=#87 id=87 data-nosnippet>87</a><span class="attr">#[serde_as]
+<a href=#88 id=88 data-nosnippet>88</a>#[derive(Deserialize, Debug, PartialEq, Eq, Clone)]
+<a href=#89 id=89 data-nosnippet>89</a>#[serde(rename_all = <span class="string">"camelCase"</span>)]
+<a href=#90 id=90 data-nosnippet>90</a></span><span class="kw">pub struct </span>Balance {
+<a href=#91 id=91 data-nosnippet>91</a>    <span class="kw">pub </span>coin_type: String,
+<a href=#92 id=92 data-nosnippet>92</a>    <span class="kw">pub </span>coin_object_count: usize,
+<a href=#93 id=93 data-nosnippet>93</a>    <span class="attr">#[serde_as(<span class="kw">as </span>= <span class="string">"BigInt&lt;u128&gt;"</span>)]
+<a href=#94 id=94 data-nosnippet>94</a>    </span><span class="kw">pub </span>total_balance: u128,
+<a href=#95 id=95 data-nosnippet>95</a>}</code></pre></div></section></main></body></html>
