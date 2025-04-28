@@ -7,12 +7,14 @@
 
 use std::{fmt, str::FromStr};
 
-use fastcrypto::encoding::{Encoding, Hex};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-use super::super::RebasedError;
-use super::super::serde::Readable;
+use super::super::{
+    RebasedError,
+    encoding::{Encoding, Hex},
+    serde::Readable,
+};
 use super::AccountAddress;
 
 pub const IOTA_ADDRESS_LENGTH: usize = AccountAddress::LENGTH;
@@ -42,18 +44,19 @@ impl TryFrom<&[u8]> for IotaAddress {
 impl FromStr for IotaAddress {
     type Err = RebasedError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
-        Ok(fastcrypto::encoding::decode_bytes_hex(s)?)
+        let bytes = Hex::decode(s).map_err(|_| RebasedError::InvalidIntent)?;
+        Self::from_bytes(bytes.as_slice())
     }
 }
 
 impl fmt::Display for IotaAddress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))
+        write!(f, "0x{}", Hex::encode(self.0))
     }
 }
 
 impl fmt::Debug for IotaAddress {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
-        write!(f, "0x{}", fastcrypto::encoding::Hex::encode(self.0))
+        write!(f, "0x{}", Hex::encode(self.0))
     }
 }

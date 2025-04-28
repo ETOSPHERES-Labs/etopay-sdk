@@ -5,10 +5,10 @@
 
 use std::fmt;
 
-use fastcrypto::encoding::{Base58, Encoding};
 use serde::{Deserialize, Serialize};
 use serde_with::{Bytes, serde_as};
 
+use super::super::encoding::{Base58, Encoding};
 use super::super::{RebasedError, serde::Readable};
 
 /// A representation of a 32 byte digest
