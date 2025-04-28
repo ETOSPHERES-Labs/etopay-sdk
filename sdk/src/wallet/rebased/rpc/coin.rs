@@ -15,10 +15,10 @@ use jsonrpsee::proc_macros::rpc;
 use serde::Deserialize;
 use serde_with::serde_as;
 
-use super::super::ObjectID;
 use super::super::bigint::BigInt;
 use super::super::serde::SequenceNumber as AsSequenceNumber;
 use super::super::types::{IotaAddress, ObjectDigest, SequenceNumber, TransactionDigest};
+use super::super::{ObjectID, ObjectRef};
 
 /// Provides access to coin-related data such as coins owned by an address,
 /// balances, or metadata.
@@ -76,6 +76,12 @@ pub struct Coin {
     #[serde_as(as = "BigInt<u64>")]
     pub balance: u64,
     pub previous_transaction: TransactionDigest,
+}
+
+impl Coin {
+    pub fn obj_ref(&self) -> ObjectRef {
+        (self.coin_object_id, self.version, self.digest)
+    }
 }
 
 #[serde_as]

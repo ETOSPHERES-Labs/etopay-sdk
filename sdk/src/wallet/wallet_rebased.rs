@@ -1,7 +1,7 @@
 use super::error::{Result, WalletError};
 use super::rebased::{
-    self, Argument, CoinReadApiClient, Command, GasData, ProgrammableTransactionBuilder, RebasedError, RpcClient,
-    TransactionExpiration,
+    self, Argument, CoinReadApiClient, Command, GasData, ObjectArg, ProgrammableTransactionBuilder, RebasedError,
+    RpcClient, TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
@@ -137,7 +137,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let gas_budget = 5_000_000;
 
-        let coins = self
+        let mut coins = self
             .client
             .get_coins(address, Some(self.coin_type.clone()), None, None)
             .await
@@ -147,40 +147,95 @@ impl WalletUser for WalletImplIotaRebased {
         // for now we just select _a_ coin object with enough balance, but at some point we probably need
         // to automatically merge multiple objects into one to send them
 
-        let (pt, gas_coin) = if let Some(gas_coin) = coins.iter().find(|c| c.balance > (amount + gas_budget)) {
+        let (mut builder, gas_coin) = if let Some(gas_coin) = coins.iter().find(|c| c.balance > (amount + gas_budget)) {
             log::info!("Single coin to cover gas and transaction found: {gas_coin:?}");
 
-            let mut b = ProgrammableTransactionBuilder::new();
-
-            // provide the inputs
-            let input_amount = b.pure(amount).map_err(RebasedError::BuilderError)?;
-            let input_receiver = b.pure(recipient).map_err(RebasedError::BuilderError)?;
-
-            // split the gas coin depending on the amount to send
-            let Argument::Result(split_primary) = b.command(Command::SplitCoins(Argument::GasCoin, vec![input_amount]))
-            else {
-                panic!("self.command should always give a Argument::Result")
-            };
-
-            // actually transfer the object that resulted from the split
-            b.command(Command::TransferObjects(
-                vec![Argument::NestedResult(split_primary, 0)],
-                input_receiver,
-            ));
-
-            let pt = b.finish();
-            (pt, gas_coin)
+            (ProgrammableTransactionBuilder::new(), gas_coin.clone())
         } else {
             // we do not have a single coin to cover amount + gas budget. Try to merge multiple
             // coins until we have enough.
 
-            // coins[0];
+            // first find a coin to cover the gas budget (probably must be iota coin)
+            let Some(gas_coin_idx) = coins.iter().position(|c| c.balance >= gas_budget) else {
+                // not found -> no way to cover the costs!
+                return Err(WalletError::InsufficientBalance(String::new()));
+            };
 
-            return Err(WalletError::InsufficientBalance(String::new()));
+            // take out the gas coin
+            let gas_coin = coins.swap_remove(gas_coin_idx);
+
+            let mut total = gas_coin.balance;
+
+            let mut other_coins = Vec::new();
+
+            for coin in coins.into_iter() {
+                // if we have enough, stop here
+                if total >= (amount + gas_budget) {
+                    break;
+                }
+                // otherwise add this coin to the list
+                total += coin.balance;
+                other_coins.push(coin);
+            }
+
+            // if we didn't find enough funds, error!
+            if total < (amount + gas_budget) {
+                return Err(WalletError::InsufficientBalance(format!(
+                    "Required: {}, found: {}",
+                    amount + gas_budget,
+                    total
+                )));
+            }
+
+            // we now have:
+            // - gas_coin that can cover the gas costs
+            // - a list of other coins that, when merged with the gas_coin, covers the total amount
+
+            log::info!("Gas Coin: {gas_coin:?}");
+            log::info!("Merging {} other Coins", other_coins.len());
+            log::info!("Total balance: {total}");
+
+            let mut b = ProgrammableTransactionBuilder::new();
+
+            // put all other coins into the arguments
+            let input_other_coins = other_coins
+                .iter()
+                .map(|c| {
+                    b.obj(ObjectArg::ImmOrOwnedObject(c.obj_ref()))
+                        .map_err(RebasedError::BuilderError)
+                })
+                .collect::<core::result::Result<Vec<_>, rebased::RebasedError>>()?;
+
+            if !input_other_coins.is_empty() {
+                // Merge the other coins into the GasCoin
+                b.command(Command::MergeCoins(Argument::GasCoin, input_other_coins));
+            }
+
+            (b, gas_coin)
         };
 
-        // create the object ref manually instead of fetching as in the official sdk
-        let gas_coin_ref: rebased::ObjectRef = (gas_coin.coin_object_id, gas_coin.version, gas_coin.digest);
+        // At this point we have a ProgrammableTransactionBuilder that has inputs and commands (if
+        // needed) to have enough Balance in the GasCoin to cover the transaction.
+        // So we just append the logic to perform the split and transfer:
+
+        // provide the inputs
+        let input_amount = builder.pure(amount).map_err(RebasedError::BuilderError)?;
+        let input_receiver = builder.pure(recipient).map_err(RebasedError::BuilderError)?;
+
+        // split the gas coin depending on the amount to send
+        let Argument::Result(split_primary) =
+            builder.command(Command::SplitCoins(Argument::GasCoin, vec![input_amount]))
+        else {
+            panic!("self.command should always give a Argument::Result")
+        };
+
+        // actually transfer the object that resulted from the split
+        builder.command(Command::TransferObjects(
+            vec![Argument::NestedResult(split_primary, 0)],
+            input_receiver,
+        ));
+
+        let pt = builder.finish();
 
         let gas_price = self
             .client
@@ -192,7 +247,7 @@ impl WalletUser for WalletImplIotaRebased {
             kind: TransactionKind::ProgrammableTransaction(pt),
             sender: address,
             gas_data: GasData {
-                payment: vec![gas_coin_ref],
+                payment: vec![gas_coin.obj_ref()],
                 owner: address,
                 price: *gas_price,
                 budget: gas_budget,
