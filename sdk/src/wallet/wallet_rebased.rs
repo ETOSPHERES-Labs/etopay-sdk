@@ -15,6 +15,7 @@ use async_trait::async_trait;
 use chrono::{TimeZone, Utc};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::wallet::account::types::InclusionState;
+use jsonrpsee::types::ErrorCode;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::prelude::ToPrimitive;
@@ -303,21 +304,14 @@ impl WalletUser for WalletImplIotaRebased {
                 Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
             )
             .await
-            .map_err(RebasedError::RpcError)?;
+            .map_err(|e| match &e {
+                jsonrpsee::core::client::Error::Call(r) if r.code() == ErrorCode::InvalidParams.code() => {
+                    WalletError::TransactionNotFound
+                }
+                _ => WalletError::IotaRebased(RebasedError::RpcError(e)),
+            })?;
 
         log::info!("Transaction Details:\n{tx:?}");
-
-        // TODO: get the information from the tx, most likely from the balance_changes
-
-        // if let Some(changes) = tx.balance_changes {
-        //     if changes.len() == 1 {
-        //         // TX to self, only single balance change
-        //     }
-        //
-        //     // for change in tx {
-        //     //     change.owner
-        //     // }
-        // }
 
         // The timestamp is in milliseconds but we make it into a human-readable format
         let date = tx
@@ -375,19 +369,19 @@ impl WalletUser for WalletImplIotaRebased {
             .to_f64()
             .unwrap_or(0.0);
 
+        let receiver = receiver
+            .map(|owner| match owner {
+                Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
+                _ => Err(WalletError::WalletFeatureNotImplemented),
+            })
+            .unwrap_or(Ok(String::default()))?;
+
         Ok(WalletTxInfo {
             date,
             block_id,
             transaction_id: tx_id.to_string(),
             incoming: false,
-            receiver: receiver
-                .map(|owner| match owner {
-                    Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => addr.to_string(),
-                    Owner::Shared { .. } | Owner::Immutable => {
-                        unimplemented!("Unsupported Owner type for receiver address")
-                    }
-                })
-                .unwrap_or_default(),
+            receiver,
             amount,
             network_key: String::from("IOTA"),
             status: format!("{:?}", status),
