@@ -14,13 +14,59 @@
     })();
 
 
-    /* We need to listen to the mkdocs location$ signal to also catch instant navications (no full page refresh) */
     /* Wait for page to load and application to mount */
     document.addEventListener("DOMContentLoaded", function () {
+
+        /* Set up feedback, i.e. "Was this page helpful?" */
+        document$.subscribe(function () {
+            var feedback = document.forms.feedback
+            if (typeof feedback === "undefined")
+                return
+
+            /* Send feedback to Matomo */
+            for (var button of feedback.querySelectorAll("[type=submit]")) {
+                button.addEventListener("click", function (ev) {
+                    ev.preventDefault()
+
+                    /* Retrieve and send data */
+                    var page = document.location.pathname
+                    var data = this.getAttribute("data-md-value")
+                    _paq.push(['trackEvent', 'Feedback', 'Feedback Submitted', page, data]);
+
+                    /* Disable form and show note, if given */
+                    feedback.firstElementChild.disabled = true
+                    var note = feedback.querySelector(
+                        ".md-feedback__note [data-md-value='" + data + "']"
+                    )
+                    if (note)
+                        note.hidden = false
+                })
+
+                /* Show feedback */
+                feedback.hidden = false
+            }
+        })
+
+        /* Send page view on location change */
         location$.subscribe(function (url) {
-            /* Add custom page event tracking here */
-            _paq.push(['setCustomUrl', url]);
+            _paq.push(['setCustomUrl', url.pathname]);
             _paq.push(['trackPageView']);
+
+            // reset the feedback form view
+            var feedback = document.forms.feedback
+            if (typeof feedback !== "undefined") {
+
+                /* Enable form and disable note, if given */
+                feedback.firstElementChild.disabled = false
+                var note = feedback.querySelector(
+                    ".md-feedback__note [data-md-value='" + data + "']"
+                )
+                if (note)
+                    note.hidden = true
+
+                /* Show feedback */
+                feedback.hidden = false
+            }
         })
     })
 </script>
