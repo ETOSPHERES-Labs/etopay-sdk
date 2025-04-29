@@ -281,12 +281,7 @@ impl WalletUser for WalletImplIotaRebased {
             .await
             .map_err(RebasedError::RpcError)?;
 
-        log::info!("Transaction sent {}", transaction_block_response.digest);
-        log::info!("Response:\n{transaction_block_response:?}");
-
-        if !transaction_block_response.errors.is_empty() {
-            log::warn!("Errors: {:?}", transaction_block_response.errors);
-        }
+        log::info!("Transaction submitted {}", transaction_block_response.digest);
 
         // JSON-RPC ignores WaitForLocalExecution, so simulate it by polling for the
         // transaction.
@@ -314,6 +309,12 @@ impl WalletUser for WalletImplIotaRebased {
                 start.elapsed().as_secs(),
             )
         })?;
+
+        log::info!("Response:\n{poll_response:?}");
+
+        if !transaction_block_response.errors.is_empty() {
+            log::warn!("Errors: {:?}", transaction_block_response.errors);
+        }
 
         Ok(poll_response.digest.to_string())
     }

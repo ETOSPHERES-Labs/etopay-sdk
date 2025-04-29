@@ -12,7 +12,7 @@ use crate::{
     },
     user::error::UserKvStorageError,
 };
-use log::info;
+use log::debug;
 
 pub struct UserRepoImpl<I: super::UserKvStorage> {
     inner: I,
@@ -26,7 +26,7 @@ impl<I: super::UserKvStorage> UserRepoImpl<I> {
 
 impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
     fn create(&mut self, user: &UserEntity) -> Result<()> {
-        info!("Creating entry in user DB");
+        debug!("Creating entry in user DB");
         if self.inner.exists(&user.username)? {
             return Err(UserKvStorageError::UserAlreadyExists {
                 username: user.username.clone(),
@@ -38,7 +38,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
     }
 
     fn update(&mut self, user: &UserEntity) -> Result<()> {
-        info!("Updating entry in user DB");
+        debug!("Updating entry in user DB");
 
         if !self.inner.exists(&user.username)? {
             return Err(UserKvStorageError::UserNotFound {
@@ -49,17 +49,17 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
     }
 
     fn delete(&mut self, username: &str) -> Result<()> {
-        info!("Deleting entry in user DB");
+        debug!("Deleting entry in user DB");
         self.inner.delete(username)
     }
 
     fn get(&self, username: &str) -> Result<UserEntity> {
-        info!("Fetching entry in user DB");
+        debug!("Fetching entry in user DB");
         self.inner.get(username)
     }
 
     fn set_wallet_password(&mut self, username: &str, password: EncryptedPassword) -> Result<()> {
-        info!("Setting password in user DB");
+        debug!("Setting password in user DB");
 
         let mut user = self.inner.get(username)?;
         user.encrypted_password = Some(password.to_owned());
@@ -67,7 +67,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
     }
 
     fn set_kyc_state(&mut self, username: &str, is_verified: bool) -> Result<()> {
-        info!("Setting KYC state in user DB: {is_verified}");
+        debug!("Setting KYC state in user DB: {is_verified}");
 
         let mut user = self.inner.get(username)?;
         user.is_kyc_verified = is_verified;
@@ -75,7 +75,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
     }
 
     fn set_kyc_type(&mut self, username: &str, kyc_type: KycType) -> Result<()> {
-        info!("Setting KYC type in user DB: {kyc_type:#?}");
+        debug!("Setting KYC type in user DB: {kyc_type:#?}");
 
         let mut user = self.inner.get(username)?;
         user.kyc_type = kyc_type;
@@ -89,7 +89,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
         monthly_limit_eur: f32,
         next_verification_step: ViviswapVerificationStep,
     ) -> Result<()> {
-        info!(
+        debug!(
             "Setting viviswap KYC state in user DB: {verification_status:?}, {monthly_limit_eur}, {next_verification_step:?}"
         );
 
@@ -122,14 +122,14 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 
     fn set_local_share(&mut self, username: &str, share: Option<&Share>) -> Result<()> {
         use secrecy::ExposeSecret;
-        info!("Setting local share in user DB for: {username}");
+        debug!("Setting local share in user DB for: {username}");
         let mut user = self.inner.get(username)?;
         user.local_share = share.map(|s| s.to_string().expose_secret().to_string());
         self.inner.set(username, &user)
     }
 
     fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<WalletTxInfo>) -> Result<()> {
-        info!("Setting wallet transactions in user DB: {transaction:#?}");
+        debug!("Setting wallet transactions in user DB: {transaction:#?}");
         let mut user = self.inner.get(username)?;
         user.wallet_transactions = transaction;
         self.inner.set(username, &user)
