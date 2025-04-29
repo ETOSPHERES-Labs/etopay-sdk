@@ -383,7 +383,7 @@ impl WalletUser for WalletImplIotaRebased {
             incoming: false,
             receiver,
             amount,
-            network_key: String::from("IOTA"),
+            network_key: String::from("iota_rebased_testnet"),
             status: format!("{:?}", status),
             explorer_url: None,
         })
