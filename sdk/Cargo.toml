@@ -125,7 +125,7 @@ bs58 = "0.5"
 fern-logger = { version = "0.5.0", default-features = false }
 
 # needed for iota-rebased impl
-jsonrpsee = { version = "0.24", default-features = false, features = [
+jsonrpsee = { version = "0.25", default-features = false, features = [
     "macros",
     "async-client",
     "http-client",
@@ -133,7 +133,7 @@ jsonrpsee = { version = "0.24", default-features = false, features = [
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 # needed for iota-rebased impl
-jsonrpsee = { version = "0.24", default-features = false, features = [
+jsonrpsee = { version = "0.25", default-features = false, features = [
     "macros",
     "async-wasm-client",
     "wasm-client",
