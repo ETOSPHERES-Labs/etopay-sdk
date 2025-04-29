@@ -12,5 +12,16 @@
         var d = document, g = d.createElement('script'), s = d.getElementsByTagName('script')[0];
         g.async = true; g.src = u + 'matomo.js'; s.parentNode.insertBefore(g, s);
     })();
+
+
+    /* We need to listen to the mkdocs location$ signal to also catch instant navications (no full page refresh) */
+    /* Wait for page to load and application to mount */
+    document.addEventListener("DOMContentLoaded", function () {
+        location$.subscribe(function (url) {
+            /* Add custom page event tracking here */
+            _paq.push(['setCustomUrl', url]);
+            _paq.push(['trackPageView']);
+        })
+    })
 </script>
 <!-- End Matomo Code -->

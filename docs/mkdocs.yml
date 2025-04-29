@@ -91,7 +91,7 @@ theme:
         icon: material/toggle-switch-off-outline
         name: Light mode
 
-copyright: Copyright &copy; 2025 - ETOSPHERES Labs GmbH
+copyright: Copyright &copy; 2025 - ETOSPHERES Labs GmbH <br/> <a href="#__consent">Change cookie settings</a>
 extra:
   analytics:
     provider: custom
