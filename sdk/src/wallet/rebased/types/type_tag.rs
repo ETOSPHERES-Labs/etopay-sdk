@@ -3,9 +3,8 @@
 // Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
 // SPDX-License-Identifier: Apache-2.0
 
-use serde::{Deserialize, Serialize};
-
 use super::{AccountAddress, Identifier};
+use serde::{Deserialize, Serialize};
 
 // Important: do not reorder the fields
 #[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Eq, Clone, PartialOrd, Ord)]

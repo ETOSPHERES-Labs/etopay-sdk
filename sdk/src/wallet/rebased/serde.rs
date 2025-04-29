@@ -5,12 +5,10 @@
 //
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/iota_serde.rs#L65
 
-use std::marker::PhantomData;
-
+use super::bigint::BigInt;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeAs, SerializeAs, serde_as};
-
-use super::bigint::BigInt;
+use std::marker::PhantomData;
 
 /// Use with serde_as to control serde for human-readable serialization and
 /// deserialization `H` : serde_as SerializeAs/DeserializeAs delegation for
