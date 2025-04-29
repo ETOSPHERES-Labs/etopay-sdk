@@ -3,14 +3,15 @@
 // Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
 // SPDX-License-Identifier: Apache-2.0
 
-use serde::{Deserialize, Serialize};
-
-use serde_with::serde_as;
-
 use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::super::encoding::Base64;
 use super::ExecuteTransactionRequestType;
+use crate::wallet::rebased::BalanceChange;
+use crate::wallet::rebased::CheckpointSequenceNumber;
+use crate::wallet::rebased::IotaTransactionBlockEffects;
+use serde::{Deserialize, Serialize};
+use serde_with::serde_as;
 
 #[serde_as]
 #[derive(Deserialize, Debug, Clone, Default)]
@@ -25,14 +26,14 @@ pub struct IotaTransactionBlockResponse {
     #[serde_as(as = "Base64")]
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub raw_transaction: Vec<u8>,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub effects: Option<IotaTransactionBlockEffects>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub effects: Option<IotaTransactionBlockEffects>,
     // #[serde(skip_serializing_if = "Option::is_none")]
     // pub events: Option<IotaTransactionBlockEvents>,
     // #[serde(skip_serializing_if = "Option::is_none")]
     // pub object_changes: Option<Vec<ObjectChange>>,
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub balance_changes: Option<Vec<BalanceChange>>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub balance_changes: Option<Vec<BalanceChange>>,
     #[serde(default, skip_serializing_if = "Option::is_none")]
     #[serde_as(as = "Option<BigInt<u64>>")]
     pub timestamp_ms: Option<u64>,
@@ -41,9 +42,9 @@ pub struct IotaTransactionBlockResponse {
     /// The checkpoint number when this transaction was included and hence
     /// finalized. This is only returned in the read api, not in the
     /// transaction execution api.
-    // #[serde_as(as = "Option<BigInt<u64>>")]
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub checkpoint: Option<CheckpointSequenceNumber>,
+    #[serde_as(as = "Option<BigInt<u64>>")]
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub checkpoint: Option<CheckpointSequenceNumber>,
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub errors: Vec<String>,
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
