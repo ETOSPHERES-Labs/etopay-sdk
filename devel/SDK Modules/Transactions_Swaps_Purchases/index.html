@@ -1058,27 +1058,27 @@
 </span></code></pre></div>
 <p>The wallet transaction is a simple transfer of funds from one address to another facilitated by the DLT network node and the wallet software running within the SDK.</p>
 <h2 id="swap-transactions-flow">Swap transactions flow<a class="headerlink" href="#swap-transactions-flow" title="Permanent link">&para;</a></h2>
-<p>A swap is simply an exchange of value from one currency to another. In the current scenario, the swap is always between SMR &lt;--&gt; EURO currencies. This is executed at viviswap exchange.</p>
+<p>A swap is simply an exchange of value from one currency to another. In the current scenario, the swap is always between SMR &lt;--&gt; EURO currencies. This is executed at the ETOSPHERES Exchange (formerly Viviswap).</p>
 <p>For payments in EURO, only the SEPA transfer method is currently supported. See the german explanation <a href="https://www.bundesbank.de/de/aufgaben/unbarer-zahlungsverkehr/serviceangebot/sepa/sepa-einfach-erklaert--603346">here</a> and the english explanation <a href="https://en.wikipedia.org/wiki/Single_Euro_Payments_Area">here</a></p>
-<p>The EURO payment needs the user to setup and add their IBAN (International Bank Account Number) to the viviswap exchange. Through this, the viviswap uses SEPA transfers to this IBAN, whenever a swap is triggered from SMR to EURO. The other way around, currently, since direct debit is not setup from the bank of viviswap, the user has to transfer manually from exactly this IBAN (viviswap verifies it in every transfer) to the IBAN owned by viviswap with the amount and a reference number provided by viviswap.</p>
+<p>The EURO payment needs the user to setup and add their IBAN (International Bank Account Number) to the Exchange. Through this, the Exchange uses SEPA transfers to this IBAN, whenever a swap is triggered from SMR to EURO. The other way around, the user has to transfer manually from exactly this IBAN (the Exchange verifies it in every transfer) to the IBAN owned by the Exchange with the amount and a unique reference number.</p>
 <ol>
-<li><code>get_iban_for_viviswap</code>: This function allows the user query their own IBAN saved at viviswap.</li>
-<li><code>ensure_detail</code>: This function verifies if a detail created at viviswap is legitimate, syntactically and semantically. A detail is basically an address for a particular payment method. The various payment methods used by viviswap are SMR, IOTA, BTC, ETH, etc... for crypto-currencies and PAYPAL, SEPA, etc... for EURO payments. For example, the address for the payment method SMR would be shimmer wallet address and the address for the payment method SEPA would be the IBAN.</li>
-<li><code>update_iban_for_viviswap</code>: This function updates the IBAN of the user in the viviswap exchange. The update is actually an advanced <code>upsert</code> action. The update would insert the IBAN if none exists and also replace the existing IBAN with the new one.</li>
-<li><code>create_deposit_with_viviswap</code>: This function creates details of a fiat to crypto swap. Deposit is to be understood as deposit of funds to a crypto currency address. Currently, the swap is between EURO to SMR. Since, there is no direct debit authorization available, creating the deposit generally means getting information about the bank details of viviswap and the reference number, and advising the user to make a SEPA transfer in the required amount.</li>
-<li><code>create_detail_for_viviswap</code>: This function creates a user detail for a payment method. This could be adding the crypto address for a certain payment method to the viviswap exchange. This detail with its id can then be directly used for the swaps.</li>
-<li><code>get_payment_method_id_viviswap</code>: This is a generic function and has to be called once to cache the UUIDs of all the payment methods supported by viviswap.</li>
-<li><code>create_withdrawal_with_viviswap</code>: This function is the opposite of deposit. Withdrawal is to be understood as withdrawal of funds from a crypto currency address. If a pin is provided, the function automatically immediately transfers money from the crypto address of the user to that of viviswap and ideally viviswap would automatically transfer the funds to the IBAN created in their system. If no pin is provided, the user is shown the crypto address of the chosen payment method and the user can decide to transfer the funds to this address at any point.</li>
-<li><code>get_swap_list</code>: This function gives the list of swaps performed at viviswap.</li>
+<li><code>get_iban_for_viviswap</code>: This function allows the user query their own IBAN saved at the Exchange.</li>
+<li><code>ensure_detail</code>: This function verifies if a detail created at the Exchange is legitimate, syntactically and semantically. A detail is basically an address for a particular payment method. The various payment methods used are SMR, IOTA, BTC, ETH, etc... for crypto-currencies and PAYPAL, SEPA, etc... for EURO payments. For example, the address for the payment method SMR would be shimmer wallet address and the address for the payment method SEPA would be the IBAN.</li>
+<li><code>update_iban_for_viviswap</code>: This function updates the IBAN of the user in the Exchange. The update is actually an advanced <code>upsert</code> action. The update would insert the IBAN if none exists and also replace the existing IBAN with the new one.</li>
+<li><code>create_deposit_with_viviswap</code>: This function creates details of a fiat to crypto swap. Deposit is to be understood as deposit of funds to a crypto currency address. Currently, the swap is between EURO to SMR. Since there is no direct debit authorization available, creating the deposit generally means getting information about the bank details of the Exchange and the reference number, and advising the user to make a SEPA transfer with the required amount.</li>
+<li><code>create_detail_for_viviswap</code>: This function creates a user detail for a payment method. This could be adding the crypto address for a certain payment method to the Exchange. This detail with its id can then be directly used for the swaps.</li>
+<li><code>get_payment_method_id_viviswap</code>: This is a generic function and has to be called once to cache the UUIDs of all the payment methods supported by the Exchange.</li>
+<li><code>create_withdrawal_with_viviswap</code>: This function is the opposite of deposit. Withdrawal is to be understood as withdrawal of funds from a crypto currency address. If a pin is provided, the function automatically immediately transfers money from the crypto address of the user to that of the Exchange and ideally the Exchange would automatically transfer the funds to the IBAN created in their system. If no pin is provided, the user is shown the crypto address of the chosen payment method and the user can decide to transfer the funds to this address at any point.</li>
+<li><code>get_swap_list</code>: This function gives the list of swaps performed at the Exchange.</li>
 <li><code>get_swap_details</code>: This function gives details about a swap, like information on fees, exchange rate, the swap status, etc...</li>
-<li><code>get_exchange_rate</code>: This function provides the exchange rate for the involved currencies in the swap. Currently, the exchange rate is always provided with EURO as base currency, i.e. it is either SMR/EURO or IOTA/EUR or BTC/EURO and so on... An inversion of the exchange rate gives the reverse rate and should be calculated by simply inverting the value. As confirmed by viviswap, there are no vertical spreads to be considered here!</li>
+<li><code>get_exchange_rate</code>: This function provides the exchange rate for the involved currencies in the swap. Currently the exchange rate is always provided with EURO as base currency, i.e. it is either SMR/EURO or IOTA/EUR or BTC/EURO and so on... An inversion of the exchange rate gives the reverse rate and should be calculated by simply inverting the value. As confirmed by the Exchange, there are no vertical spreads to be considered here!</li>
 </ol>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>                              Deposit Flow                        
 </span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
 </span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>            +------------+            |          +------------+   
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>            |            |            |          |            |   
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>            | User       |            |          | Viviswap   |   
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>            | User       |            |          | Exchange   |   
 </span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>            | Wallet     &lt;------------+----------+ Wallet     |   
 </span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>            | Address    |            |          | Address    |   
 </span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>            |            |            |          |            |   
@@ -1092,7 +1092,7 @@
 </span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>                                      |                 |         
 </span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>            +------------+            |            +----+-------+ 
 </span><span id="__span-1-19"><a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a>            |            |            |            |            | 
-</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>User        | User       |     Bank   |            |  Viviswap  | 
+</span><span id="__span-1-20"><a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a>User        | User       |     Bank   |            |  Exchange  | 
 </span><span id="__span-1-21"><a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a>------------&gt; IBAN       +------------+------------&gt;  IBAN      | 
 </span><span id="__span-1-22"><a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>Action      |            |     Ref.   |            |            | 
 </span><span id="__span-1-23"><a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a>            |            |     Nr.    |            |            | 
@@ -1111,7 +1111,7 @@
 </span><span id="__span-1-36"><a id="__codelineno-1-36" name="__codelineno-1-36" href="#__codelineno-1-36"></a>                                      |             +------------+
 </span><span id="__span-1-37"><a id="__codelineno-1-37" name="__codelineno-1-37" href="#__codelineno-1-37"></a>                                      |                           
 </span><span id="__span-1-38"><a id="__codelineno-1-38" name="__codelineno-1-38" href="#__codelineno-1-38"></a>                                      |                           
-</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>                              User    |    Viviswap               
+</span><span id="__span-1-39"><a id="__codelineno-1-39" name="__codelineno-1-39" href="#__codelineno-1-39"></a>                              User    |    Exchange               
 </span></code></pre></div>
 <div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>                 Withdraw Flow                       
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>
@@ -1120,13 +1120,13 @@
 </span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>  User                    |        |  Create    |    
 </span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>  ------------------------+--------&gt;  Withdraw  |    
 </span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>  Action                  |        |  Detail    |    
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>              Viviswap    |        |            |    
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>              Exchange    |        |            |    
 </span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>      +-------------------+--------+------------+    
 </span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>      |       Address     |                          
 </span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>      |                   |                          
 </span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>+-----v------+            |          +------------+  
 </span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>|            |            |          |            |  
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>| User       |            |          | Viviswap   |  
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>| User       |            |          | Exchange   |  
 </span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>| Wallet     +------------+----------&gt; Wallet     |  
 </span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>| Address    |            |          | Address    |  
 </span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>|            |            |          |            |  
@@ -1140,7 +1140,7 @@
 </span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>                          |                 |        
 </span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>+------------+            |            +----v-------+
 </span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>|            |            |            |            |
-</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>| User       |            |            |  Viviswap  |
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>| User       |            |            |  Exchange  |
 </span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>| IBAN       &lt;------------+------------+  IBAN      |
 </span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>|            |            |            |            |
 </span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>|            |            |            |            |
@@ -1148,7 +1148,7 @@
 </span><span id="__span-2-33"><a id="__codelineno-2-33" name="__codelineno-2-33" href="#__codelineno-2-33"></a>                          |                          
 </span><span id="__span-2-34"><a id="__codelineno-2-34" name="__codelineno-2-34" href="#__codelineno-2-34"></a>                          |                          
 </span><span id="__span-2-35"><a id="__codelineno-2-35" name="__codelineno-2-35" href="#__codelineno-2-35"></a>                          |                          
-</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>                  User    |    Viviswap              
+</span><span id="__span-2-36"><a id="__codelineno-2-36" name="__codelineno-2-36" href="#__codelineno-2-36"></a>                  User    |    Exchange              
 </span></code></pre></div>
 <h2 id="purchase-transactions-flow">Purchase transactions flow<a class="headerlink" href="#purchase-transactions-flow" title="Permanent link">&para;</a></h2>
 <p>The purchase transaction is a process different than a swap or a wallet transaction. The purchase is a process of exchanging funds for an underlying artefact. An artefact can be something promised between two parties like a photo, video, or a compliment on a photo, sensor data, services, licenses, etc... The SDK is only interested in creation, querying and confirmation of these purchase requests. The rest of the business logic flow is handled by the corresponding service in ETOPay infrastructure. The transfer of artefact can happen only after a successful execution of the purchase request. This information can be verified at all times by querying the status of the purchase request and the details of the purchase request.</p>
@@ -1208,7 +1208,7 @@ Currently, polling is used to wait for the purchase request to be valid. It can 
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="March 24, 2025 07:59:35">March 24, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date" title="April 30, 2025 09:45:30">April 30, 2025</span>
   </span>
 
     
