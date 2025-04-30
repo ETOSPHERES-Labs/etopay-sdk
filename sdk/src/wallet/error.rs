@@ -143,6 +143,10 @@ pub enum WalletError {
     /// Iota Rebased Error
     #[error("IotaRebased: {0}")]
     IotaRebased(#[from] rebased::RebasedError),
+
+    /// Failed to wait for confirming the transaction status
+    #[error("FailToConfirmTransactionStatus: Failed to confirm tx status for {0} within {1} seconds.")]
+    FailToConfirmTransactionStatus(String, u64),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {
