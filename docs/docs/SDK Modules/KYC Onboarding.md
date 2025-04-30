@@ -85,7 +85,7 @@ For more information on how ETOPay authenticates against the API of the Exchange
 Please reach out to us directly for onboarding as a business on the ETOSPHERES Exchange [here](mailto:contact@etospheres.com)
 
 The onboarding of users and their related KYC process is described directly in our [documentation](
-https://api-service-dev.viviswap.com/docs/#section/Know-your-customer-(KYC)) hosted at the exchange. The ETOPay SDK completely integrates the organisations API scope. In addition, the existed users on the exchange are also immediately federated to the organisations, once they approve to share their KYC data with the customer attached organisation at the exchange. This feature is however, not yet available directly in ETOPay and the approval for sharing data is only possible right now via an E-Mail from the user.
+https://api-service-dev.viviswap.com/docs/#section/Know-your-customer-(KYC)) hosted at the exchange. The ETOPay SDK completely integrates the organisations API scope. In addition, the existed users on the Exchange are also immediately federated to the organisations, once they approve to share their KYC data with the customer attached organisation at the Exchange. This feature is however, not yet available directly in ETOPay and the approval for sharing data is only possible right now via an E-Mail from the user.
 
 #### Order of verification
 
@@ -117,4 +117,4 @@ For values greater than or equal to 70, by default, the customer does not have p
 |20|	YES|	general, personal, identity, residence, amla & documents|	individual|	individual| |
 |10|	YES|	general, personal, identity, residence, amla & documents|	individual|	individual|	|
 
-Users can further lower their risk level by providing more information about themselves. For example, to set the risk level to 60 the exchange needs information about the country of origin and the person (general and personal kyc step). To achieve a risk level of 40, all KYC steps (general, personal, identity, residence, amla & documents) must be completed. To achieve an even lower risk level, the exchange requires further individual information from the user. To do this, the user can directly contact [support](mailto:support@etospheres.com).
+Users can further lower their risk level by providing more information about themselves. For example, to set the risk level to 60 the exchange needs information about the country of origin and the person (general and personal kyc step). To achieve a risk level of 40, all KYC steps (general, personal, identity, residence, amla & documents) must be completed. To achieve an even lower risk level, the Exchange requires further individual information from the user. To do this, the user can directly contact [support](mailto:support@etospheres.com).

@@ -16,7 +16,7 @@
 
 !!! Warning
 
-    - Viviswap and Postident KYC onboarding will not work if the user is already kyc verified.
+    - ETOSPHERES Exchange and Postident KYC onboarding will not work if the user is already kyc verified.
     - KYC onboarding with another provider will not work if the user is already started kyc onboarding with one of the other providers.
     - Restoring a wallet backup may fail, if the wallet is already existing.
     - Initializing User and initializing wallet may fail, if the user and wallet are already initialized. Since, there is no de-init function, the  SDK handle needs to be closed, or a new handle needs to be created to re init.
