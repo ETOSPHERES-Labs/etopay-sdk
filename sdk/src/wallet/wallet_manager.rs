@@ -4,9 +4,7 @@
 //!
 
 use super::share::Share;
-use super::wallet::WalletUser;
 use super::wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
-use super::wallet_rebased::WalletImplIotaRebased;
 use super::wallet_stardust::WalletImplStardust;
 use crate::core::{Config, UserRepoT};
 use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
@@ -18,6 +16,8 @@ use log::{info, warn};
 use secrecy::{ExposeSecret, SecretBox};
 use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
+use wallet::wallet::WalletUser;
+use wallet::wallet::iota::WalletImplIotaRebased;
 
 /// Represents borrowing a [`WalletUser`] instance with a lifetime connected to the wallet manager.
 /// This prevents wallets to be stored and used later by another user.

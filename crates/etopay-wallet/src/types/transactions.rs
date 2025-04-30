@@ -1,14 +1,10 @@
-use api_types::api::{
-    networks::ApiNetwork,
-    transactions::{ApiApplicationMetadata, ApiTxStatus},
-};
+use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus};
 use chrono::{LocalResult, TimeZone, Utc};
 use iota_sdk::{
     types::block::{helper::network_name_to_id, output::Output, payload::transaction::TransactionEssence},
     wallet::account::types::Transaction,
 };
 use serde::{Deserialize, Serialize};
-use wallet::types::CryptoAmount;
 
 /// Transaction list
 #[derive(Debug, Serialize)]
@@ -123,15 +119,13 @@ impl From<Transaction> for WalletTxInfo {
     }
 }
 
-/// Purchase details
-#[derive(Clone)]
-pub struct PurchaseDetails {
-    /// The sender address where the fees goes to.
-    pub system_address: String,
-    /// The amount to be paid.
-    pub amount: CryptoAmount,
-    /// The status of transaction
-    pub status: ApiTxStatus,
-    /// The network that the transaction is sent in
-    pub network: ApiNetwork,
+/// Gas estimation (EIP-1559)
+#[derive(Debug, PartialEq)]
+pub struct GasCostEstimation {
+    /// The maximum fee the sender is willing to pay per unit of gas.
+    pub max_fee_per_gas: u128,
+    /// The maximum tip the sender is willing to pay to miners (in EIP-1559).
+    pub max_priority_fee_per_gas: u128,
+    /// The maximum amount of gas that the transaction can consume.
+    pub gas_limit: u64,
 }

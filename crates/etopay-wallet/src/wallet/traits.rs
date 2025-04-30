@@ -1,6 +1,5 @@
-use super::error::Result;
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use crate::error::Result;
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
 use std::fmt::Debug;
 
@@ -16,7 +15,7 @@ pub struct TransactionIntent {
     pub data: Option<Vec<u8>>,
 }
 
-#[cfg_attr(test, mockall::automock)]
+#[cfg_attr(any(test, feature = "mock"), mockall::automock)]
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
 /// Wallet user interface

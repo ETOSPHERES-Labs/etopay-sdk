@@ -10,10 +10,10 @@ use crate::types::{
     transactions::{TxInfo, TxList},
 };
 use crate::wallet::error::WalletError;
-use crate::wallet::wallet::TransactionIntent;
 use api_types::api::networks::ApiProtocol;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 use log::{debug, info};
+use wallet::wallet::TransactionIntent;
 
 impl Sdk {
     /// Create purchase request

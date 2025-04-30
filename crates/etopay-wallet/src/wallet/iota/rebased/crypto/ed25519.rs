@@ -7,7 +7,7 @@
 use std::{cell::OnceCell, fmt};
 
 // it seems ed25519_consensus still uses an old version of rand, so we takeit from aes_gcm crate :D
-use aes_gcm::aead::rand_core::{CryptoRng, RngCore};
+use rand8::{CryptoRng, RngCore};
 
 use super::super::{
     RebasedError,

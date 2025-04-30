@@ -1,5 +1,4 @@
 use super::error::{Result, WalletError};
-use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::currencies::CryptoAmount;
 use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
@@ -14,6 +13,7 @@ use rust_decimal_macros::dec;
 use std::fmt::Debug;
 use std::path::Path;
 use std::str::FromStr;
+use wallet::wallet::{TransactionIntent, WalletUser};
 
 /// The number of addresses to automatically generate when setting up the wallet
 const USER_ADDRESS_LIMIT: u32 = 20;

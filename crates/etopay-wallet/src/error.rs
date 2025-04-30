@@ -1,5 +1,3 @@
-use super::{kdbx::KdbxStorageError, share::ShareError};
-use crate::{backend::error::ApiError, types::error::TypeError, user::error::UserKvStorageError};
 use iota_sdk::types::block;
 use serde::Serialize;
 
@@ -20,6 +18,10 @@ pub enum ErrorKind {
 /// Wrapper for wallet errors
 #[derive(thiserror::Error, Debug)]
 pub enum WalletError {
+    /// If the amount is negative when creating a CryptoAmount
+    #[error("NegativeAmount")]
+    NegativeAmount,
+
     /// Iota client error
     #[error("IotaClient error: {0}")]
     IotaClient(#[from] iota_sdk::client::Error),
@@ -80,30 +82,32 @@ pub enum WalletError {
     #[error("IotaWallet error: {0}")]
     IotaWallet(#[from] iota_sdk::wallet::Error),
 
-    /// Errors related to the kdbx storage
-    #[error("KdbxStorage error: {0}")]
-    KdbxStorage(#[from] KdbxStorageError),
-
-    /// Error occurs in sdk types
-    #[error("Type errors: {0}")]
-    Type(#[from] TypeError),
-
-    /// User repository error
-    #[error("User repository error: {0}")]
-    UserRepository(#[from] UserKvStorageError),
-
-    /// Error occurred while creating or reconstructing shares
-    #[error("Share error: {0}")]
-    Share(#[from] ShareError),
-
+    // /// Errors related to the kdbx storage
+    // #[error("KdbxStorage error: {0}")]
+    // KdbxStorage(#[from] KdbxStorageError),
+    //
+    // /// Error occurs in sdk types
+    // #[error("Type errors: {0}")]
+    // Type(#[from] TypeError),
+    //
+    // /// User repository error
+    // #[error("User repository error: {0}")]
+    // UserRepository(#[from] UserKvStorageError),
+    //
+    // /// Error occurred while creating or reconstructing shares
+    // #[error("Share error: {0}")]
+    // Share(#[from] ShareError),
     /// Error occurred while handling bip39 compliant mnemonics
     #[error("Bip39 error: {0:?}")]
     Bip39(iota_sdk::crypto::keys::bip39::Error),
 
-    /// Error occurs in sdk backend (api)
-    #[error("BackendApi errors: {0}")]
-    BackendApi(#[from] ApiError),
+    /// Error occurred while handling bip32 compliant derivation paths
+    #[error("Bip32: {0:?}")]
+    Bip32(#[from] bip32::Error),
 
+    // /// Error occurs in sdk backend (api)
+    // #[error("BackendApi errors: {0}")]
+    // BackendApi(#[from] ApiError),
     /// Error creating a LocalSigner from the provided mnemonic
     #[error("LocalSignerError: {0}")]
     LocalSignerError(#[from] alloy::signers::local::LocalSignerError),
@@ -138,7 +142,7 @@ pub enum WalletError {
 
     /// Iota Rebased Error
     #[error("IotaRebased: {0}")]
-    IotaRebased(#[from] wallet::wallet::iota::RebasedError),
+    IotaRebased(#[from] crate::wallet::iota::RebasedError),
 
     /// Failed to wait for confirming the transaction status
     #[error("FailToConfirmTransactionStatus: Failed to confirm tx status for {0} within {1} seconds.")]
