@@ -2148,6 +2148,10 @@ dependencies = [
 ]
 
 [[package]]
+name = "etopay-wallet"
+version = "0.14.2"
+
+[[package]]
 name = "etospheres-labs-iota-sdk"
 version = "1.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
