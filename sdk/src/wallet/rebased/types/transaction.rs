@@ -15,7 +15,7 @@ use super::{
     Envelope, GenericSignature, IntentScope, IotaAddress, Message, ObjectRef, ProgrammableTransaction, Signature,
     SizeOneVec, TransactionDigest, default_hash,
 };
-
+use serde_with::serde_as;
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
 pub struct EmptySignInfo {}
 
@@ -266,5 +266,47 @@ pub enum TransactionKind {
 impl TransactionData {
     pub fn digest(&self) -> TransactionDigest {
         TransactionDigest::new(default_hash(self))
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+//#[enum_dispatch(IotaTransactionBlockDataAPI)]
+#[serde(rename = "TransactionBlockData", rename_all = "camelCase", tag = "messageVersion")]
+pub enum IotaTransactionBlockData {
+    V1(IotaTransactionBlockDataV1),
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[serde(rename = "TransactionBlockDataV1", rename_all = "camelCase")]
+pub struct IotaTransactionBlockDataV1 {
+    pub transaction: IotaTransactionBlockKind,
+    pub sender: IotaAddress,
+    pub gas_data: IotaGasData,
+}
+
+use crate::wallet::rebased::bigint::BigInt;
+
+#[serde_as]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[serde(rename = "GasData", rename_all = "camelCase")]
+pub struct IotaGasData {
+    pub payment: Vec<IotaObjectRef>,
+    pub owner: IotaAddress,
+    #[serde_as(as = "BigInt<u64>")]
+    pub price: u64,
+    #[serde_as(as = "BigInt<u64>")]
+    pub budget: u64,
+}
+
+impl Display for IotaGasData {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        writeln!(f, "Gas Owner: {}", self.owner)?;
+        writeln!(f, "Gas Budget: {} NANOS", self.budget)?;
+        writeln!(f, "Gas Price: {} NANOS", self.price)?;
+        writeln!(f, "Gas Payment:")?;
+        for payment in &self.payment {
+            write!(f, "{} ", objref_string(payment))?;
+        }
+        writeln!(f)
     }
 }

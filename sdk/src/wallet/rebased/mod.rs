@@ -12,6 +12,7 @@ mod encoding;
 mod error;
 mod hash;
 mod keystore;
+mod mowe;
 mod rpc;
 mod serde;
 mod traits;
@@ -19,6 +20,7 @@ mod types;
 
 pub mod crypto;
 
+pub use mowe::*;
 pub use rpc::*;
 pub use types::*;
 

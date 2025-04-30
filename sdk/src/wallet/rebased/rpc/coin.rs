@@ -15,9 +15,11 @@ use jsonrpsee::proc_macros::rpc;
 use serde::Deserialize;
 use serde_with::serde_as;
 
+use crate::wallet::rebased::SequenceNumber;
+
 use super::super::bigint::BigInt;
 use super::super::serde::SequenceNumber as AsSequenceNumber;
-use super::super::types::{IotaAddress, ObjectDigest, SequenceNumber, TransactionDigest};
+use super::super::types::{IotaAddress, ObjectDigest, TransactionDigest};
 use super::super::{ObjectID, ObjectRef};
 
 /// Provides access to coin-related data such as coins owned by an address,

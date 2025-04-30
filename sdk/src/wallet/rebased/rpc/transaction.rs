@@ -3,13 +3,21 @@
 // Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
 // SPDX-License-Identifier: Apache-2.0
 
+use core::fmt;
+use std::fmt::Display;
+use std::fmt::Formatter;
+
 use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::super::encoding::Base64;
 use super::ExecuteTransactionRequestType;
 use crate::wallet::rebased::BalanceChange;
 use crate::wallet::rebased::CheckpointSequenceNumber;
+use crate::wallet::rebased::IotaEvent;
+use crate::wallet::rebased::IotaTransactionBlockData;
 use crate::wallet::rebased::IotaTransactionBlockEffects;
+use crate::wallet::rebased::ObjectChange;
+use crate::wallet::rebased::TransactionEvents;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -49,6 +57,90 @@ pub struct IotaTransactionBlockResponse {
     pub errors: Vec<String>,
     #[serde(skip_serializing_if = "Vec::is_empty", default)]
     pub raw_effects: Vec<u8>,
+}
+
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DryRunTransactionBlockResponse {
+    pub effects: IotaTransactionBlockEffects,
+    pub events: IotaTransactionBlockEvents,
+    pub object_changes: Vec<ObjectChange>,
+    pub balance_changes: Vec<BalanceChange>,
+    pub input: IotaTransactionBlockData,
+}
+
+#[derive(Eq, PartialEq, Clone, Debug, Default, Serialize, Deserialize)]
+#[serde(rename = "TransactionBlockEvents", transparent)]
+pub struct IotaTransactionBlockEvents {
+    pub data: Vec<IotaEvent>,
+}
+
+pub type IotaResult<T = ()> = Result<T, crate::Error>;
+
+impl IotaTransactionBlockEvents {
+    pub fn try_from(
+        events: TransactionEvents,
+        tx_digest: TransactionDigest,
+        timestamp_ms: Option<u64>,
+        resolver: &mut dyn LayoutResolver,
+    ) -> IotaResult<Self> {
+        Ok(Self {
+            data: events
+                .data
+                .into_iter()
+                .enumerate()
+                .map(|(seq, event)| {
+                    let layout = resolver.get_annotated_layout(&event.type_)?;
+                    IotaEvent::try_from(event, tx_digest, seq as u64, timestamp_ms, layout)
+                })
+                .collect::<Result<_, _>>()?,
+        })
+    }
+
+    // TODO: this is only called from the indexer. Remove this once indexer moves to
+    // its own resolver.
+    pub fn try_from_using_module_resolver(
+        events: TransactionEvents,
+        tx_digest: TransactionDigest,
+        timestamp_ms: Option<u64>,
+        resolver: &impl GetModule,
+    ) -> IotaResult<Self> {
+        Ok(Self {
+            data: events
+                .data
+                .into_iter()
+                .enumerate()
+                .map(|(seq, event)| {
+                    let layout = get_layout_from_struct_tag(event.type_.clone(), resolver)?;
+                    IotaEvent::try_from(event, tx_digest, seq as u64, timestamp_ms, layout)
+                })
+                .collect::<Result<_, _>>()?,
+        })
+    }
+}
+
+impl Display for IotaTransactionBlockEvents {
+    fn fmt(&self, f: &mut Formatter<'_>) -> fmt::Result {
+        // if self.data.is_empty() {
+        //     writeln!(f, "╭─────────────────────────────╮")?;
+        //     writeln!(f, "│ No transaction block events │")?;
+        //     writeln!(f, "╰─────────────────────────────╯")
+        // } else {
+        //     let mut builder = TableBuilder::default();
+
+        //     for event in &self.data {
+        //         builder.push_record(vec![format!("{event}")]);
+        //     }
+
+        //     let mut table = builder.build();
+        //     table.with(TablePanel::header("Transaction Block Events"));
+        //     table.with(
+        //         TableStyle::rounded().horizontals([HorizontalLine::new(1, TableStyle::modern().get_horizontal())]),
+        //     );
+        //     write!(f, "{table}")
+        // }
+        write!(f, "@IotaTransactionBlockEvents->Display()")
+    }
 }
 
 // from iota_transaction.rs

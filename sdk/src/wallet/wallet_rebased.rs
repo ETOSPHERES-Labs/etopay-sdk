@@ -390,6 +390,43 @@ impl WalletUser for WalletImplIotaRebased {
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
-        todo!()
+        let http_client = self.client;
+        let address = intent.address_to;
+        let coins;
+        let coin_type;
+        let coin_decimals = 9;
+
+        let address = self.keystore.addresses()[0];
+        let recipient = intent.address_to.parse::<rebased::IotaAddress>()?;
+
+        let amount = convert_crypto_amount_to_u128(intent.amount, self.decimals)? as u64;
+
+        let owned_objects = get_owned_objects(address, None).await.unwrap();
+
+        let gas = owned_objects.last().unwrap().object_id().unwrap();
+
+        let object_ids = owned_objects
+            .iter()
+            .take(owned_objects.len() - 1)
+            .map(|obj| obj.object_id().unwrap())
+            .collect();
+
+        let (tx_bytes, signatures) = prepare_and_sign_tx(sender, receiver, cluster, client, objects[0], gas).await;
+
+        let dry_run_tx_block_resp = client.dry_run_transaction_block(tx_bytes.clone()).await.unwrap();
     }
+}
+
+async fn get_objects_to_mutate(cluster: &TestCluster, address: IotaAddress) -> (Vec<ObjectID>, ObjectID) {
+    let owned_objects = cluster.get_owned_objects(address, None).await.unwrap();
+
+    let gas = owned_objects.last().unwrap().object_id().unwrap();
+
+    let object_ids = owned_objects
+        .iter()
+        .take(owned_objects.len() - 1)
+        .map(|obj| obj.object_id().unwrap())
+        .collect();
+
+    (object_ids, gas)
 }
