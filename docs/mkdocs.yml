@@ -91,11 +91,24 @@ theme:
         icon: material/toggle-switch-off-outline
         name: Light mode
 
-copyright: Copyright &copy; 2025 - ETOSPHERES Labs GmbH
+copyright: Copyright &copy; 2025 - ETOSPHERES Labs GmbH <br/> <a href="#__consent">Change cookie settings</a>
 extra:
   analytics:
     provider: custom
     site_id: 2
+    feedback:
+      title: Was this page helpful?
+      ratings:
+        - icon: material/emoticon-happy-outline
+          name: This page was helpful
+          data: 1
+          note: >-
+            Thanks for your feedback!
+        - icon: material/emoticon-sad-outline
+          name: This page could be improved
+          data: 0
+          note: >-
+            Thanks for your feedback! Help us improve this page by <a href="https://github.com/ETOSPHERES-Labs/etopay-sdk/issues/new/?title=[Feedback]+{title}+-+{url}" target="_blank" rel="noopener">creating an issue on GitHub</a>.
   social:
     - icon: fontawesome/solid/paper-plane
       link: mailto:contact@etospheres.com
