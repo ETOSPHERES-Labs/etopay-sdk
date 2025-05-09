@@ -11,6 +11,7 @@ mod client;
 mod encoding;
 mod error;
 mod hash;
+// mod iota_json;
 mod keystore;
 mod mowe;
 mod rpc;
@@ -18,6 +19,8 @@ mod serde;
 mod traits;
 mod types;
 
+mod v2;
+pub use v2::*;
 pub mod crypto;
 
 pub use mowe::*;

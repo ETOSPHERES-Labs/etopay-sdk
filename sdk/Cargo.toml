@@ -113,10 +113,14 @@ ref-cast = "1"
 serde-name = "0.2"
 indexmap = "2.9"
 bip32 = "0.5"
+serde-reflection = "0.4"
+leb128 = "=0.2.5"
+enum_dispatch = "0.3.13"
+schemars = "0.8.22"
 
 # needed to replace fastcrypto
 ed25519-consensus = { version = "2.1", features = [] }
-blake2 =  "0.10"
+blake2 = "0.10"
 digest = "0.10"
 base64ct = "1.7"
 bs58 = "0.5"

@@ -1,10 +1,13 @@
-use super::super::bigint::BigInt;
 use super::super::serde::Readable;
+use super::{super::bigint::BigInt, BoundedVisitor};
 use serde::{Deserialize, Serialize};
 use serde_with::{Bytes, serde_as};
 use std::str::FromStr;
 
-use crate::wallet::rebased::RebasedError;
+use crate::wallet::rebased::{
+    IotaResult, RebasedError, annotated_value_min::MoveDatatypeLayout, language_storage_min::StructTag,
+    runtime_value_min::MoveValue,
+};
 
 use super::{
     AccountAddress,
@@ -12,7 +15,6 @@ use super::{
     Identifier,
     IotaAddress,
     ObjectID,
-    StructTag,
     TransactionDigest,
     //iota_serde::{BigInt, Readable},
 };
@@ -45,6 +47,12 @@ impl Event {
             contents,
         }
     }
+
+    pub fn move_event_to_move_value(contents: &[u8], layout: MoveDatatypeLayout) -> IotaResult<MoveValue> {
+        BoundedVisitor::deserialize_value(contents, &layout.into_layout())
+            .map_err(|e| crate::wallet::rebased::error::RebasedError::ObjectSerialization { error: e.to_string() })
+    }
+
     // pub fn move_event_to_move_value(contents: &[u8], layout: MoveDatatypeLayout) -> IotaResult<MoveValue> {
     //     BoundedVisitor::deserialize_value(contents, &layout.into_layout())
     //         .map_err(|e| IotaError::ObjectSerialization { error: e.to_string() })
@@ -119,7 +127,7 @@ impl TryFrom<String> for EventID {
         // use anyhow::ensure;
         // ensure!(values.len() == 2, "Malformed EventID : {value}");
         if values.len() != 2 {
-            return Err(format!("Malformed EventID : {}", value));
+            return Err(RebasedError::EventError(format!("Malformed EventID : {}", value)));
         }
 
         Ok((TransactionDigest::from_str(values[0])?, u64::from_str(values[1])?).into())

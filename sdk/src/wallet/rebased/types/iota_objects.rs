@@ -1,3 +1,9 @@
+use crate::wallet::rebased::IotaResult;
+//use crate::wallet::rebased::MoveValue;
+
+use super::IotaMoveStruct;
+use super::IotaMoveValue;
+use super::StructTag;
 use super::{ObjectDigest, ObjectID, ObjectRef, SequenceNumber};
 use serde::{Deserialize, Serialize};
 use std::fmt;
@@ -40,3 +46,24 @@ impl From<ObjectRef> for IotaObjectRef {
         }
     }
 }
+
+// pub fn type_and_fields_from_move_event_data(event_data: MoveValue) -> IotaResult<(StructTag, serde_json::Value)> {
+//     match event_data.into() {
+//         IotaMoveValue::Struct(move_struct) => match &move_struct {
+//             IotaMoveStruct::WithTypes { type_, .. } => Ok((type_.clone(), move_struct.clone().to_json_value())),
+//             _ => Err(crate::Error::ObjectDeserialization {
+//                 error: "Found non-type IotaMoveStruct in MoveValue event".to_string(),
+//             }),
+//         },
+//         IotaMoveValue::Variant(v) => Ok((v.type_.clone(), v.clone().to_json_value())),
+//         IotaMoveValue::Vector(_)
+//         | IotaMoveValue::Number(_)
+//         | IotaMoveValue::Bool(_)
+//         | IotaMoveValue::Address(_)
+//         | IotaMoveValue::String(_)
+//         | IotaMoveValue::UID { .. }
+//         | IotaMoveValue::Option(_) => Err(crate::Error::ObjectDeserialization {
+//             error: "Invalid MoveValue event type -- this should not be possible".to_string(),
+//         }),
+//     }
+// }

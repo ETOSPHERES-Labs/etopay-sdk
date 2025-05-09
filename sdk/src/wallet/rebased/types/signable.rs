@@ -22,6 +22,7 @@ pub trait Signable<W> {
 /// write a unit test for serialization to / deserialization from signable
 /// bytes.
 mod bcs_signable {
+    use crate::wallet::rebased::TransactionEvents;
 
     pub trait BcsSignable: serde::Serialize + serde::de::DeserializeOwned {}
     // impl BcsSignable for crate::committee::Committee {}
@@ -29,7 +30,7 @@ mod bcs_signable {
     // impl BcsSignable for crate::messages_checkpoint::CheckpointContents {}
     //
     // impl BcsSignable for crate::effects::TransactionEffects {}
-    // impl BcsSignable for crate::effects::TransactionEvents {}
+    impl BcsSignable for TransactionEvents {}
     impl BcsSignable for super::super::TransactionData {}
     // impl BcsSignable for crate::transaction::SenderSignedData {}
     // impl BcsSignable for crate::object::ObjectInner {}
@@ -62,6 +63,12 @@ fn hash<S: Signable<H>, H: HashFunction<DIGEST_SIZE>, const DIGEST_SIZE: usize>(
     hash.into()
 }
 
-pub fn default_hash<S: Signable<Blake2b256>>(signable: &S) -> [u8; 32] {
-    hash::<S, Blake2b256, 32>(signable)
+// pub fn default_hash<S: Signable<Blake2b256>>(signable: &S) -> [u8; 32] {
+//     hash::<S, Blake2b256, 32>(signable)
+// }
+
+pub type DefaultHash = Blake2b256;
+
+pub fn default_hash<S: Signable<DefaultHash>>(signable: &S) -> [u8; 32] {
+    hash::<S, DefaultHash, 32>(signable)
 }

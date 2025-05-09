@@ -16,8 +16,10 @@ use crate::wallet::rebased::CheckpointSequenceNumber;
 use crate::wallet::rebased::IotaEvent;
 use crate::wallet::rebased::IotaTransactionBlockData;
 use crate::wallet::rebased::IotaTransactionBlockEffects;
+use crate::wallet::rebased::LayoutResolver;
 use crate::wallet::rebased::ObjectChange;
 use crate::wallet::rebased::TransactionEvents;
+//use move_bytecode_utils::module_cache::GetModule;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -97,26 +99,26 @@ impl IotaTransactionBlockEvents {
         })
     }
 
-    // TODO: this is only called from the indexer. Remove this once indexer moves to
-    // its own resolver.
-    pub fn try_from_using_module_resolver(
-        events: TransactionEvents,
-        tx_digest: TransactionDigest,
-        timestamp_ms: Option<u64>,
-        resolver: &impl GetModule,
-    ) -> IotaResult<Self> {
-        Ok(Self {
-            data: events
-                .data
-                .into_iter()
-                .enumerate()
-                .map(|(seq, event)| {
-                    let layout = get_layout_from_struct_tag(event.type_.clone(), resolver)?;
-                    IotaEvent::try_from(event, tx_digest, seq as u64, timestamp_ms, layout)
-                })
-                .collect::<Result<_, _>>()?,
-        })
-    }
+    // // TODO: this is only called from the indexer. Remove this once indexer moves to
+    // // its own resolver.
+    // pub fn try_from_using_module_resolver(
+    //     events: TransactionEvents,
+    //     tx_digest: TransactionDigest,
+    //     timestamp_ms: Option<u64>,
+    //     resolver: &impl GetModule,
+    // ) -> IotaResult<Self> {
+    //     Ok(Self {
+    //         data: events
+    //             .data
+    //             .into_iter()
+    //             .enumerate()
+    //             .map(|(seq, event)| {
+    //                 let layout = get_layout_from_struct_tag(event.type_.clone(), resolver)?;
+    //                 IotaEvent::try_from(event, tx_digest, seq as u64, timestamp_ms, layout)
+    //             })
+    //             .collect::<Result<_, _>>()?,
+    //     })
+    // }
 }
 
 impl Display for IotaTransactionBlockEvents {
@@ -245,3 +247,26 @@ impl IotaTransactionBlockResponseOptions {
         self == &Self::default()
     }
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+#[serde(rename = "TypeTag", rename_all = "camelCase")]
+pub struct IotaTypeTag(String);
+
+impl IotaTypeTag {
+    pub fn new(tag: String) -> Self {
+        Self(tag)
+    }
+}
+
+// impl TryInto<TypeTag> for IotaTypeTag {
+//     type Error = anyhow::Error;
+//     fn try_into(self) -> Result<TypeTag, Self::Error> {
+//         parse_iota_type_tag(&self.0)
+//     }
+// }
+
+// impl From<TypeTag> for IotaTypeTag {
+//     fn from(tag: TypeTag) -> Self {
+//         Self(format!("{tag}"))
+//     }
+// }

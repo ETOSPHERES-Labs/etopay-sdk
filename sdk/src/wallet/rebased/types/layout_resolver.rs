@@ -2,13 +2,21 @@
 // Modifications Copyright (c) 2024 IOTA Stiftung
 // SPDX-License-Identifier: Apache-2.0
 
-use move_bytecode_utils::{layout::TypeLayoutBuilder, module_cache::GetModule};
-use move_core_types::{
-    annotated_value as A,
-    language_storage::{StructTag, TypeTag},
-};
+//use super::{StructTag, TypeTag};
+//use crate::error::Error;
+use crate::wallet::rebased::error::RebasedError as Error;
+//use move_bytecode_utils::{layout::TypeLayoutBuilder, module_cache::GetModule};
+// use move_core_types::{
+//     annotated_value as A,
+//     language_storage::{StructTag, TypeTag},
+// };
 
-use crate::error::Error;
+use crate::wallet::rebased::mowe::{
+    annotated_value_min as A,
+    language_storage_min::{StructTag, TypeTag},
+    layout_min::TypeLayoutBuilder,
+    module_cache_min::GetModule,
+};
 
 pub trait LayoutResolver {
     fn get_annotated_layout(&mut self, struct_tag: &StructTag) -> Result<A::MoveDatatypeLayout, Error>;
@@ -20,7 +28,7 @@ pub fn get_layout_from_struct_tag(
 ) -> Result<A::MoveDatatypeLayout, Error> {
     let type_ = TypeTag::Struct(Box::new(struct_tag));
     let layout = TypeLayoutBuilder::build_with_types(&type_, resolver)
-        .map_err(|e| Error::ObjectSerialization { error: e.to_string() })?;
+        .map_err(|e| Error::LayoutBuilderError(format!("ObjectSerialization: {}", e)))?;
     match layout {
         A::MoveTypeLayout::Struct(l) => Ok(A::MoveDatatypeLayout::Struct(l)),
         A::MoveTypeLayout::Enum(e) => Ok(A::MoveDatatypeLayout::Enum(e)),
@@ -33,8 +41,8 @@ pub fn get_layout_from_struct_tag(
 pub fn into_struct_layout(layout: A::MoveDatatypeLayout) -> Result<A::MoveStructLayout, Error> {
     match layout {
         A::MoveDatatypeLayout::Struct(s) => Ok(*s),
-        A::MoveDatatypeLayout::Enum(e) => Err(Error::ObjectSerialization {
-            error: format!("Expected struct layout but got an enum {e:?}"),
-        }),
+        A::MoveDatatypeLayout::Enum(e) => Err(Error::LayoutBuilderError(format!(
+            "Expected struct layout but got an enum {e:?}"
+        ))),
     }
 }

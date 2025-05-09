@@ -5,6 +5,7 @@
 //! Encodings of binary data such as Base64 and Hex.
 
 use base64ct::Encoding as _;
+use schemars::JsonSchema;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use serde_with::{DeserializeAs, SerializeAs};
 
@@ -120,7 +121,7 @@ impl Encoding for Base64 {
 }
 
 /// Hex string encoding.
-#[derive(Deserialize, Debug, Clone, PartialEq)]
+#[derive(Deserialize, Debug, Clone, PartialEq, JsonSchema)]
 #[serde(try_from = "String")]
 pub struct Hex(String);
 
@@ -169,7 +170,7 @@ impl Encoding for Hex {
     }
 }
 
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, JsonSchema)]
 #[serde(try_from = "String")]
 pub struct Base58(String);
 

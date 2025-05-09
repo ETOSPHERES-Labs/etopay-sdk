@@ -68,4 +68,25 @@ pub enum RebasedError {
 
     #[error("Base58: {0}")]
     Base58(#[from] bs58::decode::Error),
+
+    #[error("Failure deserializing object in the requested format: {:?}", error)]
+    ObjectDeserialization { error: String },
+
+    #[error("Failure serializing object in the requested format: {:?}", error)]
+    ObjectSerialization { error: String },
+
+    #[error("LayoutBuilder: {0}")]
+    LayoutBuilderError(String),
+
+    #[error("IotaEvent: {0}")]
+    EventError(String),
+
+    #[error("ParseIntError: {0}")]
+    ParseIntError(#[from] std::num::ParseIntError),
+
+    #[error("ParsedError: {0}")]
+    ParsedAddressError(String),
+
+    #[error("ParserError: {0}")]
+    ParserError(String),
 }

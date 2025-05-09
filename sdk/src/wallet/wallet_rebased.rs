@@ -1,7 +1,7 @@
 use super::error::{Result, WalletError};
 use super::rebased::{
-    self, Argument, CoinReadApiClient, Command, GasData, ObjectArg, ProgrammableTransactionBuilder, RebasedError,
-    RpcClient, TransactionExpiration,
+    self, Argument, CoinReadApiClient, Command, GasData, IotaAddress, ObjectArg, ObjectID,
+    ProgrammableTransactionBuilder, RebasedError, RpcClient, TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::types::{
@@ -12,6 +12,7 @@ use crate::wallet::rebased::{
     GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind, WriteApiClient,
 };
 use async_trait::async_trait;
+use base64ct::Base64;
 use chrono::{TimeZone, Utc};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::wallet::account::types::InclusionState;
@@ -397,11 +398,15 @@ impl WalletUser for WalletImplIotaRebased {
         let coin_decimals = 9;
 
         let address = self.keystore.addresses()[0];
+        let sender = address;
         let recipient = intent.address_to.parse::<rebased::IotaAddress>()?;
+        let receiver = recipient;
 
         let amount = convert_crypto_amount_to_u128(intent.amount, self.decimals)? as u64;
 
-        let owned_objects = get_owned_objects(address, None).await.unwrap();
+        //let owned_objects = get_owned_objects(address, None).await.unwrap();
+        // let owned_objects = cluster.get_owned_objects(address, None).await.unwrap();
+        let owned_objects = self.client.get_owned_objects(address, None).await.unwrap();
 
         let gas = owned_objects.last().unwrap().object_id().unwrap();
 
@@ -411,22 +416,76 @@ impl WalletUser for WalletImplIotaRebased {
             .map(|obj| obj.object_id().unwrap())
             .collect();
 
-        let (tx_bytes, signatures) = prepare_and_sign_tx(sender, receiver, cluster, client, objects[0], gas).await;
+        let gas = owned_objects.last().unwrap().object_id().unwrap();
 
-        let dry_run_tx_block_resp = client.dry_run_transaction_block(tx_bytes.clone()).await.unwrap();
+        let object_ids = owned_objects
+            .iter()
+            .take(owned_objects.len() - 1)
+            .map(|obj| obj.object_id().unwrap())
+            .collect();
+
+        let obj_id = object_ids[0];
+
+        // START prepare_and_sign_tx
+        let tx_data = self
+            .client
+            .transfer_object(sender, obj_id, Some(gas), /*10_000_000.into(),*/ amount, receiver)
+            .await
+            .unwrap();
+
+        let signature = self
+            .keystore
+            .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())?;
+
+        let tx = rebased::Transaction::from_data(tx_data, vec![signature.clone()]);
+
+        let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures()?;
+
+        // END prepare_and_sign_tx
+
+        // let (tx_bytes, signatures) =
+        //     prepare_and_sign_tx(address, recipient, cluster, self.client, object_ids[0], gas).await;
+
+        let dry_run_tx_block_resp = self.client.dry_run_transaction_block(tx_bytes.clone()).await.unwrap();
+
+        println!("@estimate_gas_cost: {:?}", dry_run_tx_block_resp);
     }
 }
 
-async fn get_objects_to_mutate(cluster: &TestCluster, address: IotaAddress) -> (Vec<ObjectID>, ObjectID) {
-    let owned_objects = cluster.get_owned_objects(address, None).await.unwrap();
+type TxBytes = Base64;
+type Signatures = Vec<Base64>;
 
-    let gas = owned_objects.last().unwrap().object_id().unwrap();
+// async fn prepare_and_sign_tx(
+//     sender: IotaAddress,
+//     receiver: IotaAddress,
+//     cluster: &TestCluster,
+//     client: &HttpClient,
+//     obj_id: ObjectID,
+//     gas: ObjectID,
+// ) -> (TxBytes, Signatures) {
+//     let transaction_bytes = client
+//         .transfer_object(sender, obj_id, Some(gas), 10_000_000.into(), receiver)
+//         .await
+//         .unwrap();
 
-    let object_ids = owned_objects
-        .iter()
-        .take(owned_objects.len() - 1)
-        .map(|obj| obj.object_id().unwrap())
-        .collect();
+//     let (tx_bytes, signatures) = cluster
+//         .wallet
+//         .sign_transaction(&transaction_bytes.to_data().unwrap())
+//         .to_tx_bytes_and_signatures();
 
-    (object_ids, gas)
-}
+//     (tx_bytes, signatures)
+// }
+
+// async fn get_objects_to_mutate(cluster: &TestCluster, address: IotaAddress) -> (Vec<ObjectID>, ObjectID) {
+//     let owned_objects = cluster.get_owned_objects(address, None).await.unwrap();
+
+//     let gas = owned_objects.last().unwrap().object_id().unwrap();
+
+//     let object_ids = owned_objects
+//         .iter()
+//         .take(owned_objects.len() - 1)
+//         .map(|obj| obj.object_id().unwrap())
+//         .collect();
+
+//     (object_ids, gas)
+// }

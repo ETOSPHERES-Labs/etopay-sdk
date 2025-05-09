@@ -1,3 +1,5 @@
+use std::fmt::{Display, Formatter, Result};
+
 use super::{Digest, Event, ObjectDigest, ObjectID, default_hash, sequence_number::SequenceNumber};
 use serde::{Deserialize, Serialize};
 
@@ -12,7 +14,7 @@ impl TransactionEvents {
     }
 }
 
-#[derive(Clone)]
+#[derive(Clone, PartialEq, Eq)]
 pub struct ObjectChange {
     pub id: ObjectID,
     pub input_version: Option<SequenceNumber>,
