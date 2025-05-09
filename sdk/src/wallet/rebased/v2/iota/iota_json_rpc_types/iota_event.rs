@@ -1,6 +1,6 @@
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::Value;
 use serde_with::{DisplayFromStr, serde_as};
 
 use crate::wallet::rebased::encoding::{Base58, Base64};
@@ -14,7 +14,7 @@ use crate::wallet::rebased::v2::mowe::move_core_types::identifier::Identifier;
 use crate::wallet::rebased::v2::mowe::move_core_types::language_storage::StructTag;
 
 #[serde_as]
-#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(rename = "Event", rename_all = "camelCase")]
 pub struct IotaEvent {
     /// Sequential event ID, ie (transaction seq number, event seq number).
@@ -25,11 +25,13 @@ pub struct IotaEvent {
     pub id: EventID,
     /// Move package where this event was emitted.
     pub package_id: ObjectID,
+    #[schemars(with = "String")]
     #[serde_as(as = "DisplayFromStr")]
     /// Move module where this event was emitted.
     pub transaction_module: Identifier,
     /// Sender's IOTA address.
     pub sender: IotaAddress,
+    #[schemars(with = "String")]
     #[serde_as(as = "IotaStructTag")]
     /// Move event type.
     pub type_: StructTag,
@@ -40,6 +42,7 @@ pub struct IotaEvent {
     pub bcs: BcsEvent,
     /// UTC timestamp in milliseconds since epoch (1/1/1970)
     #[serde(skip_serializing_if = "Option::is_none")]
+    #[schemars(with = "Option<BigInt<u64>>")]
     #[serde_as(as = "Option<BigInt<u64>>")]
     pub timestamp_ms: Option<u64>,
 }

@@ -5,6 +5,9 @@ use std::{
 
 use serde::{Deserialize, Serialize};
 
+use crate::wallet::rebased::RebasedError;
+
+use super::ParsedStructType;
 use super::{AccountAddress, Identifier};
 
 #[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Eq, Clone, PartialOrd, Ord)]
@@ -15,6 +18,14 @@ pub struct StructTag {
     // alias for compatibility with old json serialized data.
     #[serde(rename = "type_args", alias = "type_params")]
     pub type_params: Vec<TypeTag>,
+}
+
+impl FromStr for StructTag {
+    type Err = RebasedError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        ParsedStructType::parse(s)?.into_struct_tag(&|_| None)
+    }
 }
 
 impl Display for StructTag {

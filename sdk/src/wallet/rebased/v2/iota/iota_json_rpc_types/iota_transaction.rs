@@ -1,9 +1,10 @@
 use enum_dispatch::enum_dispatch;
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
 use super::{IotaEvent, ObjectChange, balance_changes::BalanceChange};
 
-#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize, JsonSchema)]
 #[serde(rename_all = "camelCase")]
 pub struct DryRunTransactionBlockResponse {
     pub effects: IotaTransactionBlockEffects,
@@ -13,14 +14,14 @@ pub struct DryRunTransactionBlockResponse {
     pub input: IotaTransactionBlockData,
 }
 
-#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[derive(Debug, Deserialize, Serialize, JsonSchema, Clone, PartialEq, Eq)]
 #[enum_dispatch(IotaTransactionBlockEffectsAPI)]
 #[serde(rename = "TransactionBlockEffects", rename_all = "camelCase", tag = "messageVersion")]
 pub enum IotaTransactionBlockEffects {
     V1(IotaTransactionBlockEffectsV1),
 }
 
-#[derive(Eq, PartialEq, Clone, Debug, Default, Serialize, Deserialize)]
+#[derive(Eq, PartialEq, Clone, Debug, Default, Serialize, Deserialize, JsonSchema)]
 #[serde(rename = "TransactionBlockEvents", transparent)]
 pub struct IotaTransactionBlockEvents {
     pub data: Vec<IotaEvent>,
