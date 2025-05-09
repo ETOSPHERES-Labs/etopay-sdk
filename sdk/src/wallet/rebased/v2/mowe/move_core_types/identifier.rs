@@ -2,6 +2,7 @@ use crate::wallet::rebased::error::RebasedError;
 use crate::wallet::rebased::error::Result;
 use serde::{Deserialize, Serialize};
 use std::fmt;
+use std::str::FromStr;
 
 /// An owned identifier.
 ///
@@ -10,6 +11,14 @@ use std::fmt;
 pub struct Identifier(Box<str>);
 // An identifier cannot be mutated so use Box<str> instead of String -- it is 1
 // word smaller.
+
+impl FromStr for Identifier {
+    type Err = RebasedError;
+
+    fn from_str(data: &str) -> Result<Self> {
+        Self::new(data)
+    }
+}
 
 impl fmt::Display for Identifier {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

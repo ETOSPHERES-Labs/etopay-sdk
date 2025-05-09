@@ -96,7 +96,7 @@ macro_rules! impl_try_from_string {
 }
 
 /// Base64 encoding
-#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq)]
+#[derive(Serialize, Deserialize, Debug, Clone, Eq, PartialEq, JsonSchema)]
 #[serde(try_from = "String")]
 pub struct Base64(String);
 

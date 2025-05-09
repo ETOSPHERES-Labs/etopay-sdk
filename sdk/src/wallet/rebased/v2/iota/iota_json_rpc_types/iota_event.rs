@@ -1,6 +1,17 @@
+use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use serde_with::{DisplayFromStr, serde_as};
+
+use crate::wallet::rebased::encoding::{Base58, Base64};
+
+use crate::wallet::rebased::v2::iota::iota_types::base_types::IotaAddress;
+use crate::wallet::rebased::v2::iota::iota_types::base_types::ObjectID;
+use crate::wallet::rebased::v2::iota::iota_types::event::EventID;
+use crate::wallet::rebased::v2::iota::iota_types::iota_serde::BigInt;
+use crate::wallet::rebased::v2::iota::iota_types::iota_serde::IotaStructTag;
+use crate::wallet::rebased::v2::mowe::move_core_types::identifier::Identifier;
+use crate::wallet::rebased::v2::mowe::move_core_types::language_storage::StructTag;
 
 #[serde_as]
 #[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
@@ -31,4 +42,60 @@ pub struct IotaEvent {
     #[serde(skip_serializing_if = "Option::is_none")]
     #[serde_as(as = "Option<BigInt<u64>>")]
     pub timestamp_ms: Option<u64>,
+}
+
+#[serde_as]
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize, JsonSchema)]
+#[serde(rename_all = "camelCase", tag = "bcsEncoding")]
+#[serde(from = "MaybeTaggedBcsEvent")]
+pub enum BcsEvent {
+    Base64 {
+        #[serde_as(as = "Base64")]
+        #[schemars(with = "Base64")]
+        bcs: Vec<u8>,
+    },
+    Base58 {
+        #[serde_as(as = "Base58")]
+        #[schemars(with = "Base58")]
+        bcs: Vec<u8>,
+    },
+}
+
+#[allow(unused)]
+#[serde_as]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", untagged)]
+enum MaybeTaggedBcsEvent {
+    Tagged(TaggedBcsEvent),
+    Base58 {
+        #[serde_as(as = "Base58")]
+        bcs: Vec<u8>,
+    },
+}
+
+#[serde_as]
+#[derive(Serialize, Deserialize)]
+#[serde(rename_all = "camelCase", tag = "bcsEncoding")]
+enum TaggedBcsEvent {
+    Base64 {
+        #[serde_as(as = "Base64")]
+        bcs: Vec<u8>,
+    },
+    Base58 {
+        #[serde_as(as = "Base58")]
+        bcs: Vec<u8>,
+    },
+}
+
+impl From<MaybeTaggedBcsEvent> for BcsEvent {
+    fn from(event: MaybeTaggedBcsEvent) -> BcsEvent {
+        let bcs = match event {
+            MaybeTaggedBcsEvent::Tagged(TaggedBcsEvent::Base58 { bcs }) | MaybeTaggedBcsEvent::Base58 { bcs } => bcs,
+            MaybeTaggedBcsEvent::Tagged(TaggedBcsEvent::Base64 { bcs }) => bcs,
+        };
+
+        // Bytes are already decoded, force into Base64 variant to avoid serializing to
+        // base58
+        Self::Base64 { bcs }
+    }
 }
