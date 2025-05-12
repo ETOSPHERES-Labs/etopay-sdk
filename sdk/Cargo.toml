@@ -44,6 +44,9 @@ viviswap-swap = []
 server = []
 
 [dependencies]
+iota-protocol-config-macros = { path = "../iota_protocol_config_macros" }
+iota-proc-macros = { path = "../iota_proc_macros" }
+iota-enum-compat-util = { path = "../iota_enum_compat_util" }
 aes-gcm = { version = "0.10.3", default-features = false, features = [
     "alloc",
     "aes",
@@ -117,6 +120,12 @@ serde-reflection = "0.4"
 leb128 = "=0.2.5"
 enum_dispatch = "0.3.13"
 schemars = "0.8.22"
+proc-macro2 = "1.0.47"
+syn = { version = "1.0.104", features = ["full", "derive", "extra-traits"] }
+quote = "1.0.23"
+itertools = "0.13.0"
+tracing = "0.1.37"
+
 
 # needed to replace fastcrypto
 ed25519-consensus = { version = "2.1", features = [] }

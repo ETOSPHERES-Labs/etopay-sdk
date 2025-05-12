@@ -10,6 +10,9 @@ members = [
     "tools/jnigen-build",
     "tools/jnigen-integration-test",
     "testing",
+    "iota_protocol_config_macros",
+    "iota_proc_macros",
+    "iota_enum_compat_util",
 ]
 
 

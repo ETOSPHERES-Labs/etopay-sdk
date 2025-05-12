@@ -89,4 +89,7 @@ pub enum RebasedError {
 
     #[error("ParserError: {0}")]
     ParserError(String),
+
+    #[error("DigestsError: {0}")]
+    DigestsError(String),
 }

@@ -1,7 +1,10 @@
 use std::fmt;
 
 use super::Readable;
-use crate::wallet::rebased::encoding::{Base58, Encoding};
+use crate::wallet::rebased::{
+    RebasedError,
+    encoding::{Base58, Encoding},
+};
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_with::{Bytes, serde_as};
@@ -151,5 +154,63 @@ impl fmt::Display for Digest {
 impl fmt::Debug for Digest {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         fmt::Display::fmt(self, f)
+    }
+}
+
+#[serde_as]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Serialize, Deserialize, JsonSchema)]
+pub struct TransactionEventsDigest(Digest);
+
+impl TransactionEventsDigest {
+    pub const ZERO: Self = Self(Digest::ZERO);
+
+    pub const fn new(digest: [u8; 32]) -> Self {
+        Self(Digest::new(digest))
+    }
+
+    pub fn random() -> Self {
+        Self(Digest::random())
+    }
+
+    pub fn next_lexicographical(&self) -> Option<Self> {
+        self.0.next_lexicographical().map(Self)
+    }
+
+    pub fn into_inner(self) -> [u8; 32] {
+        self.0.into_inner()
+    }
+}
+
+impl fmt::Debug for TransactionEventsDigest {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("TransactionEventsDigest").field(&self.0).finish()
+    }
+}
+
+impl AsRef<[u8]> for TransactionEventsDigest {
+    fn as_ref(&self) -> &[u8] {
+        self.0.as_ref()
+    }
+}
+
+// impl AsRef<[u8; 32]> for TransactionEventsDigest {
+//     fn as_ref(&self) -> &[u8; 32] {
+//         self.0.as_ref()
+//     }
+// }
+
+impl std::str::FromStr for TransactionEventsDigest {
+    type Err = RebasedError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut result = [0; 32];
+        let buffer = Base58::decode(s).map_err(|e| RebasedError::DigestsError(format!("{:?}", e)))?;
+        if buffer.len() != 32 {
+            return Err(RebasedError::DigestsError(format!(
+                "Invalid digest length. Expected 32 bytes"
+            )));
+        }
+        result.copy_from_slice(&buffer);
+        Ok(Self::new(result))
     }
 }

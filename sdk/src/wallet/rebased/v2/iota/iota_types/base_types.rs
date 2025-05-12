@@ -5,8 +5,13 @@ use std::{
     str::FromStr,
 };
 
+pub use super::committee::EpochId;
+
 use super::ObjectDigest;
 use super::Readable;
+
+use crate::wallet::rebased::v2::mowe::move_core_types::language_storage::StructTag;
+use crate::wallet::rebased::v2::mowe::move_core_types::language_storage::TypeTag;
 
 use super::HexAccountAddress;
 use crate::wallet::rebased::{
@@ -18,17 +23,12 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
-/*
-pub use crate::{
-    committee::EpochId,
-    digests::{ObjectDigest, TransactionDigest, TransactionEffectsDigest},
-};
-*/
-
 // AccountAddress::LENGTH;
 pub const LENGTH: usize = 32;
 
 pub const IOTA_ADDRESS_LENGTH: usize = LENGTH;
+
+pub type VersionDigest = (SequenceNumber, ObjectDigest);
 
 #[serde_as]
 #[derive(Eq, Default, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Serialize, Deserialize, JsonSchema)]
@@ -258,3 +258,29 @@ impl From<SequenceNumber> for usize {
 }
 
 pub type ObjectRef = (ObjectID, SequenceNumber, ObjectDigest);
+
+/// Wrapper around StructTag with a space-efficient representation for common
+/// types like coins The StructTag for a gas coin is 84 bytes, so using 1 byte
+/// instead is a win. The inner representation is private to prevent incorrectly
+/// constructing an `Other` instead of one of the specialized variants, e.g.
+/// `Other(GasCoin::type_())` instead of `GasCoin`
+#[derive(Eq, PartialEq, PartialOrd, Ord, Debug, Clone, Deserialize, Serialize, Hash)]
+pub struct MoveObjectType(MoveObjectType_);
+
+/// Even though it is declared public, it is the "private", internal
+/// representation for `MoveObjectType`
+#[derive(Eq, PartialEq, PartialOrd, Ord, Debug, Clone, Deserialize, Serialize, Hash)]
+pub enum MoveObjectType_ {
+    /// A type that is not `0x2::coin::Coin<T>`
+    Other(StructTag),
+    /// An IOTA coin (i.e., `0x2::coin::Coin<0x2::iota::IOTA>`)
+    GasCoin,
+    /// A record of a staked IOTA coin (i.e., `0x3::staking_pool::StakedIota`)
+    StakedIota,
+    /// A non-IOTA coin type (i.e., `0x2::coin::Coin<T> where T !=
+    /// 0x2::iota::IOTA`)
+    Coin(TypeTag),
+    // NOTE: if adding a new type here, and there are existing on-chain objects of that
+    // type with Other(_), that is ok, but you must hand-roll PartialEq/Eq/Ord/maybe Hash
+    // to make sure the new type and Other(_) are interpreted consistently.
+}

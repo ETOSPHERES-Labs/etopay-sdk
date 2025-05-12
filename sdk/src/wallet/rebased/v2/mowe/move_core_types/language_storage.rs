@@ -10,6 +10,8 @@ use crate::wallet::rebased::RebasedError;
 use super::ParsedStructType;
 use super::{AccountAddress, Identifier};
 
+use crate::wallet::rebased::v2::mowe::identifier::IdentStr;
+
 #[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Eq, Clone, PartialOrd, Ord)]
 pub struct StructTag {
     pub address: AccountAddress,
@@ -93,5 +95,68 @@ impl Display for TypeTag {
             TypeTag::Signer => write!(f, "signer"),
             TypeTag::Bool => write!(f, "bool"),
         }
+    }
+}
+
+/// Represents the initial key into global storage where we first index by the
+/// address, and then the struct tag
+#[derive(Serialize, Deserialize, Debug, PartialEq, Hash, Eq, Clone, PartialOrd, Ord)]
+pub struct ModuleId {
+    address: AccountAddress,
+    name: Identifier,
+}
+
+pub const CODE_TAG: u8 = 0;
+
+impl ModuleId {
+    pub fn new(address: AccountAddress, name: Identifier) -> Self {
+        ModuleId { address, name }
+    }
+
+    pub fn name(&self) -> &IdentStr {
+        &self.name
+    }
+
+    pub fn address(&self) -> &AccountAddress {
+        &self.address
+    }
+
+    pub fn access_vector(&self) -> Vec<u8> {
+        let mut key = vec![CODE_TAG];
+        key.append(&mut bcs::to_bytes(self).unwrap());
+        key
+    }
+
+    pub fn to_canonical_string(&self, with_prefix: bool) -> String {
+        self.to_canonical_display(with_prefix).to_string()
+    }
+
+    /// Proxy type for overriding `ModuleId`'s display implementation, to use a
+    /// canonical form (full-width addresses), with an optional "0x" prefix
+    /// (controlled by the `with_prefix` flag).
+    pub fn to_canonical_display(&self, with_prefix: bool) -> impl Display + '_ {
+        struct IdDisplay<'a> {
+            id: &'a ModuleId,
+            with_prefix: bool,
+        }
+
+        impl<'a> Display for IdDisplay<'a> {
+            fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+                write!(
+                    f,
+                    "{}::{}",
+                    self.id.address.to_canonical_display(self.with_prefix),
+                    self.id.name,
+                )
+            }
+        }
+
+        IdDisplay { id: self, with_prefix }
+    }
+}
+
+impl Display for ModuleId {
+    fn fmt(&self, f: &mut Formatter) -> std::fmt::Result {
+        write!(f, "{}", self.to_canonical_display(/* with_prefix */ false))
     }
 }

@@ -1,8 +1,11 @@
 use crate::wallet::rebased::error::RebasedError;
 use crate::wallet::rebased::error::Result;
+use ref_cast::RefCast;
 use serde::{Deserialize, Serialize};
-use std::fmt;
-use std::str::FromStr;
+
+use std::{borrow::Borrow, fmt, ops::Deref, str::FromStr};
+
+use super::AbstractMemorySize;
 
 /// An owned identifier.
 ///
@@ -21,6 +24,78 @@ impl FromStr for Identifier {
 }
 
 impl fmt::Display for Identifier {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", &self.0)
+    }
+}
+
+/// A borrowed identifier.
+///
+/// For more details, see the module level documentation.
+#[derive(Debug, Eq, Hash, Ord, PartialEq, PartialOrd, RefCast)]
+#[repr(transparent)]
+pub struct IdentStr(str);
+
+impl IdentStr {
+    pub fn new(s: &str) -> Result<&IdentStr> {
+        if Self::is_valid(s) {
+            Ok(IdentStr::ref_cast(s))
+        } else {
+            //bail!("Invalid identifier '{}'", s);
+            return Err(RebasedError::ParserError(format!("Invalid identifier '{}'", s)));
+        }
+    }
+
+    /// Returns true if this string is a valid identifier.
+    pub fn is_valid(s: impl AsRef<str>) -> bool {
+        is_valid(s.as_ref())
+    }
+
+    /// Returns the length of `self` in bytes.
+    pub fn len(&self) -> usize {
+        self.0.len()
+    }
+
+    /// Returns `true` if `self` has a length of zero bytes.
+    pub fn is_empty(&self) -> bool {
+        self.0.is_empty()
+    }
+
+    /// Converts `self` to a `&str`.
+    ///
+    /// This is not implemented as a `From` trait to discourage automatic
+    /// conversions -- these conversions should not typically happen.
+    pub fn as_str(&self) -> &str {
+        &self.0
+    }
+
+    /// Converts `self` to a byte slice.
+    pub fn as_bytes(&self) -> &[u8] {
+        self.0.as_bytes()
+    }
+
+    /// Returns the abstract size of the struct
+    /// TODO (ade): use macro to enfornce determinism
+    pub fn abstract_size_for_gas_metering(&self) -> AbstractMemorySize {
+        AbstractMemorySize::new((self.len()) as u64)
+    }
+}
+
+impl Borrow<IdentStr> for Identifier {
+    fn borrow(&self) -> &IdentStr {
+        self
+    }
+}
+
+impl ToOwned for IdentStr {
+    type Owned = Identifier;
+
+    fn to_owned(&self) -> Identifier {
+        Identifier(self.0.into())
+    }
+}
+
+impl fmt::Display for IdentStr {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "{}", &self.0)
     }
@@ -46,9 +121,73 @@ impl Identifier {
         }
     }
 
+    /// Creates a new `Identifier` from a string without checking if it is a
+    /// valid identifier. This should not be used under normal
+    /// circumstances, but is used in cases where we need to
+    /// preserve backwards compatibility.
+    ///
+    /// # Safety
+    ///
+    /// Only use this function when preserving backwards compatibility.
+    pub unsafe fn new_unchecked(s: impl Into<Box<str>>) -> Self {
+        Self(s.into())
+    }
+
     /// Returns true if this string is a valid identifier.
     pub fn is_valid(s: impl AsRef<str>) -> bool {
         is_valid(s.as_ref())
+    }
+
+    /// Returns if this identifier is `<SELF>`.
+    /// TODO: remove once we fully separate CompiledScript & CompiledModule.
+    pub fn is_self(&self) -> bool {
+        &*self.0 == "<SELF>"
+    }
+
+    /// Converts a vector of bytes to an `Identifier`.
+    pub fn from_utf8(vec: Vec<u8>) -> Result<Self> {
+        let s = String::from_utf8(vec)?;
+        Self::new(s)
+    }
+
+    /// Creates a borrowed version of `self`.
+    pub fn as_ident_str(&self) -> &IdentStr {
+        self
+    }
+
+    /// Converts this `Identifier` into a `String`.
+    ///
+    /// This is not implemented as a `From` trait to discourage automatic
+    /// conversions -- these conversions should not typically happen.
+    pub fn into_string(self) -> String {
+        self.0.into()
+    }
+
+    /// Converts this `Identifier` into a UTF-8-encoded byte sequence.
+    pub fn into_bytes(self) -> Vec<u8> {
+        self.into_string().into_bytes()
+    }
+}
+
+impl From<&IdentStr> for Identifier {
+    fn from(ident_str: &IdentStr) -> Self {
+        ident_str.to_owned()
+    }
+}
+
+impl AsRef<IdentStr> for Identifier {
+    fn as_ref(&self) -> &IdentStr {
+        self
+    }
+}
+
+impl Deref for Identifier {
+    type Target = IdentStr;
+
+    fn deref(&self) -> &IdentStr {
+        // Identifier and IdentStr maintain the same invariants, so it is safe to
+        // convert.
+        IdentStr::ref_cast(&self.0)
     }
 }
 

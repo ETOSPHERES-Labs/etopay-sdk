@@ -1,13 +1,23 @@
 pub mod base_types;
+pub mod committee;
 pub mod digests;
+pub mod effects;
 pub mod event;
+pub mod execution_status;
+pub mod gas;
 pub mod iota_serde;
 pub mod lib_file;
+pub mod move_package;
 pub mod object;
 
 pub use base_types::*;
+pub use committee::*;
 pub use digests::*;
+pub use effects::*;
 pub use event::*;
+pub use execution_status::*;
+pub use gas::*;
 pub use iota_serde::*;
 pub use lib_file::*;
+pub use move_package::*;
 pub use object::*;
