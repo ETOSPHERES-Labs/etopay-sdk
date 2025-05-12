@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"enum":["ShareError"],"fn":["create_shares_from_mnemonic","reconstruct_mnemonic"],"struct":["GeneratedShares","Share"]};
