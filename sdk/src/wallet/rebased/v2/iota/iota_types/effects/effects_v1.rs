@@ -4,11 +4,13 @@ use crate::wallet::rebased::v2::iota::iota_types::base_types::EpochId;
 use crate::wallet::rebased::v2::iota::iota_types::base_types::ObjectID;
 use crate::wallet::rebased::v2::iota::iota_types::base_types::SequenceNumber;
 use crate::wallet::rebased::v2::iota::iota_types::base_types::VersionDigest;
+use crate::wallet::rebased::v2::iota::iota_types::digests::EffectsAuxDataDigest;
 use crate::wallet::rebased::v2::iota::iota_types::digests::TransactionDigest;
 use crate::wallet::rebased::v2::iota::iota_types::digests::TransactionEventsDigest;
 use crate::wallet::rebased::v2::iota::iota_types::execution_status::ExecutionStatus;
 use crate::wallet::rebased::v2::iota::iota_types::gas::GasCostSummary;
 
+use super::TransactionEffectsAPI;
 use super::object_change::EffectsObjectChange;
 
 /// The response from processing a transaction or a certified transaction
@@ -64,4 +66,10 @@ pub enum UnchangedSharedKind {
     /// Read of a per-epoch config object that should remain the same during an
     /// epoch.
     PerEpochConfig,
+}
+
+impl TransactionEffectsAPI for TransactionEffectsV1 {
+    fn gas_cost_summary(&self) -> &GasCostSummary {
+        &self.gas_used
+    }
 }

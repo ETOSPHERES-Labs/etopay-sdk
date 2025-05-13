@@ -766,6 +766,12 @@ pub struct ProtocolConfig {
     consensus_gc_depth: Option<u32>,
 }
 
+impl ProtocolConfig {
+    pub fn protocol_defined_base_fee(&self) -> bool {
+        self.feature_flags.protocol_defined_base_fee
+    }
+}
+
 // TODO: There are quite a few non boolean values in the feature flags. We
 // should move them out.
 /// Records on/off feature flags that may vary at each protocol version.

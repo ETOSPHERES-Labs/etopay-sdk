@@ -38,6 +38,16 @@ pub struct MovePackage {
     pub(crate) linkage_table: BTreeMap<ObjectID, UpgradeInfo>,
 }
 
+impl MovePackage {
+    pub fn id(&self) -> ObjectID {
+        self.id
+    }
+
+    pub fn version(&self) -> SequenceNumber {
+        self.version
+    }
+}
+
 /// Identifies a struct and the module it was defined in
 #[derive(Debug, Clone, Eq, PartialEq, Ord, PartialOrd, Deserialize, Serialize, Hash, JsonSchema)]
 pub struct TypeOrigin {

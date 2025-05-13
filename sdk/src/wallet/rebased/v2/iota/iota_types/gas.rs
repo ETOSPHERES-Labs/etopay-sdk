@@ -7,7 +7,11 @@ pub use checked::*;
 
 //#[iota_macros::with_checked_arithmetic]
 pub mod checked {
+    use crate::wallet::rebased::v2::iota::iota_types::iota_serde::BigInt;
+    use crate::wallet::rebased::v2::iota::iota_types::iota_serde::Readable;
 
+    use crate::wallet::rebased::IotaResult;
+    use crate::wallet::rebased::RebasedError;
     use crate::wallet::rebased::v2::iota_protocol_config::ProtocolConfig;
     use enum_dispatch::enum_dispatch;
     //use iota_protocol_config::ProtocolConfig;
@@ -18,22 +22,29 @@ pub mod checked {
 
     use crate::wallet::rebased::v2::iota::iota_types::ObjectID;
     use crate::wallet::rebased::v2::iota::iota_types::effects::TransactionEffects;
-    use crate::{
-        //ObjectID,
-        //effects::{TransactionEffects, TransactionEffectsAPI},
-        error::{ExecutionError, IotaResult, UserInputError, UserInputResult},
-        gas_model::{gas_v1::IotaGasStatus as IotaGasStatusV1, tables::GasStatus},
-        iota_serde::{BigInt, Readable},
-        object::Object,
-        transaction::ObjectReadResult,
-    };
+    use crate::wallet::rebased::v2::iota::iota_types::effects::TransactionEffectsAPI;
+    use crate::wallet::rebased::v2::iota::iota_types::gas_model::gas_v1::IotaGasStatus as IotaGasStatusV1;
+    use crate::wallet::rebased::v2::iota::iota_types::gas_model::tables::GasStatus;
+    use crate::wallet::rebased::v2::iota::iota_types::object::Object;
+    use crate::wallet::rebased::v2::iota::iota_types::transaction::ObjectReadResult;
+    // use crate::{
+    //     //ObjectID,
+    //     //effects::{TransactionEffects, TransactionEffectsAPI},
+    //     // error::{ExecutionError, IotaResult, UserInputError, UserInputResult},
+    //     // gas_model::{gas_v1::IotaGasStatus as IotaGasStatusV1, tables::GasStatus},
+    //     // iota_serde::{BigInt, Readable},
+    //     // object::Object,
+    //     // transaction::ObjectReadResult,
+    // };
+
+    //use crate::wallet::rebased::v2::iota::iota_types::
 
     #[enum_dispatch]
     pub trait IotaGasStatusAPI {
         fn is_unmetered(&self) -> bool;
         fn move_gas_status(&self) -> &GasStatus;
         fn move_gas_status_mut(&mut self) -> &mut GasStatus;
-        fn bucketize_computation(&mut self) -> Result<(), ExecutionError>;
+        fn bucketize_computation(&mut self) -> Result<(), RebasedError>;
         fn summary(&self) -> GasCostSummary;
         fn gas_budget(&self) -> u64;
         fn storage_gas_units(&self) -> u64;
@@ -41,10 +52,10 @@ pub mod checked {
         fn unmetered_storage_rebate(&self) -> u64;
         fn gas_used(&self) -> u64;
         fn reset_storage_cost_and_rebate(&mut self);
-        fn charge_storage_read(&mut self, size: usize) -> Result<(), ExecutionError>;
-        fn charge_publish_package(&mut self, size: usize) -> Result<(), ExecutionError>;
+        fn charge_storage_read(&mut self, size: usize) -> Result<(), RebasedError>;
+        fn charge_publish_package(&mut self, size: usize) -> Result<(), RebasedError>;
         fn track_storage_mutation(&mut self, object_id: ObjectID, new_size: usize, storage_rebate: u64) -> u64;
-        fn charge_storage_and_rebate(&mut self) -> Result<(), ExecutionError>;
+        fn charge_storage_and_rebate(&mut self) -> Result<(), RebasedError>;
         fn adjust_computation_on_out_of_gas(&mut self);
     }
 
@@ -272,19 +283,21 @@ pub mod checked {
         };
         gas_coin.set_coin_value_unsafe(new_balance)
     }
-
+    pub type UserInputResult<T = ()> = Result<T, RebasedError>;
     pub fn get_gas_balance(gas_object: &Object) -> UserInputResult<u64> {
         if let Some(move_obj) = gas_object.data.try_as_move() {
             if !move_obj.type_().is_gas_coin() {
-                return Err(UserInputError::InvalidGasObject {
-                    object_id: gas_object.id(),
-                });
+                return Err(RebasedError::InvalidGasObjectError(format!(
+                    "object_id: {}",
+                    gas_object.id()
+                )));
             }
             Ok(move_obj.get_coin_value_unsafe())
         } else {
-            Err(UserInputError::InvalidGasObject {
-                object_id: gas_object.id(),
-            })
+            Err(RebasedError::InvalidGasObjectError(format!(
+                "object_id: {}",
+                gas_object.id()
+            )))
         }
     }
 }

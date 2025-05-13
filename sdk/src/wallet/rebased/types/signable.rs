@@ -33,7 +33,7 @@ mod bcs_signable {
     impl BcsSignable for TransactionEvents {}
     impl BcsSignable for super::super::TransactionData {}
     // impl BcsSignable for crate::transaction::SenderSignedData {}
-    // impl BcsSignable for crate::object::ObjectInner {}
+    impl BcsSignable for crate::wallet::rebased::v2::iota::iota_types::object::ObjectInner {}
     //
     // impl BcsSignable for crate::accumulator::Accumulator {}
     //

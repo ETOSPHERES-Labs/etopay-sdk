@@ -9,6 +9,16 @@ use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 use serde_with::{Bytes, serde_as};
 
+#[serde_as]
+#[derive(Eq, PartialEq, Ord, PartialOrd, Copy, Clone, Hash, Serialize, Deserialize, JsonSchema)]
+pub struct EffectsAuxDataDigest(Digest);
+
+impl fmt::Debug for EffectsAuxDataDigest {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("EffectsAuxDataDigest").field(&self.0).finish()
+    }
+}
+
 /// A representation of a 32 byte digest
 #[serde_as]
 #[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize, JsonSchema)]

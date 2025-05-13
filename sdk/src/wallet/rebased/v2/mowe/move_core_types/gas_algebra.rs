@@ -56,3 +56,33 @@ pub enum AbstractMemoryUnit {}
 /// This is a legacy concept that is not well defined and will be deprecated
 /// very soon. New applications should not be using this.
 pub type AbstractMemorySize = GasQuantity<AbstractMemoryUnit>;
+
+/// ****************************************************************************
+/// ********************* Units of Measurement
+///
+/// ****************************************************************************
+/// *******************
+/// Unit of internal gas.
+pub enum InternalGasUnit {}
+
+pub type InternalGas = GasQuantity<InternalGasUnit>;
+
+impl<U> Debug for GasQuantity<U> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "{} ({})", self.val, std::any::type_name::<U>())
+    }
+}
+
+/// ****************************************************************************
+/// ********************* Clone & Copy
+///
+/// ****************************************************************************
+/// *******************
+#[allow(clippy::non_canonical_clone_impl)]
+impl<U> Clone for GasQuantity<U> {
+    fn clone(&self) -> Self {
+        Self::new(self.val)
+    }
+}
+
+impl<U> Copy for GasQuantity<U> {}

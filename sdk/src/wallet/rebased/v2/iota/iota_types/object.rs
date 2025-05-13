@@ -1,16 +1,13 @@
 use serde_with::{Bytes, serde_as};
 use std::{
-    collections::BTreeMap,
-    convert::TryFrom,
     fmt::{Debug, Display, Formatter},
-    mem::size_of,
     sync::Arc,
 };
 
 use schemars::JsonSchema;
 use serde::{Deserialize, Serialize};
 
-use crate::wallet::rebased::default_hash;
+use crate::wallet::rebased::{RebasedError, default_hash};
 
 use super::{
     TransactionDigest,
@@ -18,6 +15,8 @@ use super::{
     digests::ObjectDigest,
     move_package::MovePackage,
 };
+
+use crate::wallet::rebased::v2::iota::base_types::ObjectID;
 
 #[derive(Eq, PartialEq, Debug, Clone, Copy, Deserialize, Serialize, Hash, JsonSchema, Ord, PartialOrd)]
 pub enum Owner {
@@ -33,6 +32,12 @@ pub enum Owner {
     },
     /// Object is immutable, and hence ownership doesn't matter.
     Immutable,
+}
+
+impl Owner {
+    pub fn is_address_owned(&self) -> bool {
+        matches!(self, Owner::AddressOwner(_))
+    }
 }
 
 impl Display for Owner {
@@ -87,6 +92,27 @@ pub enum Data {
     // ... IOTA "native" types go here
 }
 
+impl Data {
+    pub fn try_as_move(&self) -> Option<&MoveObject> {
+        use Data::*;
+        match self {
+            Move(m) => Some(m),
+            Package(_) => None,
+        }
+    }
+
+    pub fn try_as_move_mut(&mut self) -> Option<&mut MoveObject> {
+        use Data::*;
+        match self {
+            Move(m) => Some(m),
+            Package(_) => None,
+        }
+    }
+}
+
+/// Index marking the end of the object's ID + the beginning of its version
+pub const ID_END_INDEX: usize = ObjectID::LENGTH;
+
 #[serde_as]
 #[derive(Eq, PartialEq, Debug, Clone, Deserialize, Serialize, Hash)]
 pub struct MoveObject {
@@ -99,6 +125,60 @@ pub struct MoveObject {
     /// BCS bytes of a Move struct value
     #[serde_as(as = "Bytes")]
     pub(crate) contents: Vec<u8>,
+}
+
+impl MoveObject {
+    pub fn version(&self) -> SequenceNumber {
+        self.version
+    }
+
+    pub fn id(&self) -> ObjectID {
+        Self::id_opt(&self.contents).unwrap()
+    }
+
+    pub fn id_opt(contents: &[u8]) -> Result<ObjectID, RebasedError> {
+        if ID_END_INDEX > contents.len() {
+            return Err(RebasedError::ObjectIDParseError(format!("")));
+        }
+        let r = ObjectID::try_from(&contents[0..ID_END_INDEX]);
+        match r {
+            Ok(o) => Ok(o),
+            Err(_) => Err(RebasedError::ObjectIDParseError(format!(""))),
+        }
+    }
+    /// Return the `value: u64` field of a `Coin<T>` type.
+    /// Useful for reading the coin without deserializing the object into a Move
+    /// value It is the caller's responsibility to check that `self` is a
+    /// coin--this function may panic or do something unexpected otherwise.
+    pub fn get_coin_value_unsafe(&self) -> u64 {
+        debug_assert!(self.type_.is_coin());
+        // 32 bytes for object ID, 8 for balance
+        debug_assert!(self.contents.len() == 40);
+
+        // unwrap safe because we checked that it is a coin
+        u64::from_le_bytes(<[u8; 8]>::try_from(&self.contents[ID_END_INDEX..]).unwrap())
+    }
+
+    pub fn is_coin(&self) -> bool {
+        self.type_.is_coin()
+    }
+
+    pub fn type_(&self) -> &MoveObjectType {
+        &self.type_
+    }
+
+    /// Update the `value: u64` field of a `Coin<T>` type.
+    /// Useful for updating the coin without deserializing the object into a
+    /// Move value It is the caller's responsibility to check that `self` is
+    /// a coin--this function may panic or do something unexpected
+    /// otherwise.
+    pub fn set_coin_value_unsafe(&mut self, value: u64) {
+        debug_assert!(self.type_.is_coin());
+        // 32 bytes for object ID, 8 for balance
+        debug_assert!(self.contents.len() == 40);
+
+        self.contents.splice(ID_END_INDEX.., value.to_le_bytes());
+    }
 }
 
 impl Object {
@@ -235,7 +315,7 @@ impl std::ops::DerefMut for Object {
 }
 
 impl ObjectInner {
-    /// Returns true if the object is a system package.
+    // Returns true if the object is a system package.
     // pub fn is_system_package(&self) -> bool {
     //     self.is_package() && is_system_package(self.id())
     // }
@@ -280,6 +360,15 @@ impl ObjectInner {
         ObjectDigest::new(default_hash(self))
     }
 
+    pub fn id(&self) -> ObjectID {
+        use Data::*;
+
+        match &self.data {
+            Move(v) => v.id(),
+            Package(m) => m.id(),
+        }
+    }
+
     // pub fn id(&self) -> ObjectID {
     //     use Data::*;
 
@@ -288,6 +377,9 @@ impl ObjectInner {
     //         Package(m) => m.id(),
     //     }
     // }
+    pub fn is_address_owned(&self) -> bool {
+        self.owner.is_address_owned()
+    }
 
     pub fn version(&self) -> SequenceNumber {
         use Data::*;
@@ -296,5 +388,11 @@ impl ObjectInner {
             Move(o) => o.version(),
             Package(p) => p.version(),
         }
+    }
+
+    /// Return true if this object is a Move package, false if it is a Move
+    /// value
+    pub fn is_package(&self) -> bool {
+        matches!(&self.data, Data::Package(_))
     }
 }

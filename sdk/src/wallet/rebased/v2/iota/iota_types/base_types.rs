@@ -1,7 +1,7 @@
 use std::{
     cmp::max,
     convert::{TryFrom, TryInto},
-    fmt,
+    fmt::{self, format},
     str::FromStr,
 };
 
@@ -137,6 +137,13 @@ impl ObjectID {
     pub const fn new(obj_id: [u8; Self::LENGTH]) -> Self {
         Self(AccountAddress::new(obj_id))
     }
+
+    /// Parse the ObjectID from byte array or buffer.
+    pub fn from_bytes<T: AsRef<[u8]>>(bytes: T) -> Result<Self, RebasedError> {
+        <[u8; Self::LENGTH]>::try_from(bytes.as_ref())
+            .map_err(|_| RebasedError::ObjectIDParseError(format!("@ObjectId -> from_bytes()")))
+            .map(ObjectID::new)
+    }
 }
 
 impl fmt::Display for ObjectID {
@@ -148,6 +155,24 @@ impl fmt::Display for ObjectID {
 impl fmt::Debug for ObjectID {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> Result<(), fmt::Error> {
         write!(f, "0x{}", Hex::encode(self.0))
+    }
+}
+
+impl TryFrom<&[u8]> for ObjectID {
+    type Error = RebasedError;
+
+    /// Tries to convert the provided byte array into ObjectID.
+    fn try_from(bytes: &[u8]) -> Result<ObjectID, RebasedError> {
+        Self::from_bytes(bytes)
+    }
+}
+
+impl TryFrom<Vec<u8>> for ObjectID {
+    type Error = RebasedError;
+
+    /// Tries to convert the provided byte buffer into ObjectID.
+    fn try_from(bytes: Vec<u8>) -> Result<ObjectID, RebasedError> {
+        Self::from_bytes(bytes)
     }
 }
 
@@ -284,3 +309,24 @@ pub enum MoveObjectType_ {
     // type with Other(_), that is ok, but you must hand-roll PartialEq/Eq/Ord/maybe Hash
     // to make sure the new type and Other(_) are interpreted consistently.
 }
+
+impl MoveObjectType {
+    /// Return true if `self` is `0x2::coin::Coin<T>` for some T (note: T can be
+    /// IOTA)
+    pub fn is_coin(&self) -> bool {
+        match &self.0 {
+            MoveObjectType_::GasCoin | MoveObjectType_::Coin(_) => true,
+            MoveObjectType_::StakedIota | MoveObjectType_::Other(_) => false,
+        }
+    }
+
+    /// Return true if `self` is 0x2::coin::Coin<0x2::iota::IOTA>
+    pub fn is_gas_coin(&self) -> bool {
+        match &self.0 {
+            MoveObjectType_::GasCoin => true,
+            MoveObjectType_::StakedIota | MoveObjectType_::Coin(_) | MoveObjectType_::Other(_) => false,
+        }
+    }
+}
+
+// is_coin

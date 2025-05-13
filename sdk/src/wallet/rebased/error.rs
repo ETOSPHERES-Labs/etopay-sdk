@@ -92,4 +92,25 @@ pub enum RebasedError {
 
     #[error("DigestsError: {0}")]
     DigestsError(String),
+
+    #[error("InvalidGasObjectError: {0}")]
+    InvalidGasObjectError(String),
+
+    #[error("ObjectIDParseError: {0}")]
+    ObjectIDParseError(String),
+
+    #[error("GasObjectNotOwnedObject: {0}")]
+    GasObjectNotOwnedObject(String),
+
+    #[error("MissingGasPayment: {0}")]
+    MissingGasPayment(String),
+
+    #[error("GasBudgetTooHigh: {0}")]
+    GasBudgetTooHigh(String),
+
+    #[error("GasBudgetTooLow: {0}")]
+    GasBudgetTooLow(String),
+
+    #[error("GasBalanceTooLow: {0}")]
+    GasBalanceTooLow(String),
 }
