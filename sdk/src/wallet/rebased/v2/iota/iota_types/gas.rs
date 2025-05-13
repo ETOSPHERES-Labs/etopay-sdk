@@ -10,8 +10,8 @@ pub mod checked {
     use crate::wallet::rebased::v2::iota::iota_types::iota_serde::BigInt;
     use crate::wallet::rebased::v2::iota::iota_types::iota_serde::Readable;
 
-    use crate::wallet::rebased::IotaResult;
     use crate::wallet::rebased::RebasedError;
+    use crate::wallet::rebased::error::Result;
     use crate::wallet::rebased::v2::iota_protocol_config::ProtocolConfig;
     use enum_dispatch::enum_dispatch;
     //use iota_protocol_config::ProtocolConfig;
@@ -44,7 +44,7 @@ pub mod checked {
         fn is_unmetered(&self) -> bool;
         fn move_gas_status(&self) -> &GasStatus;
         fn move_gas_status_mut(&mut self) -> &mut GasStatus;
-        fn bucketize_computation(&mut self) -> Result<(), RebasedError>;
+        fn bucketize_computation(&mut self) -> Result<()>;
         fn summary(&self) -> GasCostSummary;
         fn gas_budget(&self) -> u64;
         fn storage_gas_units(&self) -> u64;
@@ -52,10 +52,10 @@ pub mod checked {
         fn unmetered_storage_rebate(&self) -> u64;
         fn gas_used(&self) -> u64;
         fn reset_storage_cost_and_rebate(&mut self);
-        fn charge_storage_read(&mut self, size: usize) -> Result<(), RebasedError>;
-        fn charge_publish_package(&mut self, size: usize) -> Result<(), RebasedError>;
+        fn charge_storage_read(&mut self, size: usize) -> Result<()>;
+        fn charge_publish_package(&mut self, size: usize) -> Result<()>;
         fn track_storage_mutation(&mut self, object_id: ObjectID, new_size: usize, storage_rebate: u64) -> u64;
-        fn charge_storage_and_rebate(&mut self) -> Result<(), RebasedError>;
+        fn charge_storage_and_rebate(&mut self) -> Result<()>;
         fn adjust_computation_on_out_of_gas(&mut self);
     }
 
@@ -67,28 +67,22 @@ pub mod checked {
     }
 
     impl IotaGasStatus {
-        pub fn new(
-            gas_budget: u64,
-            gas_price: u64,
-            reference_gas_price: u64,
-            config: &ProtocolConfig,
-        ) -> IotaResult<Self> {
+        pub fn new(gas_budget: u64, gas_price: u64, reference_gas_price: u64, config: &ProtocolConfig) -> Result<Self> {
             // Common checks. We may pull them into version specific status as needed, but
             // they are unlikely to change.
 
             // gas price must be greater than or equal to reference gas price
             if gas_price < reference_gas_price {
-                return Err(UserInputError::GasPriceUnderRGP {
-                    gas_price,
-                    reference_gas_price,
-                }
-                .into());
+                return Err(RebasedError::GasPriceUnderRGP(format!(
+                    "gas_price: {}, reference_gas_price: {}",
+                    gas_price, reference_gas_price,
+                )));
             }
             if gas_price > config.max_gas_price() {
-                return Err(UserInputError::GasPriceTooHigh {
-                    max_gas_price: config.max_gas_price(),
-                }
-                .into());
+                return Err(RebasedError::GasPriceTooHigh(format!(
+                    "max_gas_price: {}",
+                    config.max_gas_price()
+                )));
             }
 
             Ok(Self::V1(IotaGasStatusV1::new_with_budget(
@@ -107,7 +101,7 @@ pub mod checked {
 
         // This is the only public API on IotaGasStatus, all other gas related
         // operations should go through `GasCharger`
-        pub fn check_gas_balance(&self, gas_objs: &[&ObjectReadResult], gas_budget: u64) -> UserInputResult {
+        pub fn check_gas_balance(&self, gas_objs: &[&ObjectReadResult], gas_budget: u64) -> Result<()> {
             match self {
                 Self::V1(status) => status.check_gas_balance(gas_objs, gas_budget),
             }
@@ -283,8 +277,8 @@ pub mod checked {
         };
         gas_coin.set_coin_value_unsafe(new_balance)
     }
-    pub type UserInputResult<T = ()> = Result<T, RebasedError>;
-    pub fn get_gas_balance(gas_object: &Object) -> UserInputResult<u64> {
+    //pub type UserInputResult<T = ()> = Result<T, RebasedError>;
+    pub fn get_gas_balance(gas_object: &Object) -> Result<u64> {
         if let Some(move_obj) = gas_object.data.try_as_move() {
             if !move_obj.type_().is_gas_coin() {
                 return Err(RebasedError::InvalidGasObjectError(format!(

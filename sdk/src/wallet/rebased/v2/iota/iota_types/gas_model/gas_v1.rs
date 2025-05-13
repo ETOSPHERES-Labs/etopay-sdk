@@ -10,6 +10,7 @@ mod checked {
     use crate::wallet::rebased::RebasedError;
     use crate::wallet::rebased::v2::iota::iota_protocol_config::ProtocolConfig;
     use crate::wallet::rebased::v2::iota::iota_types::base_types::ObjectID;
+    use crate::wallet::rebased::v2::iota::iota_types::gas::IotaGasStatusAPI;
     use crate::wallet::rebased::v2::iota::iota_types::gas::{self};
     use crate::wallet::rebased::v2::iota::iota_types::gas_model::gas_predicates::cost_table_for_version;
     use crate::wallet::rebased::v2::iota::iota_types::gas_model::tables::GasStatus;
@@ -203,6 +204,176 @@ mod checked {
             } else {
                 Ok(())
             }
+        }
+    }
+
+    impl IotaGasStatusAPI for IotaGasStatus {
+        fn is_unmetered(&self) -> bool {
+            !self.charge
+        }
+
+        fn move_gas_status(&self) -> &GasStatus {
+            &self.gas_status
+        }
+
+        fn move_gas_status_mut(&mut self) -> &mut GasStatus {
+            &mut self.gas_status
+        }
+
+        fn bucketize_computation(&mut self) -> Result<(), ExecutionError> {
+            let mut computation_units = self.gas_status.gas_used_pre_gas_price();
+            if let Some(gas_rounding) = self.gas_rounding_step {
+                if gas_rounding > 0 && (computation_units == 0 || computation_units % gas_rounding > 0) {
+                    computation_units = ((computation_units / gas_rounding) + 1) * gas_rounding;
+                }
+            } else {
+                // use the max value of the bucket that the computation_units falls into.
+                computation_units = get_bucket_cost(&self.cost_table.computation_bucket, computation_units);
+            };
+            let computation_cost = computation_units * self.gas_price;
+            if self.gas_budget <= computation_cost {
+                self.computation_cost = self.gas_budget;
+                Err(ExecutionErrorKind::InsufficientGas.into())
+            } else {
+                self.computation_cost = computation_cost;
+                Ok(())
+            }
+        }
+
+        /// Returns the final (computation cost, storage cost, storage rebate)
+        /// of the gas meter. We use initial budget, combined with
+        /// remaining gas and storage cost to derive computation cost.
+        fn summary(&self) -> GasCostSummary {
+            // compute computation cost burned and storage rebate, both rebate and non
+            // refundable fee
+            let computation_cost_burned = if self.protocol_defined_base_fee {
+                // when protocol_defined_base_fee is enabled, the computation cost burned is
+                // computed as follows:
+                // computation_cost_burned = computation_units * reference_gas_price.
+                // = (computation_cost / gas_price) * reference_gas_price
+                self.computation_cost * self.reference_gas_price / self.gas_price
+            } else {
+                // when protocol_defined_base_fee is disabled, the entire computation cost is
+                // burned.
+                self.computation_cost
+            };
+            let storage_rebate = self.storage_rebate();
+            let sender_rebate = sender_rebate(storage_rebate, self.rebate_rate);
+            assert!(sender_rebate <= storage_rebate);
+            let non_refundable_storage_fee = storage_rebate - sender_rebate;
+            GasCostSummary {
+                computation_cost: self.computation_cost,
+                computation_cost_burned,
+                storage_cost: self.storage_cost(),
+                storage_rebate: sender_rebate,
+                non_refundable_storage_fee,
+            }
+        }
+
+        fn gas_budget(&self) -> u64 {
+            self.gas_budget
+        }
+
+        fn storage_gas_units(&self) -> u64 {
+            self.per_object_storage
+                .iter()
+                .map(|(_, per_object)| per_object.storage_cost)
+                .sum()
+        }
+
+        fn storage_rebate(&self) -> u64 {
+            self.per_object_storage
+                .iter()
+                .map(|(_, per_object)| per_object.storage_rebate)
+                .sum()
+        }
+
+        fn unmetered_storage_rebate(&self) -> u64 {
+            self.unmetered_storage_rebate
+        }
+
+        fn gas_used(&self) -> u64 {
+            self.gas_status.gas_used_pre_gas_price()
+        }
+
+        fn reset_storage_cost_and_rebate(&mut self) {
+            self.per_object_storage = Vec::new();
+            self.unmetered_storage_rebate = 0;
+        }
+
+        fn charge_storage_read(&mut self, size: usize) -> Result<(), ExecutionError> {
+            self.gas_status
+                .charge_bytes(size, self.cost_table.object_read_per_byte_cost)
+                .map_err(|e| {
+                    debug_assert_eq!(e.major_status(), StatusCode::OUT_OF_GAS);
+                    ExecutionErrorKind::InsufficientGas.into()
+                })
+        }
+
+        fn charge_publish_package(&mut self, size: usize) -> Result<(), ExecutionError> {
+            self.gas_status
+                .charge_bytes(size, self.cost_table.package_publish_per_byte_cost)
+                .map_err(|e| {
+                    debug_assert_eq!(e.major_status(), StatusCode::OUT_OF_GAS);
+                    ExecutionErrorKind::InsufficientGas.into()
+                })
+        }
+
+        /// Update `storage_rebate` and `storage_gas_units` for each object in
+        /// the transaction. There is no charge in this function.
+        /// Charges will all be applied together at the end
+        /// (`track_storage_mutation`).
+        /// Return the new storage rebate (cost of object storage) according to
+        /// `new_size`.
+        fn track_storage_mutation(&mut self, object_id: ObjectID, new_size: usize, storage_rebate: u64) -> u64 {
+            if self.is_unmetered() {
+                self.unmetered_storage_rebate += storage_rebate;
+                return 0;
+            }
+
+            // compute and track cost (based on size)
+            let new_size = new_size as u64;
+            let storage_cost = new_size * self.cost_table.storage_per_byte_cost * self.storage_gas_price;
+            // track rebate
+
+            self.per_object_storage.push((
+                object_id,
+                PerObjectStorage {
+                    storage_cost,
+                    storage_rebate,
+                    new_size,
+                },
+            ));
+            // return the new object rebate (object storage cost)
+            storage_cost
+        }
+
+        fn charge_storage_and_rebate(&mut self) -> Result<(), ExecutionError> {
+            let storage_rebate = self.storage_rebate();
+            let storage_cost = self.storage_cost();
+            let sender_rebate = sender_rebate(storage_rebate, self.rebate_rate);
+            assert!(sender_rebate <= storage_rebate);
+            if sender_rebate >= storage_cost {
+                // there is more rebate than cost, when deducting gas we are adding
+                // to whatever is the current amount charged so we are `Ok`
+                Ok(())
+            } else {
+                let gas_left = self.gas_budget - self.computation_cost;
+                // we have to charge for storage and may go out of gas, check
+                if gas_left < storage_cost - sender_rebate {
+                    // Running out of gas would cause the temporary store to reset
+                    // and zero storage and rebate.
+                    // The remaining_gas will be 0 and we will charge all in computation
+                    Err(ExecutionErrorKind::InsufficientGas.into())
+                } else {
+                    Ok(())
+                }
+            }
+        }
+
+        fn adjust_computation_on_out_of_gas(&mut self) {
+            self.per_object_storage = Vec::new();
+            self.computation_cost = self.gas_budget;
         }
     }
 

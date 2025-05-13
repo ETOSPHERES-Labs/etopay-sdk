@@ -113,4 +113,10 @@ pub enum RebasedError {
 
     #[error("GasBalanceTooLow: {0}")]
     GasBalanceTooLow(String),
+
+    #[error("GasPriceUnderRGP: {0}")]
+    GasPriceUnderRGP(String),
+
+    #[error("GasPriceTooHigh: {0}")]
+    GasPriceTooHigh(String),
 }

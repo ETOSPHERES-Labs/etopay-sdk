@@ -73,6 +73,27 @@ impl<U> Debug for GasQuantity<U> {
     }
 }
 
+impl<U> GasQuantity<U> {
+    pub fn checked_sub(self, other: Self) -> Option<Self> {
+        self.val.checked_sub(other.val).map(Self::new)
+    }
+
+    pub fn saturating_sub(self, other: Self) -> Self {
+        self.val.saturating_sub(other.val).into()
+    }
+}
+
+/// ****************************************************************************
+/// ********************* Conversion
+///
+/// ****************************************************************************
+/// *******************
+impl<U> From<u64> for GasQuantity<U> {
+    fn from(val: u64) -> Self {
+        Self::new(val)
+    }
+}
+
 /// ****************************************************************************
 /// ********************* Clone & Copy
 ///

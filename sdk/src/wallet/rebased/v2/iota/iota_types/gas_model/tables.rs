@@ -1,7 +1,7 @@
 use std::collections::BTreeMap;
 use std::sync::LazyLock;
 
-use super::CostTable;
+use crate::wallet::rebased::v2::iota::gas_model::units_types::{CostTable, Gas};
 use crate::wallet::rebased::v2::mowe::move_core_types::gas_algebra::InternalGas;
 use crate::wallet::rebased::v2::mowe::move_vm_profiler::GasProfiler;
 
@@ -121,6 +121,16 @@ impl GasStatus {
 
     fn to_internal_units(val: u64) -> InternalGas {
         InternalGas::new(val * Self::INTERNAL_UNIT_MULTIPLIER)
+    }
+
+    // The amount of gas used, it does not include the multiplication for the gas
+    // price
+    pub fn gas_used_pre_gas_price(&self) -> u64 {
+        let gas: Gas = match self.initial_budget.checked_sub(self.gas_left) {
+            Some(val) => InternalGas::to_unit_round_down(val),
+            None => InternalGas::to_unit_round_down(self.initial_budget),
+        };
+        u64::from(gas)
     }
 }
 
