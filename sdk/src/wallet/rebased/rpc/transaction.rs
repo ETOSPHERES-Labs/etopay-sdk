@@ -153,3 +153,13 @@ impl IotaTransactionBlockResponseOptions {
         self == &Self::default()
     }
 }
+
+#[derive(Eq, PartialEq, Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DryRunTransactionBlockResponse {
+    pub effects: IotaTransactionBlockEffects,
+    // pub events: IotaTransactionBlockEvents,
+    // pub object_changes: Vec<ObjectChange>,
+    // pub balance_changes: Vec<BalanceChange>,
+    // pub input: IotaTransactionBlockData,
+}

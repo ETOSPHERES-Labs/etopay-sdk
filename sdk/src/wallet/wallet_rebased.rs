@@ -2,7 +2,7 @@ use std::time::{Duration, Instant};
 
 use super::error::{Result, WalletError};
 use super::rebased::{
-    self, Argument, CoinReadApiClient, Command, GasData, ObjectArg, ProgrammableTransactionBuilder, RebasedError,
+    self, Argument, Coin, CoinReadApiClient, Command, GasData, ObjectArg, ProgrammableTransactionBuilder, RebasedError,
     RpcClient, TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
@@ -425,6 +425,102 @@ impl WalletUser for WalletImplIotaRebased {
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
-        todo!()
+        // let http_client = self.client;
+        // let address = intent.address_to;
+        //let coins;
+        //let coin_type;
+        let coin_decimals = 9;
+
+        let address = self.keystore.addresses()[0];
+        let sender = address;
+        let recipient = intent.address_to.parse::<rebased::IotaAddress>()?;
+        let receiver = recipient;
+
+        let amount = convert_crypto_amount_to_u128(intent.amount, self.decimals)? as u64;
+
+        //let owned_objects = get_owned_objects(address, None).await.unwrap();
+        // let owned_objects = cluster.get_owned_objects(address, None).await.unwrap();
+        // let owned_objects = self.client.get_owned_objects(address, None).await.unwrap();
+
+        //let owned_objects = b.get_owned_objects(address, None).await.unwrap();
+
+        let mut coins = self
+            .client
+            .get_coins(address, Some(self.coin_type.clone()), None, None)
+            .await
+            .map_err(RebasedError::RpcError)?
+            .data;
+
+        #[allow(clippy::unwrap_used)]
+        let gas_coin = coins.last().unwrap(); //.object_id().unwrap();
+
+        let object_ids: Vec<_> = coins
+            .iter()
+            .take(coins.len() - 1)
+            //.map(|obj| obj.object_id().unwrap())
+            .collect();
+
+        // let gas = coins.last().unwrap(); //.object_id().unwrap();
+
+        // let object_ids: Vec<Coin> = coins
+        //     .iter()
+        //     .take(coins.len() - 1)
+        //     //.map(|obj| obj.object_id().unwrap())
+        //     .collect();
+
+        let obj_id = object_ids[0];
+
+        // START prepare_and_sign_tx
+        let mut b = ProgrammableTransactionBuilder::new();
+        let tx_data = b.transfer_iota(receiver, shadow_rs::v1::Some(amount));
+        let pt = b.finish();
+
+        let gas_price = self
+            .client
+            .get_reference_gas_price()
+            .await
+            .map_err(RebasedError::RpcError)?;
+
+        let gas_budget = 10_000_000;
+
+        let tx_data = rebased::TransactionData::V1(rebased::TransactionDataV1 {
+            kind: TransactionKind::ProgrammableTransaction(pt),
+            sender: address,
+            gas_data: GasData {
+                payment: vec![gas_coin.obj_ref()],
+                owner: address,
+                price: *gas_price,
+                budget: gas_budget,
+            },
+            expiration: TransactionExpiration::None,
+        });
+
+        let signature = self
+            .keystore
+            .sign_secure(&address, &tx_data, rebased::Intent::iota_transaction())?;
+
+        let tx = rebased::Transaction::from_data(tx_data, vec![signature.clone()]);
+
+        let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures()?;
+
+        // END prepare_and_sign_tx
+
+        // let (tx_bytes, signatures) =
+        //     prepare_and_sign_tx(address, recipient, cluster, self.client, object_ids[0], gas).await;
+        println!("@estimate_gas_cost -> before dry_run_tx_block_resp");
+
+        #[allow(clippy::unwrap_used)]
+        let dry_run_tx_block_resp = self.client.dry_run_transaction_block(tx_bytes.clone()).await.unwrap();
+
+        println!(
+            "@estimate_gas_cost -> dry_run_tx_block_resp: {:?}",
+            dry_run_tx_block_resp
+        );
+
+        Ok(GasCostEstimation {
+            max_fee_per_gas: 0,
+            max_priority_fee_per_gas: 0,
+            gas_limit: 0,
+        })
     }
 }

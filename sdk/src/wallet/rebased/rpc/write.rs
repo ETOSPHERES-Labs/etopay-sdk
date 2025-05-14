@@ -9,7 +9,7 @@ use jsonrpsee::proc_macros::rpc;
 use serde::{Deserialize, Serialize};
 
 use super::super::encoding::Base64;
-use super::{IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions};
+use super::{DryRunTransactionBlockResponse, IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions};
 
 /// Provides methods for executing and testing transactions.
 #[rpc(client, namespace = "iota")]
@@ -37,6 +37,10 @@ pub trait WriteApi {
         // The request type, derived from `IotaTransactionBlockResponseOptions` if None
         request_type: Option<ExecuteTransactionRequestType>,
     ) -> RpcResult<IotaTransactionBlockResponse>;
+    /// Return transaction execution effects including the gas cost summary,
+    /// while the effects are not committed to the chain.
+    #[method(name = "dryRunTransactionBlock")]
+    async fn dry_run_transaction_block(&self, tx_bytes: Base64) -> RpcResult<DryRunTransactionBlockResponse>;
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

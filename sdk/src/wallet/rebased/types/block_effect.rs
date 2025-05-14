@@ -3,6 +3,8 @@ use std::fmt::{self, Display, Formatter};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
+use super::GasCostSummary;
+
 #[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
 #[serde(rename = "TransactionBlockEffects", rename_all = "camelCase", tag = "messageVersion")]
 pub enum IotaTransactionBlockEffects {
@@ -20,7 +22,7 @@ pub struct IotaTransactionBlockEffectsV1 {
     // #[schemars(with = "BigInt<u64>")]
     // #[serde_as(as = "BigInt<u64>")]
     // pub executed_epoch: EpochId,
-    // pub gas_used: GasCostSummary,
+    pub gas_used: GasCostSummary,
     // /// The version that every modified (mutated or deleted) object had before
     // /// it was modified by this transaction.
     // #[serde(default, skip_serializing_if = "Vec::is_empty")]
