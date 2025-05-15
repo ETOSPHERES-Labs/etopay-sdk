@@ -67,17 +67,19 @@ async fn main() {
     let balance = sdk.get_balance(&user.pin).await.unwrap();
     println!("address: {recipient_address}, balance: {balance:?}");
 
-    // Send amount
     let amount = dec!(1.0).try_into().unwrap();
     let data = Some("test".to_string().into_bytes());
-    // estimate gas (uncomment this once gas estimation is implemented)
-    // let estimate = sdk
-    //     .estimate_gas(&user.pin, &recipient_address, amount, data.clone())
-    //     .await
-    //     .unwrap();
-    //
-    // println!("Estimated gas: {estimate:?}");
 
+    // Estimate gas
+    let estimate = sdk
+        .estimate_gas(&user.pin, &recipient_address, amount, data.clone())
+        .await
+        .unwrap()
+        .gas_limit;
+
+    println!("Estimated gas: {estimate:?}");
+
+    // Send amount
     let tx_id = sdk
         .send_amount(&user.pin, &recipient_address, amount, data)
         .await

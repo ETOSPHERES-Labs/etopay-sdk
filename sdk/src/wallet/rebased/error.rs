@@ -30,6 +30,9 @@ pub enum RebasedError {
     #[error("RpcError: {0}")]
     RpcError(#[from] jsonrpsee::core::client::Error),
 
+    #[error("InsufficientBalance: {0}")]
+    InsufficientBalance(String),
+
     #[error("InvalidAddress")]
     InvalidAddress,
 
