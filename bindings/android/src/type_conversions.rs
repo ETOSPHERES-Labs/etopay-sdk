@@ -1,3 +1,4 @@
+use sdk::types::transactions::GasCostEstimation;
 use sdk::types::transactions::PurchaseDetails;
 
 #[derive(Debug, serde::Serialize)]
@@ -34,6 +35,28 @@ impl TryFrom<PurchaseDetails> for PurchaseDetailsEntity {
             status: status.to_string(),
             network_key: val.network.key,
             invalid_reasons: status_reasons,
+        })
+    }
+}
+
+/// Gas estimation (EIP-1559)
+#[derive(Debug, serde::Serialize)]
+pub struct GasCostEstimationEntity {
+    /// The maximum fee the sender is willing to pay per unit of gas.
+    pub max_fee_per_gas: u128,
+    /// The maximum tip the sender is willing to pay to miners (in EIP-1559).
+    pub max_priority_fee_per_gas: u128,
+    /// The maximum amount of gas that the transaction can consume.
+    pub gas_limit: u64,
+}
+
+impl TryFrom<GasCostEstimation> for GasCostEstimationEntity {
+    type Error = sdk::Error;
+    fn try_from(val: GasCostEstimation) -> Result<Self, Self::Error> {
+        Ok(GasCostEstimationEntity {
+            max_fee_per_gas: val.max_fee_per_gas,
+            max_priority_fee_per_gas: val.max_priority_fee_per_gas,
+            gas_limit: val.gas_limit,
         })
     }
 }
