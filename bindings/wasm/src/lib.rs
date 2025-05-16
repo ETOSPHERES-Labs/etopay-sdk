@@ -504,13 +504,13 @@ impl ETOPaySdk {
         .map_err(|e| format!("{e:#?}"))
     }
 
-    /// Sends the given amount to the given address
+    /// Estimates the amount of gas required to execute the transaction.
     ///
     /// @param {string} pin - The pin for verification
     /// @param {string} address - The address of the receiver
     /// @param {number} amount - The amount to send in the selected currency
     /// @param {Uint8Array | undefined} data - The data associated with the transaction. Optional.
-    /// @returns {Promise<string>} the transaction id.
+    /// @return {Promise<string>} The estimated gas as a serialized JSON string
     #[wasm_bindgen(skip_jsdoc, js_name = "estimateGas")]
     pub async fn estimate_gas(
         &self,
