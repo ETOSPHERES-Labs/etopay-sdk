@@ -75,6 +75,7 @@ mod ffi {
             newtypes::{AccessToken, EncryptionPin, PlainPassword},
         },
     };
+    use type_conversions::GasCostEstimationEntity;
     use type_conversions::PurchaseDetailsEntity;
 
     /// Set the configuration as a JSON-encoded string.
@@ -809,6 +810,34 @@ mod ffi {
             sdk.send_amount(&pin, &address, amount, data).await
         });
         result.map_err(|e| format!("{e:#?}"))
+    }
+
+    /// Estimates the amount of gas required to execute the transaction.
+    ///
+    /// @param pin The pin for verification
+    /// @param address The address of the receiver
+    /// @param amount The amount to send in the selected currency
+    /// @param data The data associated with the transaction. Pass NULL to not specify any data.
+    ///
+    /// @return {Promise<string>} The estimated gas as a serialized JSON string
+    #[public_name = "estimateGas"]
+    pub fn estimateGas(pin: String, address: String, amount: f64, data: Option<Vec<u8>>) -> Result<String, String> {
+        let result = runtime().block_on(async move {
+            let mut sdk = get_or_init_sdk().write().await;
+            let amount = CryptoAmount::try_from(amount)?;
+            let pin = EncryptionPin::try_from_string(pin)?;
+            sdk.estimate_gas(&pin, &address, amount, data)
+                .await
+                .and_then(TryInto::try_into)
+        });
+
+        match result {
+            Ok(value) => {
+                let entity: GasCostEstimationEntity = value;
+                serde_json::to_string(&entity).map_err(|e| format!("{e:#?}"))
+            }
+            Err(e) => Err(format!("{e:#?}")),
+        }
     }
 
     /// Updates the IBAN of the user
