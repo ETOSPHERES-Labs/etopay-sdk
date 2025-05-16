@@ -97,6 +97,7 @@ impl WalletImplEvm {
     }
 
     /// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
+    #[allow(clippy::result_large_err)]
     fn prepare_transaction(&self, intent: &TransactionIntent) -> Result<TransactionRequest> {
         let TransactionIntent {
             address_to,
