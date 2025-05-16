@@ -53,7 +53,7 @@ public class SendAmountRebased13 {
             System.out.println("balance: " + balance);
 
             // estimate gas
-            double estimate = sdk.estimateGas(utils.PIN, address.toString(), 1, "java bindings test".getBytes());
+            String estimate = sdk.estimateGas(utils.PIN, address.toString(), 1, "java bindings test".getBytes());
             System.out.println("estimate: " + estimate);
 
             // send amount
