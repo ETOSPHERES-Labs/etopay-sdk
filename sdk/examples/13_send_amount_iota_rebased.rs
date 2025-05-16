@@ -43,24 +43,10 @@ async fn main() {
         .await
         .unwrap();
 
-    // Set network
-    sdk.set_networks(vec![ApiNetwork {
-        key: "iota-rebased".to_string(),
-        is_testnet: true,
-        display_name: "IOTA Rebased".to_string(),
-        display_symbol: "IOTA".to_string(),
-        coin_type: 0,
-        // node_urls: vec!["http://127.0.0.1:9000".to_string()],
-        // node_urls: vec!["https://api.devnet.iota.cafe".to_string()],
-        node_urls: vec!["https://api.testnet.iota.cafe".to_string()],
-        decimals: 9,
-        can_do_purchases: false,
-        protocol: ApiProtocol::IotaRebased {
-            coin_type: "0x2::iota::IOTA".to_string(),
-        },
-        block_explorer_url: String::new(),
-    }]);
-    sdk.set_network("iota-rebased".to_string()).await.unwrap();
+    // Fetch networks from backend
+    let networks = sdk.get_networks().await.unwrap();
+    let iota_network_key = &networks.get(2).unwrap().key;
+    sdk.set_network(iota_network_key.to_string()).await.unwrap();
 
     // Generate new address
     let recipient_address = sdk.generate_new_address(&user.pin).await.unwrap();
