@@ -504,6 +504,31 @@ impl ETOPaySdk {
         .map_err(|e| format!("{e:#?}"))
     }
 
+    /// Sends the given amount to the given address
+    ///
+    /// @param {string} pin - The pin for verification
+    /// @param {string} address - The address of the receiver
+    /// @param {number} amount - The amount to send in the selected currency
+    /// @param {Uint8Array | undefined} data - The data associated with the transaction. Optional.
+    /// @returns {Promise<string>} the transaction id.
+    #[wasm_bindgen(skip_jsdoc, js_name = "estimateGas")]
+    pub async fn estimate_gas(
+        &self,
+        pin: String,
+        address: String,
+        amount: f64,
+        data: Option<Vec<u8>>,
+    ) -> Result<GasCostEstimation, String> {
+        let mut sdk = self.inner.write().await;
+        async move {
+            let amount = CryptoAmount::try_from(amount)?;
+            let pin = EncryptionPin::try_from_string(pin)?;
+            sdk.estimate_gas(&pin, &address, amount, data).await.map(Into::into)
+        }
+        .await
+        .map_err(|e| format!("{e:#?}"))
+    }
+
     /// Gets the detailed lists of purchases (COMPLIMENTS and PURCHASES)
     ///
     /// @param {number} start - The start page
