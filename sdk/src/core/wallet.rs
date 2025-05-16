@@ -504,7 +504,8 @@ impl Sdk {
 
         // TODO: we need to support this better for all networks with a unified logic and interface
         let tx_list = match network.protocol {
-            crate::types::networks::ApiProtocol::Evm { .. } => {
+            crate::types::networks::ApiProtocol::Evm { .. }
+            | crate::types::networks::ApiProtocol::IotaRebased { .. } => {
                 // We retrieve the transaction list from the wallet,
                 // then synchronize selected transactions (by fetching their current status from the network),
                 // and finally, save the refreshed list back to the wallet
@@ -547,7 +548,7 @@ impl Sdk {
                 }
             }
             crate::types::networks::ApiProtocol::EvmERC20 { .. } => wallet.get_wallet_tx_list(start, limit).await?,
-            crate::types::networks::ApiProtocol::IotaRebased { .. } => wallet.get_wallet_tx_list(start, limit).await?,
+            //crate::types::networks::ApiProtocol::IotaRebased { .. } => wallet.get_wallet_tx_list(start, limit).await?,
             crate::types::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
         };
 
