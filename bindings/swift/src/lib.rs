@@ -48,6 +48,13 @@ pub mod ffi {
     }
 
     #[swift_bridge(swift_repr = "struct")]
+    pub struct GasCostEstimation {
+        pub max_fee_per_gas: String,
+        pub max_priority_fee_per_gas: String,
+        pub gas_limit: String,
+    }
+
+    #[swift_bridge(swift_repr = "struct")]
     pub struct NewViviswapUser {
         pub username: String,
     }
@@ -410,6 +417,14 @@ pub mod ffi {
             amount: f64,
             data: Option<Vec<u8>>,
         ) -> Result<String, String>;
+        #[swift_bridge(swift_name = "estimateGas")]
+        async fn estimate_gas(
+            &self,
+            pin: String,
+            address: String,
+            amount: f64,
+            data: Option<Vec<u8>>,
+        ) -> Result<GasCostEstimation, String>;
         #[swift_bridge(swift_name = "updateIbanViviswap")]
         async fn update_iban_viviswap(&self, pin: String, address: String) -> Result<ViviswapAddressDetail, String>;
         #[swift_bridge(swift_name = "getIbanViviswap")]

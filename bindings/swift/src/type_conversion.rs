@@ -20,6 +20,16 @@ impl From<sdk::types::ApiTxStatus> for ffi::TxStatus {
     }
 }
 
+impl From<sdk::types::transactions::GasCostEstimation> for ffi::GasCostEstimation {
+    fn from(value: sdk::types::transactions::GasCostEstimation) -> Self {
+        Self {
+            max_fee_per_gas: value.max_fee_per_gas.to_string(),
+            max_priority_fee_per_gas: value.max_priority_fee_per_gas.to_string(),
+            gas_limit: value.gas_limit.to_string(),
+        }
+    }
+}
+
 convert_simple_struct!(sdk::types::NewCaseIdResponse, ffi::NewCaseIdResponse, case_id, case_url,);
 
 convert_simple_struct!(
