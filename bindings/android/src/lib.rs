@@ -819,7 +819,7 @@ mod ffi {
     /// @param amount The amount to send in the selected currency
     /// @param data The data associated with the transaction. Pass NULL to not specify any data.
     ///
-    /// @return {Promise<string>} The estimated gas as a serialized JSON string
+    /// @return The estimated gas as a serialized JSON string
     #[public_name = "estimateGas"]
     pub fn estimateGas(pin: String, address: String, amount: f64, data: Option<Vec<u8>>) -> Result<String, String> {
         let result = runtime().block_on(async move {
