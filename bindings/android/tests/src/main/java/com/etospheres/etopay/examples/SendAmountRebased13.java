@@ -8,7 +8,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import java.util.List;
 import com.etospheres.etopay.ETOPaySdk;
 
-public class SendAmount13 {
+public class SendAmountRebased13 {
 
     public static void main(String[] args) {
         // initialize the sdk
