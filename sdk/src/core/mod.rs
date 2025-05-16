@@ -79,6 +79,7 @@ impl Default for Sdk {
 
 impl Sdk {
     /// Initialize an SDK instance from a config
+    #[allow(clippy::result_large_err)]
     pub fn new(config: Config) -> Result<Self> {
         debug!("Configuration: {:?}", config);
         let mut s = Self::default();

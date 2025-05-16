@@ -62,6 +62,7 @@ impl WalletImplIotaRebased {
 }
 
 /// Convert a [`u128`] to [`CryptoAmount`] while taking the decimals into account.
+#[allow(clippy::result_large_err)]
 fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmount> {
     let Some(mut result_decimal) = Decimal::from_u128(value) else {
         return Err(WalletError::ConversionError(format!(
@@ -83,6 +84,7 @@ fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmo
     })
 }
 /// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+#[allow(clippy::result_large_err)]
 fn convert_crypto_amount_to_u128(amount: CryptoAmount, decimals: u32) -> Result<u128> {
     // normalize to remove trailing zeros
     let value_decimal = amount.inner().normalize();

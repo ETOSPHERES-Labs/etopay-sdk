@@ -217,6 +217,7 @@ pub struct GeneratedShares {
 }
 
 /// Creates shares from a [`Mnemonic`] that can be resolved into a [`Mnemonic`] again when reconstructed.
+#[allow(clippy::result_large_err)]
 pub fn create_shares_from_mnemonic(
     mnemonic: impl Into<Mnemonic>,
     password: &SecretSlice<u8>,
@@ -234,6 +235,7 @@ pub fn create_shares_from_mnemonic(
 
 /// Reconstruct a [`Mnemonic`] from the shares. Can be used to initialize a wallet using the
 /// [`iota_sdk::client::secret::mnemonic::MnemonicSecretManager::try_from_mnemonic`] function.
+#[allow(clippy::result_large_err)]
 pub fn reconstruct_mnemonic(
     shares: &[&Share],
     password: Option<&SecretSlice<u8>>,
@@ -250,6 +252,7 @@ pub fn reconstruct_mnemonic(
 }
 
 /// Creates shares from any secret represented as a vector of bytes.
+#[allow(clippy::result_large_err)]
 fn create_shares_from_secret(
     payload_type: PayloadType,
     secret: &SecretSlice<u8>,
@@ -288,6 +291,7 @@ fn create_shares_from_secret(
 }
 
 /// Reconstruct the secret from provided shares.
+#[allow(clippy::result_large_err)]
 fn reconstruct_secret(
     shares: &[&Share],
     password: Option<&SecretSlice<u8>>,
@@ -345,6 +349,7 @@ fn reconstruct_secret(
     }
 }
 
+#[allow(clippy::result_large_err)]
 fn encrypt_with_password(data: &ShareData, key: &SecretSlice<u8>) -> Result<ShareData, ShareError> {
     use aes_gcm::{
         Aes256Gcm, Key,
@@ -375,6 +380,7 @@ fn encrypt_with_password(data: &ShareData, key: &SecretSlice<u8>) -> Result<Shar
     Ok(ShareData(data.into()))
 }
 
+#[allow(clippy::result_large_err)]
 fn decrypt_with_password(data: &ShareData, key: &SecretSlice<u8>) -> Result<ShareData, ShareError> {
     use aes_gcm::{
         Aes256Gcm, Key, Nonce,

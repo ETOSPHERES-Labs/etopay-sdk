@@ -100,6 +100,7 @@ impl TryFrom<DeserializedConfig> for Config {
 
 impl Config {
     /// Load the [`Config`] directly from a JSON-formatted [`String`] or [`str`].
+    #[allow(clippy::result_large_err)]
     pub fn from_json(json: impl AsRef<str>) -> Result<Self> {
         let json = json.as_ref();
         let deserialized_config: DeserializedConfig = json.parse()?;
@@ -109,6 +110,7 @@ impl Config {
 
 impl Sdk {
     /// Set the [`Config`] needed by the SDK
+    #[allow(clippy::result_large_err)]
     pub fn set_config(&mut self, config: Config) -> Result<()> {
         info!("Setting config: {config:?}");
         // TODO: do any destructing things if config already exists
@@ -132,6 +134,7 @@ impl Sdk {
     }
 
     /// Set path prefix
+    #[allow(clippy::result_large_err)]
     fn initialize_user_repository(&mut self) -> Result<()> {
         // initialize jammdb
         #[cfg(feature = "jammdb_repo")]
