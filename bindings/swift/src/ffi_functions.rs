@@ -14,9 +14,9 @@
 //! The conversion of types between Swift and Rust is done in the `type_conversion.rs` module.
 
 use crate::ffi::{
-    CaseDetailsResponse, File, IdentityOfficialDocumentData, IdentityPersonalDocumentData, NewCaseIdResponse,
-    NewViviswapUser, Protocol, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit, ViviswapKycStatus,
-    ViviswapPartiallyKycDetails, ViviswapWithdrawal,
+    CaseDetailsResponse, File, GasCostEstimation, IdentityOfficialDocumentData, IdentityPersonalDocumentData,
+    NewCaseIdResponse, NewViviswapUser, Protocol, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit,
+    ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::currencies::CryptoAmount;
@@ -893,6 +893,41 @@ impl ETOPaySdk {
             let amount = CryptoAmount::try_from(amount)?;
             let pin = EncryptionPin::try_from_string(pin)?;
             sdk.send_amount(&pin, &address, amount, data).await
+        }
+        .await
+        .map_err(|err| format!("{:#?}", err))
+    }
+
+    /// Estimates the amount of gas required to execute the transaction.
+    ///
+    /// # Arguments
+    ///
+    /// * `pin` - The PIN of the user.
+    /// * `address` - The receiver's address.
+    /// * `amount` - The amount to send.
+    /// * `data` - The associated data with the transaction.
+    ///
+    /// # Returns
+    ///
+    /// * Ok - the gas estimation of the transaction
+    /// * Err - if the user or wallet is not initialized, there is an error verifying the PIN, or there is an error estimating the transaction gas.
+    pub async fn estimate_gas(
+        &self,
+        pin: String,
+        address: String,
+        amount: f64,
+        data: Option<Vec<u8>>,
+    ) -> Result<GasCostEstimation, String> {
+        let mut sdk = self.inner.write().await;
+        async move {
+            async move {
+                let amount = CryptoAmount::try_from(amount)?;
+                let pin = EncryptionPin::try_from_string(pin)?;
+                sdk.estimate_gas(&pin, &address, amount, data).await
+            }
+            .await
+            .map(Into::into)
+            .map_err(|err| format!("{:#?}", err))
         }
         .await
         .map_err(|err| format!("{:#?}", err))
