@@ -55,6 +55,7 @@ pub struct WalletImplEvm {
 
 impl WalletImplEvm {
     /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
+    #[allow(clippy::result_large_err)]
     pub fn new(mnemonic: Mnemonic, node_urls: &[String], chain_id: u64, decimals: u32, coin_type: u32) -> Result<Self> {
         // Ase mnemonic to create a Signer
         let wallet = MnemonicBuilder::<English>::default()
@@ -84,11 +85,13 @@ impl WalletImplEvm {
     }
 
     /// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+    #[allow(clippy::result_large_err)]
     fn convert_alloy_256_to_crypto_amount(&self, v: alloy_primitives::Uint<256, 4>) -> Result<CryptoAmount> {
         convert_alloy_256_to_crypto_amount(v, self.decimals)
     }
 
     /// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+    #[allow(clippy::result_large_err)]
     fn convert_crypto_amount_to_u256(&self, v: CryptoAmount) -> Result<alloy_primitives::U256> {
         convert_crypto_amount_to_u256(v, self.decimals)
     }
@@ -152,6 +155,7 @@ impl WalletImplEvm {
 }
 
 /// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
+#[allow(clippy::result_large_err)]
 fn convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -> Result<CryptoAmount> {
     let value_u128 = u128::try_from(value)
         .map_err(|e| WalletError::ConversionError(format!("could not convert U256 to u128: {e:?}")))?;
@@ -177,6 +181,7 @@ fn convert_alloy_256_to_crypto_amount(value: U256, decimals: u32) -> Result<Cryp
 }
 
 /// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
+#[allow(clippy::result_large_err)]
 fn convert_crypto_amount_to_u256(amount: CryptoAmount, decimals: u32) -> Result<U256> {
     // normalize to remove trailing zeros
     let value_decimal = amount.inner().normalize();
@@ -324,6 +329,7 @@ pub struct WalletImplEvmErc20 {
 }
 impl WalletImplEvmErc20 {
     /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
+    #[allow(clippy::result_large_err)]
     pub fn new(
         mnemonic: Mnemonic,
         node_urls: &[String],
@@ -343,6 +349,7 @@ impl WalletImplEvmErc20 {
     }
 
     /// Helper function that prepares the [`TransactionRequest`] so that we can also use the same logic for gas estimation.
+    #[allow(clippy::result_large_err)]
     fn prepare_transaction(&self, intent: &TransactionIntent) -> Result<TransactionRequest> {
         let TransactionIntent {
             address_to,
