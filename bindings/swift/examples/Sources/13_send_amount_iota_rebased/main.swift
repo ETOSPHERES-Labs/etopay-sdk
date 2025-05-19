@@ -54,7 +54,7 @@ Task {
         let bytes: [UInt8] = Array(message.utf8)
 
         let estimate = try await sdk.estimateGas(env.pin, address.toString(), 1, rustVec)
-        print("estimate: \(estimate.toString())")
+        print("estimate: \(estimate.gas_limit.toString())")
 
         let tx_id = try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
         print("sent amount of 1 on transaction \(tx_id.toString())")
