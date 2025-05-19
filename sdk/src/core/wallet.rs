@@ -548,7 +548,6 @@ impl Sdk {
                 }
             }
             crate::types::networks::ApiProtocol::EvmERC20 { .. } => wallet.get_wallet_tx_list(start, limit).await?,
-            //crate::types::networks::ApiProtocol::IotaRebased { .. } => wallet.get_wallet_tx_list(start, limit).await?,
             crate::types::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
         };
 
