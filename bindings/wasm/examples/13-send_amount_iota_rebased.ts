@@ -17,7 +17,7 @@ async function main() {
     // fetch networks from backend
     let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
-    sdk.setNetwork(networks[2].key);
+    sdk.setNetwork("iota_rebased_testnet");
 
     let recipient_address = await sdk.generateNewAddress(PIN);
     console.log("address", recipient_address);
