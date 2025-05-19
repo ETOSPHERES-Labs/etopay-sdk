@@ -30,7 +30,7 @@ Task {
         print("migrated wallet from mnemonic")
 
         // Fetch networks from backend
-        try await sdk.getNetworks()
+        let _ = try await sdk.getNetworks()
         try await sdk.setNetwork("iota_rebased_testnet")
         print("retrieved available networks and set the network for the wallet")
 
