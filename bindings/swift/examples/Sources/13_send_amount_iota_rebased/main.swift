@@ -57,6 +57,7 @@ Task {
         print("estimate: \(estimate.gas_limit.toString())")
 
         let tx_id = try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
+        print("sent amount of 1 on transaction [OK]")
         print("sent amount of 1 on transaction \(tx_id.toString())")
 
         // Get new balance
