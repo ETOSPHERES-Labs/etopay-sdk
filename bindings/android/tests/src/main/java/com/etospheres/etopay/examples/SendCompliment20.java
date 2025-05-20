@@ -36,20 +36,10 @@ public class SendCompliment20 {
             System.out.println("Created and initialized new wallet from mnemonic.");
 
             // fetch networks from backend
-            String networks = sdk.getNetworks();
+            sdk.getNetworks();
 
-            List<Network> networksList;
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                networksList = objectMapper.readValue(networks, new TypeReference<List<Network>>() {
-                });
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Error processing JSON response", e);
-            }
-
-            Network iotaNetwork = networksList.get(0);
             // set the network configuration for the wallet
-            sdk.setNetwork(iotaNetwork.key);
+            sdk.setNetwork("iota_rebased_testnet");
 
             // generate receiver address
             String address = sdk.generateNewAddress(utils.PIN);

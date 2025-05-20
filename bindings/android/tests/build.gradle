@@ -169,16 +169,6 @@ task runSendAmount13(type: JavaExec) {
     systemProperty "java.library.path", file("../../../target/release/")
 }
 
-
-task runSendAmountIotaRebased13(type: JavaExec) {
-    group = 'application'
-    main = 'com.etospheres.etopay.examples.SendAmountIotaRebased13'
-    classpath = sourceSets.main.runtimeClasspath
-    dependsOn compileNativeReleaseLibrary
-
-    systemProperty "java.library.path", file("../../../target/release/")
-}
-
 task runGetExchangeRate14(type: JavaExec) {
     group = 'application'
     main = 'com.etospheres.etopay.examples.GetExchangeRate14'
@@ -258,7 +248,6 @@ task runAllExamples(dependsOn: [
     'runResetPin11',
     'runChangePassword12',
     'runSendAmount13',
-    'runSendAmountIotaRebased13',
     'runGetExchangeRate14',
     'runGetTxList16',
     'runDeleteUser18',

@@ -145,15 +145,6 @@ let package = Package(
         ),
 
         .executableTarget(
-            name: "13_send_amount_iota_rebased",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/13_send_amount_iota_rebased"
-        ),
-
-        .executableTarget(
             name: "14_get_exchange_rate",
             dependencies: [
                 .product(name: "ETOPaySdk", package: "ETOPaySdk"),

@@ -17,9 +17,8 @@ async fn main() {
     sdk.init_user(&user.username).await.unwrap();
 
     // Fetch networks from backend
-    let networks = sdk.get_networks().await.unwrap();
-    let iota_network_key = &networks.first().unwrap().key;
-    sdk.set_network(iota_network_key.to_string()).await.unwrap();
+    let _ = sdk.get_networks().await.unwrap();
+    sdk.set_network("iota_rebased_testnet".to_string()).await.unwrap();
 
     // use wallet without creating a new one first
     let output = sdk.generate_new_address(&user.pin).await;

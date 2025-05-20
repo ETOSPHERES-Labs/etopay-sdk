@@ -17,7 +17,7 @@ async function main() {
     // fetch networks from backend
     let networks = await sdk.getNetworks();
     // set the network configuration for the wallet
-    sdk.setNetwork(networks[0].key);
+    sdk.setNetwork("iota_rebased_testnet");
 
     let recipient_address = await sdk.generateNewAddress(PIN);
     console.log("address", recipient_address);
@@ -26,6 +26,10 @@ async function main() {
     console.log("balance before sending amount", balance_before);
 
     const data = new TextEncoder().encode("wasm example");
+
+    let estimate = await sdk.estimateGas(PIN, recipient_address, 1.0, data);
+    console.log("estimated gas", estimate.gas_limit);
+
     let tx_id = await sdk.sendAmount(PIN, recipient_address, 1.0, data);
     console.log("sent amount with transaction", tx_id);
 
