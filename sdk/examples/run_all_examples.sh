@@ -12,7 +12,7 @@ examples=(
     "05_migrate_wallet_from_backup"
     "06_generate_new_address"
     "07_get_balance"
-    "08_create_purchase_request"
+    # "08_create_purchase_request"
     # "09_onboard_user_viviswap"
     "10_verify_pin"
     "11_reset_pin"

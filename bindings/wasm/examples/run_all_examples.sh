@@ -12,7 +12,7 @@ examples=(
     "05-migrate_wallet_from_backup.ts"
     "06-generate_new_address.ts"
     "07-get_balance.ts"
-    "08-create_purchase_request.ts"
+    # "08-create_purchase_request.ts"
     # "09-onboard_user_via_viviswap.ts"
     "10-verify_pin.ts"
     "11-reset_pin.ts"

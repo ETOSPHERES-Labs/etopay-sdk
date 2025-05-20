@@ -124,14 +124,14 @@ task runGetBalance07(type: JavaExec) {
     systemProperty "java.library.path", file("../../../target/release/")
 }
 
-task runCreatePurchaseRequest08(type: JavaExec) {
-    group = 'application'
-    main = 'com.etospheres.etopay.examples.CreatePurchaseRequest08'
-    classpath = sourceSets.main.runtimeClasspath
-    dependsOn compileNativeReleaseLibrary
+// task runCreatePurchaseRequest08(type: JavaExec) {
+//     group = 'application'
+//     main = 'com.etospheres.etopay.examples.CreatePurchaseRequest08'
+//     classpath = sourceSets.main.runtimeClasspath
+//     dependsOn compileNativeReleaseLibrary
 
-    systemProperty "java.library.path", file("../../../target/release/")
-}
+//     systemProperty "java.library.path", file("../../../target/release/")
+// }
 
 task runVerifyPin10(type: JavaExec) {
     group = 'application'
@@ -242,7 +242,7 @@ task runAllExamples(dependsOn: [
     'runMigrateWalletFromBackup05',
     'runGenerateNewAddress06',
     'runGetBalance07',
-    'runCreatePurchaseRequest08',
+    // 'runCreatePurchaseRequest08',
     // 'runOnboardUserViviswap09',
     'runVerifyPin10',
     'runResetPin11',

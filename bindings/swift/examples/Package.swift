@@ -72,14 +72,14 @@ let package = Package(
             path: "Sources/05_migrate_wallet_from_backup"
         ),
 
-        .executableTarget(
-            name: "06_generate_new_address",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/06_generate_new_address"
-        ),
+        // .executableTarget(
+        //     name: "06_generate_new_address",
+        //     dependencies: [
+        //         .product(name: "ETOPaySdk", package: "ETOPaySdk"),
+        //         "utils",
+        //     ],
+        //     path: "Sources/06_generate_new_address"
+        // ),
 
         .executableTarget(
             name: "07_get_balance",

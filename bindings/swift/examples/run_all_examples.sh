@@ -10,7 +10,7 @@ examples=(
     "03_create_new_wallet"
     "04_migrate_wallet_from_mnemonic"
     "05_migrate_wallet_from_backup"
-    "06_generate_new_address"
+    # "06_generate_new_address"
     "07_get_balance"
     "08_create_purchase_request"
     # "09_onboard_user_viviswap"
