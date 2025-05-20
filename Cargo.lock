@@ -275,9 +275,23 @@ dependencies = [
 
 [[package]]
 name = "alloy-json-rpc"
-version = "0.15.6"
+version = "0.15.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3593ce03c82601517eee458f67bb5dc642b9baff7016063f03a4ccbcfb52a387"
+checksum = "ca1e31b50f4ed9a83689ae97263d366b15b935a67c4acb5dd46d5b1c3b27e8e6"
+dependencies = [
+ "alloy-primitives",
+ "alloy-sol-types",
+ "serde",
+ "serde_json",
+ "thiserror 2.0.12",
+ "tracing",
+]
+
+[[package]]
+name = "alloy-json-rpc"
+version = "1.0.4"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8e8c28ad7af5ae99b0f1983eb601390fa2a972ddaec2b24017d3bdbd4a905bfc"
 dependencies = [
  "alloy-primitives",
  "alloy-sol-types",
@@ -296,7 +310,7 @@ dependencies = [
  "alloy-consensus",
  "alloy-consensus-any",
  "alloy-eips",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.15.11",
  "alloy-network-primitives",
  "alloy-primitives",
  "alloy-rpc-types-any",
@@ -362,7 +376,7 @@ dependencies = [
  "alloy-chains",
  "alloy-consensus",
  "alloy-eips",
- "alloy-json-rpc",
+ "alloy-json-rpc 0.15.11",
  "alloy-network",
  "alloy-network-primitives",
  "alloy-primitives",
@@ -420,7 +434,7 @@ version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "821fca097f02720cd2a53e785776e265f36288f8210aa9177c9de05e2c2724c3"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.15.11",
  "alloy-primitives",
  "alloy-transport",
  "alloy-transport-http",
@@ -606,7 +620,7 @@ version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "609f69c9153df716e7e6ef002cba69f94b7635eb2c603fff69b664aa6acea93a"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.15.11",
  "base64 0.22.1",
  "derive_more 2.0.1",
  "futures",
@@ -628,7 +642,7 @@ version = "0.15.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "c2e60987afbc49b8719578355726059579a1a197741a2adae52f860d5d7464cc"
 dependencies = [
- "alloy-json-rpc",
+ "alloy-json-rpc 0.15.11",
  "alloy-transport",
  "reqwest 0.12.15",
  "serde_json",
@@ -2048,7 +2062,7 @@ dependencies = [
  "aes-gcm",
  "alloy",
  "alloy-consensus",
- "alloy-json-rpc",
+ "alloy-json-rpc 1.0.4",
  "alloy-primitives",
  "alloy-provider",
  "alloy-transport",
