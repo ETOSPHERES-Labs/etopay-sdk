@@ -144,14 +144,14 @@ let package = Package(
             path: "Sources/13_send_amount"
         ),
 
-        .executableTarget(
-            name: "14_get_exchange_rate",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/14_get_exchange_rate"
-        ),
+        // .executableTarget(
+        //     name: "14_get_exchange_rate",
+        //     dependencies: [
+        //         .product(name: "ETOPaySdk", package: "ETOPaySdk"),
+        //         "utils",
+        //     ],
+        //     path: "Sources/14_get_exchange_rate"
+        // ),
 
         .executableTarget(
             name: "16_get_tx_list",

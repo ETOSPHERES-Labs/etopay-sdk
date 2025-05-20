@@ -18,7 +18,7 @@ examples=(
     "11_reset_pin"
     "12_change_password"
     "13_send_amount"
-    "14_get_exchange_rate"
+    # "14_get_exchange_rate"
     "16_get_tx_list"
     "18_delete_user"
     "19_get_wallet_tx_list"

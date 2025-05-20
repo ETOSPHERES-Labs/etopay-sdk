@@ -18,7 +18,7 @@ examples=(
     "11-reset_pin.ts"
     "12-change_password.ts"
     "13-send_amount.ts"
-    "14-get_exchange_rate.ts"
+    # "14-get_exchange_rate.ts"
     "16-get_tx_list.ts"
     "18-delete_user.ts"
     "19-get_wallet_tx_list.ts"
