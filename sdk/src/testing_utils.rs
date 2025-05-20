@@ -50,7 +50,8 @@ pub const ENCRYPTED_SHARE: &str = "ME-RS-AesGcm-K3vx+e6IF6BOUJ2DemvsdflQq2CbolcF
 pub const NOT_ENCRYPTED_SHARE: &str = "ME-RS-N-Mi0xLUNBRVFBaGdESXFBRStPVUZYZTJnMTdLRFY1L2pWRllQTHdtZ0dCWExJbitjTERReFRyRHArWGNVMG5yY3UyVmFONFEvZkVoeXNadm5qNFhmRDVIZXZ3eHB2bENTYnZIZTFtOTlXdjJwby8zVWl0d2VhMnVWOTZaejB5WmhEdHlkRDFYcEg1R0RIYXFvZDBpTHdpcDZ3d1k5T0VWdEJhZmtkUVRGaTNNM3gvY2dsK0FDWVQ5WG50TlJycnRtWFRTUGZ4MG54R1lVc0NWUnNKY3h5Q0JxSHBlRGVRekpSTlFxVldMNGpJU3JCZkFRcEpYMnJoT1o4OXM1V3VLaW5PWFd0YUZncTRnd2t1VzR0ZkJJZzVUMjFlaXpGNEpWNzlMcXFXSDZoY3N0Z1huYzZYWTJvZjRvaytlYnJWOFBmR1lOU1NxRWQ4VFpqUzlBL0h0clJGNThEbUdaL2Z2Nmp5MjJjS01hUWllK1ZqdFZ4OUJyblJjWThYYTgxWmNTWlF4YlFLbFQ3MC9tRk5aQlN4ZXNLTWVTU24vV2hycEs0OU80ZW4zRkZJVTJqd2lLcGwybHpHMk0vdThJTzRZSlNCL1B6aVp4cGczcVk5Z25PRHNQR2lDZGNyejErcTVhYUdoMDdXUGlISFg5K1VpbVJjRThZS1BBNXUwNTBkQ2l2eVM2a2VhZkpFalQ0UXkxcElPaFRUd3ZrMWxrR0ZmeWp3bVBqL3JMRGY4YUc3ZXZlVWQveGwxbzlKMnh5ckhvQW9heTNVNVpHYjFCZGJ2OGFGNHJLb2wwTkorUlZBSTZJSHJCUnE4OGxJeGtzSlFxTm9GQ3o5b051N011OTVkMUJpZ3ErNjZiYzBuTWcyWXZYQXdaMkh3RjAzS0xRWEFWYjZVekZ1Lzc0MjYraElNUlR1M01mZDZoa01vMllMVzlxSS9odlBsaWg4RG5qaUFTUG9Fbkx2cVFidVpXaVBnQ3h2c1F4eXFBQWdDazlzckhwaG51UnpTck95M1JmZzRYa0lndHhlb3ArUmZJOVgyaDBRcEVmcjgzYzExd0xhQkxDUmgwMlFXazA2Ty8yM2s2cWZNZHBxNVZ2b0ZnTkNJYlY1V01sSFpaV3RnVXFzaGtXRVJycjduZnVvd1BQQ0NUaHdxMC9tbUQ1NDVDb0VNWU16bUtQYlIyYmF4RkVTbUswTlRRT3VWR3A2Y3JqNWlYOGxzaU9kZ3FVNHhuSVpRcDRsT1lJcTlBOUhFS3NZZ1RuYysxRlRNazJEN05ydThlalh4UUR3amFqUTFNTmJ5cldBS0MvZ3RTWW9ONTFKY25FWFlUOWI1MVZOWWF4anArTE9oeDA0M3RNUW9TejNvN1kxbWtORlJUTmJMZWhDKzV0UkNKNjdQYk5Va29DbWxXbjFYODZxVlVsRFU0MjkxaXVLaE1YQ0lsVHlscGU2dw==";
 pub const TX_INDEX: &str = "deadbeef-1234-2341-6afe";
 pub const PRODUCT_HASH: &str = "hash";
-pub const AMOUNT: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000)) }; // SAFETY: we know that this value is not negative
+// SAFETY: we know that this value is not negative
+pub const AMOUNT: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000)) };
 pub const REASON: &str = "COMPLIMENT";
 pub const PURCHASE_MODEL: &str = "CLIK";
 pub const RECEIVER: &str = "satoshi";
@@ -63,11 +64,14 @@ pub const PAYMENT_METHOD_ID: &str = "payment-method-id";
 pub const PAYMENT_DETAIL_ID: &str = "payment-detail-id";
 pub const CASE_ID: &str = "123";
 
-pub static ENCRYPTED_WALLET_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::new(|| unsafe {
-    EncryptedPassword::new_unchecked([
-        91, 105, 102, 64, 68, 93, 59, 70, 41, 198, 141, 36, 152, 135, 67, 77, 191, 58, 227, 216, 53, 74, 74, 1, 168,
-        243, 227, 153, 73, 141, 159, 91, 79, 39, 208, 59, 54, 101, 112, 107, 169,
-    ])
+pub static ENCRYPTED_WALLET_PASSWORD: LazyLock<EncryptedPassword> = LazyLock::new(|| {
+    // SAFETY: The byte array was generated and validated at compile time
+    unsafe {
+        EncryptedPassword::new_unchecked([
+            91, 105, 102, 64, 68, 93, 59, 70, 41, 198, 141, 36, 152, 135, 67, 77, 191, 58, 227, 216, 53, 74, 74, 1,
+            168, 243, 227, 153, 73, 141, 159, 91, 79, 39, 208, 59, 54, 101, 112, 107, 169,
+        ])
+    }
 });
 pub static WALLET_PASSWORD: LazyLock<PlainPassword> =
     LazyLock::new(|| PlainPassword::try_from_string("correcthorsebatterystaple").unwrap());

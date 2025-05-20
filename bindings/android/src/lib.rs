@@ -56,11 +56,10 @@ fn runtime() -> &'static Arc<Runtime> {
 /// The sdk handle with atomic reference counter as a static reference
 fn get_or_init_sdk() -> &'static SdkWrapper {
     static CELL: OnceCell<SdkWrapper> = OnceCell::new();
-    let sdk = CELL.get_or_init(|| {
+    CELL.get_or_init(|| {
         let sdk_user = Sdk::default();
         Arc::new(RwLock::new(sdk_user))
-    });
-    sdk
+    })
 }
 
 /// Main object that contains all the functionality for interfacing with the ETOPaySdk.

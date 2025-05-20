@@ -9,6 +9,7 @@ use fern_logger::{LoggerConfig, LoggerOutputConfigBuilder, logger_init};
 use log::warn;
 
 /// Initializes the logger
+#[allow(clippy::result_large_err)]
 pub fn init_logger(level: log::LevelFilter, file: &str) -> crate::Result<()> {
     let config = LoggerConfig::build()
         .with_output(LoggerOutputConfigBuilder::new().level_filter(level).name(file))

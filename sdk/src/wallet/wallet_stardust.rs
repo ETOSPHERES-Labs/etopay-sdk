@@ -88,10 +88,12 @@ impl WalletImplStardust {
 }
 
 /// The minimum amount of IOTA to consider an output as non-dust output. Everything below this is dust.
-const MIN_DUST_OUTPUT: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(0.1)) }; // SAFETY: the value is non-negative
+// SAFETY: the value is non-negative
+const MIN_DUST_OUTPUT: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(0.1)) };
 
 /// The value to divide an amount in GLOW with to get IOTA
-const GLOW_TO_IOTA_DIVISOR: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000_000)) }; // SAFETY: the value is non-negative
+// SAFETY: the value is non-negative
+const GLOW_TO_IOTA_DIVISOR: CryptoAmount = unsafe { CryptoAmount::new_unchecked(dec!(1_000_000)) };
 
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]
