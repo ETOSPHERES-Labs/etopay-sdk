@@ -523,9 +523,10 @@ impl ETOPaySdk {
         async move {
             let amount = CryptoAmount::try_from(amount)?;
             let pin = EncryptionPin::try_from_string(pin)?;
-            sdk.estimate_gas(&pin, &address, amount, data).await.map(Into::into)
+            sdk.estimate_gas(&pin, &address, amount, data).await
         }
         .await
+        .map(Into::into)
         .map_err(|e| format!("{e:#?}"))
     }
 
