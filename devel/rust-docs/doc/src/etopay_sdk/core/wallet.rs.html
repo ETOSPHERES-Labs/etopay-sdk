@@ -504,50 +504,50 @@
 <a href=#504 id=504 data-nosnippet>504</a>
 <a href=#505 id=505 data-nosnippet>505</a>        <span class="comment">// TODO: we need to support this better for all networks with a unified logic and interface
 <a href=#506 id=506 data-nosnippet>506</a>        </span><span class="kw">let </span>tx_list = <span class="kw">match </span>network.protocol {
-<a href=#507 id=507 data-nosnippet>507</a>            <span class="kw">crate</span>::types::networks::ApiProtocol::Evm { .. } =&gt; {
-<a href=#508 id=508 data-nosnippet>508</a>                <span class="comment">// We retrieve the transaction list from the wallet,
-<a href=#509 id=509 data-nosnippet>509</a>                // then synchronize selected transactions (by fetching their current status from the network),
-<a href=#510 id=510 data-nosnippet>510</a>                // and finally, save the refreshed list back to the wallet
-<a href=#511 id=511 data-nosnippet>511</a>                </span><span class="kw">let </span><span class="kw-2">mut </span>wallet_transactions = user.wallet_transactions;
-<a href=#512 id=512 data-nosnippet>512</a>
-<a href=#513 id=513 data-nosnippet>513</a>                <span class="kw">for </span>transaction <span class="kw">in </span>wallet_transactions
-<a href=#514 id=514 data-nosnippet>514</a>                    .iter_mut()
-<a href=#515 id=515 data-nosnippet>515</a>                    .filter(|tx| tx.network_key == network.key)
-<a href=#516 id=516 data-nosnippet>516</a>                    .skip(start)
-<a href=#517 id=517 data-nosnippet>517</a>                    .take(limit)
-<a href=#518 id=518 data-nosnippet>518</a>                {
-<a href=#519 id=519 data-nosnippet>519</a>                    <span class="comment">// We don't need to query the network for the state of this transaction,
-<a href=#520 id=520 data-nosnippet>520</a>                    // because it has already been synchronized earlier (as indicated by `InclusionState::Confirmed`).
-<a href=#521 id=521 data-nosnippet>521</a>                    </span><span class="kw">if </span>transaction.status == inclusion_state_confirmed {
-<a href=#522 id=522 data-nosnippet>522</a>                        <span class="kw">continue</span>;
-<a href=#523 id=523 data-nosnippet>523</a>                    }
-<a href=#524 id=524 data-nosnippet>524</a>
-<a href=#525 id=525 data-nosnippet>525</a>                    <span class="kw">let </span>synchronized_transaction = wallet.get_wallet_tx(<span class="kw-2">&amp;</span>transaction.transaction_id).<span class="kw">await</span>;
-<a href=#526 id=526 data-nosnippet>526</a>                    <span class="kw">match </span>synchronized_transaction {
-<a href=#527 id=527 data-nosnippet>527</a>                        <span class="prelude-val">Ok</span>(stx) =&gt; <span class="kw-2">*</span>transaction = stx,
-<a href=#528 id=528 data-nosnippet>528</a>                        <span class="prelude-val">Err</span>(e) =&gt; {
-<a href=#529 id=529 data-nosnippet>529</a>                            <span class="comment">// On error, return historical (cached) transaction data
-<a href=#530 id=530 data-nosnippet>530</a>                            </span><span class="macro">log::debug!</span>(
-<a href=#531 id=531 data-nosnippet>531</a>                                <span class="string">"[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}"</span>,
-<a href=#532 id=532 data-nosnippet>532</a>                                transaction.clone(),
-<a href=#533 id=533 data-nosnippet>533</a>                                e
-<a href=#534 id=534 data-nosnippet>534</a>                            );
-<a href=#535 id=535 data-nosnippet>535</a>                        }
-<a href=#536 id=536 data-nosnippet>536</a>                    }
-<a href=#537 id=537 data-nosnippet>537</a>                }
-<a href=#538 id=538 data-nosnippet>538</a>
-<a href=#539 id=539 data-nosnippet>539</a>                <span class="kw">let </span><span class="prelude-val">Some</span>(repo) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.repo <span class="kw">else </span>{
-<a href=#540 id=540 data-nosnippet>540</a>                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized);
-<a href=#541 id=541 data-nosnippet>541</a>                };
-<a href=#542 id=542 data-nosnippet>542</a>
-<a href=#543 id=543 data-nosnippet>543</a>                <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>user.username, wallet_transactions.clone());
-<a href=#544 id=544 data-nosnippet>544</a>
-<a href=#545 id=545 data-nosnippet>545</a>                WalletTxInfoList {
-<a href=#546 id=546 data-nosnippet>546</a>                    transactions: wallet_transactions,
-<a href=#547 id=547 data-nosnippet>547</a>                }
-<a href=#548 id=548 data-nosnippet>548</a>            }
-<a href=#549 id=549 data-nosnippet>549</a>            <span class="kw">crate</span>::types::networks::ApiProtocol::EvmERC20 { .. } =&gt; wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?</span>,
-<a href=#550 id=550 data-nosnippet>550</a>            <span class="kw">crate</span>::types::networks::ApiProtocol::IotaRebased { .. } =&gt; wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?</span>,
+<a href=#507 id=507 data-nosnippet>507</a>            <span class="kw">crate</span>::types::networks::ApiProtocol::Evm { .. }
+<a href=#508 id=508 data-nosnippet>508</a>            | <span class="kw">crate</span>::types::networks::ApiProtocol::IotaRebased { .. } =&gt; {
+<a href=#509 id=509 data-nosnippet>509</a>                <span class="comment">// We retrieve the transaction list from the wallet,
+<a href=#510 id=510 data-nosnippet>510</a>                // then synchronize selected transactions (by fetching their current status from the network),
+<a href=#511 id=511 data-nosnippet>511</a>                // and finally, save the refreshed list back to the wallet
+<a href=#512 id=512 data-nosnippet>512</a>                </span><span class="kw">let </span><span class="kw-2">mut </span>wallet_transactions = user.wallet_transactions;
+<a href=#513 id=513 data-nosnippet>513</a>
+<a href=#514 id=514 data-nosnippet>514</a>                <span class="kw">for </span>transaction <span class="kw">in </span>wallet_transactions
+<a href=#515 id=515 data-nosnippet>515</a>                    .iter_mut()
+<a href=#516 id=516 data-nosnippet>516</a>                    .filter(|tx| tx.network_key == network.key)
+<a href=#517 id=517 data-nosnippet>517</a>                    .skip(start)
+<a href=#518 id=518 data-nosnippet>518</a>                    .take(limit)
+<a href=#519 id=519 data-nosnippet>519</a>                {
+<a href=#520 id=520 data-nosnippet>520</a>                    <span class="comment">// We don't need to query the network for the state of this transaction,
+<a href=#521 id=521 data-nosnippet>521</a>                    // because it has already been synchronized earlier (as indicated by `InclusionState::Confirmed`).
+<a href=#522 id=522 data-nosnippet>522</a>                    </span><span class="kw">if </span>transaction.status == inclusion_state_confirmed {
+<a href=#523 id=523 data-nosnippet>523</a>                        <span class="kw">continue</span>;
+<a href=#524 id=524 data-nosnippet>524</a>                    }
+<a href=#525 id=525 data-nosnippet>525</a>
+<a href=#526 id=526 data-nosnippet>526</a>                    <span class="kw">let </span>synchronized_transaction = wallet.get_wallet_tx(<span class="kw-2">&amp;</span>transaction.transaction_id).<span class="kw">await</span>;
+<a href=#527 id=527 data-nosnippet>527</a>                    <span class="kw">match </span>synchronized_transaction {
+<a href=#528 id=528 data-nosnippet>528</a>                        <span class="prelude-val">Ok</span>(stx) =&gt; <span class="kw-2">*</span>transaction = stx,
+<a href=#529 id=529 data-nosnippet>529</a>                        <span class="prelude-val">Err</span>(e) =&gt; {
+<a href=#530 id=530 data-nosnippet>530</a>                            <span class="comment">// On error, return historical (cached) transaction data
+<a href=#531 id=531 data-nosnippet>531</a>                            </span><span class="macro">log::debug!</span>(
+<a href=#532 id=532 data-nosnippet>532</a>                                <span class="string">"[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}"</span>,
+<a href=#533 id=533 data-nosnippet>533</a>                                transaction.clone(),
+<a href=#534 id=534 data-nosnippet>534</a>                                e
+<a href=#535 id=535 data-nosnippet>535</a>                            );
+<a href=#536 id=536 data-nosnippet>536</a>                        }
+<a href=#537 id=537 data-nosnippet>537</a>                    }
+<a href=#538 id=538 data-nosnippet>538</a>                }
+<a href=#539 id=539 data-nosnippet>539</a>
+<a href=#540 id=540 data-nosnippet>540</a>                <span class="kw">let </span><span class="prelude-val">Some</span>(repo) = <span class="kw-2">&amp;mut </span><span class="self">self</span>.repo <span class="kw">else </span>{
+<a href=#541 id=541 data-nosnippet>541</a>                    <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::UserRepoNotInitialized);
+<a href=#542 id=542 data-nosnippet>542</a>                };
+<a href=#543 id=543 data-nosnippet>543</a>
+<a href=#544 id=544 data-nosnippet>544</a>                <span class="kw">let _ </span>= repo.set_wallet_transactions(<span class="kw-2">&amp;</span>user.username, wallet_transactions.clone());
+<a href=#545 id=545 data-nosnippet>545</a>
+<a href=#546 id=546 data-nosnippet>546</a>                WalletTxInfoList {
+<a href=#547 id=547 data-nosnippet>547</a>                    transactions: wallet_transactions,
+<a href=#548 id=548 data-nosnippet>548</a>                }
+<a href=#549 id=549 data-nosnippet>549</a>            }
+<a href=#550 id=550 data-nosnippet>550</a>            <span class="kw">crate</span>::types::networks::ApiProtocol::EvmERC20 { .. } =&gt; wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?</span>,
 <a href=#551 id=551 data-nosnippet>551</a>            <span class="kw">crate</span>::types::networks::ApiProtocol::Stardust {} =&gt; wallet.get_wallet_tx_list(start, limit).<span class="kw">await</span><span class="question-mark">?</span>,
 <a href=#552 id=552 data-nosnippet>552</a>        };
 <a href=#553 id=553 data-nosnippet>553</a>
