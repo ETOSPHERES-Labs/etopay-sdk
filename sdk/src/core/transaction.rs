@@ -258,7 +258,7 @@ impl Sdk {
                 chain_id: _,
                 contract_address: _,
             } => wallet.send_amount(&intent).await?,
-            ApiProtocol::Evm { chain_id: _ } => {
+            ApiProtocol::Evm { chain_id: _ } | ApiProtocol::IotaRebased { .. } => {
                 let tx_id = wallet.send_amount(&intent).await?;
 
                 // store the created transaction in the repo
@@ -269,7 +269,7 @@ impl Sdk {
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
-            ApiProtocol::Stardust {} | ApiProtocol::IotaRebased { .. } => wallet.send_amount(&intent).await?,
+            ApiProtocol::Stardust {} => wallet.send_amount(&intent).await?,
         };
 
         Ok(tx_id)
