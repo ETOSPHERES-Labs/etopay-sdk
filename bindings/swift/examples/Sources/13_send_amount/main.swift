@@ -50,8 +50,6 @@ Task {
             rustVec.push(value: byte)
         }
 
-        let bytes: [UInt8] = Array(message.utf8)
-
         // Estimate gas
         let estimate = try await sdk.estimateGas(env.pin, address.toString(), 1, rustVec)
         print("estimate: \(estimate.gas_limit.toString())")
