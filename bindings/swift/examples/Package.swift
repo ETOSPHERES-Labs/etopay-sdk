@@ -90,14 +90,14 @@ let package = Package(
             path: "Sources/07_get_balance"
         ),
 
-        .executableTarget(
-            name: "08_create_purchase_request",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/08_create_purchase_request"
-        ),
+        // .executableTarget(
+        //     name: "08_create_purchase_request",
+        //     dependencies: [
+        //         .product(name: "ETOPaySdk", package: "ETOPaySdk"),
+        //         "utils",
+        //     ],
+        //     path: "Sources/08_create_purchase_request"
+        // ),
 
         .executableTarget(
             name: "09_onboard_user_viviswap",
