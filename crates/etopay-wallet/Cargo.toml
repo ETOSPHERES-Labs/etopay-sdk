@@ -38,7 +38,7 @@ thiserror = { workspace = true }
 tokio = { workspace = true }
 chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
 
-log = { workspace = true }
+log = { version = "0.4.27", default-features = false }
 reqwest = { workspace = true }
 
 rand = { version = "0.9", default-features = false, features = [
