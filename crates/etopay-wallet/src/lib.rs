@@ -8,7 +8,7 @@ mod wallet_stardust;
 pub mod types;
 
 pub use error::{Result, WalletError};
-pub use wallet::{TransactionIntent, WalletUser};
+pub use wallet::*;
 pub use wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
 pub use wallet_rebased::WalletImplIotaRebased;
 pub use wallet_stardust::WalletImplStardust;

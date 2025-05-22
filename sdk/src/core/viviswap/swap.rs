@@ -5,7 +5,7 @@ use crate::backend::viviswap::{
 use crate::core::Sdk;
 use crate::core::viviswap::ViviswapError;
 use crate::error::Result;
-use crate::types::currencies::{CryptoAmount, Currency};
+use crate::types::currencies::Currency;
 use crate::types::newtypes::EncryptionPin;
 use crate::types::viviswap::{
     ViviswapAddressDetail, ViviswapDeposit, ViviswapDepositDetails, ViviswapDetailUpdateStrategy, ViviswapWithdrawal,
@@ -14,6 +14,7 @@ use crate::types::viviswap::{
 use api_types::api::viviswap::contract::ViviswapApiContractDetails;
 use api_types::api::viviswap::detail::SwapPaymentDetailKey;
 use api_types::api::viviswap::order::{Order, OrderList};
+use etopay_wallet::types::CryptoAmount;
 use log::{debug, info};
 use rust_decimal_macros::dec;
 
@@ -577,11 +578,11 @@ mod tests {
         core::Sdk,
         types::users::ActiveUser,
         user::MockUserRepo,
-        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
     };
     use api_types::api::networks::ApiNetwork;
     use api_types::api::{dlt::SetUserAddressRequest, viviswap::order::GetOrdersResponse};
+    use etopay_wallet::MockWalletUser;
     use mockito::Matcher;
     use rand::Rng;
     use rstest::rstest;

@@ -1,4 +1,4 @@
-use super::{kdbx::KdbxStorageError, rebased, share::ShareError};
+use super::{kdbx::KdbxStorageError, share::ShareError};
 use crate::{backend::error::ApiError, types::error::TypeError, user::error::UserKvStorageError};
 use iota_sdk::types::block;
 use serde::Serialize;
@@ -100,29 +100,9 @@ pub enum WalletError {
     #[error("Bip39 error: {0:?}")]
     Bip39(iota_sdk::crypto::keys::bip39::Error),
 
-    /// Error occurred while handling bip32 compliant derivation paths
-    #[error("Bip32: {0:?}")]
-    Bip32(#[from] bip32::Error),
-
     /// Error occurs in sdk backend (api)
     #[error("BackendApi errors: {0}")]
     BackendApi(#[from] ApiError),
-
-    /// Error creating a LocalSigner from the provided mnemonic
-    #[error("LocalSignerError: {0}")]
-    LocalSignerError(#[from] alloy::signers::local::LocalSignerError),
-
-    /// Error waiting for transaction to be included
-    #[error("PendingTransactionError: {0}")]
-    PendingTransactionError(#[from] alloy::providers::PendingTransactionError),
-
-    /// Could not convert hex to address
-    #[error("Invalid hex value: {0}")]
-    FromHexError(#[from] alloy_primitives::hex::FromHexError),
-
-    /// Alloy transport error
-    #[error("Alloy transport RPC error: {0}")]
-    AlloyTransportRpcError(#[from] alloy_json_rpc::RpcError<alloy_transport::TransportErrorKind>),
 
     /// Error raises if transaction does not exist
     #[error("TransactionNotFound")]
@@ -132,21 +112,13 @@ pub enum WalletError {
     #[error("Unable to convert: {0}")]
     ConversionError(String),
 
-    /// Error for calling a Smart Contract
-    #[error("Contract error: {0}")]
-    Contract(#[from] alloy::contract::Error),
-
-    /// Error for decoding a Smart Contract call
-    #[error("SolidityError error: {0}")]
-    SolidityError(#[from] alloy::sol_types::Error),
-
-    /// Iota Rebased Error
-    #[error("IotaRebased: {0}")]
-    IotaRebased(#[from] rebased::RebasedError),
-
     /// Failed to wait for confirming the transaction status
     #[error("FailToConfirmTransactionStatus: Failed to confirm tx status for {0} within {1} seconds.")]
     FailToConfirmTransactionStatus(String, u64),
+
+    // TODO: is this needed here at all? + cleanup variants!
+    #[error("WalletError: {0}")]
+    WalletError(#[from] etopay_wallet::WalletError),
 }
 
 impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {

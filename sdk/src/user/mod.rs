@@ -13,12 +13,12 @@ use crate::{
     share::Share,
     types::{
         newtypes::EncryptedPassword,
-        transactions::WalletTxInfo,
         users::{KycType, UserEntity},
         viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep},
     },
 };
 use error::{Result, UserKvStorageError};
+use etopay_wallet::types::WalletTxInfo;
 
 /// Storage abstraction of [`UserEntity`] objects as a simple Key-Value storage
 #[cfg_attr(test, mockall::automock)]

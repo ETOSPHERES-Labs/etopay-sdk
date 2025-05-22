@@ -6,12 +6,12 @@ use crate::{
     share::Share,
     types::{
         newtypes::EncryptedPassword,
-        transactions::WalletTxInfo,
         users::{KycType, UserEntity},
         viviswap::{ViviswapPartiallyKycDetails, ViviswapState, ViviswapVerificationStatus, ViviswapVerificationStep},
     },
     user::error::UserKvStorageError,
 };
+use etopay_wallet::types::WalletTxInfo;
 use log::debug;
 
 pub struct UserRepoImpl<I: super::UserKvStorage> {

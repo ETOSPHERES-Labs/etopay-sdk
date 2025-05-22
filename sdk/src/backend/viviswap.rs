@@ -8,7 +8,6 @@
 
 use super::error::{ApiError, Result};
 use crate::core::Config;
-use crate::types::currencies::CryptoAmount;
 use crate::types::newtypes::AccessToken;
 use api_types::api::viviswap::contract::{ContractRequestBody, ViviswapContractCreationResponse};
 use api_types::api::viviswap::detail::{
@@ -23,6 +22,7 @@ use api_types::api::viviswap::kyc::{
 use api_types::api::viviswap::order::{GetOrderQuery, GetOrdersQuery, Order, OrderList};
 use api_types::api::viviswap::payment::ViviPaymentMethodsResponse;
 use api_types::api::viviswap::user::{UserDataRequest, UserDataResponse};
+use etopay_wallet::types::CryptoAmount;
 use log::{debug, error, info};
 use reqwest::{Method, StatusCode};
 use std::future::Future;

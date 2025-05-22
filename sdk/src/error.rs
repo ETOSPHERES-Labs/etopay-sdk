@@ -78,8 +78,9 @@ pub enum Error {
     Parse(String),
 
     /// User provided a negative invalid amount to send or create a purchase request with
-    #[error("NegativeAmount")]
-    NegativeAmount,
+    #[error("CryptoAmount: {0}")]
+    #[serde(serialize_with = "debug_string")]
+    CryptoAmount(#[from] etopay_wallet::types::CryptoAmountError),
 
     /// Error from fern logger
     #[cfg(not(target_arch = "wasm32"))]
@@ -101,6 +102,10 @@ pub enum Error {
     #[error("Wallet error: {0}")]
     #[serde(serialize_with = "debug_string")]
     Wallet(#[from] WalletError),
+
+    #[error("WalletImplError: {0}")]
+    #[serde(serialize_with = "debug_string")]
+    WalletImplError(#[from] etopay_wallet::WalletError),
 
     /// Viviswap related errors
     #[error("Viviswap error: {0}")]

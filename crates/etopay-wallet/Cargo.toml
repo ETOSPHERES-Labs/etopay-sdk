@@ -87,7 +87,6 @@ base64ct = "1.7"
 bs58 = "0.5"
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-fern-logger = { version = "0.5.0", default-features = false }
 
 # needed for iota-rebased impl
 jsonrpsee = { version = "0.25", default-features = false, features = [

@@ -18,6 +18,7 @@ pub mod users;
 pub mod viviswap;
 
 /// Export some `api_types` for the bindings to reference
+// TODO: pub mod bindings {
 pub use api_types::api::{
     postident::{CaseDetailsResponse, NewCaseIdResponse},
     transactions::{ApiApplicationMetadata, ApiTxStatus},
@@ -30,3 +31,6 @@ pub use api_types::api::{
         order::{Order, OrderList},
     },
 };
+
+pub use etopay_wallet::types::CryptoAmount;
+pub use etopay_wallet::types::WalletTxInfo;

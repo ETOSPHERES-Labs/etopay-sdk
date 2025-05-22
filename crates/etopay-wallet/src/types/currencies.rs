@@ -28,7 +28,7 @@ impl CryptoAmount {
 
     /// Internal helper function to create values in consts during tests.
     /// This is unsafe since it does not perform any non-negativity checks.
-    pub(crate) const unsafe fn new_unchecked(value: rust_decimal::Decimal) -> Self {
+    pub const unsafe fn new_unchecked(value: rust_decimal::Decimal) -> Self {
         Self(value)
     }
 }

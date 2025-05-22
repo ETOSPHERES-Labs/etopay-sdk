@@ -1,11 +1,9 @@
-use super::{
-    newtypes::{EncryptedPassword, EncryptionSalt},
-    transactions::WalletTxInfo,
-};
+use super::newtypes::{EncryptedPassword, EncryptionSalt};
 use crate::{
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
+use etopay_wallet::types::WalletTxInfo;
 use serde::{Deserialize, Serialize};
 
 /// Struct for storing a user in the database
