@@ -4,8 +4,9 @@ use crate::utils::init_sdk;
 use api_types::api::transactions::ApiTxStatus;
 use etopay_sdk::{
     core::{Config, Sdk},
-    types::{currencies::CryptoAmount, newtypes::AccessToken},
+    types::newtypes::AccessToken,
 };
+use etopay_wallet::types::CryptoAmount;
 use rust_decimal_macros::dec;
 use std::{path::Path, time::Duration};
 use testing::{CleanUp, USER_HANS34, USER_HANS48, USER_SATOSHI};

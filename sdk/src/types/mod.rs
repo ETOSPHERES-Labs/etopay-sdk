@@ -32,5 +32,4 @@ pub use api_types::api::{
     },
 };
 
-pub use etopay_wallet::types::CryptoAmount;
-pub use etopay_wallet::types::WalletTxInfo;
+pub use etopay_wallet::types::{CryptoAmount, WalletTxInfo};

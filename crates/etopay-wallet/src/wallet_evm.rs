@@ -439,7 +439,7 @@ impl WalletUser for WalletImplEvmErc20 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::{core::Config, types::CryptoAmount};
+    use crate::types::CryptoAmount;
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rust_decimal_macros::dec;
     use serde_json::json;
@@ -501,7 +501,7 @@ mod tests {
 
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEvm, CleanUp) {
-        let (_, cleanup) = Config::new_test_with_cleanup();
+        let cleanup = testing::CleanUp::default();
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 

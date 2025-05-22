@@ -8,8 +8,15 @@ homepage.workspace = true
 repository.workspace = true
 rust-version.workspace = true
 
-[lints]
-workspace = true
+[lints.clippy]
+unwrap_used = "deny"
+expect_used = "deny"
+undocumented_unsafe_blocks = "deny"
+
+[lints.rust]
+# this is set by cargo-llvm-cov while running code coverage and is used to skip tests
+# that take way to much time
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage)'] }
 
 [features]
 mock = ["dep:mockall"]
