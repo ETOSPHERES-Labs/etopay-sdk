@@ -21,6 +21,8 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage)'] }
 [features]
 mock = ["dep:mockall"]
 
+jammdb = ["iota-sdk/jammdb"]
+
 [dependencies]
 api_types = { workspace = true }
 
@@ -30,7 +32,6 @@ mockall = { workspace = true, optional = true }
 
 rust_decimal = { workspace = true }
 rust_decimal_macros = { workspace = true }
-secrecy = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
@@ -45,8 +46,9 @@ rand = { version = "0.9", default-features = false, features = [
     "thread_rng",
 ] }
 
-rand_0_8 = { package = "rand_core", version = "0.6", default-features = false, features = [ ] }
-zeroize = { version = "1.8", default-features = false, features = [ "std", ] }
+rand_0_8 = { package = "rand_core", version = "0.6", default-features = false, features = [
+] }
+zeroize = { version = "1.8", default-features = false, features = ["std"] }
 
 # For EVM impl
 alloy = { version = "1.0.6", default-features = false, features = [
@@ -88,7 +90,7 @@ bip32 = "0.5"
 
 # needed to replace fastcrypto
 ed25519-consensus = { version = "2.1", features = [] }
-blake2 =  "0.10"
+blake2 = "0.10"
 digest = "0.10"
 base64ct = "1.7"
 bs58 = "0.5"
@@ -116,3 +118,7 @@ mockall = { workspace = true }
 mockito = { workspace = true }
 rstest = { workspace = true }
 testing = { workspace = true }
+
+
+[package.metadata.cargo-machete]
+ignored = ["tiny-bip39"]

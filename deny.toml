@@ -116,6 +116,7 @@ exceptions = [
     # list
     { allow = ["AGPL-3.0"], crate = "etopay-sdk" },
     { allow = ["AGPL-3.0"], crate = "etopay-api-types" },
+    { allow = ["AGPL-3.0"], crate = "etopay-wallet" },
 ]
 
 # Some crates don't have (easily) machine readable licensing information,

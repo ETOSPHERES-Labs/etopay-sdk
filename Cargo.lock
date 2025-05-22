@@ -2177,7 +2177,6 @@ dependencies = [
  "rstest",
  "rust_decimal",
  "rust_decimal_macros",
- "secrecy",
  "serde",
  "serde-name",
  "serde_json",
