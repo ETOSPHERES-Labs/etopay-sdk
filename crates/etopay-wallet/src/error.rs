@@ -1,5 +1,3 @@
-use iota_sdk::types::block;
-
 /// A [`core::result::Result`] with [`WalletError`] as its error variant.
 pub type Result<T> = core::result::Result<T, WalletError>;
 
@@ -10,21 +8,9 @@ pub enum WalletError {
     #[error("IotaClient error: {0}")]
     IotaClient(#[from] iota_sdk::client::Error),
 
-    /// Error occurs if password is missing
-    #[error("Password is missing")]
-    MissingPassword,
-
-    /// Wrong pin or password
-    #[error("Pin or password incorrect.")]
-    WrongPinOrPassword,
-
     /// Error raises if the feature is not implemented
     #[error("Wallet feature is not implemented")]
     WalletFeatureNotImplemented,
-
-    /// Error raises if authentication token is outdated or invalid
-    #[error("Unauthorized: Missing Access Token")]
-    MissingAccessToken,
 
     /// Error raises if the wallet address is empty
     #[error("Wallet address is empty")]
@@ -33,10 +19,6 @@ pub enum WalletError {
     /// Error raises if something failed to parse
     #[error("ParseError: {0}")]
     Parse(String),
-
-    /// Alloy RPC error
-    #[error("Alloy RPC error: {0}")]
-    Rpc(String),
 
     /// Error occurs is the transaction amount is invalid
     #[error("InvalidTransactionAmount: {0}")]
@@ -56,15 +38,11 @@ pub enum WalletError {
 
     /// Block error
     #[error("Block error: {0}")]
-    Block(#[from] block::Error),
+    Block(#[from] iota_sdk::types::block::Error),
 
     /// Iota wallet error
     #[error("IotaWallet error: {0}")]
     IotaWallet(#[from] iota_sdk::wallet::Error),
-
-    /// Error occurred while handling bip39 compliant mnemonics
-    #[error("Bip39 error: {0:?}")]
-    Bip39(iota_sdk::crypto::keys::bip39::Error),
 
     /// Error occurred while handling bip32 compliant derivation paths
     #[error("Bip32: {0:?}")]
@@ -109,12 +87,6 @@ pub enum WalletError {
     /// Failed to wait for confirming the transaction status
     #[error("FailToConfirmTransactionStatus: Failed to confirm tx status for {0} within {1} seconds.")]
     FailToConfirmTransactionStatus(String, u64),
-}
-
-impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {
-    fn from(value: iota_sdk::crypto::keys::bip39::Error) -> Self {
-        Self::Bip39(value)
-    }
 }
 
 impl From<rust_decimal::Error> for WalletError {

@@ -199,7 +199,7 @@ impl WalletUser for WalletImplStardust {
         if let Some(transaction) = account.get_transaction(&transaction_id).await {
             Ok(transaction.into())
         } else {
-            Err(WalletError::MissingAccessToken)
+            Err(WalletError::TransactionNotFound)
         }
     }
 

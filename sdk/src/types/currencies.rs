@@ -67,8 +67,6 @@ impl std::fmt::Display for Currency {
 mod test {
     use crate::types::currencies::Currency;
 
-    use rust_decimal_macros::dec;
-
     #[rstest::rstest]
     fn test_display_roundtrip(#[values(Currency::Iota, Currency::Eth)] c: Currency) {
         assert_eq!(c, Currency::try_from(c.to_string()).unwrap());

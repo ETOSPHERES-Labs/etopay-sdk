@@ -103,6 +103,7 @@ pub enum Error {
     #[serde(serialize_with = "debug_string")]
     Wallet(#[from] WalletError),
 
+    /// Error from the wallet impl
     #[error("WalletImplError: {0}")]
     #[serde(serialize_with = "debug_string")]
     WalletImplError(#[from] etopay_wallet::WalletError),
