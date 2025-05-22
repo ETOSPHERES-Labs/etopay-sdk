@@ -9,7 +9,7 @@ use std::{borrow::Borrow, ops::Deref, str::FromStr};
 use ref_cast::RefCast;
 use serde::{Deserialize, Serialize};
 
-use crate::wallet::rebased::RebasedError;
+use super::super::RebasedError;
 
 /// An owned identifier.
 ///

@@ -1,14 +1,14 @@
-pub fn add(left: u64, right: u64) -> u64 {
-    left + right
-}
+mod error;
+mod rebased;
+mod wallet;
+mod wallet_evm;
+mod wallet_rebased;
+mod wallet_stardust;
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+pub mod types;
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+pub use error::{Result, WalletError};
+pub use wallet::{TransactionIntent, WalletUser};
+pub use wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
+pub use wallet_rebased::WalletImplIotaRebased;
+pub use wallet_stardust::WalletImplStardust;

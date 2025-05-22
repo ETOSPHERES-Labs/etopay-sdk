@@ -44,6 +44,8 @@ viviswap-swap = []
 server = []
 
 [dependencies]
+etopay_wallet = { workspace = true }
+
 aes-gcm = { version = "0.10.3", default-features = false, features = [
     "alloc",
     "aes",
@@ -84,61 +86,10 @@ zeroize = { version = "1.8", default-features = false, features = [
     "std",
     "zeroize_derive",
 ] }
-alloy = { version = "1.0.6", default-features = false, features = [
-    "providers",
-    "rpc-types",
-    "signer-mnemonic",
-    "contract",
-    "sol-types",
-] }
-alloy-consensus = { version = "1.0.6", features = ["k256"] }
-alloy-primitives = { version = "1.1", default-features = false }
-alloy-provider = { version = "1.0.6", default-features = false, features = [
-    "reqwest",
-    "reqwest-rustls-tls",
-] }
-alloy-json-rpc = "1.0.6"
-alloy-transport = "1.0.6"
 shadow-rs = { version = "1.0.1", default-features = false }
 zxcvbn = { version = "3.1.0", default-features = false }
 
-# needed for custom iota-rebased impl
-serde_with = { version = "3.12", features = ["macros", "hex"] }
-hex = { version = "0.4" }
-tiny-bip39 = "2"
-slip10_ed25519 = "0.1.3"
-bcs = "0.1.6"
-serde_repr = "0.1.20"
-ref-cast = "1"
-serde-name = "0.2"
-indexmap = "2.9"
-bip32 = "0.5"
-
-# needed to replace fastcrypto
-ed25519-consensus = { version = "2.1", features = [] }
-blake2 =  "0.10"
-digest = "0.10"
-base64ct = "1.7"
-bs58 = "0.5"
-
-[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
-fern-logger = { version = "0.5.0", default-features = false }
-
-# needed for iota-rebased impl
-jsonrpsee = { version = "0.25", default-features = false, features = [
-    "macros",
-    "async-client",
-    "http-client",
-] }
-
 [target.'cfg(target_arch = "wasm32")'.dependencies]
-# needed for iota-rebased impl
-jsonrpsee = { version = "0.25", default-features = false, features = [
-    "macros",
-    "async-wasm-client",
-    "wasm-client",
-] }
-
 rmp-serde = { version = "1.3.0", default-features = false }
 web-sys = { version = "0.3", default-features = false, features = [
     "Window",
@@ -151,6 +102,7 @@ shadow-rs = { version = "1.0.1", default-features = false, features = [
 ] }
 
 [dev-dependencies]
+etopay_wallet = { workspace = true, features = ["mock"] }
 dotenvy = { workspace = true }
 env_logger = "0.11.8"
 fake = { workspace = true }

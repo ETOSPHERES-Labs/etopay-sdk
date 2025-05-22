@@ -7,10 +7,6 @@
 /// Wallet manager
 pub mod wallet_manager;
 
-/// wallet user definition
-#[allow(clippy::module_inception)]
-pub(crate) mod wallet;
-
 /// wallet user for Stardust protocol
 pub(crate) mod wallet_stardust;
 

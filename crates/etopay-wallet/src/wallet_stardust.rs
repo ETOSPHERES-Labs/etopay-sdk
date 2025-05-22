@@ -1,7 +1,7 @@
 use super::error::{Result, WalletError};
 use super::wallet::{TransactionIntent, WalletUser};
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use crate::types::CryptoAmount;
+use crate::types::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManager;
 use iota_sdk::crypto::keys::bip39::Mnemonic;

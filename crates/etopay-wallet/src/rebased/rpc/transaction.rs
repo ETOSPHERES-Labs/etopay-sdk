@@ -3,13 +3,10 @@
 // Modifications Copyright (c) 2025 ETO GRUPPE TECHNOLOGIES GmbH
 // SPDX-License-Identifier: Apache-2.0
 
-use super::super::TransactionDigest;
 use super::super::bigint::BigInt;
 use super::super::encoding::Base64;
+use super::super::{BalanceChange, CheckpointSequenceNumber, IotaTransactionBlockEffects, TransactionDigest};
 use super::ExecuteTransactionRequestType;
-use crate::wallet::rebased::BalanceChange;
-use crate::wallet::rebased::CheckpointSequenceNumber;
-use crate::wallet::rebased::IotaTransactionBlockEffects;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 

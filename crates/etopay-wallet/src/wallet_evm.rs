@@ -1,8 +1,7 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
-use crate::wallet::error::WalletError;
+use crate::error::WalletError;
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -440,7 +439,7 @@ impl WalletUser for WalletImplEvmErc20 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core::Config;
+    use crate::{core::Config, types::CryptoAmount};
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rust_decimal_macros::dec;
     use serde_json::json;
