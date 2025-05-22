@@ -46,6 +46,7 @@ async fn main() {
     // Set network
     sdk.set_networks(vec![ApiNetwork {
         key: "iota-rebased".to_string(),
+        enabled: true,
         is_testnet: true,
         display_name: "IOTA Rebased".to_string(),
         display_symbol: "IOTA".to_string(),

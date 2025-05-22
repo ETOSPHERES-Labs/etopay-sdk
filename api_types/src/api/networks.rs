@@ -30,6 +30,8 @@ pub enum ApiProtocol {
 pub struct ApiNetwork {
     /// Unique key for the network
     pub key: String,
+    /// Whether the network is enabled
+    pub enabled: bool,
     /// If this network is a test network
     pub is_testnet: bool,
     /// Display name of the network

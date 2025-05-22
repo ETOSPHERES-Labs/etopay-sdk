@@ -32,6 +32,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
     sdk.set_networks(vec![
         ApiNetwork {
             key: String::from("IOTA"),
+            enabled: true,
             is_testnet: true,
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
@@ -44,6 +45,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
         },
         ApiNetwork {
             key: String::from("ETH"),
+            enabled: true,
             is_testnet: true,
             display_name: String::from("Eth Sepolia"),
             display_symbol: String::from("ETH"),
