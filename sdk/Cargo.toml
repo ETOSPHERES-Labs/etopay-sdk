@@ -14,15 +14,8 @@ categories = ["api-bindings", "cryptography::cryptocurrencies", "finance"]
 # Max 5 keywords allowed
 keywords = ["blockchain", "evm", "payments", "wallet", "web3"]
 
-[lints.clippy]
-unwrap_used = "deny"
-expect_used = "deny"
-undocumented_unsafe_blocks = "deny"
-
-[lints.rust]
-# this is set by cargo-llvm-cov while running code coverage and is used to skip tests
-# that take way to much time
-unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage)'] }
+[lints]
+workspace = true
 
 [features]
 # by default (for platforms that are not wasm)
@@ -45,13 +38,13 @@ server = []
 
 [dependencies]
 etopay_wallet = { workspace = true }
+api_types = { workspace = true }
 
 aes-gcm = { version = "0.10.3", default-features = false, features = [
     "alloc",
     "aes",
     "getrandom",
 ] }
-api_types = { workspace = true }
 async-trait = { version = "0.1.88", default-features = false }
 base64 = { workspace = true }
 chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
