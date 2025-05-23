@@ -9,6 +9,7 @@ async function main() {
 
     const sdk = await initSdk();
     await sdk.createNewUser(username);
+    await sdk.initializeUser(username);
     await sdk.setWalletPassword(PIN, password);
     await sdk.createWalletFromMnemonic(PIN, mnemonic);
 

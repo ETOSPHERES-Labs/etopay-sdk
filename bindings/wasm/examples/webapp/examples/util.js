@@ -13,10 +13,10 @@ export async function initSdk() {
     const sdk = new wasm.ETOPaySdk(); // Create an instance of the SDK
 
     const url = process.env.EXAMPLES_BACKEND_URL;
+	await sdk.initLogger(wasm.Level.Trace);
     await sdk.setConfig(`
     {
         "backend_url": "${url}",
-        "log_level": "info",
         "auth_provider": "standalone"
     }
     `);

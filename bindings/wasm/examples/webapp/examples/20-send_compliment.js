@@ -17,7 +17,7 @@ async function main() {
     await sdk.createNewUser(username);
     await sdk.initializeUser(username);
     await sdk.setWalletPassword(PIN, password);
-    await sdk.initWalletFromMnemonic(PIN, mnemonic);
+    await sdk.createWalletFromMnemonic(PIN, mnemonic);
 
     // fetch networks from backend
     let _ = await sdk.getNetworks();
