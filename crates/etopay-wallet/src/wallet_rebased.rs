@@ -3,8 +3,8 @@ use std::time::{Duration, Instant};
 
 use super::error::{Result, WalletError};
 use super::rebased::{
-    self, Argument, CoinReadApiClient, Command, GasData, IotaAddress, ObjectArg, ProgrammableTransactionBuilder,
-    RebasedError, RpcClient, TransactionData, TransactionExpiration,
+    self, Argument, CoinReadApi, Command, GasData, GovernanceReadApi, IotaAddress, ObjectArg,
+    ProgrammableTransactionBuilder, ReadApi, RebasedError, RpcClient, TransactionData, TransactionExpiration, WriteApi,
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
@@ -138,12 +138,7 @@ impl WalletUser for WalletImplIotaRebased {
 
     async fn get_balance(&self) -> Result<CryptoAmount> {
         let address = self.keystore.addresses()[0];
-
-        let balance = self
-            .client
-            .get_balance(address, Some(self.coin_type.clone()))
-            .await
-            .map_err(RebasedError::RpcError)?;
+        let balance = self.client.get_balance(address, Some(self.coin_type.clone())).await?;
 
         convert_u128_to_crypto_amount(balance.total_balance, self.decimals)
     }
@@ -175,8 +170,7 @@ impl WalletUser for WalletImplIotaRebased {
                 Some(rebased::IotaTransactionBlockResponseOptions::default()),
                 None,
             )
-            .await
-            .map_err(RebasedError::RpcError)?;
+            .await?;
 
         log::info!("Transaction submitted {}", transaction_block_response.digest);
 
@@ -229,13 +223,13 @@ impl WalletUser for WalletImplIotaRebased {
                 digest,
                 Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
             )
-            .await
-            .map_err(|e| match &e {
-                jsonrpsee::core::client::Error::Call(r) if r.code() == ErrorCode::InvalidParams.code() => {
-                    WalletError::TransactionNotFound
-                }
-                _ => WalletError::IotaRebased(RebasedError::RpcError(e)),
-            })?;
+            .await?;
+        // .map_err(|e| match &e {
+        //     jsonrpsee::core::client::Error::Call(r) if r.code() == ErrorCode::InvalidParams.code() => {
+        //         WalletError::TransactionNotFound
+        //     }
+        //     _ => WalletError::IotaRebased(RebasedError::RpcError(e)),
+        // })?;
 
         // log::info!("Transaction Details:\n{tx:#?}");
 
@@ -345,11 +339,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures()?;
 
-        let dry_run_tx_block_resp = self
-            .client
-            .dry_run_transaction_block(tx_bytes.clone())
-            .await
-            .map_err(RebasedError::RpcError)?;
+        let dry_run_tx_block_resp = self.client.dry_run_transaction_block(tx_bytes.clone()).await?;
 
         let gas_used = self.get_total_gas_used(dry_run_tx_block_resp.effects);
 
@@ -389,8 +379,7 @@ impl WalletImplIotaRebased {
         let mut coins = self
             .client
             .get_coins(address, Some(self.coin_type.clone()), None, None)
-            .await
-            .map_err(RebasedError::RpcError)?
+            .await?
             .data;
 
         // for now we just select _a_ coin object with enough balance, but at some point we probably need
@@ -486,11 +475,7 @@ impl WalletImplIotaRebased {
 
         let pt = builder.finish();
 
-        let gas_price = self
-            .client
-            .get_reference_gas_price()
-            .await
-            .map_err(RebasedError::RpcError)?;
+        let gas_price = self.client.get_reference_gas_price().await?;
 
         let tx_data = rebased::TransactionData::V1(rebased::TransactionDataV1 {
             kind: TransactionKind::ProgrammableTransaction(pt),
