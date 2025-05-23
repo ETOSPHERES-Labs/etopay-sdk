@@ -215,6 +215,28 @@ impl From<sdk::types::transactions::TxInfo> for TxInfo {
 
 #[wasm_bindgen(getter_with_clone, inspectable)]
 #[derive(Clone)]
+/// Gas estimation (EIP-1559)
+pub struct GasCostEstimation {
+    /// The maximum fee the sender is willing to pay per unit of gas.
+    pub max_fee_per_gas: u128,
+    /// The maximum tip the sender is willing to pay to miners (in EIP-1559).
+    pub max_priority_fee_per_gas: u128,
+    /// The maximum amount of gas that the transaction can consume.
+    pub gas_limit: u64,
+}
+
+impl From<sdk::types::transactions::GasCostEstimation> for GasCostEstimation {
+    fn from(value: sdk::types::transactions::GasCostEstimation) -> Self {
+        Self {
+            max_fee_per_gas: value.max_fee_per_gas,
+            max_priority_fee_per_gas: value.max_priority_fee_per_gas,
+            gas_limit: value.gas_limit,
+        }
+    }
+}
+
+#[wasm_bindgen(getter_with_clone, inspectable)]
+#[derive(Clone)]
 pub struct WalletTxInfo {
     /// Tx creation date, if available
     pub date: String,

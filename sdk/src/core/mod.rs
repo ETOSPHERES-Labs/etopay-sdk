@@ -110,7 +110,7 @@ impl Sdk {
     pub async fn get_networks(&mut self) -> Result<Vec<ApiNetwork>> {
         if self.networks.is_empty() {
             if self.access_token.is_none() {
-                return Err(crate::Error::MissingNetwork);
+                return Err(crate::Error::MissingAccessToken);
             }
 
             let result = self.get_networks_backend().await;

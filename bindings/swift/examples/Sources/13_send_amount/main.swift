@@ -30,8 +30,8 @@ Task {
         print("migrated wallet from mnemonic")
 
         // Fetch networks from backend
-        let networks = try await sdk.getNetworks()
-        try await sdk.setNetwork(networks[0].key())
+        let _ = try await sdk.getNetworks()
+        try await sdk.setNetwork("iota_rebased_testnet")
         print("retrieved available networks and set the network for the wallet")
 
         // Generate address
@@ -42,7 +42,6 @@ Task {
         let balance = try await sdk.getWalletBalance(env.pin)
         print("balance: \(balance)")
 
-        // Send amount
         let message = "swift bindings test"
 
         // convert to a RustVec by copying over all values
@@ -51,7 +50,11 @@ Task {
             rustVec.push(value: byte)
         }
 
-        let bytes: [UInt8] = Array(message.utf8)
+        // Estimate gas
+        let estimate = try await sdk.estimateGas(env.pin, address.toString(), 1, rustVec)
+        print("estimate: \(estimate.gas_limit.toString())")
+
+        // Send amount
         let tx_id = try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
         print("sent amount of 1 on transaction \(tx_id.toString())")
 

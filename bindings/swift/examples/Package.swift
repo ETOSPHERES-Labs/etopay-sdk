@@ -72,14 +72,14 @@ let package = Package(
             path: "Sources/05_migrate_wallet_from_backup"
         ),
 
-        .executableTarget(
-            name: "06_generate_new_address",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/06_generate_new_address"
-        ),
+        // .executableTarget(
+        //     name: "06_generate_new_address",
+        //     dependencies: [
+        //         .product(name: "ETOPaySdk", package: "ETOPaySdk"),
+        //         "utils",
+        //     ],
+        //     path: "Sources/06_generate_new_address"
+        // ),
 
         .executableTarget(
             name: "07_get_balance",
@@ -90,14 +90,14 @@ let package = Package(
             path: "Sources/07_get_balance"
         ),
 
-        .executableTarget(
-            name: "08_create_purchase_request",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/08_create_purchase_request"
-        ),
+        // .executableTarget(
+        //     name: "08_create_purchase_request",
+        //     dependencies: [
+        //         .product(name: "ETOPaySdk", package: "ETOPaySdk"),
+        //         "utils",
+        //     ],
+        //     path: "Sources/08_create_purchase_request"
+        // ),
 
         .executableTarget(
             name: "09_onboard_user_viviswap",
@@ -144,14 +144,14 @@ let package = Package(
             path: "Sources/13_send_amount"
         ),
 
-        .executableTarget(
-            name: "14_get_exchange_rate",
-            dependencies: [
-                .product(name: "ETOPaySdk", package: "ETOPaySdk"),
-                "utils",
-            ],
-            path: "Sources/14_get_exchange_rate"
-        ),
+        // .executableTarget(
+        //     name: "14_get_exchange_rate",
+        //     dependencies: [
+        //         .product(name: "ETOPaySdk", package: "ETOPaySdk"),
+        //         "utils",
+        //     ],
+        //     path: "Sources/14_get_exchange_rate"
+        // ),
 
         .executableTarget(
             name: "16_get_tx_list",

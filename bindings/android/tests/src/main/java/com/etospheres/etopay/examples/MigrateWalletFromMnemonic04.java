@@ -29,23 +29,6 @@ public class MigrateWalletFromMnemonic04 {
 
             sdk.createWalletFromMnemonic(utils.PIN, mnemonic);
             System.out.println("Created new wallet from mnemonic.");
-
-            // fetch networks from backend
-            String networks = sdk.getNetworks();
-
-            List<Network> networksList;
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                networksList = objectMapper.readValue(networks, new TypeReference<List<Network>>() {
-                });
-            } catch (JsonProcessingException e) {
-                throw new RuntimeException("Error processing JSON response", e);
-            }
-
-            Network iotaNetwork = networksList.get(0);
-            // set the network configuration for the wallet
-            sdk.setNetwork(iotaNetwork.key);
-
         } catch (Exception e) {
             throw new RuntimeException("Migrate wallet from mnemonic example failed", e);
         }
