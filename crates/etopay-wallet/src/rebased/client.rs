@@ -1,12 +1,14 @@
 #[cfg(not(target_arch = "wasm32"))]
-use jsonrpsee::http_client::HttpClient as Client;
+use reqwest::Client;
 
 #[cfg(target_arch = "wasm32")]
-use jsonrpsee::wasm_client::Client;
+use reqwest::Client;
 
 pub struct RpcClient {
-    client: Client,
+    pub client: Client,
 }
+
+pub type RpcResult<T> = Result<T, super::RebasedError>;
 
 impl std::ops::Deref for RpcClient {
     type Target = Client;
@@ -16,10 +18,20 @@ impl std::ops::Deref for RpcClient {
     }
 }
 
+use serde::Deserialize;
+#[derive(Deserialize)]
+pub struct RpcResponse<T> {
+    pub result: T,
+}
+
 #[cfg(not(target_arch = "wasm32"))]
 mod non_wasm {
-    use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClientBuilder};
-
+    //use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClientBuilder};
+    //    use reqwest::Client;
+    use reqwest::{
+        Client,
+        header::{HeaderMap, HeaderValue},
+    };
     const CLIENT_SDK_TYPE_HEADER: &str = "client-sdk-type";
     /// The version number of the SDK itself. This can be different from the API
     /// version.
@@ -41,13 +53,12 @@ mod non_wasm {
             headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
             headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
 
-            let http_builder = HttpClientBuilder::default()
-                .max_request_size(2 << 30)
-                .set_headers(headers);
+            //let http_builder = Client::default().max_request_size(2 << 30).set_headers(headers);
+            let http_builder = Client::builder().default_headers(headers);
             // .request_timeout(self.request_timeout);
 
             Ok(Self {
-                client: http_builder.build(url)?,
+                client: http_builder.build()?,
             })
         }
     }
@@ -56,12 +67,15 @@ mod non_wasm {
 #[cfg(target_arch = "wasm32")]
 impl RpcClient {
     pub async fn new(url: &str) -> Result<Self, super::RebasedError> {
-        use jsonrpsee::wasm_client::WasmClientBuilder;
-        let http_builder = WasmClientBuilder::default();
-        // .request_timeout(self.request_timeout);
+        use log::debug;
+        use reqwest::Client;
+        use serde_json::Value;
+        use serde_json::json;
+
+        let http_builder = Client::builder();
 
         Ok(Self {
-            client: http_builder.build(url).await?,
+            client: http_builder.build()?,
         })
     }
 }
