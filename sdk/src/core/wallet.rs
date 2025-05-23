@@ -10,8 +10,7 @@ use crate::{
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
-use etopay_wallet::types::{CryptoAmount, WalletTxInfo, WalletTxInfoList};
-use iota_sdk::wallet::account::types::InclusionState;
+use etopay_wallet::types::{CryptoAmount, InclusionState, WalletTxInfo, WalletTxInfoList};
 use log::{debug, info, warn};
 
 impl Sdk {
@@ -605,7 +604,6 @@ mod tests {
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use etopay_wallet::MockWalletUser;
-    use iota_sdk::wallet::account::types::InclusionState;
     use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;

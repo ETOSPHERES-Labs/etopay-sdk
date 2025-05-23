@@ -28,9 +28,8 @@ use api_types::api::{
     },
 };
 use etopay_wallet::MockWalletUser;
-use etopay_wallet::types::CryptoAmount;
 use etopay_wallet::types::WalletTxInfo;
-use iota_sdk::wallet::account::types::InclusionState;
+use etopay_wallet::types::{CryptoAmount, InclusionState};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;

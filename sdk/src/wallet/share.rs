@@ -1,8 +1,6 @@
 use base64::{Engine as _, engine::general_purpose::STANDARD};
-use iota_sdk::crypto::{
-    hashes::{Digest, blake2b::Blake2b256},
-    keys::bip39::Mnemonic,
-};
+use etopay_wallet::bip39::Mnemonic;
+use iota_sdk::crypto::hashes::{Digest, blake2b::Blake2b256};
 use secrecy::{ExposeSecret, SecretBox, SecretSlice, SecretString};
 use std::str::FromStr;
 
@@ -219,35 +217,25 @@ pub struct GeneratedShares {
 /// Creates shares from a [`Mnemonic`] that can be resolved into a [`Mnemonic`] again when reconstructed.
 #[allow(clippy::result_large_err)]
 pub fn create_shares_from_mnemonic(
-    mnemonic: impl Into<Mnemonic>,
+    mnemonic: &Mnemonic,
     password: &SecretSlice<u8>,
 ) -> super::error::Result<GeneratedShares> {
-    let mnemonic: Mnemonic = mnemonic.into();
-
     // convert the mnemonic string into the raw entropy it encodes
-    let entropy =
-        iota_sdk::crypto::keys::bip39::wordlist::decode(&mnemonic, &iota_sdk::crypto::keys::bip39::wordlist::ENGLISH)?;
+    let entropy = mnemonic.entropy();
 
-    let entropy_bytes: &[u8] = entropy.as_ref();
-    create_shares_from_secret(PayloadType::MnemonicEntropy, &entropy_bytes.to_vec().into(), password)
-        .map_err(Into::into)
+    create_shares_from_secret(PayloadType::MnemonicEntropy, &entropy.to_vec().into(), password).map_err(Into::into)
 }
 
 /// Reconstruct a [`Mnemonic`] from the shares. Can be used to initialize a wallet using the
 /// [`iota_sdk::client::secret::mnemonic::MnemonicSecretManager::try_from_mnemonic`] function.
 #[allow(clippy::result_large_err)]
-pub fn reconstruct_mnemonic(
-    shares: &[&Share],
-    password: Option<&SecretSlice<u8>>,
-) -> super::error::Result<SecretBox<Mnemonic>> {
+pub fn reconstruct_mnemonic(shares: &[&Share], password: Option<&SecretSlice<u8>>) -> super::error::Result<Mnemonic> {
     let (payload_type, secret) = reconstruct_secret(shares, password)?;
     match payload_type {
-        PayloadType::MnemonicEntropy => Ok(SecretBox::new(Box::new(
-            iota_sdk::crypto::keys::bip39::wordlist::encode(
-                secret.expose_secret(),
-                &iota_sdk::crypto::keys::bip39::wordlist::ENGLISH,
-            )?,
-        ))),
+        PayloadType::MnemonicEntropy => Ok(Mnemonic::from_entropy(
+            secret.expose_secret(),
+            etopay_wallet::bip39::Language::English,
+        )?),
     }
 }
 
@@ -506,38 +494,37 @@ mod test {
         // Arrange
         let password = SecretBox::new("password".to_string().into_bytes().into());
 
-        let mnemonic = iota_sdk::client::Client::generate_mnemonic().unwrap();
+        let mnemonic = Mnemonic::new(
+            etopay_wallet::bip39::MnemonicType::Words24,
+            etopay_wallet::bip39::Language::English,
+        );
 
         // Perform and check
-        let shares = create_shares_from_mnemonic(mnemonic.clone(), &password).unwrap();
+        let shares = create_shares_from_mnemonic(&mnemonic, &password).unwrap();
 
         assert_eq!(
             reconstruct_mnemonic(&[&shares.backup, &shares.local], Some(&password))
                 .unwrap()
-                .expose_secret()
-                .as_bytes(),
-            mnemonic.as_bytes()
+                .entropy(),
+            mnemonic.entropy(),
         );
         assert_eq!(
             reconstruct_mnemonic(&[&shares.backup, &shares.recovery], Some(&password))
                 .unwrap()
-                .expose_secret()
-                .as_bytes(),
-            mnemonic.as_bytes()
+                .entropy(),
+            mnemonic.entropy(),
         );
         assert_eq!(
             reconstruct_mnemonic(&[&shares.recovery, &shares.local], None)
                 .unwrap()
-                .expose_secret()
-                .as_bytes(),
-            mnemonic.as_bytes()
+                .entropy(),
+            mnemonic.entropy(),
         );
         assert_eq!(
             reconstruct_mnemonic(&[&shares.recovery, &shares.local, &shares.backup], Some(&password))
                 .unwrap()
-                .expose_secret()
-                .as_bytes(),
-            mnemonic.as_bytes()
+                .entropy(),
+            mnemonic.entropy()
         );
 
         assert!(reconstruct_mnemonic(&[&shares.recovery], Some(&password)).is_err());
@@ -572,10 +559,7 @@ mod test {
         let shares: Vec<&Share> = shares.iter().collect();
 
         assert_eq!(
-            reconstruct_mnemonic(&shares, Some(&password))
-                .unwrap()
-                .expose_secret()
-                .to_string(),
+            reconstruct_mnemonic(&shares, Some(&password)).unwrap().to_string(),
             mnemonic_str,
         );
 
@@ -586,10 +570,7 @@ mod test {
         let shares: Vec<Share> = shares.iter().map(|&s| s.parse::<Share>().unwrap()).collect();
         let shares: Vec<&Share> = shares.iter().collect();
         assert_eq!(
-            reconstruct_mnemonic(&shares, Some(&password))
-                .unwrap()
-                .expose_secret()
-                .to_string(),
+            reconstruct_mnemonic(&shares, Some(&password)).unwrap().to_string(),
             mnemonic_str
         );
 
@@ -599,10 +580,7 @@ mod test {
         ];
         let shares: Vec<Share> = shares.iter().map(|&s| s.parse::<Share>().unwrap()).collect();
         let shares: Vec<&Share> = shares.iter().collect();
-        assert_eq!(
-            reconstruct_mnemonic(&shares, None).unwrap().expose_secret().to_string(),
-            mnemonic_str
-        );
+        assert_eq!(reconstruct_mnemonic(&shares, None).unwrap().to_string(), mnemonic_str);
     }
 
     #[test]

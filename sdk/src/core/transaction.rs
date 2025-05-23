@@ -401,8 +401,7 @@ mod tests {
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use etopay_wallet::MockWalletUser;
-    use etopay_wallet::types::WalletTxInfo;
-    use iota_sdk::wallet::account::types::InclusionState;
+    use etopay_wallet::types::{InclusionState, WalletTxInfo};
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
