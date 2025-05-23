@@ -19,13 +19,15 @@
 //! - We define functions to get the inner value in safe ways (eg. as a [`secrecy::Secret`], or functions
 //!   to convert (eg. for the encrypt / decrypt methods) to other newtypes.
 
-use super::error::{Result, TypeError};
+use super::{
+    crypto::Blake2b256,
+    error::{Result, TypeError},
+};
 use aes_gcm::{
     Aes256Gcm, Nonce,
     aead::{Aead, KeyInit},
 };
-use iota_sdk::crypto::hashes::Digest;
-use iota_sdk::crypto::hashes::blake2b::Blake2b256;
+use blake2::Digest;
 use log::warn;
 use rand::RngCore;
 use serde::{Deserialize, Serialize};

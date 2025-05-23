@@ -532,7 +532,7 @@ mod tests {
         chain_id: u64,
     ) -> WalletImplEvm {
         let mnemonic = Mnemonic::from_phrase(mnemonic_phrase.as_ref(), Language::English).expect("invalid mnemonic");
-        WalletImplEvm::new(mnemonic.into(), &[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+        WalletImplEvm::new(mnemonic, &[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("could not initialize WalletImplEth")
     }
 

@@ -1,8 +1,10 @@
 use base64::{Engine as _, engine::general_purpose::STANDARD};
+use blake2::Digest;
 use etopay_wallet::bip39::Mnemonic;
-use iota_sdk::crypto::hashes::{Digest, blake2b::Blake2b256};
 use secrecy::{ExposeSecret, SecretBox, SecretSlice, SecretString};
 use std::str::FromStr;
+
+use crate::types::crypto::Blake2b256;
 
 /// A share that can be used with other [`Share`] to construct the secret.
 #[derive(Debug, Clone)] // for testing purposes we also derive PartialEq
