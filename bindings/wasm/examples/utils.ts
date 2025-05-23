@@ -28,10 +28,11 @@ export async function initSdk(username: string) {
         throw new Error("EXAMPLES_BACKEND_URL environment variable must be present")
     }
 
+	await sdk.initLogger(wasm.Level.Trace);
+
     await sdk.setConfig(`
     {
         "backend_url": "${url}",
-        "log_level": "info",
         "auth_provider": "standalone"
     }
     `);
