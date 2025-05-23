@@ -13,7 +13,6 @@ use async_trait::async_trait;
 use chrono::{TimeZone, Utc};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::wallet::account::types::InclusionState;
-use jsonrpsee::types::ErrorCode;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 use rust_decimal::prelude::ToPrimitive;

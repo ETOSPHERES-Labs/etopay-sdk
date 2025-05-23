@@ -5,8 +5,6 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/read.rs
 
-// use jsonrpsee::proc_macros::rpc;
-
 use serde_json::{Value, json};
 
 use crate::rebased::{
@@ -20,11 +18,8 @@ use super::{super::TransactionDigest, IotaTransactionBlockResponse, IotaTransact
 /// blocks, checkpoints, and protocol configuration. The trait further provides
 /// methods for reading the ledger (current objects) as well its history (past
 /// objects).
-// #[rpc(client, namespace = "iota")]
 pub trait ReadApi {
     /// Return the transaction response object.
-    // #[rustfmt::skip]
-    // #[method(name = "getTransactionBlock")]
     async fn get_transaction_block(
         &self,
         // the digest of the queried transaction
@@ -44,8 +39,8 @@ impl ReadApi for RpcClient {
     ) -> RpcResult<IotaTransactionBlockResponse> {
         let mut params: Vec<Value> = vec![json!(digest.to_string())];
 
-        if let Some(o) = options {
-            params.push(json!(o));
+        if let Some(opts) = options {
+            params.push(json!(opts));
         }
 
         let request_body = json!({
@@ -55,12 +50,7 @@ impl ReadApi for RpcClient {
             "params": params
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response
             .json::<RpcResponse<IotaTransactionBlockResponse>>()
