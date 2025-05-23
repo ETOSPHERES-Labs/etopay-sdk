@@ -20,8 +20,8 @@ impl From<sdk::types::ApiTxStatus> for ffi::TxStatus {
     }
 }
 
-impl From<sdk::types::transactions::GasCostEstimation> for ffi::GasCostEstimation {
-    fn from(value: sdk::types::transactions::GasCostEstimation) -> Self {
+impl From<sdk::types::GasCostEstimation> for ffi::GasCostEstimation {
+    fn from(value: sdk::types::GasCostEstimation) -> Self {
         Self {
             max_fee_per_gas: value.max_fee_per_gas.to_string(),
             max_priority_fee_per_gas: value.max_priority_fee_per_gas.to_string(),
