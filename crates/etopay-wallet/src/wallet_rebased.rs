@@ -1,5 +1,40 @@
 use std::ops::{Add, Sub};
-use std::time::{Duration, Instant};
+use std::time::Duration;
+
+// #[cfg(not(target_arch = "wasm32"))]
+// use std::time::{Duration, Instant};
+
+// #[cfg(target_arch = "wasm32")]
+// use js_sys::Date;
+
+// #[cfg(target_arch = "wasm32")]
+// pub struct InstantWasm(f64);
+
+// #[cfg(target_arch = "wasm32")]
+// impl InstantWasm {
+//     pub fn now() -> Self {
+//         Self(Date::now())
+//     }
+
+//     pub fn elapsed(&self) -> Duration {
+//         let now = Date::now();
+//         let delta_ms = now - self.0;
+//         Duration::from_millis(delta_ms as u64)
+//     }
+// }
+
+// #[cfg(target_arch = "wasm32")]
+// impl InstantWasm {
+//     pub fn now() -> Self {
+//         Self(Date::now())
+//     }
+
+//     pub fn elapsed(&self) -> Duration {
+//         let now = Date::now();
+//         let delta_ms = now - self.0;
+//         Duration::from_millis(delta_ms as u64)
+//     }
+// }
 
 use super::error::{Result, WalletError};
 use super::rebased::{
@@ -162,7 +197,13 @@ impl WalletUser for WalletImplIotaRebased {
 
         let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures()?;
 
-        let start = Instant::now();
+        // #[cfg(not(target_arch = "wasm32"))]
+        // let start = Instant::now();
+
+        // #[cfg(target_arch = "wasm32")]
+        // let start = InstantWasm::now();
+
+        //let start = Instant::now();
         let transaction_block_response = self
             .client
             .execute_transaction_block(
@@ -198,7 +239,7 @@ impl WalletUser for WalletImplIotaRebased {
         .map_err(|_| {
             WalletError::FailToConfirmTransactionStatus(
                 transaction_block_response.digest.to_string(),
-                start.elapsed().as_secs(),
+                0, //start.elapsed().as_secs(),
             )
         })?;
 
