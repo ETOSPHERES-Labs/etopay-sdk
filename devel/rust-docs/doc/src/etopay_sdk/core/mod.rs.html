@@ -110,7 +110,7 @@
 <a href=#110 id=110 data-nosnippet>110</a>    </span><span class="kw">pub async fn </span>get_networks(<span class="kw-2">&amp;mut </span><span class="self">self</span>) -&gt; <span class="prelude-ty">Result</span>&lt;Vec&lt;ApiNetwork&gt;&gt; {
 <a href=#111 id=111 data-nosnippet>111</a>        <span class="kw">if </span><span class="self">self</span>.networks.is_empty() {
 <a href=#112 id=112 data-nosnippet>112</a>            <span class="kw">if </span><span class="self">self</span>.access_token.is_none() {
-<a href=#113 id=113 data-nosnippet>113</a>                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingNetwork);
+<a href=#113 id=113 data-nosnippet>113</a>                <span class="kw">return </span><span class="prelude-val">Err</span>(<span class="kw">crate</span>::Error::MissingAccessToken);
 <a href=#114 id=114 data-nosnippet>114</a>            }
 <a href=#115 id=115 data-nosnippet>115</a>
 <a href=#116 id=116 data-nosnippet>116</a>            <span class="kw">let </span>result = <span class="self">self</span>.get_networks_backend().<span class="kw">await</span>;
