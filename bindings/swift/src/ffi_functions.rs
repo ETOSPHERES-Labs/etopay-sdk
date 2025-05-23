@@ -920,16 +920,12 @@ impl ETOPaySdk {
     ) -> Result<GasCostEstimation, String> {
         let mut sdk = self.inner.write().await;
         async move {
-            async move {
-                let amount = CryptoAmount::try_from(amount)?;
-                let pin = EncryptionPin::try_from_string(pin)?;
-                sdk.estimate_gas(&pin, &address, amount, data).await
-            }
-            .await
-            .map(Into::into)
-            .map_err(|err| format!("{:#?}", err))
+            let amount = CryptoAmount::try_from(amount)?;
+            let pin = EncryptionPin::try_from_string(pin)?;
+            sdk.estimate_gas(&pin, &address, amount, data).await
         }
         .await
+        .map(Into::into)
         .map_err(|err| format!("{:#?}", err))
     }
 
