@@ -387,7 +387,7 @@ mod tests {
     use crate::testing_utils::{
         AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
-        example_wallet_borrow, set_config,
+        example_wallet_borrow, example_wallet_tx_info, set_config,
     };
     use crate::types::users::KycType;
     use crate::{
@@ -707,7 +707,11 @@ mod tests {
 
         match &expected {
             Ok(_) => {
-                let mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 1, KycType::Undefined);
+                let mut mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 2, KycType::Undefined);
+                mock_user_repo
+                    .expect_set_wallet_transactions()
+                    .once()
+                    .returning(|_, _| Ok(()));
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
@@ -717,6 +721,10 @@ mod tests {
                         .expect_send_amount()
                         .times(1)
                         .returning(move |_| Ok(String::from("transaction id")));
+                    mock_wallet
+                        .expect_get_wallet_tx()
+                        .once()
+                        .returning(|_| Ok(example_wallet_tx_info()));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 

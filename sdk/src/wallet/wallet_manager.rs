@@ -391,7 +391,7 @@ impl WalletManager for WalletManagerImpl {
         self.create_and_upload_shares(config, access_token, repo, pin, &mnemonic)
             .await?;
 
-        Ok(mnemonic.to_string())
+        Ok(mnemonic.phrase().to_string())
     }
 
     /// Create shares from a mnemonic
@@ -724,6 +724,8 @@ mod tests {
         let mut manager = WalletManagerImpl::new(USERNAME);
         let (pin, mut repo) = get_user_repo();
 
+        let file_count_before = walkdir::WalkDir::new(&config.path_prefix).into_iter().count();
+
         // create a wallet
         manager
             .create_wallet_from_new_mnemonic(&config, &None, &mut repo, pin)
@@ -742,8 +744,6 @@ mod tests {
             .await
             .expect("should succeed to get wallet");
 
-        let file_count_before = walkdir::WalkDir::new(&config.path_prefix).into_iter().count();
-
         //Act
         manager
             .delete_wallet(&config, &None, &mut repo)
@@ -752,7 +752,8 @@ mod tests {
 
         // Assert
         let file_count_after = walkdir::WalkDir::new(&config.path_prefix).into_iter().count();
-        assert!(file_count_after < file_count_before, "should remove files");
+
+        assert_eq!(file_count_before, file_count_after, "should not leave files behind");
     }
 
     // Note: all test cases assume that there is no password stored in the user database (since a wallet was never created before)
