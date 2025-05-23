@@ -17,3 +17,12 @@ pub struct CreateTransactionRequest {
 pub struct CreateTransactionResponse {
     pub index: String,
 }
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
+#[cfg_attr(feature = "utoipa", derive(utoipa::ToSchema))]
+pub struct CommitTransactionRequest {
+    /// Unique purchase index.
+    pub index: String,
+    /// The transaction hash / id that identifies the transaction on the chain.
+    pub transaction_id: String,
+}
