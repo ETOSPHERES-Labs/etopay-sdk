@@ -20,22 +20,12 @@
 use super::error::{ApiError, Result};
 use crate::{core::config::Config, types::newtypes::AccessToken};
 use api_types::api::transactions::{
-    ApiApplicationMetadata, CreateTransactionRequest, CreateTransactionResponse, GetTransactionDetailsResponse,
-    GetTransactionStatusRequest, GetTxsDetailsResponse, TxsDetailsQuery,
+    ApiApplicationMetadata, CommitTransactionRequest, CreateTransactionRequest, CreateTransactionResponse,
+    GetTransactionDetailsResponse, GetTransactionStatusRequest, GetTxsDetailsResponse, TxsDetailsQuery,
 };
 use etopay_wallet::types::CryptoAmount;
 use log::{debug, error, info};
 use reqwest::StatusCode;
-use serde::{Deserialize, Serialize};
-
-/// Request body to commit a transaction
-#[derive(Debug, Deserialize, Serialize, Clone)]
-struct CommitTransactionRequest {
-    /// unique transaction index
-    pub index: String,
-    /// transaction id
-    pub transaction_id: String,
-}
 
 /// Create new transaction
 ///

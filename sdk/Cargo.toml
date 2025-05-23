@@ -19,7 +19,7 @@ workspace = true
 
 [features]
 # by default (for platforms that are not wasm)
-default = ["jammdb_repo", "etopay_wallet/jammdb", "tokio/fs"]
+default = ["jammdb_repo", "tokio/fs"]
 
 # if the jammdb should be used as user repository backend
 jammdb_repo = ["dep:jammdb", "dep:rmp-serde"]
@@ -47,8 +47,8 @@ aes-gcm = { version = "0.10.3", default-features = false, features = [
 ] }
 async-trait = { version = "0.1.88", default-features = false }
 base64 = { workspace = true }
+blake2 = "0.10"
 chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
-iota-sdk = { package = "etospheres-labs-iota-sdk", version = "1.1.5", default-features = false }
 
 kdbx-rs = { version = "0.5.1", default-features = false }
 jammdb = { version = "0.11.0", optional = true }

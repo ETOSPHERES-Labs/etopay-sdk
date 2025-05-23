@@ -10,11 +10,10 @@ use super::wallet::{TransactionIntent, WalletUser};
 use crate::rebased::{
     GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind, WriteApiClient,
 };
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
+use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
-use iota_sdk::crypto::keys::bip39::Mnemonic;
-use iota_sdk::wallet::account::types::InclusionState;
 use jsonrpsee::types::ErrorCode;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
@@ -45,7 +44,7 @@ impl WalletImplIotaRebased {
     /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
     pub async fn new(mnemonic: Mnemonic, coin_type: &str, decimals: u32, node_url: &[String]) -> Result<Self> {
         let mut keystore2 = rebased::InMemKeystore::default();
-        keystore2.import_from_mnemonic(&mnemonic, "m/44'/4218'/0'/0'/0'".parse::<bip32::DerivationPath>()?)?;
+        keystore2.import_from_mnemonic(mnemonic, "m/44'/4218'/0'/0'/0'".parse::<bip32::DerivationPath>()?)?;
 
         let client = RpcClient::new(&node_url[0]).await?;
 

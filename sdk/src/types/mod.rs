@@ -2,6 +2,9 @@
 //!
 //!
 
+/// Some helper stuff for dealing with cryptographich hashes
+pub mod crypto;
+
 /// Business logic for config sdk module
 pub mod currencies;
 /// Errors related to sdk types

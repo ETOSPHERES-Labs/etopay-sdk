@@ -1,7 +1,7 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -20,8 +20,7 @@ use alloy_provider::fillers::{
 };
 use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
-use iota_sdk::crypto::keys::bip39::Mnemonic;
-use iota_sdk::wallet::account::types::InclusionState;
+use bip39::Mnemonic;
 use log::info;
 use reqwest::Url;
 use rust_decimal::Decimal;
@@ -455,7 +454,7 @@ impl WalletUser for WalletImplEvmErc20 {
 mod tests {
     use super::*;
     use crate::types::CryptoAmount;
-    use iota_sdk::crypto::keys::bip39::Mnemonic;
+    use bip39::{Language, Mnemonic};
     use rust_decimal_macros::dec;
     use serde_json::json;
     use testing::CleanUp;
@@ -515,23 +514,25 @@ mod tests {
     }
 
     /// helper function to get a [`WalletUser`] instance.
-    async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEvm, CleanUp) {
+    async fn get_wallet_user(mnemonic_phrase: impl AsRef<str>) -> (WalletImplEvm, CleanUp) {
         let cleanup = testing::CleanUp::default();
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 
-        let wallet = WalletImplEvm::new(mnemonic.into(), &node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+        let mnemonic = Mnemonic::from_phrase(mnemonic_phrase.as_ref(), Language::English).expect("invalid mnemonic");
+        let wallet = WalletImplEvm::new(mnemonic, &node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("should initialize wallet");
         (wallet, cleanup)
     }
 
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user_with_mocked_provider(
-        mnemonic: impl Into<Mnemonic>,
+        mnemonic_phrase: impl AsRef<str>,
         node_url: String,
         chain_id: u64,
     ) -> WalletImplEvm {
-        WalletImplEvm::new(mnemonic.into(), &[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
+        let mnemonic = Mnemonic::from_phrase(mnemonic_phrase.as_ref(), Language::English).expect("invalid mnemonic");
+        WalletImplEvm::new(mnemonic, &[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
             .expect("could not initialize WalletImplEth")
     }
 

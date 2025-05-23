@@ -28,9 +28,8 @@ use api_types::api::{
     },
 };
 use etopay_wallet::MockWalletUser;
-use etopay_wallet::types::CryptoAmount;
 use etopay_wallet::types::WalletTxInfo;
-use iota_sdk::wallet::account::types::InclusionState;
+use etopay_wallet::types::{CryptoAmount, InclusionState};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;
@@ -175,11 +174,13 @@ pub fn example_tx_details() -> GetTransactionDetailsResponse {
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
-            node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
-            decimals: 16,
+            node_urls: vec![String::from("https://api.testnet.iota.cafe")],
+            decimals: 8,
             can_do_purchases: true,
-            protocol: ApiProtocol::Stardust {},
-            block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
+            protocol: ApiProtocol::IotaRebased {
+                coin_type: "0x2::iota::IOTA".to_string(),
+            },
+            block_explorer_url: String::from("https://iotascan.com/testnet"),
         },
     }
 }
@@ -192,11 +193,13 @@ pub fn example_api_network(key: String) -> ApiNetwork {
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
-            node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
-            decimals: 16,
+            node_urls: vec![String::from("https://api.testnet.iota.cafe")],
+            decimals: 8,
             can_do_purchases: true,
-            protocol: ApiProtocol::Stardust {},
-            block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
+            protocol: ApiProtocol::IotaRebased {
+                coin_type: "0x2::iota::IOTA".to_string(),
+            },
+            block_explorer_url: String::from("https://iotascan.com/testnet"),
         },
         val if val == *"ETH" => ApiNetwork {
             key: ETH_NETWORK_KEY.to_string(),
@@ -210,18 +213,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
             protocol: ApiProtocol::Evm { chain_id: 31337 },
             block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
         },
-        _ => ApiNetwork {
-            key: String::new(),
-            is_testnet: true,
-            display_name: String::new(),
-            display_symbol: String::new(),
-            coin_type: 0,
-            node_urls: vec![String::new()],
-            decimals: 0,
-            can_do_purchases: false,
-            protocol: ApiProtocol::Stardust {},
-            block_explorer_url: String::new(),
-        },
+        _ => unreachable!("nonexistant!"),
     }
 }
 
@@ -233,11 +225,13 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
             display_name: String::from("IOTA"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
-            node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
-            decimals: 16,
+            node_urls: vec![String::from("https://api.testnet.iota.cafe")],
+            decimals: 8,
             can_do_purchases: true,
-            protocol: ApiProtocol::Stardust {},
-            block_explorer_url: String::from("https://explorer.iota.org/iota-testnet/"),
+            protocol: ApiProtocol::IotaRebased {
+                coin_type: "0x2::iota::IOTA".to_string(),
+            },
+            block_explorer_url: String::from("https://iotascan.com/testnet"),
         },
         ApiNetwork {
             key: ETH_NETWORK_KEY.to_string(),
