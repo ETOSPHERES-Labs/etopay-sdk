@@ -4,10 +4,6 @@ pub type Result<T> = core::result::Result<T, WalletError>;
 /// Wrapper for wallet errors
 #[derive(thiserror::Error, Debug)]
 pub enum WalletError {
-    /// Iota client error
-    #[error("IotaClient error: {0}")]
-    IotaClient(#[from] iota_sdk::client::Error),
-
     /// Error raises if the feature is not implemented
     #[error("Wallet feature is not implemented")]
     WalletFeatureNotImplemented,
@@ -35,14 +31,6 @@ pub enum WalletError {
     /// Error caused by conversions to/from Decimal and f64
     #[error("Decimal error: {0}")]
     Decimal(rust_decimal::Error),
-
-    /// Block error
-    #[error("Block error: {0}")]
-    Block(#[from] iota_sdk::types::block::Error),
-
-    /// Iota wallet error
-    #[error("IotaWallet error: {0}")]
-    IotaWallet(#[from] iota_sdk::wallet::Error),
 
     /// Error occurred while handling bip32 compliant derivation paths
     #[error("Bip32: {0:?}")]

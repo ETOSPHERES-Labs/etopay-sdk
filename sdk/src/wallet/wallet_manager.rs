@@ -9,7 +9,7 @@ use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPa
 use crate::wallet::error::{ErrorKind, Result, WalletError};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use async_trait::async_trait;
-use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletImplStardust, WalletUser};
+use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use log::{info, warn};
 use secrecy::{ExposeSecret, SecretBox};
@@ -532,13 +532,6 @@ impl WalletManager for WalletManagerImpl {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
 
         // we have the mnemonic and can now instantiate the WalletImpl
-
-        let path = config
-            .path_prefix
-            .join("wallets")
-            .join(&self.username)
-            .join(network.clone().key);
-
         let bo = match &network.protocol {
             ApiProtocol::Evm { chain_id } => {
                 let wallet = WalletImplEvm::new(
@@ -565,8 +558,9 @@ impl WalletManager for WalletManagerImpl {
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             ApiProtocol::Stardust {} => {
-                let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
-                Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
+                return Err(WalletError::WalletImplError(
+                    etopay_wallet::WalletError::WalletFeatureNotImplemented,
+                ));
             }
             ApiProtocol::IotaRebased { coin_type } => {
                 let wallet =

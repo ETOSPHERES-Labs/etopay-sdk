@@ -4,7 +4,7 @@
 // SPDX-License-Identifier: Apache-2.0
 
 use bip32::DerivationPath;
-use bip39::{Language, Mnemonic, Seed};
+use bip39::{Mnemonic, Seed};
 use serde::Serialize;
 use std::collections::BTreeMap;
 
@@ -20,10 +20,9 @@ pub struct InMemKeystore {
 impl InMemKeystore {
     pub fn import_from_mnemonic(
         &mut self,
-        phrase: &str,
+        mnemonic: Mnemonic,
         derivation_path: DerivationPath,
     ) -> Result<IotaAddress, RebasedError> {
-        let mnemonic = Mnemonic::from_phrase(phrase, Language::English)?;
         let seed = Seed::new(&mnemonic, "");
 
         let indexes = derivation_path.into_iter().map(|i| i.into()).collect::<Vec<_>>();

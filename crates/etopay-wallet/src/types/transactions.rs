@@ -2,11 +2,6 @@ use api_types::api::{
     networks::ApiNetwork,
     transactions::{ApiApplicationMetadata, ApiTxStatus},
 };
-use chrono::{LocalResult, TimeZone, Utc};
-use iota_sdk::{
-    types::block::{helper::network_name_to_id, output::Output, payload::transaction::TransactionEssence},
-    wallet::account::types::Transaction,
-};
 use serde::{Deserialize, Serialize};
 
 use super::currencies::CryptoAmount;
@@ -75,55 +70,6 @@ pub struct WalletTxInfoList {
     pub transactions: Vec<WalletTxInfo>,
 }
 
-impl From<Transaction> for WalletTxInfo {
-    fn from(transaction: Transaction) -> Self {
-        let essence = transaction.payload.essence();
-
-        let TransactionEssence::Regular(regular) = essence;
-        let mut sum: u64 = 0u64;
-        for output in regular.outputs().iter() {
-            if let Output::Basic(output) = output {
-                sum += output.amount();
-            }
-        }
-        // convert from GLOW to IOTA/SMR
-        let sum = sum as f64 / 1_000_000.0;
-
-        let (network_key, explorer_url) = match transaction.network_id {
-            id if id == network_name_to_id("iota") => {
-                let explorer_url = transaction
-                    .block_id
-                    .map(|id| format!("https://explorer.iota.org/mainnet/block/{id}"));
-                ("IOTA", explorer_url)
-            }
-            id => {
-                log::error!("unknown network id: {id}");
-                ("", None)
-            }
-        };
-
-        let date = match Utc.timestamp_millis_opt(transaction.timestamp as i64) {
-            LocalResult::Single(timestamp) => timestamp.to_rfc3339(),
-            _ => {
-                log::error!("could not convert timestamp to date");
-                "".to_string()
-            }
-        };
-
-        WalletTxInfo {
-            block_id: transaction.block_id.map(|id| id.to_string()),
-            transaction_id: transaction.transaction_id.to_string(),
-            incoming: transaction.incoming,
-            receiver: String::new(), // TODO: iota is out anyways
-            amount: sum,
-            network_key: network_key.to_string(),
-            status: format!("{:?}", transaction.inclusion_state),
-            explorer_url,
-            date,
-        }
-    }
-}
-
 /// Purchase details
 #[derive(Clone)]
 pub struct PurchaseDetails {
@@ -146,4 +92,13 @@ pub struct GasCostEstimation {
     pub max_priority_fee_per_gas: u128,
     /// The maximum amount of gas that the transaction can consume.
     pub gas_limit: u64,
+}
+
+/// Possible InclusionStates for transactions
+/// TODO: refine this (just copy from iota-sdk for now)
+#[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
+pub enum InclusionState {
+    Pending,
+    Confirmed,
+    Conflicting,
 }

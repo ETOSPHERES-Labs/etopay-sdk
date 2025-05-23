@@ -19,7 +19,7 @@ workspace = true
 
 [features]
 # by default (for platforms that are not wasm)
-default = ["jammdb_repo", "etopay_wallet/jammdb", "tokio/fs"]
+default = ["jammdb_repo", "tokio/fs"]
 
 # if the jammdb should be used as user repository backend
 jammdb_repo = ["dep:jammdb", "dep:rmp-serde"]
