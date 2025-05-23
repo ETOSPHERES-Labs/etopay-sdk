@@ -4,15 +4,12 @@
 //!
 
 use super::share::Share;
-use super::wallet::WalletUser;
-use super::wallet_evm::{WalletImplEvm, WalletImplEvmErc20};
-use super::wallet_rebased::WalletImplIotaRebased;
-use super::wallet_stardust::WalletImplStardust;
 use crate::core::{Config, UserRepoT};
 use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPassword};
 use crate::wallet::error::{ErrorKind, Result, WalletError};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use async_trait::async_trait;
+use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletImplStardust, WalletUser};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
 use log::{info, warn};
 use secrecy::{ExposeSecret, SecretBox};

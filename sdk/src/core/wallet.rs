@@ -7,13 +7,10 @@ use super::Sdk;
 use crate::{
     backend::dlt::put_user_address,
     error::Result,
-    types::{
-        currencies::CryptoAmount,
-        newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
-        transactions::{WalletTxInfo, WalletTxInfoList},
-    },
+    types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
+use etopay_wallet::types::{CryptoAmount, WalletTxInfo, WalletTxInfoList};
 use iota_sdk::wallet::account::types::InclusionState;
 use log::{debug, info, warn};
 
@@ -603,11 +600,11 @@ mod tests {
         core::Sdk,
         types::users::KycType,
         user::MockUserRepo,
-        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
     };
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use etopay_wallet::MockWalletUser;
     use iota_sdk::wallet::account::types::InclusionState;
     use mockall::predicate::eq;
     use mockito::Matcher;

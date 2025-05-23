@@ -1,12 +1,9 @@
 mod utils;
 use etopay_sdk::{
     ErrorKind, WalletError,
-    types::{
-        currencies::CryptoAmount,
-        newtypes::{AccessToken, EncryptionPin, PlainPassword},
-        transactions::WalletTxInfoList,
-    },
+    types::newtypes::{AccessToken, EncryptionPin, PlainPassword},
 };
+use etopay_wallet::types::{CryptoAmount, WalletTxInfoList};
 use testing::USER_SATOSHI;
 use utils::{init_sdk, init_sdk_with_cleanup};
 

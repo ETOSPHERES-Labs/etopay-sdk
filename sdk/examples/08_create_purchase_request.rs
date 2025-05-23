@@ -1,4 +1,5 @@
-use etopay_sdk::types::{currencies::CryptoAmount, newtypes::PlainPassword};
+use etopay_sdk::types::newtypes::PlainPassword;
+use etopay_wallet::types::CryptoAmount;
 use rust_decimal_macros::dec;
 use testing::USER_SATOSHI;
 mod utils;

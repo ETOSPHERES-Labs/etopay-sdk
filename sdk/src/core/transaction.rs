@@ -3,16 +3,17 @@ use crate::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
 use crate::error::Result;
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::{GasCostEstimation, PurchaseDetails};
+use crate::types::transactions::PurchaseDetails;
 use crate::types::{
     newtypes::EncryptionPin,
     transactions::{TxInfo, TxList},
 };
 use crate::wallet::error::WalletError;
-use crate::wallet::wallet::TransactionIntent;
 use api_types::api::networks::ApiProtocol;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
+use etopay_wallet::TransactionIntent;
+use etopay_wallet::types::CryptoAmount;
+use etopay_wallet::types::GasCostEstimation;
 use log::{debug, info};
 
 impl Sdk {
@@ -388,12 +389,10 @@ mod tests {
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
         example_wallet_borrow, set_config,
     };
-    use crate::types::transactions::WalletTxInfo;
     use crate::types::users::KycType;
     use crate::{
         core::Sdk,
         user::MockUserRepo,
-        wallet::wallet::MockWalletUser,
         wallet_manager::{MockWalletManager, WalletBorrow},
     };
     use api_types::api::transactions::GetTxsDetailsResponse;
@@ -401,6 +400,8 @@ mod tests {
         ApiTransaction, ApiTransferDetails, CreateTransactionResponse, GetTransactionDetailsResponse,
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use etopay_wallet::MockWalletUser;
+    use etopay_wallet::types::WalletTxInfo;
     use iota_sdk::wallet::account::types::InclusionState;
     use mockito::Matcher;
     use rstest::rstest;

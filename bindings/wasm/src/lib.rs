@@ -12,7 +12,7 @@ use sdk::types::File;
 use sdk::{
     core::{Config, Sdk},
     types::{
-        currencies::CryptoAmount,
+        CryptoAmount,
         newtypes::{AccessToken, EncryptionPin, PlainPassword},
     },
 };
@@ -286,7 +286,9 @@ impl ETOPaySdk {
         let mut sdk = self.inner.write().await;
         async move {
             let pin = EncryptionPin::try_from_string(pin)?;
-            sdk.get_balance(&pin).await.and_then(f64::try_from)
+            sdk.get_balance(&pin)
+                .await
+                .and_then(|v| f64::try_from(v).map_err(Into::into))
         }
         .await
         .map_err(|e| format!("{e:#?}"))
