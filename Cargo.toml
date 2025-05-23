@@ -55,7 +55,7 @@ api_types = { package = "etopay-api-types", version = "0.15.0", path = "./api_ty
 etopay_wallet = { package = "etopay-wallet", version = "0.15.0", path = "./crates/etopay-wallet" }
 
 base64 = { version = "0.22", default-features = false }
-chrono = { version = "0.4.40", default-features = false }
+chrono = { version = "0.4.41", default-features = false }
 dotenvy = { version = "0.15", default-features = false }
 fluent-assertions = { version = "0.4", default-features = false }
 mockall = { version = "0.13", default-features = false }
