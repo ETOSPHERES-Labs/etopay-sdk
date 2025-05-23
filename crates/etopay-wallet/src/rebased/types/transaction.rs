@@ -7,7 +7,7 @@
 
 use serde::{Deserialize, Serialize};
 
-use crate::wallet::rebased::RebasedError;
+use super::super::RebasedError;
 
 use super::super::encoding::Base64;
 use super::super::{Intent, IntentMessage};

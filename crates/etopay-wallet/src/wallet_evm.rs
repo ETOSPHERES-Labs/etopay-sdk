@@ -1,8 +1,7 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
-use crate::wallet::error::WalletError;
+use crate::error::WalletError;
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -317,9 +316,24 @@ impl WalletUser for WalletImplEvm {
 }
 
 alloy::sol!(
+    /// Interface of the ERC20 standard as defined in [the EIP].
+    ///
+    /// [the EIP]: https://eips.ethereum.org/EIPS/eip-20
     #[sol(rpc)]
-    Erc20Contract,
-    "src/abi/erc20.json"
+    contract Erc20Contract {
+       mapping(address account => uint256) public balanceOf;
+
+       constructor(string name, string symbol);
+
+       event Transfer(address indexed from, address indexed to, uint256 value);
+       event Approval(address indexed owner, address indexed spender, uint256 value);
+
+       function totalSupply() external view returns (uint256);
+       function transfer(address to, uint256 amount) external returns (bool);
+       function allowance(address owner, address spender) external view returns (uint256);
+       function approve(address spender, uint256 amount) external returns (bool);
+       function transferFrom(address from, address to, uint256 amount) external returns (bool);
+    }
 );
 
 /// [`WalletUser`] implementation for EVM-ERC20
@@ -423,10 +437,10 @@ impl WalletUser for WalletImplEvmErc20 {
 
         let args = Erc20Contract::transferCall::abi_decode(tx.inner.input())?;
 
-        let value_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(args._value)?;
+        let value_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
         info.amount = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
 
-        info.receiver = args._to.to_string();
+        info.receiver = args.to.to_string();
 
         Ok(info)
     }
@@ -440,7 +454,7 @@ impl WalletUser for WalletImplEvmErc20 {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core::Config;
+    use crate::types::CryptoAmount;
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rust_decimal_macros::dec;
     use serde_json::json;
@@ -502,7 +516,7 @@ mod tests {
 
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user(mnemonic: impl Into<Mnemonic>) -> (WalletImplEvm, CleanUp) {
-        let (_, cleanup) = Config::new_test_with_cleanup();
+        let cleanup = testing::CleanUp::default();
         let node_url = vec![String::from("https://sepolia.mode.network")];
         let chain_id = 31337;
 

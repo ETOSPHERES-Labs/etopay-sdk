@@ -18,14 +18,12 @@
 //!
 
 use super::error::{ApiError, Result};
-use crate::{
-    core::config::Config,
-    types::{currencies::CryptoAmount, newtypes::AccessToken},
-};
+use crate::{core::config::Config, types::newtypes::AccessToken};
 use api_types::api::transactions::{
     ApiApplicationMetadata, CreateTransactionRequest, CreateTransactionResponse, GetTransactionDetailsResponse,
     GetTransactionStatusRequest, GetTxsDetailsResponse, TxsDetailsQuery,
 };
+use etopay_wallet::types::CryptoAmount;
 use log::{debug, error, info};
 use reqwest::StatusCode;
 use serde::{Deserialize, Serialize};

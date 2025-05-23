@@ -19,7 +19,7 @@ use crate::ffi::{
     ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal,
 };
 use sdk::core::{Config, Sdk};
-use sdk::types::currencies::CryptoAmount;
+use sdk::types::CryptoAmount;
 use sdk::types::networks::ApiProtocol;
 use sdk::types::newtypes::{AccessToken, EncryptionPin, PlainPassword};
 use std::sync::Arc;
@@ -357,7 +357,9 @@ impl ETOPaySdk {
         let mut sdk = self.inner.write().await;
         async move {
             let pin = EncryptionPin::try_from_string(pin)?;
-            sdk.get_balance(&pin).await.and_then(f64::try_from)
+            sdk.get_balance(&pin)
+                .await
+                .and_then(|v| f64::try_from(v).map_err(Into::into))
         }
         .await
         .map_err(|err| format!("{:#?}", err))

@@ -225,8 +225,8 @@ pub struct GasCostEstimation {
     pub gas_limit: u64,
 }
 
-impl From<sdk::types::transactions::GasCostEstimation> for GasCostEstimation {
-    fn from(value: sdk::types::transactions::GasCostEstimation) -> Self {
+impl From<sdk::types::GasCostEstimation> for GasCostEstimation {
+    fn from(value: sdk::types::GasCostEstimation) -> Self {
         Self {
             max_fee_per_gas: value.max_fee_per_gas,
             max_priority_fee_per_gas: value.max_priority_fee_per_gas,
@@ -263,8 +263,8 @@ pub struct WalletTxInfoList {
     pub transactions: Vec<WalletTxInfo>,
 }
 
-impl From<sdk::types::transactions::WalletTxInfo> for WalletTxInfo {
-    fn from(value: sdk::types::transactions::WalletTxInfo) -> Self {
+impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
+    fn from(value: sdk::types::WalletTxInfo) -> Self {
         Self {
             date: value.date,
             block_id: value.block_id,

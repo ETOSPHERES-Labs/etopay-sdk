@@ -71,7 +71,7 @@ mod ffi {
         core::Config,
         share::Share,
         types::{
-            currencies::CryptoAmount,
+            CryptoAmount,
             newtypes::{AccessToken, EncryptionPin, PlainPassword},
         },
     };
@@ -298,7 +298,9 @@ mod ffi {
         let result = runtime().block_on(async move {
             let mut sdk = get_or_init_sdk().write().await;
             let pin = EncryptionPin::try_from_string(pin)?;
-            sdk.get_balance(&pin).await.and_then(f64::try_from)
+            sdk.get_balance(&pin)
+                .await
+                .and_then(|v| f64::try_from(v).map_err(Into::into))
         });
         result.map_err(|e| format!("{e:#?}"))
     }

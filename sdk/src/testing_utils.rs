@@ -1,13 +1,10 @@
 #![allow(clippy::unwrap_used)]
 
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::WalletTxInfo;
 use crate::types::users::{KycType, UserEntity};
 use crate::types::viviswap::{
     ViviswapAddressDetail, ViviswapPartiallyKycDetails, ViviswapState, ViviswapVerificationStatus,
     ViviswapVerificationStep,
 };
-use crate::wallet::wallet::MockWalletUser;
 use crate::wallet_manager::MockWalletManager;
 use crate::{
     core::Config,
@@ -30,6 +27,9 @@ use api_types::api::{
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
     },
 };
+use etopay_wallet::MockWalletUser;
+use etopay_wallet::types::CryptoAmount;
+use etopay_wallet::types::WalletTxInfo;
 use iota_sdk::wallet::account::types::InclusionState;
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;

@@ -1,8 +1,6 @@
 use api_types::api::transactions::ApiTxStatus;
-use etopay_sdk::types::{
-    currencies::CryptoAmount,
-    newtypes::{AccessToken, PlainPassword},
-};
+use etopay_sdk::types::newtypes::{AccessToken, PlainPassword};
+use etopay_wallet::types::CryptoAmount;
 use rust_decimal_macros::dec;
 use std::time::Duration;
 use testing::USER_HANS34;

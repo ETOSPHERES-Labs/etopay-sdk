@@ -1,7 +1,7 @@
 use super::error::{Result, WalletError};
 use super::wallet::{TransactionIntent, WalletUser};
-use crate::types::currencies::CryptoAmount;
-use crate::types::transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use crate::types::CryptoAmount;
+use crate::types::{GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
 use iota_sdk::client::secret::SecretManager;
 use iota_sdk::crypto::keys::bip39::Mnemonic;
@@ -29,7 +29,7 @@ pub struct WalletImplStardust {
 }
 
 impl WalletImplStardust {
-    /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
+    /// Creates a new [`WalletImpl`] from the specified [`Mnemonic`].
     pub async fn new(mnemonic: Mnemonic, path: &Path, coin_type: u32, node_url: &[String]) -> Result<Self> {
         // we now have the mnemonic and can initialize a wallet
         let node_urls: Vec<&str> = node_url.iter().map(String::as_str).collect();
@@ -199,7 +199,7 @@ impl WalletUser for WalletImplStardust {
         if let Some(transaction) = account.get_transaction(&transaction_id).await {
             Ok(transaction.into())
         } else {
-            Err(WalletError::MissingAccessToken)
+            Err(WalletError::TransactionNotFound)
         }
     }
 
@@ -216,12 +216,14 @@ impl WalletUser for WalletImplStardust {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::core::Config;
-    use crate::testing_utils::MNEMONIC;
     use iota_sdk::crypto::keys::bip39::Mnemonic;
     use rstest::rstest;
     use rust_decimal_macros::dec;
     use testing::CleanUp;
+
+    /// Mnemonic for testing.
+    /// Iota: tst1qz7m7xtfppy9xd73xvsnpvlnx5rcewjz2k2gqh6w67tdleks83rh768k6rc
+    pub const MNEMONIC: &str = "aware mirror sadness razor hurdle bus scout crisp close life science spy shell fine loop govern country strategy city soldier select diet brain return";
 
     const COIN_TYPE_IOTA: u32 = iota_sdk::client::constants::IOTA_COIN_TYPE;
 
@@ -231,7 +233,7 @@ mod tests {
 
     /// helper function to get a [`WalletUser`] instance.
     async fn get_wallet_user(mnemonic: impl Into<Mnemonic>, coin_type: u32) -> (WalletImplStardust, CleanUp) {
-        let (_, cleanup) = Config::new_test_with_cleanup();
+        let cleanup = testing::CleanUp::default();
         let wallet = WalletImplStardust::new(
             mnemonic.into(),
             Path::new(&cleanup.path_prefix),
@@ -305,7 +307,7 @@ mod tests {
 
         // Assert
         let wallet_tx_info_list = result.unwrap();
-        let transactions: Vec<crate::types::transactions::WalletTxInfo> = wallet_tx_info_list.transactions.to_vec();
+        let transactions: Vec<crate::types::WalletTxInfo> = wallet_tx_info_list.transactions.to_vec();
 
         assert_eq!(transactions.len(), 1);
         assert_eq!(transactions[0].transaction_id, transaction);

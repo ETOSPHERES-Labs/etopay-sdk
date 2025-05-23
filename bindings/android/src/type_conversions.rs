@@ -1,4 +1,4 @@
-use sdk::types::transactions::GasCostEstimation;
+use sdk::types::GasCostEstimation;
 use sdk::types::transactions::PurchaseDetails;
 
 #[derive(Debug, serde::Serialize)]

@@ -7,13 +7,10 @@ use super::rebased::{
     RebasedError, RpcClient, TransactionData, TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
-use crate::types::{
-    currencies::CryptoAmount,
-    transactions::{GasCostEstimation, WalletTxInfo, WalletTxInfoList},
-};
-use crate::wallet::rebased::{
+use crate::rebased::{
     GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind, WriteApiClient,
 };
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
 use chrono::{TimeZone, Utc};
 use iota_sdk::crypto::keys::bip39::Mnemonic;
