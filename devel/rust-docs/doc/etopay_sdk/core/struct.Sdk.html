@@ -27,10 +27,10 @@
 <p>Returns a <code>Result</code> containing <code>()</code> if successful, or a <a href="../error/enum.Error.html" title="enum etopay_sdk::error::Error"><code>crate::Error</code></a> if an error occurs.</p>
 <h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
 <p>Returns <code>Ok(())</code> if the case status is updated successfully.</p>
-</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-2" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#18-380">Source</a><a href="#impl-Sdk-2" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#36-73">Source</a><h4 class="code-header">pub async fn <a href="#method.create_purchase_request" class="fn">create_purchase_request</a>(
+</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-2" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#19-381">Source</a><a href="#impl-Sdk-2" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#37-74">Source</a><h4 class="code-header">pub async fn <a href="#method.create_purchase_request" class="fn">create_purchase_request</a>(
     &amp;self,
     receiver: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
-    amount: <a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct etopay_sdk::types::currencies::CryptoAmount">CryptoAmount</a>,
+    amount: <a class="struct" href="../types/struct.CryptoAmount.html" title="struct etopay_sdk::types::CryptoAmount">CryptoAmount</a>,
     product_hash: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
     app_data: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
     purchase_type: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -47,7 +47,7 @@
 <p>The purchase ID. This is an internal index used to reference the transaction in etopay</p>
 <h5 id="errors-3"><a class="doc-anchor" href="#errors-3">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, or if there is an error creating the transaction.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_purchase_details" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#88-109">Source</a><h4 class="code-header">pub async fn <a href="#method.get_purchase_details" class="fn">get_purchase_details</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_purchase_details" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#89-110">Source</a><h4 class="code-header">pub async fn <a href="#method.get_purchase_details" class="fn">get_purchase_details</a>(
     &amp;self,
     purchase_id: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.PurchaseDetails.html" title="struct etopay_sdk::types::transactions::PurchaseDetails">PurchaseDetails</a>&gt;</h4></section></summary><div class="docblock"><p>Get purchase details</p>
@@ -59,7 +59,7 @@
 <p>The purchase details.</p>
 <h5 id="errors-4"><a class="doc-anchor" href="#errors-4">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction details.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.confirm_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#126-205">Source</a><h4 class="code-header">pub async fn <a href="#method.confirm_purchase_request" class="fn">confirm_purchase_request</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.confirm_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#127-206">Source</a><h4 class="code-header">pub async fn <a href="#method.confirm_purchase_request" class="fn">confirm_purchase_request</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     purchase_id: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -74,11 +74,11 @@
 <h5 id="errors-5"><a class="doc-anchor" href="#errors-5">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 if there is an error getting the transaction details, or if there is an error committing the transaction.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.send_amount" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#224-276">Source</a><h4 class="code-header">pub async fn <a href="#method.send_amount" class="fn">send_amount</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.send_amount" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#225-277">Source</a><h4 class="code-header">pub async fn <a href="#method.send_amount" class="fn">send_amount</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     address: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
-    amount: <a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct etopay_sdk::types::currencies::CryptoAmount">CryptoAmount</a>,
+    amount: <a class="struct" href="../types/struct.CryptoAmount.html" title="struct etopay_sdk::types::CryptoAmount">CryptoAmount</a>,
     data: <a class="enum" href="https://doc.rust-lang.org/1.87.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u8.html">u8</a>&gt;&gt;,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</h4></section></summary><div class="docblock"><p>Send amount to receiver address</p>
 <h5 id="arguments-4"><a class="doc-anchor" href="#arguments-4">§</a>Arguments</h5>
@@ -93,13 +93,13 @@ if there is an error getting the transaction details, or if there is an error co
 <h5 id="errors-6"><a class="doc-anchor" href="#errors-6">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 or if there is an error sending the amount.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.estimate_gas" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#295-331">Source</a><h4 class="code-header">pub async fn <a href="#method.estimate_gas" class="fn">estimate_gas</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.estimate_gas" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#296-332">Source</a><h4 class="code-header">pub async fn <a href="#method.estimate_gas" class="fn">estimate_gas</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     address: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
-    amount: <a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct etopay_sdk::types::currencies::CryptoAmount">CryptoAmount</a>,
+    amount: <a class="struct" href="../types/struct.CryptoAmount.html" title="struct etopay_sdk::types::CryptoAmount">CryptoAmount</a>,
     data: <a class="enum" href="https://doc.rust-lang.org/1.87.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u8.html">u8</a>&gt;&gt;,
-) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.GasCostEstimation.html" title="struct etopay_sdk::types::transactions::GasCostEstimation">GasCostEstimation</a>&gt;</h4></section></summary><div class="docblock"><p>Estimate gas for sending amount to receiver</p>
+) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.GasCostEstimation.html" title="struct etopay_sdk::types::GasCostEstimation">GasCostEstimation</a>&gt;</h4></section></summary><div class="docblock"><p>Estimate gas for sending amount to receiver</p>
 <h5 id="arguments-5"><a class="doc-anchor" href="#arguments-5">§</a>Arguments</h5>
 <ul>
 <li><code>pin</code> - The PIN of the user.</li>
@@ -112,7 +112,7 @@ or if there is an error sending the amount.</p>
 <h5 id="errors-7"><a class="doc-anchor" href="#errors-7">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 or if there is an error estimating the gas.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_tx_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#346-379">Source</a><h4 class="code-header">pub async fn <a href="#method.get_tx_list" class="fn">get_tx_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.TxList.html" title="struct etopay_sdk::types::transactions::TxList">TxList</a>&gt;</h4></section></summary><div class="docblock"><p>Get transaction list</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_tx_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#347-380">Source</a><h4 class="code-header">pub async fn <a href="#method.get_tx_list" class="fn">get_tx_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.TxList.html" title="struct etopay_sdk::types::transactions::TxList">TxList</a>&gt;</h4></section></summary><div class="docblock"><p>Get transaction list</p>
 <h5 id="arguments-6"><a class="doc-anchor" href="#arguments-6">§</a>Arguments</h5>
 <ul>
 <li><code>start</code> - The starting page number.</li>
@@ -180,7 +180,7 @@ or if there is an error estimating the gas.</p>
     network_key: <a class="enum" href="https://doc.rust-lang.org/1.87.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.unit.html">()</a>&gt;</h4></section></summary><div class="docblock"><p>Set the user preferred network</p>
 </div></details><details class="toggle method-toggle" open><summary><section id="method.get_preferred_network" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/user.rs.html#236-247">Source</a><h4 class="code-header">pub async fn <a href="#method.get_preferred_network" class="fn">get_preferred_network</a>(&amp;self) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="enum" href="https://doc.rust-lang.org/1.87.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;&gt;</h4></section></summary><div class="docblock"><p>Get the user preferred network</p>
-</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-4" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#20-564">Source</a><a href="#impl-Sdk-4" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.get_iban_for_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#38-81">Source</a><h4 class="code-header">pub async fn <a href="#method.get_iban_for_viviswap" class="fn">get_iban_for_viviswap</a>(&amp;mut self) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/viviswap/struct.ViviswapAddressDetail.html" title="struct etopay_sdk::types::viviswap::ViviswapAddressDetail">ViviswapAddressDetail</a>&gt;</h4></section></summary><div class="docblock"><p>Get current iban of viviswap user</p>
+</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-4" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#21-565">Source</a><a href="#impl-Sdk-4" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.get_iban_for_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#39-82">Source</a><h4 class="code-header">pub async fn <a href="#method.get_iban_for_viviswap" class="fn">get_iban_for_viviswap</a>(&amp;mut self) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/viviswap/struct.ViviswapAddressDetail.html" title="struct etopay_sdk::types::viviswap::ViviswapAddressDetail">ViviswapAddressDetail</a>&gt;</h4></section></summary><div class="docblock"><p>Get current iban of viviswap user</p>
 <h5 id="arguments-12"><a class="doc-anchor" href="#arguments-12">§</a>Arguments</h5>
 <p>None</p>
 <h5 id="returns-15"><a class="doc-anchor" href="#returns-15">§</a>Returns</h5>
@@ -194,7 +194,7 @@ or if there is an error estimating the gas.</p>
 <li>[<code>crate::Error::ViviswapApi</code>] - If there is an error in the viviswap API.</li>
 <li>[<code>crate::Error::UserStatusUpdateError</code>] - If there is an error updating the user status.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.update_iban_for_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#174-225">Source</a><h4 class="code-header">pub async fn <a href="#method.update_iban_for_viviswap" class="fn">update_iban_for_viviswap</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.update_iban_for_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#175-226">Source</a><h4 class="code-header">pub async fn <a href="#method.update_iban_for_viviswap" class="fn">update_iban_for_viviswap</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     address: <a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>,
@@ -214,7 +214,7 @@ or if there is an error estimating the gas.</p>
 <li>[<code>crate::Error::ViviswapMissingUserError</code>] - If the viviswap user is missing.</li>
 <li>[<code>crate::Error::UserStatusUpdateError</code>] - If there is an error updating the user status.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.create_deposit_with_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#240-312">Source</a><h4 class="code-header">pub async fn <a href="#method.create_deposit_with_viviswap" class="fn">create_deposit_with_viviswap</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.create_deposit_with_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#241-313">Source</a><h4 class="code-header">pub async fn <a href="#method.create_deposit_with_viviswap" class="fn">create_deposit_with_viviswap</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/viviswap/struct.ViviswapDeposit.html" title="struct etopay_sdk::types::viviswap::ViviswapDeposit">ViviswapDeposit</a>&gt;</h4></section></summary><div class="docblock"><p>create deposit for viviswap user</p>
@@ -229,7 +229,7 @@ or if there is an error estimating the gas.</p>
 <li>[<code>crate::Error::ViviswapInvalidState</code>] - If the viviswap state is invalid.</li>
 <li>[<code>crate::Error::ViviswapApi</code>] - If there is an error with the Viviswap API.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.create_detail_for_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#325-345">Source</a><h4 class="code-header">pub async fn <a href="#method.create_detail_for_viviswap" class="fn">create_detail_for_viviswap</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.create_detail_for_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#326-346">Source</a><h4 class="code-header">pub async fn <a href="#method.create_detail_for_viviswap" class="fn">create_detail_for_viviswap</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/viviswap/struct.ViviswapAddressDetail.html" title="struct etopay_sdk::types::viviswap::ViviswapAddressDetail">ViviswapAddressDetail</a>&gt;</h4></section></summary><div class="docblock"><p>create detail for viviswap user</p>
@@ -242,9 +242,9 @@ or if there is an error estimating the gas.</p>
 <li>[<code>crate::Error::ConfigInitError</code>] - If there is an error initializing the configuration.</li>
 <li>[<code>crate::Error::ViviswapMissingUserError</code>] - If the viviswap user is missing.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.create_withdrawal_with_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#426-507">Source</a><h4 class="code-header">pub async fn <a href="#method.create_withdrawal_with_viviswap" class="fn">create_withdrawal_with_viviswap</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.create_withdrawal_with_viviswap" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#427-508">Source</a><h4 class="code-header">pub async fn <a href="#method.create_withdrawal_with_viviswap" class="fn">create_withdrawal_with_viviswap</a>(
     &amp;mut self,
-    amount: <a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct etopay_sdk::types::currencies::CryptoAmount">CryptoAmount</a>,
+    amount: <a class="struct" href="../types/struct.CryptoAmount.html" title="struct etopay_sdk::types::CryptoAmount">CryptoAmount</a>,
     pin: <a class="enum" href="https://doc.rust-lang.org/1.87.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;&amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>&gt;,
     data: <a class="enum" href="https://doc.rust-lang.org/1.87.0/core/option/enum.Option.html" title="enum core::option::Option">Option</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/vec/struct.Vec.html" title="struct alloc::vec::Vec">Vec</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u8.html">u8</a>&gt;&gt;,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/viviswap/struct.ViviswapWithdrawal.html" title="struct etopay_sdk::types::viviswap::ViviswapWithdrawal">ViviswapWithdrawal</a>&gt;</h4></section></summary><div class="docblock"><p>create withdrawal for viviswap user</p>
@@ -266,7 +266,7 @@ or if there is an error estimating the gas.</p>
 <li>[<code>crate::Error::ViviswapInvalidState</code>] - If the viviswap state is invalid.</li>
 <li>[<code>crate::Error::ViviswapApi</code>] - If there is an error with the Viviswap API.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_swap_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#522-535">Source</a><h4 class="code-header">pub async fn <a href="#method.get_swap_list" class="fn">get_swap_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.OrderList.html" title="struct etopay_sdk::types::OrderList">OrderList</a>&gt;</h4></section></summary><div class="docblock"><p>Get the list of swaps for the viviswap user.</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_swap_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#523-536">Source</a><h4 class="code-header">pub async fn <a href="#method.get_swap_list" class="fn">get_swap_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.OrderList.html" title="struct etopay_sdk::types::OrderList">OrderList</a>&gt;</h4></section></summary><div class="docblock"><p>Get the list of swaps for the viviswap user.</p>
 <h5 id="returns-20"><a class="doc-anchor" href="#returns-20">§</a>Returns</h5>
 <p>Returns a <code>Result</code> containing a vector of <code>Swap</code> if successful, or a <a href="../error/enum.Error.html" title="enum etopay_sdk::error::Error"><code>crate::Error</code></a> if an error occurs.</p>
 <h5 id="errors-20"><a class="doc-anchor" href="#errors-20">§</a>Errors</h5>
@@ -275,7 +275,7 @@ or if there is an error estimating the gas.</p>
 <li>Repository initialization error.</li>
 <li>Viviswap API error.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_swap_details" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#547-563">Source</a><h4 class="code-header">pub async fn <a href="#method.get_swap_details" class="fn">get_swap_details</a>(&amp;self, order_id: <a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.Order.html" title="struct etopay_sdk::types::Order">Order</a>&gt;</h4></section></summary><div class="docblock"><p>Get swap details</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_swap_details" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/viviswap/swap.rs.html#548-564">Source</a><h4 class="code-header">pub async fn <a href="#method.get_swap_details" class="fn">get_swap_details</a>(&amp;self, order_id: <a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.Order.html" title="struct etopay_sdk::types::Order">Order</a>&gt;</h4></section></summary><div class="docblock"><p>Get swap details</p>
 <h5 id="arguments-15"><a class="doc-anchor" href="#arguments-15">§</a>Arguments</h5>
 <ul>
 <li><code>order_id</code> - The ID of the swap order.</li>
@@ -460,7 +460,7 @@ that verifies that this person is currently living at the address submitted.</li
 <li>[<code>crate::Error::ViviswapApiError</code>] - If there is an error in the viviswap API.</li>
 <li>[<code>crate::Error::UserNotInitialized)</code>] - If the user is not initialized.</li>
 </ul>
-</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-6" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#20-590">Source</a><a href="#impl-Sdk-6" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_new_mnemonic" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#36-54">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_new_mnemonic" class="fn">create_wallet_from_new_mnemonic</a>(
+</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-6" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#17-587">Source</a><a href="#impl-Sdk-6" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_new_mnemonic" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#33-51">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_new_mnemonic" class="fn">create_wallet_from_new_mnemonic</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</h4></section></summary><div class="docblock"><p>Create and store a wallet from a new random mnemonic</p>
@@ -476,7 +476,7 @@ that verifies that this person is currently living at the address submitted.</li
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_existing_mnemonic" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#68-86">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_existing_mnemonic" class="fn">create_wallet_from_existing_mnemonic</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_existing_mnemonic" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#65-83">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_existing_mnemonic" class="fn">create_wallet_from_existing_mnemonic</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     mnemonic: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -492,7 +492,7 @@ that verifies that this person is currently living at the address submitted.</li
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_backup" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#101-124">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_backup" class="fn">create_wallet_from_backup</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.create_wallet_from_backup" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#98-121">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_from_backup" class="fn">create_wallet_from_backup</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     backup: &amp;[<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u8.html">u8</a>],
@@ -510,7 +510,7 @@ that verifies that this person is currently living at the address submitted.</li
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.create_wallet_backup" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#142-164">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_backup" class="fn">create_wallet_backup</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.create_wallet_backup" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#139-161">Source</a><h4 class="code-header">pub async fn <a href="#method.create_wallet_backup" class="fn">create_wallet_backup</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     backup_password: &amp;<a class="struct" href="../types/newtypes/struct.PlainPassword.html" title="struct etopay_sdk::types::newtypes::PlainPassword">PlainPassword</a>,
@@ -528,7 +528,7 @@ that verifies that this person is currently living at the address submitted.</li
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.verify_mnemonic" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#183-201">Source</a><h4 class="code-header">pub async fn <a href="#method.verify_mnemonic" class="fn">verify_mnemonic</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.verify_mnemonic" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#180-198">Source</a><h4 class="code-header">pub async fn <a href="#method.verify_mnemonic" class="fn">verify_mnemonic</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     mnemonic: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -547,7 +547,7 @@ or an <code>Error</code>.</p>
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.delete_wallet" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#216-236">Source</a><h4 class="code-header">pub async fn <a href="#method.delete_wallet" class="fn">delete_wallet</a>(&amp;mut self, pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.unit.html">()</a>&gt;</h4></section></summary><div class="docblock"><p>Delete the currently active wallet</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.delete_wallet" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#213-233">Source</a><h4 class="code-header">pub async fn <a href="#method.delete_wallet" class="fn">delete_wallet</a>(&amp;mut self, pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.unit.html">()</a>&gt;</h4></section></summary><div class="docblock"><p>Delete the currently active wallet</p>
 <p>Deletes the currently active wallet, potentially resulting in loss of funds if the mnemonic or wallet is not backed up.</p>
 <h5 id="returns-31"><a class="doc-anchor" href="#returns-31">§</a>Returns</h5>
 <p>Returns <code>Ok(())</code> if the wallet is successfully deleted, otherwise returns an <code>Error</code>.</p>
@@ -557,7 +557,7 @@ or an <code>Error</code>.</p>
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.verify_pin" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#256-278">Source</a><h4 class="code-header">pub async fn <a href="#method.verify_pin" class="fn">verify_pin</a>(&amp;self, pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.unit.html">()</a>&gt;</h4></section></summary><div class="docblock"><p>Verify pin</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.verify_pin" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#253-275">Source</a><h4 class="code-header">pub async fn <a href="#method.verify_pin" class="fn">verify_pin</a>(&amp;self, pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.unit.html">()</a>&gt;</h4></section></summary><div class="docblock"><p>Verify pin</p>
 <p>Verifies the pin for the wallet.</p>
 <h5 id="arguments-29"><a class="doc-anchor" href="#arguments-29">§</a>Arguments</h5>
 <ul>
@@ -572,7 +572,7 @@ or an <code>Error</code>.</p>
 <li><a href="../enum.WalletError.html#variant.WalletNotInitialized" title="variant etopay_sdk::WalletError::WalletNotInitialized"><code>WalletError::WalletNotInitialized</code></a> - If there is an error initializing the wallet.</li>
 <li><a href="../enum.WalletError.html#variant.WrongPinOrPassword" title="variant etopay_sdk::WalletError::WrongPinOrPassword"><code>WalletError::WrongPinOrPassword</code></a> - If the pin or password is incorrect.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.change_pin" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#299-328">Source</a><h4 class="code-header">pub async fn <a href="#method.change_pin" class="fn">change_pin</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.change_pin" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#296-325">Source</a><h4 class="code-header">pub async fn <a href="#method.change_pin" class="fn">change_pin</a>(
     &amp;mut self,
     old_pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     new_pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
@@ -592,7 +592,7 @@ or an <code>Error</code>.</p>
 <li><a href="../enum.WalletError.html#variant.WalletNotInitialized" title="variant etopay_sdk::WalletError::WalletNotInitialized"><code>WalletError::WalletNotInitialized</code></a> - If there is an error initializing the wallet.</li>
 <li><a href="../enum.WalletError.html#variant.WrongPinOrPassword" title="variant etopay_sdk::WalletError::WrongPinOrPassword"><code>WalletError::WrongPinOrPassword</code></a> - If the pin or password is incorrect.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.set_wallet_password" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#345-384">Source</a><h4 class="code-header">pub async fn <a href="#method.set_wallet_password" class="fn">set_wallet_password</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.set_wallet_password" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#342-381">Source</a><h4 class="code-header">pub async fn <a href="#method.set_wallet_password" class="fn">set_wallet_password</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     new_password: &amp;<a class="struct" href="../types/newtypes/struct.PlainPassword.html" title="struct etopay_sdk::types::newtypes::PlainPassword">PlainPassword</a>,
@@ -609,7 +609,7 @@ or an <code>Error</code>.</p>
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.is_wallet_password_set" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#398-411">Source</a><h4 class="code-header">pub async fn <a href="#method.is_wallet_password_set" class="fn">is_wallet_password_set</a>(&amp;self) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.bool.html">bool</a>&gt;</h4></section></summary><div class="docblock"><p>Check if the password to use for wallet operations is set. If this returns <code>false</code>,
+</div></details><details class="toggle method-toggle" open><summary><section id="method.is_wallet_password_set" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#395-408">Source</a><h4 class="code-header">pub async fn <a href="#method.is_wallet_password_set" class="fn">is_wallet_password_set</a>(&amp;self) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.bool.html">bool</a>&gt;</h4></section></summary><div class="docblock"><p>Check if the password to use for wallet operations is set. If this returns <code>false</code>,
 the password should be set with [<code>set_wallet_password</code>], otherwise you need to use
 [<code>change_password</code>] to change it.</p>
 <h5 id="returns-35"><a class="doc-anchor" href="#returns-35">§</a>Returns</h5>
@@ -619,7 +619,7 @@ the password should be set with [<code>set_wallet_password</code>], otherwise yo
 <li><a href="../error/enum.Error.html#variant.UserRepoNotInitialized" title="variant etopay_sdk::error::Error::UserRepoNotInitialized"><code>crate::Error::UserRepoNotInitialized</code></a> - If there is an error initializing the repository.</li>
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.generate_new_address" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#424-450">Source</a><h4 class="code-header">pub async fn <a href="#method.generate_new_address" class="fn">generate_new_address</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.generate_new_address" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#421-447">Source</a><h4 class="code-header">pub async fn <a href="#method.generate_new_address" class="fn">generate_new_address</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
 ) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="https://doc.rust-lang.org/1.87.0/alloc/string/struct.String.html" title="struct alloc::string::String">String</a>&gt;</h4></section></summary><div class="docblock"><p>Generates a new receiver address (based on selected currency in the config) for the wallet.</p>
@@ -631,7 +631,7 @@ the password should be set with [<code>set_wallet_password</code>], otherwise yo
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 <li><a href="../error/enum.Error.html#variant.MissingConfig" title="variant etopay_sdk::error::Error::MissingConfig"><code>crate::Error::MissingConfig</code></a> - If the sdk config is missing.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_balance" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#464-471">Source</a><h4 class="code-header">pub async fn <a href="#method.get_balance" class="fn">get_balance</a>(&amp;mut self, pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/currencies/struct.CryptoAmount.html" title="struct etopay_sdk::types::currencies::CryptoAmount">CryptoAmount</a>&gt;</h4></section></summary><div class="docblock"><p>Get the balance of the user</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_balance" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#461-468">Source</a><h4 class="code-header">pub async fn <a href="#method.get_balance" class="fn">get_balance</a>(&amp;mut self, pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.CryptoAmount.html" title="struct etopay_sdk::types::CryptoAmount">CryptoAmount</a>&gt;</h4></section></summary><div class="docblock"><p>Get the balance of the user</p>
 <p>Fetches the balance of the user from the wallet.</p>
 <h5 id="returns-37"><a class="doc-anchor" href="#returns-37">§</a>Returns</h5>
 <p>Returns the balance as a <code>f64</code> if successful, otherwise returns an <code>Error</code>.</p>
@@ -640,12 +640,12 @@ the password should be set with [<code>set_wallet_password</code>], otherwise yo
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 <li><a href="../enum.WalletError.html#variant.WalletNotInitialized" title="variant etopay_sdk::WalletError::WalletNotInitialized"><code>WalletError::WalletNotInitialized</code></a> - If there is an error initializing the wallet.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#490-565">Source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx_list" class="fn">get_wallet_tx_list</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#487-562">Source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx_list" class="fn">get_wallet_tx_list</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.usize.html">usize</a>,
     limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.usize.html">usize</a>,
-) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.WalletTxInfoList.html" title="struct etopay_sdk::types::transactions::WalletTxInfoList">WalletTxInfoList</a>&gt;</h4></section></summary><div class="docblock"><p>wallet transaction list</p>
+) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;WalletTxInfoList&gt;</h4></section></summary><div class="docblock"><p>wallet transaction list</p>
 <p>Returns paginated list of wallet transaction list.</p>
 <h5 id="arguments-32"><a class="doc-anchor" href="#arguments-32">§</a>Arguments</h5>
 <ul>
@@ -659,11 +659,11 @@ the password should be set with [<code>set_wallet_password</code>], otherwise yo
 <li><a href="../error/enum.Error.html#variant.UserNotInitialized" title="variant etopay_sdk::error::Error::UserNotInitialized"><code>crate::Error::UserNotInitialized</code></a> - If there is an error initializing the user.</li>
 <li><a href="../enum.WalletError.html#variant.WalletNotInitialized" title="variant etopay_sdk::WalletError::WalletNotInitialized"><code>WalletError::WalletNotInitialized</code></a> - If there is an error initializing the wallet.</li>
 </ul>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#583-589">Source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx" class="fn">get_wallet_tx</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_wallet_tx" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/wallet.rs.html#580-586">Source</a><h4 class="code-header">pub async fn <a href="#method.get_wallet_tx" class="fn">get_wallet_tx</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     tx_id: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
-) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.WalletTxInfo.html" title="struct etopay_sdk::types::transactions::WalletTxInfo">WalletTxInfo</a>&gt;</h4></section></summary><div class="docblock"><p>wallet transaction</p>
+) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/struct.WalletTxInfo.html" title="struct etopay_sdk::types::WalletTxInfo">WalletTxInfo</a>&gt;</h4></section></summary><div class="docblock"><p>wallet transaction</p>
 <p>Returns the wallet transaction details.</p>
 <h5 id="arguments-33"><a class="doc-anchor" href="#arguments-33">§</a>Arguments</h5>
 <ul>

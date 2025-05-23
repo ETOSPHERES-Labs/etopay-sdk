@@ -8,21 +8,21 @@
 <a href=#8 id=8 data-nosnippet>8</a>
 <a href=#9 id=9 data-nosnippet>9</a></span><span class="kw">use </span><span class="kw">super</span>::error::{ApiError, <span class="prelude-ty">Result</span>};
 <a href=#10 id=10 data-nosnippet>10</a><span class="kw">use </span><span class="kw">crate</span>::core::Config;
-<a href=#11 id=11 data-nosnippet>11</a><span class="kw">use </span><span class="kw">crate</span>::types::currencies::CryptoAmount;
-<a href=#12 id=12 data-nosnippet>12</a><span class="kw">use </span><span class="kw">crate</span>::types::newtypes::AccessToken;
-<a href=#13 id=13 data-nosnippet>13</a><span class="kw">use </span>api_types::api::viviswap::contract::{ContractRequestBody, ViviswapContractCreationResponse};
-<a href=#14 id=14 data-nosnippet>14</a><span class="kw">use </span>api_types::api::viviswap::detail::{
-<a href=#15 id=15 data-nosnippet>15</a>    DeleteDetailRequestQueries, GetPaymentDetailsRequestQueries, GetPaymentDetailsResponse, SetDetailRequestBody,
-<a href=#16 id=16 data-nosnippet>16</a>    SetDetailRequestQueries, SetPaymentDetailResponse, SwapPaymentDetailKey,
-<a href=#17 id=17 data-nosnippet>17</a>};
-<a href=#18 id=18 data-nosnippet>18</a><span class="kw">use </span>api_types::api::viviswap::kyc::{
-<a href=#19 id=19 data-nosnippet>19</a>    AnswerData, GetKycAmlaQuestionsResponse, GetKycDocumentsResponse, IdentityOfficialDocumentData,
-<a href=#20 id=20 data-nosnippet>20</a>    IdentityPersonalDocumentData, KycDetailsResponse, SetDocumentDataRequest, SetGeneralDataRequest,
-<a href=#21 id=21 data-nosnippet>21</a>    SetIdentityDataRequest, SetPersonalDataRequest, SetResidenceDataRequest,
-<a href=#22 id=22 data-nosnippet>22</a>};
-<a href=#23 id=23 data-nosnippet>23</a><span class="kw">use </span>api_types::api::viviswap::order::{GetOrderQuery, GetOrdersQuery, Order, OrderList};
-<a href=#24 id=24 data-nosnippet>24</a><span class="kw">use </span>api_types::api::viviswap::payment::ViviPaymentMethodsResponse;
-<a href=#25 id=25 data-nosnippet>25</a><span class="kw">use </span>api_types::api::viviswap::user::{UserDataRequest, UserDataResponse};
+<a href=#11 id=11 data-nosnippet>11</a><span class="kw">use </span><span class="kw">crate</span>::types::newtypes::AccessToken;
+<a href=#12 id=12 data-nosnippet>12</a><span class="kw">use </span>api_types::api::viviswap::contract::{ContractRequestBody, ViviswapContractCreationResponse};
+<a href=#13 id=13 data-nosnippet>13</a><span class="kw">use </span>api_types::api::viviswap::detail::{
+<a href=#14 id=14 data-nosnippet>14</a>    DeleteDetailRequestQueries, GetPaymentDetailsRequestQueries, GetPaymentDetailsResponse, SetDetailRequestBody,
+<a href=#15 id=15 data-nosnippet>15</a>    SetDetailRequestQueries, SetPaymentDetailResponse, SwapPaymentDetailKey,
+<a href=#16 id=16 data-nosnippet>16</a>};
+<a href=#17 id=17 data-nosnippet>17</a><span class="kw">use </span>api_types::api::viviswap::kyc::{
+<a href=#18 id=18 data-nosnippet>18</a>    AnswerData, GetKycAmlaQuestionsResponse, GetKycDocumentsResponse, IdentityOfficialDocumentData,
+<a href=#19 id=19 data-nosnippet>19</a>    IdentityPersonalDocumentData, KycDetailsResponse, SetDocumentDataRequest, SetGeneralDataRequest,
+<a href=#20 id=20 data-nosnippet>20</a>    SetIdentityDataRequest, SetPersonalDataRequest, SetResidenceDataRequest,
+<a href=#21 id=21 data-nosnippet>21</a>};
+<a href=#22 id=22 data-nosnippet>22</a><span class="kw">use </span>api_types::api::viviswap::order::{GetOrderQuery, GetOrdersQuery, Order, OrderList};
+<a href=#23 id=23 data-nosnippet>23</a><span class="kw">use </span>api_types::api::viviswap::payment::ViviPaymentMethodsResponse;
+<a href=#24 id=24 data-nosnippet>24</a><span class="kw">use </span>api_types::api::viviswap::user::{UserDataRequest, UserDataResponse};
+<a href=#25 id=25 data-nosnippet>25</a><span class="kw">use </span>etopay_wallet::types::CryptoAmount;
 <a href=#26 id=26 data-nosnippet>26</a><span class="kw">use </span>log::{debug, error, info};
 <a href=#27 id=27 data-nosnippet>27</a><span class="kw">use </span>reqwest::{Method, StatusCode};
 <a href=#28 id=28 data-nosnippet>28</a><span class="kw">use </span>std::future::Future;

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":["GasCostEstimation","PurchaseDetails","TxInfo","TxList","WalletTxInfo","WalletTxInfoList"]};
+window.SIDEBAR_ITEMS = {"struct":["PurchaseDetails","TxInfo","TxList"]};
