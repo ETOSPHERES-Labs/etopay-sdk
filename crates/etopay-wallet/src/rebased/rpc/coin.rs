@@ -5,13 +5,6 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/coin.rs
 
-// use iota_json_rpc_types::{Balance, CoinPage, IotaCirculatingSupply, IotaCoinMetadata};
-// use iota_open_rpc_macros::open_rpc;
-// use iota_types::{
-//     balance::Supply,
-//     base_types::{IotaAddress, ObjectID},
-// };
-// use jsonrpsee::proc_macros::rpc;
 use serde::Deserialize;
 use serde_json::{Value, json};
 use serde_with::serde_as;
@@ -26,11 +19,8 @@ use super::super::{ObjectID, ObjectRef};
 
 /// Provides access to coin-related data such as coins owned by an address,
 /// balances, or metadata.
-// #[rpc(client, namespace = "iotax")]
 pub trait CoinReadApi {
     // /// Return all Coin<`coin_type`> objects owned by an address.
-    // #[rustfmt::skip]
-    // #[method(name = "getCoins")]
     async fn get_coins(
         &self,
         // the owner's IOTA address
@@ -44,8 +34,6 @@ pub trait CoinReadApi {
     ) -> RpcResult<CoinPage>;
 
     /// Return the total coin balance for one coin type, owned by the address owner.
-    // #[rustfmt::skip]
-    // #[method(name = "getBalance")]
     async fn get_balance(
         &self,
         // the owner's IOTA address
@@ -87,12 +75,7 @@ impl CoinReadApi for RpcClient {
             "params": params
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response.json::<RpcResponse<CoinPage>>().await?.result)
     }
@@ -114,12 +97,7 @@ impl CoinReadApi for RpcClient {
             ]
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response.json::<RpcResponse<Balance>>().await?.result)
     }

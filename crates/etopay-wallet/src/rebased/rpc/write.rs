@@ -5,7 +5,6 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/write.rs
 
-// use jsonrpsee::proc_macros::rpc;
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
@@ -15,21 +14,17 @@ use crate::rebased::client::{RpcResponse, RpcResult};
 use super::super::encoding::Base64;
 use super::{DryRunTransactionBlockResponse, IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions};
 
-/// Provides methods for executing and testing transactions.
-// #[rpc(client, namespace = "iota")]
 pub trait WriteApi {
     /// Execute the transaction and wait for results if desired.
     /// Request types:
     /// 1. WaitForEffectsCert: waits for TransactionEffectsCert and then return to client.
-    ///     This mode is a proxy for transaction finality.
+    ///    This mode is a proxy for transaction finality.
     /// 2. WaitForLocalExecution: waits for TransactionEffectsCert and make sure the node
-    ///     executed the transaction locally before returning the client. The local execution
-    ///     makes sure this node is aware of this transaction when client fires subsequent queries.
-    ///     However if the node fails to execute the transaction locally in a timely manner,
-    ///     a bool type in the response is set to false to indicated the case.
-    /// request_type is default to be `WaitForEffectsCert` unless options.show_events or options.show_effects is true
-    // #[rustfmt::skip]
-    // #[method(name = "executeTransactionBlock")]
+    ///    executed the transaction locally before returning the client. The local execution
+    ///    makes sure this node is aware of this transaction when client fires subsequent queries.
+    ///    However if the node fails to execute the transaction locally in a timely manner,
+    ///    a bool type in the response is set to false to indicated the case.
+    ///    request_type is default to be `WaitForEffectsCert` unless options.show_events or options.show_effects is true
     async fn execute_transaction_block(
         &self,
         // BCS serialized transaction data bytes without its type tag, as base-64 encoded string.
@@ -43,7 +38,6 @@ pub trait WriteApi {
     ) -> RpcResult<IotaTransactionBlockResponse>;
     /// Return transaction execution effects including the gas cost summary,
     /// while the effects are not committed to the chain.
-    // #[method(name = "dryRunTransactionBlock")]
     async fn dry_run_transaction_block(&self, tx_bytes: Base64) -> RpcResult<DryRunTransactionBlockResponse>;
 }
 
@@ -82,12 +76,7 @@ impl WriteApi for RpcClient {
             "params": params
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response
             .json::<RpcResponse<IotaTransactionBlockResponse>>()
@@ -105,12 +94,7 @@ impl WriteApi for RpcClient {
             ]
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response
             .json::<RpcResponse<DryRunTransactionBlockResponse>>()

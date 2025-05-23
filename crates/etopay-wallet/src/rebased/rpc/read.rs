@@ -5,12 +5,13 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/read.rs
 
+use serde_json::{Value, json};
+
 use crate::rebased::{
     RpcClient,
     client::{RpcResponse, RpcResult},
 };
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
 use serde_with::serde_as;
 
 use super::{
@@ -111,8 +112,8 @@ impl ReadApi for RpcClient {
     ) -> RpcResult<IotaTransactionBlockResponse> {
         let mut params: Vec<Value> = vec![json!(digest.to_string())];
 
-        if let Some(o) = options {
-            params.push(json!(o));
+        if let Some(opts) = options {
+            params.push(json!(opts));
         }
 
         let request_body = json!({
@@ -122,12 +123,7 @@ impl ReadApi for RpcClient {
             "params": params
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response
             .json::<RpcResponse<IotaTransactionBlockResponse>>()
@@ -147,12 +143,7 @@ impl ReadApi for RpcClient {
             "params": [id]
         });
 
-        let response = self
-            .client
-            .post("https://api.testnet.iota.cafe")
-            .json(&request_body)
-            .send()
-            .await?;
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
         Ok(response.json::<RpcResponse<Checkpoint>>().await?.result)
     }

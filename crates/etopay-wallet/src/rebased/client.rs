@@ -6,6 +6,7 @@ use reqwest::Client;
 
 pub struct RpcClient {
     pub client: Client,
+    pub url: String,
 }
 
 pub type RpcResult<T> = Result<T, super::RebasedError>;
@@ -26,8 +27,6 @@ pub struct RpcResponse<T> {
 
 #[cfg(not(target_arch = "wasm32"))]
 mod non_wasm {
-    //use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClientBuilder};
-    //    use reqwest::Client;
     use reqwest::{
         Client,
         header::{HeaderMap, HeaderValue},
@@ -59,6 +58,7 @@ mod non_wasm {
 
             Ok(Self {
                 client: http_builder.build()?,
+                url: url.to_string(),
             })
         }
     }
@@ -67,15 +67,13 @@ mod non_wasm {
 #[cfg(target_arch = "wasm32")]
 impl RpcClient {
     pub async fn new(url: &str) -> Result<Self, super::RebasedError> {
-        use log::debug;
         use reqwest::Client;
-        use serde_json::Value;
-        use serde_json::json;
 
         let http_builder = Client::builder();
 
         Ok(Self {
             client: http_builder.build()?,
+            url: url.to_string(),
         })
     }
 }
