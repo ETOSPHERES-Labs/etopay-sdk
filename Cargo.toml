@@ -85,8 +85,3 @@ syn = { version = "2.0", features = ["full"] }
 proc-macro2 = { version = "1.0", default-features = false }
 jni = { version = "0.21.1", default-features = false }
 
-# scrypt is used for the main wallet functions in the iota-sdk. Since it does a lot of 
-# cryptography hashing, running in debug mode takes forever and therefore we tell Cargo to
-# always compile it with full optimizations in debug mode.
-[profile.dev.package.scrypt]
-opt-level = 3

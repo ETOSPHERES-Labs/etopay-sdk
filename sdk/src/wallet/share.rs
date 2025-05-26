@@ -342,13 +342,16 @@ fn reconstruct_secret(
 #[allow(clippy::result_large_err)]
 fn encrypt_with_password(data: &ShareData, key: &SecretSlice<u8>) -> Result<ShareData, ShareError> {
     use aes_gcm::{
-        Aes256Gcm, Key,
-        aead::{Aead, AeadCore, KeyInit, OsRng},
+        Aes256Gcm, Key, Nonce,
+        aead::{Aead, KeyInit, consts::U12},
     };
+    use rand::RngCore;
 
     // create a random nonce value (96-bit for AesGcm256) since it needs to be unique for each
     // encryption with the same key
-    let nonce = Aes256Gcm::generate_nonce(&mut OsRng);
+    let mut nonce = Nonce::<U12>::default();
+    let mut rng = rand::rng();
+    rng.fill_bytes(&mut nonce);
 
     // hash the key string with the nonce to use as encryption key
     let key = Blake2b256::new()

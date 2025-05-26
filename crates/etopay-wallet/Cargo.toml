@@ -45,8 +45,6 @@ rand = { version = "0.9", default-features = false, features = [
     "thread_rng",
 ] }
 
-rand_0_8 = { package = "rand_core", version = "0.6", default-features = false, features = [
-] }
 zeroize = { version = "1.8", default-features = false, features = ["std"] }
 
 # For EVM impl
@@ -70,7 +68,7 @@ alloy-transport = "1.0.6"
 # needed for custom iota-rebased impl
 serde_with = { version = "3.12", features = ["macros", "hex"] }
 hex = { version = "0.4" }
-tiny-bip39 = "2"
+tiny-bip39 = { version = "2", default-features = false }
 slip10_ed25519 = "0.1.3"
 bcs = "0.1.6"
 serde_repr = "0.1.20"
@@ -109,6 +107,7 @@ mockall = { workspace = true }
 mockito = { workspace = true }
 rstest = { workspace = true }
 testing = { workspace = true }
+tiny-bip39 = { version = "2", default-features = false, features = ["rand"] }
 
 
 [package.metadata.cargo-machete]
