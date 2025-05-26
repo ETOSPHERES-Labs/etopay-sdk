@@ -9,10 +9,10 @@ use crate::types::newtypes::{AccessToken, EncryptionPin, EncryptionSalt, PlainPa
 use crate::wallet::error::{ErrorKind, Result, WalletError};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use async_trait::async_trait;
-use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletImplStardust, WalletUser};
-use iota_sdk::crypto::keys::bip39::Mnemonic;
+use etopay_wallet::bip39::{self, Mnemonic};
+use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
 use log::{info, warn};
-use secrecy::{ExposeSecret, SecretBox};
+use secrecy::SecretBox;
 use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
 
@@ -306,7 +306,7 @@ impl WalletManagerImpl {
                 // create the shares again, and just use a random password since we are not interested
                 // in the backup share anyways (which is the only reason this needs a password)
                 let shares = crate::share::create_shares_from_mnemonic(
-                    secrecy::ExposeSecret::expose_secret(&mnemonic).clone(),
+                    &mnemonic,
                     &SecretBox::new(String::from("dummy password").as_bytes().into()),
                 )?;
 
@@ -319,7 +319,7 @@ impl WalletManagerImpl {
             }
 
             Ok((
-                mnemonic.expose_secret().clone(),
+                mnemonic,
                 Status {
                     local: local_used,
                     recovery: recovery_used,
@@ -342,7 +342,7 @@ impl WalletManagerImpl {
         access_token: &Option<AccessToken>,
         repo: &mut UserRepoT,
         pin: &EncryptionPin,
-        mnemonic: impl Into<Mnemonic>,
+        mnemonic: &Mnemonic,
     ) -> Result<()> {
         log::info!("Creating and uploading shares");
 
@@ -387,11 +387,11 @@ impl WalletManager for WalletManagerImpl {
         repo: &mut UserRepoT,
         pin: &EncryptionPin,
     ) -> Result<String> {
-        let mnemonic = iota_sdk::client::Client::generate_mnemonic()?;
-        self.create_and_upload_shares(config, access_token, repo, pin, mnemonic.as_ref())
+        let mnemonic = Mnemonic::new(bip39::MnemonicType::Words24, bip39::Language::English);
+        self.create_and_upload_shares(config, access_token, repo, pin, &mnemonic)
             .await?;
 
-        Ok(mnemonic.to_string())
+        Ok(mnemonic.phrase().to_string())
     }
 
     /// Create shares from a mnemonic
@@ -403,7 +403,8 @@ impl WalletManager for WalletManagerImpl {
         pin: &EncryptionPin,
         mnemonic: &str,
     ) -> Result<()> {
-        self.create_and_upload_shares(config, access_token, repo, pin, mnemonic)
+        let mnemonic = Mnemonic::from_phrase(mnemonic, bip39::Language::English)?;
+        self.create_and_upload_shares(config, access_token, repo, pin, &mnemonic)
             .await
     }
 
@@ -417,9 +418,8 @@ impl WalletManager for WalletManagerImpl {
         backup: &[u8],
         backup_password: &PlainPassword,
     ) -> Result<()> {
-        use secrecy::ExposeSecret;
         let mnemonic = crate::kdbx::load_mnemonic(backup, &backup_password.into_secret_string())?;
-        self.create_and_upload_shares(config, access_token, repo, pin, mnemonic.expose_secret().clone())
+        self.create_and_upload_shares(config, access_token, repo, pin, &mnemonic)
             .await
     }
 
@@ -435,7 +435,7 @@ impl WalletManager for WalletManagerImpl {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
 
         Ok(crate::kdbx::store_mnemonic(
-            &SecretBox::new(Box::new(mnemonic)),
+            &mnemonic,
             &backup_password.into_secret_string(),
         )?)
     }
@@ -480,7 +480,7 @@ impl WalletManager for WalletManagerImpl {
         let (existing_mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
 
         // perform a str-str comparison
-        Ok(*mnemonic == **existing_mnemonic)
+        Ok(mnemonic == existing_mnemonic.phrase())
     }
 
     async fn change_wallet_password(
@@ -514,7 +514,7 @@ impl WalletManager for WalletManagerImpl {
 
         // and if we need to reconstruct the shares, do it!
         if let Ok((mnemonic, _status)) = result {
-            self.create_and_upload_shares(config, access_token, repo, pin, mnemonic.clone())
+            self.create_and_upload_shares(config, access_token, repo, pin, &mnemonic)
                 .await?;
         }
 
@@ -532,13 +532,6 @@ impl WalletManager for WalletManagerImpl {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
 
         // we have the mnemonic and can now instantiate the WalletImpl
-
-        let path = config
-            .path_prefix
-            .join("wallets")
-            .join(&self.username)
-            .join(network.clone().key);
-
         let bo = match &network.protocol {
             ApiProtocol::Evm { chain_id } => {
                 let wallet = WalletImplEvm::new(
@@ -565,8 +558,9 @@ impl WalletManager for WalletManagerImpl {
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
             ApiProtocol::Stardust {} => {
-                let wallet = WalletImplStardust::new(mnemonic, &path, network.coin_type, &network.node_urls).await?;
-                Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
+                return Err(WalletError::WalletImplError(
+                    etopay_wallet::WalletError::WalletFeatureNotImplemented,
+                ));
             }
             ApiProtocol::IotaRebased { coin_type } => {
                 let wallet =
@@ -730,6 +724,8 @@ mod tests {
         let mut manager = WalletManagerImpl::new(USERNAME);
         let (pin, mut repo) = get_user_repo();
 
+        let file_count_before = walkdir::WalkDir::new(&config.path_prefix).into_iter().count();
+
         // create a wallet
         manager
             .create_wallet_from_new_mnemonic(&config, &None, &mut repo, pin)
@@ -748,8 +744,6 @@ mod tests {
             .await
             .expect("should succeed to get wallet");
 
-        let file_count_before = walkdir::WalkDir::new(&config.path_prefix).into_iter().count();
-
         //Act
         manager
             .delete_wallet(&config, &None, &mut repo)
@@ -758,7 +752,8 @@ mod tests {
 
         // Assert
         let file_count_after = walkdir::WalkDir::new(&config.path_prefix).into_iter().count();
-        assert!(file_count_after < file_count_before, "should remove files");
+
+        assert_eq!(file_count_before, file_count_after, "should not leave files behind");
     }
 
     // Note: all test cases assume that there is no password stored in the user database (since a wallet was never created before)

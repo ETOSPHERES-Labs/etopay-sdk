@@ -19,10 +19,6 @@ pub enum ErrorKind {
 /// Wrapper for wallet errors
 #[derive(thiserror::Error, Debug)]
 pub enum WalletError {
-    /// Iota client error
-    #[error("IotaClient error: {0}")]
-    IotaClient(#[from] iota_sdk::client::Error),
-
     /// Error occurs if password is missing
     #[error("Password is missing")]
     MissingPassword,
@@ -61,7 +57,7 @@ pub enum WalletError {
 
     /// Error occurred while handling bip39 compliant mnemonics
     #[error("Bip39 error: {0:?}")]
-    Bip39(iota_sdk::crypto::keys::bip39::Error),
+    Bip39(#[from] etopay_wallet::bip39::ErrorKind),
 
     /// Error occurs in sdk backend (api)
     #[error("BackendApi errors: {0}")]
@@ -70,10 +66,4 @@ pub enum WalletError {
     /// Error from the wallet impl
     #[error("WalletImplError: {0}")]
     WalletImplError(#[from] etopay_wallet::WalletError),
-}
-
-impl From<iota_sdk::crypto::keys::bip39::Error> for WalletError {
-    fn from(value: iota_sdk::crypto::keys::bip39::Error) -> Self {
-        Self::Bip39(value)
-    }
 }

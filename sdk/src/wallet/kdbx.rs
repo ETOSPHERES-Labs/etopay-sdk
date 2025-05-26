@@ -1,12 +1,12 @@
-use iota_sdk::crypto::keys::bip39::Mnemonic;
+use etopay_wallet::bip39::Mnemonic;
 use kdbx_rs::database::Entry;
 use kdbx_rs::errors::FailedUnlock;
 use kdbx_rs::{CompositeKey, Database, Kdbx};
 use log::info;
-use secrecy::{ExposeSecret, SecretBox, SecretString};
+use secrecy::{ExposeSecret, SecretString};
 
 /// load mnemonic from kdbx file
-pub fn load_mnemonic(backup: &[u8], password: &SecretString) -> Result<SecretBox<Mnemonic>, KdbxStorageError> {
+pub fn load_mnemonic(backup: &[u8], password: &SecretString) -> Result<Mnemonic, KdbxStorageError> {
     info!("Loading kdbx file from bytes");
     let kdbx = kdbx_rs::from_reader(backup)?;
     let key = CompositeKey::from_password(password.expose_secret());
@@ -19,12 +19,14 @@ pub fn load_mnemonic(backup: &[u8], password: &SecretString) -> Result<SecretBox
     let Some(mnemonic) = entry.password() else {
         return Err(KdbxStorageError::NotFound("Mnemonic not found".to_string()));
     };
-    let mnemonic = Mnemonic::from(mnemonic);
-    Ok(SecretBox::new(Box::new(mnemonic)))
+
+    let mnemonic = Mnemonic::from_phrase(mnemonic, etopay_wallet::bip39::Language::English)?;
+
+    Ok(mnemonic)
 }
 
 /// store mnemonic in kdbx file
-pub fn store_mnemonic(mnemonic: &SecretBox<Mnemonic>, password: &SecretString) -> Result<Vec<u8>, KdbxStorageError> {
+pub fn store_mnemonic(mnemonic: &Mnemonic, password: &SecretString) -> Result<Vec<u8>, KdbxStorageError> {
     info!("Creating kdbx file from mnemonic");
 
     let mut database = Database::default();
@@ -32,7 +34,7 @@ pub fn store_mnemonic(mnemonic: &SecretBox<Mnemonic>, password: &SecretString) -
 
     let mut entry = Entry::default();
     entry.set_title("mnemonic");
-    entry.set_password(mnemonic.expose_secret().to_string());
+    entry.set_password(mnemonic.phrase());
     database.add_entry(entry);
 
     let mut kdbx = Kdbx::from_database(database);
@@ -66,6 +68,10 @@ pub enum KdbxStorageError {
     /// Not found errors
     #[error("Not found: {0}")]
     NotFound(String),
+
+    /// Error occurred while handling bip39 compliant mnemonics
+    #[error("Bip39 error: {0:?}")]
+    Bip39(#[from] etopay_wallet::bip39::ErrorKind),
 }
 
 impl From<FailedUnlock> for KdbxStorageError {
@@ -82,14 +88,18 @@ mod tests {
     #[test]
     fn test_store_and_load_mnemonic() {
         // Arrange
-        let mnemonic = SecretBox::new(Box::new("secret mnemonic".into()));
+        let mnemonic = Mnemonic::new(
+            etopay_wallet::bip39::MnemonicType::Words24,
+            etopay_wallet::bip39::Language::English,
+        );
+
         let password = SecretString::new("password".into());
 
         // Act
         let kdbx = store_mnemonic(&mnemonic, &password).unwrap();
-        let mnemonic = load_mnemonic(&kdbx, &password).unwrap();
+        let mnemonic_recovered = load_mnemonic(&kdbx, &password).unwrap();
 
         // Assert
-        assert_eq!(mnemonic.expose_secret().to_string(), "secret mnemonic");
+        assert_eq!(mnemonic_recovered.phrase(), mnemonic.phrase());
     }
 }

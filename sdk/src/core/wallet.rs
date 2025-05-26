@@ -10,8 +10,7 @@ use crate::{
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
-use etopay_wallet::types::{CryptoAmount, WalletTxInfo, WalletTxInfoList};
-use iota_sdk::wallet::account::types::InclusionState;
+use etopay_wallet::types::{CryptoAmount, InclusionState, WalletTxInfo, WalletTxInfoList};
 use log::{debug, info, warn};
 
 impl Sdk {
@@ -605,7 +604,6 @@ mod tests {
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use etopay_wallet::MockWalletUser;
-    use iota_sdk::wallet::account::types::InclusionState;
     use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;
@@ -1188,7 +1186,7 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(Ok(WalletTxInfoList { transactions: vec![example_wallet_tx_info()]}))]
+    #[case::success(Ok(WalletTxInfoList { transactions: vec![]}))]
     #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]
@@ -1200,17 +1198,16 @@ mod tests {
 
         match &expected {
             Ok(_) => {
-                let mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 2, KycType::Undefined);
+                let mut mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 2, KycType::Undefined);
+                mock_user_repo
+                    .expect_set_wallet_transactions()
+                    .once()
+                    .returning(|_, _| Ok(()));
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
                 mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
-                    let mut mock_wallet_user = MockWalletUser::new();
-                    mock_wallet_user.expect_get_wallet_tx_list().once().returning(|_, _| {
-                        Ok(WalletTxInfoList {
-                            transactions: vec![example_wallet_tx_info()],
-                        })
-                    });
+                    let mock_wallet_user = MockWalletUser::new();
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
                 sdk.active_user = Some(crate::types::users::ActiveUser {

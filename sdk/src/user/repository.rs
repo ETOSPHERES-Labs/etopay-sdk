@@ -140,7 +140,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 mod tests {
     use std::vec;
 
-    use iota_sdk::wallet::account::types::InclusionState;
+    use etopay_wallet::types::InclusionState;
 
     use super::*;
     use crate::{
