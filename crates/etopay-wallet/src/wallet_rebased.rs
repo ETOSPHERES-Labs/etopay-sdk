@@ -1,40 +1,9 @@
 use std::ops::{Add, Sub};
-use std::time::Duration;
+#[cfg(not(target_family = "wasm"))]
+use std::time::{Duration, Instant};
 
-// #[cfg(not(target_arch = "wasm32"))]
-// use std::time::{Duration, Instant};
-
-// #[cfg(target_arch = "wasm32")]
-// use js_sys::Date;
-
-// #[cfg(target_arch = "wasm32")]
-// pub struct InstantWasm(f64);
-
-// #[cfg(target_arch = "wasm32")]
-// impl InstantWasm {
-//     pub fn now() -> Self {
-//         Self(Date::now())
-//     }
-
-//     pub fn elapsed(&self) -> Duration {
-//         let now = Date::now();
-//         let delta_ms = now - self.0;
-//         Duration::from_millis(delta_ms as u64)
-//     }
-// }
-
-// #[cfg(target_arch = "wasm32")]
-// impl InstantWasm {
-//     pub fn now() -> Self {
-//         Self(Date::now())
-//     }
-
-//     pub fn elapsed(&self) -> Duration {
-//         let now = Date::now();
-//         let delta_ms = now - self.0;
-//         Duration::from_millis(delta_ms as u64)
-//     }
-// }
+#[cfg(target_family = "wasm")]
+use web_time::{Duration, Instant};
 
 use super::error::{Result, WalletError};
 use super::rebased::{
@@ -55,6 +24,11 @@ use iota_sdk::crypto::keys::bip39::Mnemonic;
 use iota_sdk::wallet::account::types::InclusionState;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
+
+#[cfg(not(target_family = "wasm"))]
+use tokio::time::{interval, sleep, timeout};
+#[cfg(target_family = "wasm")]
+use wasmtimer::tokio::{interval, sleep, timeout};
 
 const WAIT_FOR_LOCAL_EXECUTION_TIMEOUT: Duration = Duration::from_secs(60);
 const WAIT_FOR_LOCAL_EXECUTION_DELAY: Duration = Duration::from_millis(200);
@@ -197,13 +171,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let (tx_bytes, signatures) = tx.to_tx_bytes_and_signatures()?;
 
-        // #[cfg(not(target_arch = "wasm32"))]
-        // let start = Instant::now();
-
-        // #[cfg(target_arch = "wasm32")]
-        // let start = InstantWasm::now();
-
-        //let start = Instant::now();
+        let start = Instant::now();
         let transaction_block_response = self
             .client
             .execute_transaction_block(
@@ -216,16 +184,18 @@ impl WalletUser for WalletImplIotaRebased {
 
         log::info!("Transaction submitted {}", transaction_block_response.digest);
 
+        // let timeout_ms = WAIT_FOR_LOCAL_EXECUTION_TIMEOUT.as_millis() as u32;
+        // let delay_ms = WAIT_FOR_LOCAL_EXECUTION_DELAY.as_millis() as u32;
+        // let interval_ms = WAIT_FOR_LOCAL_EXECUTION_INTERVAL.as_millis() as u32;
+
         // JSON-RPC ignores WaitForLocalExecution, so simulate it by polling for the
         // transaction.
-        let poll_response = tokio::time::timeout(WAIT_FOR_LOCAL_EXECUTION_TIMEOUT, async {
+        let poll_response = timeout(WAIT_FOR_LOCAL_EXECUTION_TIMEOUT, async {
             // Apply a short delay to give the full node a chance to catch up.
-            tokio::time::sleep(WAIT_FOR_LOCAL_EXECUTION_DELAY).await;
-
-            let mut interval = tokio::time::interval(WAIT_FOR_LOCAL_EXECUTION_INTERVAL);
+            sleep(WAIT_FOR_LOCAL_EXECUTION_DELAY).await;
+            let mut interval = interval(WAIT_FOR_LOCAL_EXECUTION_INTERVAL);
             loop {
                 interval.tick().await;
-
                 if let Ok(poll_response) = self
                     .client
                     .get_transaction_block(transaction_block_response.digest, None)
@@ -239,7 +209,7 @@ impl WalletUser for WalletImplIotaRebased {
         .map_err(|_| {
             WalletError::FailToConfirmTransactionStatus(
                 transaction_block_response.digest.to_string(),
-                0, //start.elapsed().as_secs(),
+                start.elapsed().as_secs(),
             )
         })?;
 

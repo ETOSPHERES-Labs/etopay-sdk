@@ -39,6 +39,8 @@ async function main() {
     let details = await sdk.getWalletTransaction(PIN, tx_id);
     console.log("transaction details: ", details);
 
+    // todo: wasmtimer needs this to exit
+    process.exit(0);
 }
 
 main();
