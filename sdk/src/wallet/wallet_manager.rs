@@ -12,6 +12,7 @@ use async_trait::async_trait;
 use etopay_wallet::bip39::{self, Mnemonic};
 use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
 use log::{info, warn};
+use rand::RngCore;
 use secrecy::SecretBox;
 use std::marker::PhantomData;
 use std::ops::{Deref, DerefMut};
@@ -387,7 +388,14 @@ impl WalletManager for WalletManagerImpl {
         repo: &mut UserRepoT,
         pin: &EncryptionPin,
     ) -> Result<String> {
-        let mnemonic = Mnemonic::new(bip39::MnemonicType::Words24, bip39::Language::English);
+        let bytes = {
+            let mut rng = rand::rng();
+            let mut bytes = vec![0u8; 32];
+            rng.fill_bytes(&mut bytes);
+            bytes
+        };
+
+        let mnemonic = Mnemonic::from_entropy(&bytes, bip39::Language::English)?;
         self.create_and_upload_shares(config, access_token, repo, pin, &mnemonic)
             .await?;
 
