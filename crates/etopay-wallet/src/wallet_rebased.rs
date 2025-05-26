@@ -292,11 +292,18 @@ impl WalletUser for WalletImplIotaRebased {
             })
             .unwrap_or(Ok(String::default()))?;
 
+        let sender = sender
+            .map(|owner| match owner {
+                Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
+                _ => Err(WalletError::WalletFeatureNotImplemented),
+            })
+            .unwrap_or(Ok(String::default()))?;
+
         Ok(WalletTxInfo {
             date,
             block_id,
             transaction_id: tx_id.to_string(),
-            incoming: false,
+            sender,
             receiver,
             amount,
             network_key: String::from("iota_rebased_testnet"),

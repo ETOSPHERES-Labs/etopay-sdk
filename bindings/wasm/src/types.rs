@@ -244,10 +244,10 @@ pub struct WalletTxInfo {
     pub block_id: Option<String>,
     /// transaction id for particular transaction
     pub transaction_id: String,
+    /// The sender of the transaction
+    pub sender: String,
     /// The receiver address
     pub receiver: String,
-    /// Describes type of transaction
-    pub incoming: bool,
     /// Amount of transfer
     pub amount: f64,
     /// either SMR or IOTA
@@ -269,8 +269,8 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
             date: value.date,
             block_id: value.block_id,
             transaction_id: value.transaction_id,
+            sender: value.sender,
             receiver: value.receiver,
-            incoming: value.incoming,
             amount: value.amount,
             network_key: value.network_key,
             status: value.status,

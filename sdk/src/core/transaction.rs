@@ -773,7 +773,7 @@ mod tests {
             block_id: Some(String::new()),
             transaction_id: String::from("tx_id"),
             receiver: String::new(),
-            incoming: false,
+            sender: String::new(),
             amount: 5.0,
             network_key: ETH_NETWORK_KEY.to_string(),
             status: format!("{:?}", InclusionState::Pending),

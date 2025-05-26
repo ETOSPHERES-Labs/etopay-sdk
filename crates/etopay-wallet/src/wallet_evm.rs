@@ -264,25 +264,24 @@ impl WalletUser for WalletImplEvm {
             return Err(WalletError::TransactionNotFound);
         };
 
+        let sender = tx.inner.signer();
+
         let date = if let Some(block_number) = tx.block_number {
             let block = self
                 .provider
                 .get_block_by_number(BlockNumberOrTag::Number(block_number))
                 .await?;
+
             block.map(|b| b.header.timestamp)
         } else {
             None
         };
-
-        let my_address = self.get_address().await?;
 
         let Some(receiver_address) = tx.to() else {
             return Err(WalletError::InvalidTransaction(
                 "Transaction has no to address".to_string(),
             ));
         };
-
-        let is_transaction_incoming = receiver_address.to_string() == my_address;
 
         let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
         let status = match receipt.map(|r| r.inner.is_success()) {
@@ -299,8 +298,8 @@ impl WalletUser for WalletImplEvm {
             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
             block_id: tx.block_number.map(|n| n.to_string()),
             transaction_id: transaction_id.to_string(),
+            sender: sender.to_string(),
             receiver: receiver_address.to_string(),
-            incoming: is_transaction_incoming,
             amount: value_eth_f64,
             network_key: "ETH".to_string(),
             status: format!("{:?}", status),

@@ -46,8 +46,8 @@ pub struct WalletTxInfo {
     pub block_id: Option<String>,
     /// transaction id for particular transaction
     pub transaction_id: String,
-    /// Describes type of transaction
-    pub incoming: bool,
+    /// The sender of the transaction
+    pub sender: String,
     /// The receiver of the transaction
     pub receiver: String,
     /// Amount of transfer
