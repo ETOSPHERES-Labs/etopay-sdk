@@ -575,9 +575,15 @@ impl WalletManager for WalletManagerImpl {
                 ));
             }
             ApiProtocol::IotaRebased { coin_type } => {
-                let wallet =
-                    WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls, options)
-                        .await?;
+                let wallet = WalletImplIotaRebased::new(
+                    mnemonic,
+                    coin_type,
+                    network.decimals,
+                    &network.node_urls,
+                    options,
+                    None,
+                )
+                .await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };

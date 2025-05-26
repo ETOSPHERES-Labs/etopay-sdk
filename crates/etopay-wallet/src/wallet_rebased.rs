@@ -63,6 +63,7 @@ impl WalletImplIotaRebased {
         decimals: u32,
         node_url: &[String],
         options: &MnemonicDerivationOption,
+        request_timeout: Option<u64>,
     ) -> Result<Self> {
         let mut keystore2 = rebased::InMemKeystore::default();
         keystore2.import_from_mnemonic(
@@ -70,7 +71,8 @@ impl WalletImplIotaRebased {
             format!("m/44'/4218'/{}'/0'/{}'", options.account, options.index).parse::<bip32::DerivationPath>()?,
         )?;
 
-        let client = RpcClient::new(&node_url[0]).await?;
+        let request_timeout = Duration::from_secs(request_timeout.unwrap_or(10));
+        let client = RpcClient::new(&node_url[0], request_timeout).await?;
 
         Ok(Self {
             client,
