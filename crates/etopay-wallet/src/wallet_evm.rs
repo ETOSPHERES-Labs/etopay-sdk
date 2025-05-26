@@ -1,7 +1,7 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -276,9 +276,9 @@ impl WalletUser for WalletImplEvm {
 
                 let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
                 let status = match receipt.map(|r| r.inner.is_success()) {
-                    Some(true) => InclusionState::Confirmed,
-                    Some(false) => InclusionState::Conflicting,
-                    None => InclusionState::Pending,
+                    Some(true) => WalletTxStatus::Confirmed,
+                    Some(false) => WalletTxStatus::Conflicting,
+                    None => WalletTxStatus::Pending,
                 };
 
                 let date = block
@@ -289,7 +289,7 @@ impl WalletUser for WalletImplEvm {
             } else {
                 // status is pending
 
-                (InclusionState::Pending, None, None)
+                (WalletTxStatus::Pending, None, None)
             };
 
         let Some(receiver_address) = tx.to() else {

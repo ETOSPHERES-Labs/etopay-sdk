@@ -29,7 +29,7 @@ use api_types::api::{
 };
 use etopay_wallet::MockWalletUser;
 use etopay_wallet::types::WalletTxInfo;
-use etopay_wallet::types::{CryptoAmount, InclusionState};
+use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;
@@ -362,7 +362,7 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         // SAFETY: the value is non-negative
         amount: unsafe { CryptoAmount::new_unchecked(dec!(20)) },
         network_key: "IOTA".to_string(),
-        status: InclusionState::Confirmed,
+        status: WalletTxStatus::Confirmed,
         explorer_url: None,
     }
 }

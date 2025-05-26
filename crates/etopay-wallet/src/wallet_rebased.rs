@@ -11,7 +11,7 @@ use crate::rebased::{
     CheckpointId, GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind,
     WriteApiClient,
 };
-use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -253,9 +253,9 @@ impl WalletUser for WalletImplIotaRebased {
         let status = match tx.effects.map(|effects| match effects {
             IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
         }) {
-            Some(true) => InclusionState::Confirmed,
-            Some(false) => InclusionState::Conflicting,
-            None => InclusionState::Pending,
+            Some(true) => WalletTxStatus::Confirmed,
+            Some(false) => WalletTxStatus::Conflicting,
+            None => WalletTxStatus::Pending,
         };
 
         // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses

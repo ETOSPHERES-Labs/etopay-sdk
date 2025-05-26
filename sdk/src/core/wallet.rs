@@ -10,7 +10,7 @@ use crate::{
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
-use etopay_wallet::types::{CryptoAmount, InclusionState, WalletTxInfo, WalletTxInfoList};
+use etopay_wallet::types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use log::{debug, info, warn};
 
 impl Sdk {
@@ -512,8 +512,8 @@ impl Sdk {
                     .take(limit)
                 {
                     // We don't need to query the network for the state of this transaction,
-                    // because it has already been synchronized earlier (as indicated by `InclusionState::Confirmed`).
-                    if transaction.status == InclusionState::Confirmed {
+                    // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
+                    if transaction.status == WalletTxStatus::Confirmed {
                         continue;
                     }
 
@@ -1251,7 +1251,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
                 network_key: "IOTA".to_string(),
-                status: InclusionState::Confirmed,
+                status: WalletTxStatus::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1262,7 +1262,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
                 network_key: "ETH".to_string(),
-                status: InclusionState::Pending,
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1273,7 +1273,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                 network_key: "ETH".to_string(),
-                status: InclusionState::Pending, // this one
+                status: WalletTxStatus::Pending, // this one
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1284,7 +1284,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
                 network_key: "ETH".to_string(),
-                status: InclusionState::Pending,
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
         ];
@@ -1313,7 +1313,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
                 network_key: "IOTA".to_string(),
-                status: InclusionState::Confirmed,
+                status: WalletTxStatus::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1324,7 +1324,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
                 network_key: "ETH".to_string(),
-                status: InclusionState::Pending,
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1335,7 +1335,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                 network_key: "ETH".to_string(),
-                status: InclusionState::Confirmed,
+                status: WalletTxStatus::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1346,7 +1346,7 @@ mod tests {
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
                 network_key: "ETH".to_string(),
-                status: InclusionState::Pending,
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
         ];
@@ -1378,7 +1378,7 @@ mod tests {
                         sender: String::new(),
                         amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                         network_key: "ETH".to_string(),
-                        status: InclusionState::Confirmed, // Pending -> Confirmed
+                        status: WalletTxStatus::Confirmed, // Pending -> Confirmed
                         explorer_url: None,
                     })
                 });
@@ -1414,7 +1414,7 @@ mod tests {
                     sender: String::new(),
                     amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                     network_key: "ETH".to_string(),
-                    status: InclusionState::Confirmed,
+                    status: WalletTxStatus::Confirmed,
                     explorer_url: None,
                 }]
             }
@@ -1435,7 +1435,7 @@ mod tests {
             sender: String::new(),
             amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
             network_key: "ETH".to_string(),
-            status: InclusionState::Confirmed,
+            status: WalletTxStatus::Confirmed,
             explorer_url: None,
         }];
 

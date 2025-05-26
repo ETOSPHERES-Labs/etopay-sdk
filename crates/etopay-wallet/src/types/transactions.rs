@@ -55,7 +55,7 @@ pub struct WalletTxInfo {
     /// Unique key representing a network
     pub network_key: String,
     /// Status of the transfer
-    pub status: InclusionState,
+    pub status: WalletTxStatus,
     /// Url of network IOTA/ETH
     pub explorer_url: Option<String>, // ok
                                       // change based on the network either eth or iota
@@ -94,10 +94,10 @@ pub struct GasCostEstimation {
     pub gas_limit: u64,
 }
 
-/// Possible InclusionStates for transactions
+/// Possible States for transactions
 /// TODO: refine this (just copied from iota-sdk for now)
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
-pub enum InclusionState {
+pub enum WalletTxStatus {
     Pending,
     Confirmed,
     Conflicting,

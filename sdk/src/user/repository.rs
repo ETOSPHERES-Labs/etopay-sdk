@@ -140,7 +140,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 mod tests {
     use std::vec;
 
-    use etopay_wallet::types::{CryptoAmount, InclusionState};
+    use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
     use rust_decimal_macros::dec;
 
     use super::*;
@@ -435,7 +435,7 @@ mod tests {
                 // SAFETY: the value is non-negative
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(0.5)) },
                 network_key: ETH_NETWORK_KEY.to_string(),
-                status: InclusionState::Pending,
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -447,7 +447,7 @@ mod tests {
                 // SAFETY: the value is non-negative
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(4.0)) },
                 network_key: ETH_NETWORK_KEY.to_string(),
-                status: InclusionState::Pending,
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
         ];

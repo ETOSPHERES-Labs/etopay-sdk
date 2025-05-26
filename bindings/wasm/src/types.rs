@@ -237,15 +237,15 @@ impl From<sdk::types::GasCostEstimation> for GasCostEstimation {
 
 #[wasm_bindgen]
 #[derive(Clone)]
-pub enum InclusionState {
+pub enum WalletTxStatus {
     Pending,
     Confirmed,
     Conflicting,
 }
 
 convert_enum!(
-    sdk::types::InclusionState,
-    InclusionState,
+    sdk::types::WalletTxStatus,
+    WalletTxStatus,
     Pending,
     Confirmed,
     Conflicting,
@@ -271,7 +271,7 @@ pub struct WalletTxInfo {
     /// either SMR or IOTA
     pub network_key: String,
     /// Status of the transfer
-    pub status: InclusionState,
+    pub status: WalletTxStatus,
     /// Url of network explorer
     pub explorer_url: Option<String>,
 }

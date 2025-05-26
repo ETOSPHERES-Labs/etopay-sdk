@@ -15,8 +15,8 @@
 
 use crate::ffi::{
     CaseDetailsResponse, File, GasCostEstimation, IdentityOfficialDocumentData, IdentityPersonalDocumentData,
-    InclusionState, NewCaseIdResponse, NewViviswapUser, Protocol, PurchaseDetails, TxStatus, ViviswapAddressDetail,
-    ViviswapDeposit, ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal,
+    NewCaseIdResponse, NewViviswapUser, Protocol, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit,
+    ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxStatus,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::CryptoAmount;
@@ -1534,7 +1534,7 @@ pub struct WalletTxInfo {
     pub receiver: String,
     pub amount: f64,
     pub network_key: String,
-    pub status: InclusionState,
+    pub status: WalletTxStatus,
     pub explorer_url: String,
 }
 
@@ -1570,7 +1570,7 @@ impl WalletTxInfo {
         self.network_key.clone()
     }
 
-    pub fn status(&self) -> InclusionState {
+    pub fn status(&self) -> WalletTxStatus {
         self.status
     }
 

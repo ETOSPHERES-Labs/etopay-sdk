@@ -268,8 +268,8 @@ impl From<sdk::types::networks::ApiNetwork> for crate::ffi_functions::Network {
     }
 }
 convert_enum!(
-    ffi::InclusionState,
-    sdk::types::InclusionState,
+    ffi::WalletTxStatus,
+    sdk::types::WalletTxStatus,
     Pending,
     Confirmed,
     Conflicting,

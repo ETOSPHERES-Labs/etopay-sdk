@@ -236,7 +236,7 @@ pub mod ffi {
         fn invalid_reasons(&self) -> Vec<String>;
     }
 
-    pub enum InclusionState {
+    pub enum WalletTxStatus {
         Pending,
         Confirmed,
         Conflicting,
@@ -253,7 +253,7 @@ pub mod ffi {
         fn receiver(&self) -> String;
         fn amount(&self) -> f64;
         fn network_key(&self) -> String;
-        fn status(&self) -> InclusionState;
+        fn status(&self) -> WalletTxStatus;
         fn explorer_url(&self) -> String;
     }
 
