@@ -64,10 +64,10 @@ Task {
 
         // Get the details (wrap env.pin in RustString to make sure parameters have the same type (they share same generic type))
         let details = try await sdk.getWalletTransaction(RustString(env.pin), tx_id)
-        print("tx details status: \(details.status().toString())")
+        print("tx details status: \(details.status())")
         print("tx details amount: \(details.amount())")
         print("tx details receiver: \(details.receiver().toString())")
-        print("tx details block_id: \(details.block_id().toString())")
+        print("tx details block_number: \(details.block_number())")
 
 
     } catch let error as RustString {
