@@ -1245,7 +1245,7 @@ mod tests {
         let mixed_wallet_transactions = vec![
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "some tx id".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1256,7 +1256,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "1".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1267,7 +1267,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "2".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1278,7 +1278,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "3".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1307,7 +1307,7 @@ mod tests {
         let mixed_wallet_transactions_after_synchronization = vec![
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "some tx id".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1318,7 +1318,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "1".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1329,7 +1329,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "2".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1340,7 +1340,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: "3".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
@@ -1372,7 +1372,7 @@ mod tests {
                 .returning(move |_| {
                     Ok(WalletTxInfo {
                         date: "some date".to_string(),
-                        block_id: None,
+                        block_number_hash: None,
                         transaction_id: "2".to_string(),
                         receiver: String::new(),
                         sender: String::new(),
@@ -1408,7 +1408,7 @@ mod tests {
             WalletTxInfoList {
                 transactions: vec![WalletTxInfo {
                     date: "some date".to_string(),
-                    block_id: None,
+                    block_number_hash: None,
                     transaction_id: "2".to_string(),
                     receiver: String::new(),
                     sender: String::new(),
@@ -1429,7 +1429,7 @@ mod tests {
 
         let wallet_transactions = vec![WalletTxInfo {
             date: "some date".to_string(),
-            block_id: None,
+            block_number_hash: None,
             transaction_id: "1".to_string(),
             receiver: String::new(),
             sender: String::new(),

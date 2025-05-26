@@ -355,7 +355,7 @@ pub fn example_wallet_borrow() -> MockWalletManager {
 pub fn example_wallet_tx_info() -> WalletTxInfo {
     WalletTxInfo {
         date: "some date".to_string(),
-        block_id: None,
+        block_number_hash: None,
         transaction_id: "some tx id".to_string(),
         receiver: String::new(),
         sender: String::new(),

@@ -226,7 +226,7 @@ impl WalletUser for WalletImplIotaRebased {
                 _ => WalletError::IotaRebased(RebasedError::RpcError(e)),
             })?;
 
-        log::info!("Transaction Details:\n{tx:?}");
+        // log::info!("Transaction Details:\n{tx:#?}");
 
         // The timestamp is in milliseconds but we make it into a human-readable format
         let date = tx
@@ -236,7 +236,13 @@ impl WalletUser for WalletImplIotaRebased {
             .unwrap_or_default(); // default is going to be an empty String here
 
         // For block id we use the checkpoint number which shows when the tx was finalized.
-        let block_id = tx.checkpoint.map(|n| n.to_string());
+        let block_number_hash = if let Some(checkpoint) = tx.checkpoint {
+            // TODO: get the checkpoint hash
+
+            Some((checkpoint, String::new()))
+        } else {
+            None
+        };
 
         let status = match tx.effects.map(|effects| match effects {
             IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
@@ -297,7 +303,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         Ok(WalletTxInfo {
             date,
-            block_id,
+            block_number_hash,
             transaction_id: tx_id.to_string(),
             sender,
             receiver,

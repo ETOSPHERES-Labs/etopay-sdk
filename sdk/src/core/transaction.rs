@@ -770,7 +770,7 @@ mod tests {
 
         let wallet_transaction = WalletTxInfo {
             date: String::new(),
-            block_id: Some(String::new()),
+            block_number_hash: Some((0, String::new())),
             transaction_id: String::from("tx_id"),
             receiver: String::new(),
             sender: String::new(),

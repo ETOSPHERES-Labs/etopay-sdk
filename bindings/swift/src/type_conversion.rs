@@ -238,7 +238,8 @@ impl From<sdk::types::WalletTxInfo> for crate::ffi_functions::WalletTxInfo {
     fn from(value: sdk::types::WalletTxInfo) -> Self {
         crate::ffi_functions::WalletTxInfo {
             date: value.date,
-            block_id: value.block_id.unwrap_or("".to_string()),
+            block_number: value.block_number_hash.as_ref().map(|b| b.0),
+            block_hash: value.block_number_hash.map(|b| b.1),
             transaction_id: value.transaction_id,
             sender: value.sender,
             receiver: value.receiver,

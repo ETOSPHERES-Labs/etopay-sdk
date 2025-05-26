@@ -428,7 +428,7 @@ mod tests {
         let txs = vec![
             WalletTxInfo {
                 date: String::new(),
-                block_id: None,
+                block_number_hash: None,
                 transaction_id: String::from("transaction_id_1"),
                 receiver: String::new(),
                 sender: String::new(),
@@ -440,7 +440,7 @@ mod tests {
             },
             WalletTxInfo {
                 date: String::new(),
-                block_id: Some(String::from("block_2")),
+                block_number_hash: Some((1, String::from("block_2"))),
                 transaction_id: String::from("transaction_id_2"),
                 receiver: String::new(),
                 sender: String::new(),

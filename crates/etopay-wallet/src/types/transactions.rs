@@ -42,8 +42,8 @@ pub struct TxInfo {
 pub struct WalletTxInfo {
     /// Tx creation date, if available
     pub date: String,
-    /// Contains block id
-    pub block_id: Option<String>, // TODO: This must exist (block id & hash?)
+    /// Block number / id and hash
+    pub block_number_hash: Option<(u64, String)>,
     /// transaction id for particular transaction
     pub transaction_id: String,
     /// The sender of the transaction

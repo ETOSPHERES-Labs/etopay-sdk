@@ -256,8 +256,10 @@ convert_enum!(
 pub struct WalletTxInfo {
     /// Tx creation date, if available
     pub date: String,
-    /// Contains block id
-    pub block_id: Option<String>,
+    /// Contains block number / id
+    pub block_number: Option<u64>,
+    /// Contains block hash
+    pub block_hash: Option<String>,
     /// transaction id for particular transaction
     pub transaction_id: String,
     /// The sender of the transaction
@@ -283,7 +285,8 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
     fn from(value: sdk::types::WalletTxInfo) -> Self {
         Self {
             date: value.date,
-            block_id: value.block_id,
+            block_number: value.block_number_hash.as_ref().map(|b| b.0),
+            block_hash: value.block_number_hash.map(|b| b.1),
             transaction_id: value.transaction_id,
             sender: value.sender,
             receiver: value.receiver,

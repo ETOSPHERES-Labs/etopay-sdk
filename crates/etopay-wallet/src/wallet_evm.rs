@@ -266,16 +266,27 @@ impl WalletUser for WalletImplEvm {
 
         let sender = tx.inner.signer();
 
-        let date = if let Some(block_number) = tx.block_number {
-            let block = self
-                .provider
-                .get_block_by_number(BlockNumberOrTag::Number(block_number))
-                .await?;
+        let (status, date, block_number_hash) =
+            if let (Some(block_number), Some(block_hash)) = (tx.block_number, tx.block_hash) {
+                let block = self
+                    .provider
+                    .get_block_by_number(BlockNumberOrTag::Number(block_number))
+                    .await?;
 
-            block.map(|b| b.header.timestamp)
-        } else {
-            None
-        };
+                let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
+                let status = match receipt.map(|r| r.inner.is_success()) {
+                    Some(true) => InclusionState::Confirmed,
+                    Some(false) => InclusionState::Conflicting,
+                    None => InclusionState::Pending,
+                };
+
+                let date = block.map(|b| b.header.timestamp);
+                (status, date, Some((block_number, block_hash.to_string())))
+            } else {
+                // status is pending
+
+                (InclusionState::Pending, None, None)
+            };
 
         let Some(receiver_address) = tx.to() else {
             return Err(WalletError::InvalidTransaction(
@@ -283,18 +294,11 @@ impl WalletUser for WalletImplEvm {
             ));
         };
 
-        let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
-        let status = match receipt.map(|r| r.inner.is_success()) {
-            Some(true) => InclusionState::Confirmed,
-            Some(false) => InclusionState::Conflicting,
-            None => InclusionState::Pending,
-        };
-
         let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
 
         Ok(WalletTxInfo {
             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
-            block_id: tx.block_number.map(|n| n.to_string()),
+            block_number_hash,
             transaction_id: transaction_id.to_string(),
             sender: sender.to_string(),
             receiver: receiver_address.to_string(),
