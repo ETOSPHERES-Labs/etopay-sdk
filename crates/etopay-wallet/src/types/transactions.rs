@@ -51,7 +51,7 @@ pub struct WalletTxInfo {
     /// The receiver of the transaction
     pub receiver: String,
     /// Amount of transfer
-    pub amount: f64, // TODO: CryptoAmount
+    pub amount: CryptoAmount,
     /// Unique key representing a network
     pub network_key: String,
     /// Status of the transfer

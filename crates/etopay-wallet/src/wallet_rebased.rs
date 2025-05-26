@@ -17,7 +17,6 @@ use chrono::{TimeZone, Utc};
 use jsonrpsee::types::ErrorCode;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
-use rust_decimal::prelude::ToPrimitive;
 
 const WAIT_FOR_LOCAL_EXECUTION_TIMEOUT: Duration = Duration::from_secs(60);
 const WAIT_FOR_LOCAL_EXECUTION_DELAY: Duration = Duration::from_millis(200);
@@ -280,10 +279,7 @@ impl WalletUser for WalletImplIotaRebased {
         };
 
         // 2) Turn amount into f64
-        let amount: f64 = convert_u128_to_crypto_amount(raw_amount, self.decimals)?
-            .inner()
-            .to_f64()
-            .unwrap_or(0.0);
+        let amount = convert_u128_to_crypto_amount(raw_amount, self.decimals)?;
 
         let receiver = receiver
             .map(|owner| match owner {

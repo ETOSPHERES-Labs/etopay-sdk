@@ -1,3 +1,8 @@
+use std::f64;
+
+use rust_decimal::prelude::ToPrimitive;
+use serde::{Deserialize, Serialize};
+
 #[derive(thiserror::Error, Debug)]
 pub enum CryptoAmountError {
     #[error("NegativeAmount")]
@@ -14,7 +19,7 @@ impl From<rust_decimal::Error> for CryptoAmountError {
 }
 
 /// A non-negative decimal value. Used as inputs to create purchases or sending a transaction.
-#[derive(Debug, Clone, Copy, PartialEq, PartialOrd)]
+#[derive(Debug, Clone, Copy, PartialEq, PartialOrd, Serialize, Deserialize)]
 pub struct CryptoAmount(rust_decimal::Decimal);
 
 impl CryptoAmount {
@@ -34,6 +39,20 @@ impl CryptoAmount {
     /// it is known that the value is non-negative.
     pub const unsafe fn new_unchecked(value: rust_decimal::Decimal) -> Self {
         Self(value)
+    }
+
+    pub fn to_f64_lossy(&self) -> f64 {
+        // Looking at implementation of to_f64, it always returns Some() although the value may be truncated.
+        if let Some(v) = self.0.to_f64() {
+            return v;
+        }
+
+        log::error!(
+            "[unreachable] Could not convert CryptoAmount to f64! {:?}. Please file a bug report!",
+            self
+        );
+
+        f64::NAN
     }
 }
 

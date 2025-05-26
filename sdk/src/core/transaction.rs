@@ -774,7 +774,8 @@ mod tests {
             transaction_id: String::from("tx_id"),
             receiver: String::new(),
             sender: String::new(),
-            amount: 5.0,
+            // SAFETY: the value is non-negative
+            amount: unsafe { CryptoAmount::new_unchecked(dec!(5)) },
             network_key: ETH_NETWORK_KEY.to_string(),
             status: InclusionState::Pending,
             explorer_url: Some(String::new()),

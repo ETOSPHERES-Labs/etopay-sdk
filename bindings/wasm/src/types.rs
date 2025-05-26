@@ -287,7 +287,7 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
             transaction_id: value.transaction_id,
             sender: value.sender,
             receiver: value.receiver,
-            amount: value.amount,
+            amount: value.amount.to_f64_lossy(),
             network_key: value.network_key,
             status: value.status.into(),
             explorer_url: value.explorer_url,

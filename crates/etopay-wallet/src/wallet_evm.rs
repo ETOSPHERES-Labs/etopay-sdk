@@ -290,9 +290,7 @@ impl WalletUser for WalletImplEvm {
             None => InclusionState::Pending,
         };
 
-        let value_eth_crypto_amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
-
-        let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+        let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
 
         Ok(WalletTxInfo {
             date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
@@ -300,7 +298,7 @@ impl WalletUser for WalletImplEvm {
             transaction_id: transaction_id.to_string(),
             sender: sender.to_string(),
             receiver: receiver_address.to_string(),
-            amount: value_eth_f64,
+            amount,
             network_key: "ETH".to_string(),
             status,
             explorer_url: None,
@@ -435,8 +433,7 @@ impl WalletUser for WalletImplEvmErc20 {
 
         let args = Erc20Contract::transferCall::abi_decode(tx.inner.input())?;
 
-        let value_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
-        info.amount = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+        info.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
 
         info.receiver = args.to.to_string();
 

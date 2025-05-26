@@ -359,7 +359,8 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         transaction_id: "some tx id".to_string(),
         receiver: String::new(),
         sender: String::new(),
-        amount: 20.0,
+        // SAFETY: the value is non-negative
+        amount: unsafe { CryptoAmount::new_unchecked(dec!(20)) },
         network_key: "IOTA".to_string(),
         status: InclusionState::Confirmed,
         explorer_url: None,
