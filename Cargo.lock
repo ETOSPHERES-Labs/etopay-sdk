@@ -1902,6 +1902,12 @@ dependencies = [
  "digest 0.10.7",
  "ed25519-consensus",
  "etopay-api-types",
+<<<<<<< HEAD
+=======
+ "etospheres-labs-iota-sdk",
+ "futures",
+ "gloo-timers 0.3.0",
+>>>>>>> 0b6e0b4a (cargo toml)
  "hex",
  "indexmap 2.9.0",
  "jsonrpsee",
@@ -1924,6 +1930,9 @@ dependencies = [
  "thiserror 2.0.12",
  "tiny-bip39",
  "tokio",
+ "wasm-bindgen",
+ "wasmtimer",
+ "web-time",
  "zeroize",
 ]
 

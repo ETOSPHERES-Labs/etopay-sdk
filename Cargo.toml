@@ -10,7 +10,7 @@ members = [
     "tools/jnigen-build",
     "tools/jnigen-integration-test",
     "testing",
-	"crates/etopay-wallet",
+    "crates/etopay-wallet",
 ]
 
 
