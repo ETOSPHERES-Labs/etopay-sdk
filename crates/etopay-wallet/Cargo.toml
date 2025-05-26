@@ -75,7 +75,6 @@ ref-cast = "1"
 serde-name = "0.2"
 indexmap = "2.9"
 bip32 = "0.5"
-futures = { version = "0.3", default-features = false }
 tokio = { workspace = true }
 
 # needed to replace fastcrypto

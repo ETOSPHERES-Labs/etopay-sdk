@@ -2135,7 +2135,6 @@ dependencies = [
  "digest 0.10.7",
  "ed25519-consensus",
  "etopay-api-types",
- "futures",
  "hex",
  "indexmap 2.9.0",
  "log",
