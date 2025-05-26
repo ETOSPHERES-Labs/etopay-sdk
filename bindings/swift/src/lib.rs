@@ -248,7 +248,7 @@ pub mod ffi {
         fn date(&self) -> String;
         fn block_number(&self) -> Option<u64>;
         fn block_hash(&self) -> Option<String>;
-        fn transaction_id(&self) -> String;
+        fn transaction_hash(&self) -> String;
         fn sender(&self) -> String;
         fn receiver(&self) -> String;
         fn amount(&self) -> f64;

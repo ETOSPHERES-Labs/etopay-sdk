@@ -257,8 +257,8 @@ impl WalletUser for WalletImplEvm {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
-        let transaction_hash = TxHash::from_str(transaction_id)?;
+    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxInfo> {
+        let transaction_hash = TxHash::from_str(transaction_hash)?;
         let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
 
         let Some(tx) = transaction else {
@@ -303,7 +303,7 @@ impl WalletUser for WalletImplEvm {
         Ok(WalletTxInfo {
             date: date.unwrap_or_default(), // if missing: empty string
             block_number_hash,
-            transaction_id: transaction_id.to_string(),
+            transaction_hash: transaction_hash.to_string(),
             sender: sender.to_string(),
             receiver: receiver_address.to_string(),
             amount,

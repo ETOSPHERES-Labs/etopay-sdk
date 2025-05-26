@@ -517,7 +517,7 @@ impl Sdk {
                         continue;
                     }
 
-                    let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_id).await;
+                    let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_hash).await;
                     match synchronized_transaction {
                         Ok(stx) => *transaction = stx,
                         Err(e) => {
@@ -1246,7 +1246,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "some tx id".to_string(),
+                transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
@@ -1257,7 +1257,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "1".to_string(),
+                transaction_hash: "1".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
@@ -1268,7 +1268,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "2".to_string(),
+                transaction_hash: "2".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
@@ -1279,7 +1279,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "3".to_string(),
+                transaction_hash: "3".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
@@ -1308,7 +1308,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "some tx id".to_string(),
+                transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
@@ -1319,7 +1319,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "1".to_string(),
+                transaction_hash: "1".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
@@ -1330,7 +1330,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "2".to_string(),
+                transaction_hash: "2".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
@@ -1341,7 +1341,7 @@ mod tests {
             WalletTxInfo {
                 date: "some date".to_string(),
                 block_number_hash: None,
-                transaction_id: "3".to_string(),
+                transaction_hash: "3".to_string(),
                 receiver: String::new(),
                 sender: String::new(),
                 amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
@@ -1373,7 +1373,7 @@ mod tests {
                     Ok(WalletTxInfo {
                         date: "some date".to_string(),
                         block_number_hash: None,
-                        transaction_id: "2".to_string(),
+                        transaction_hash: "2".to_string(),
                         receiver: String::new(),
                         sender: String::new(),
                         amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
@@ -1409,7 +1409,7 @@ mod tests {
                 transactions: vec![WalletTxInfo {
                     date: "some date".to_string(),
                     block_number_hash: None,
-                    transaction_id: "2".to_string(),
+                    transaction_hash: "2".to_string(),
                     receiver: String::new(),
                     sender: String::new(),
                     amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
@@ -1430,7 +1430,7 @@ mod tests {
         let wallet_transactions = vec![WalletTxInfo {
             date: "some date".to_string(),
             block_number_hash: None,
-            transaction_id: "1".to_string(),
+            transaction_hash: "1".to_string(),
             receiver: String::new(),
             sender: String::new(),
             amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },

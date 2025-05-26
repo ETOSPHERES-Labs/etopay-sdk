@@ -44,8 +44,8 @@ pub struct WalletTxInfo {
     pub date: String,
     /// Block number / id and hash
     pub block_number_hash: Option<(u64, String)>,
-    /// transaction id for particular transaction
-    pub transaction_id: String,
+    /// transaction hash for particular transaction
+    pub transaction_hash: String,
     /// The sender of the transaction
     pub sender: String,
     /// The receiver of the transaction

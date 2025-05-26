@@ -210,8 +210,8 @@ impl WalletUser for WalletImplIotaRebased {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo> {
-        let digest = tx_id.parse::<rebased::TransactionDigest>()?;
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfo> {
+        let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self
             .client
@@ -310,7 +310,7 @@ impl WalletUser for WalletImplIotaRebased {
         Ok(WalletTxInfo {
             date,
             block_number_hash,
-            transaction_id: tx_id.to_string(),
+            transaction_hash: tx_hash.to_string(),
             sender,
             receiver,
             amount,

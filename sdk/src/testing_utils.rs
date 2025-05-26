@@ -356,7 +356,7 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
     WalletTxInfo {
         date: "some date".to_string(),
         block_number_hash: None,
-        transaction_id: "some tx id".to_string(),
+        transaction_hash: "some tx id".to_string(),
         receiver: String::new(),
         sender: String::new(),
         // SAFETY: the value is non-negative

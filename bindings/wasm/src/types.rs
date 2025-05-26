@@ -261,7 +261,7 @@ pub struct WalletTxInfo {
     /// Contains block hash
     pub block_hash: Option<String>,
     /// transaction id for particular transaction
-    pub transaction_id: String,
+    pub transaction_hash: String,
     /// The sender of the transaction
     pub sender: String,
     /// The receiver address
@@ -287,7 +287,7 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
             date: value.date,
             block_number: value.block_number_hash.as_ref().map(|b| b.0),
             block_hash: value.block_number_hash.map(|b| b.1),
-            transaction_id: value.transaction_id,
+            transaction_hash: value.transaction_hash,
             sender: value.sender,
             receiver: value.receiver,
             amount: value.amount.to_f64_lossy(),

@@ -1529,7 +1529,7 @@ pub struct WalletTxInfo {
     pub date: String,
     pub block_number: Option<u64>,
     pub block_hash: Option<String>,
-    pub transaction_id: String,
+    pub transaction_hash: String,
     pub sender: String,
     pub receiver: String,
     pub amount: f64,
@@ -1550,8 +1550,8 @@ impl WalletTxInfo {
         self.block_hash.clone()
     }
 
-    pub fn transaction_id(&self) -> String {
-        self.transaction_id.clone()
+    pub fn transaction_hash(&self) -> String {
+        self.transaction_hash.clone()
     }
 
     pub fn sender(&self) -> String {

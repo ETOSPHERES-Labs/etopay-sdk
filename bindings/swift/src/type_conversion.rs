@@ -240,7 +240,7 @@ impl From<sdk::types::WalletTxInfo> for crate::ffi_functions::WalletTxInfo {
             date: value.date,
             block_number: value.block_number_hash.as_ref().map(|b| b.0),
             block_hash: value.block_number_hash.map(|b| b.1),
-            transaction_id: value.transaction_id,
+            transaction_hash: value.transaction_hash,
             sender: value.sender,
             receiver: value.receiver,
             amount: value.amount.to_f64_lossy(),
