@@ -21,6 +21,7 @@ use alloy_provider::fillers::{
 use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
 use bip39::Mnemonic;
+use chrono::{TimeZone, Utc};
 use log::info;
 use reqwest::Url;
 use rust_decimal::Decimal;
@@ -280,7 +281,10 @@ impl WalletUser for WalletImplEvm {
                     None => InclusionState::Pending,
                 };
 
-                let date = block.map(|b| b.header.timestamp);
+                let date = block
+                    .and_then(|b| Utc.timestamp_opt(b.header.timestamp as i64, 0).single())
+                    .map(|dt| dt.to_rfc3339());
+
                 (status, date, Some((block_number, block_hash.to_string())))
             } else {
                 // status is pending
@@ -297,7 +301,7 @@ impl WalletUser for WalletImplEvm {
         let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
 
         Ok(WalletTxInfo {
-            date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
+            date: date.unwrap_or_default(), // if missing: empty string
             block_number_hash,
             transaction_id: transaction_id.to_string(),
             sender: sender.to_string(),
