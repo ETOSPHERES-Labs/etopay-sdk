@@ -4,9 +4,10 @@
 
 //! Inspired by https://github.com/MystenLabs/fastcrypto/blob/main/fastcrypto/src/ed25519.rs
 
+use rand::CryptoRng;
 use std::{cell::OnceCell, fmt};
 
-use rand_0_8::{CryptoRng, RngCore};
+use rand::RngCore;
 
 use super::super::{
     RebasedError,
@@ -146,7 +147,11 @@ impl Ed25519KeyPair {
     }
 
     pub fn generate<R: CryptoRng + RngCore>(rng: &mut R) -> Self {
-        let kp = ed25519_consensus::SigningKey::new(rng);
+        // instead of using SigningKey::new(rng), we manually get the bytes using the working version of the `rand` crate
+        let mut bytes = [0u8; 32];
+        rng.fill_bytes(&mut bytes[..]);
+        let kp = ed25519_consensus::SigningKey::from(bytes);
+
         Ed25519KeyPair {
             public: Ed25519PublicKey(kp.verification_key()),
             private: Ed25519PrivateKey(kp),

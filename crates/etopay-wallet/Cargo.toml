@@ -45,8 +45,6 @@ rand = { version = "0.9", default-features = false, features = [
     "thread_rng",
 ] }
 
-rand_0_8 = { package = "rand_core", version = "0.6", default-features = false, features = [
-] }
 zeroize = { version = "1.8", default-features = false, features = ["std"] }
 
 # For EVM impl
