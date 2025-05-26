@@ -41,6 +41,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
             can_do_purchases: true,
             protocol: ApiProtocol::Stardust {},
             block_explorer_url: String::from("https://explorer.iota.org/iota-testnet/"),
+            address: None,
         },
         ApiNetwork {
             key: String::from("ETH"),
@@ -53,6 +54,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
             can_do_purchases: true,
             protocol: ApiProtocol::Evm { chain_id: 31337 },
             block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
+            address: None,
         },
     ]);
     sdk.set_network(String::from("IOTA")).await.unwrap();

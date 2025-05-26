@@ -48,4 +48,6 @@ pub struct ApiNetwork {
     pub protocol: ApiProtocol,
     /// URL of the network's block explorer
     pub block_explorer_url: String,
+    /// Tenant address for the network
+    pub address: Option<String>,
 }

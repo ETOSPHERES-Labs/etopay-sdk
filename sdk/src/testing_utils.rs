@@ -181,6 +181,7 @@ pub fn example_tx_details() -> GetTransactionDetailsResponse {
                 coin_type: "0x2::iota::IOTA".to_string(),
             },
             block_explorer_url: String::from("https://iotascan.com/testnet"),
+            address: None,
         },
     }
 }
@@ -200,6 +201,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
                 coin_type: "0x2::iota::IOTA".to_string(),
             },
             block_explorer_url: String::from("https://iotascan.com/testnet"),
+            address: None,
         },
         val if val == *"ETH" => ApiNetwork {
             key: ETH_NETWORK_KEY.to_string(),
@@ -212,6 +214,7 @@ pub fn example_api_network(key: String) -> ApiNetwork {
             can_do_purchases: true,
             protocol: ApiProtocol::Evm { chain_id: 31337 },
             block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
+            address: None,
         },
         _ => unreachable!("nonexistant!"),
     }
@@ -232,6 +235,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
                 coin_type: "0x2::iota::IOTA".to_string(),
             },
             block_explorer_url: String::from("https://iotascan.com/testnet"),
+            address: None,
         },
         ApiNetwork {
             key: ETH_NETWORK_KEY.to_string(),
@@ -244,6 +248,7 @@ pub fn example_api_networks() -> Vec<ApiNetwork> {
             can_do_purchases: true,
             protocol: ApiProtocol::Evm { chain_id: 31337 },
             block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
+            address: None,
         },
     ]
 }
