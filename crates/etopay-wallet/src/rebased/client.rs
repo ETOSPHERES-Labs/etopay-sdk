@@ -48,7 +48,12 @@ impl RpcClient {
         headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
         headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
 
-        let http_builder = Client::builder().default_headers(headers).timeout(request_timeout);
+        let mut http_builder = Client::builder().default_headers(headers);
+
+        #[cfg(not(target_family = "wasm"))]
+        {
+            http_builder = http_builder.timeout(request_timeout);
+        }
 
         Ok(Self {
             client: http_builder.build()?,
