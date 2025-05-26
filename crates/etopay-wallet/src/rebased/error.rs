@@ -28,9 +28,6 @@ pub enum RebasedError {
     InvalidSignature,
 
     #[error("RpcError: {0}")]
-    RpcError(#[from] jsonrpsee::core::client::Error),
-
-    #[error("RpcError: {0}")]
     ReqwestRpcError(#[from] reqwest::Error),
 
     #[error("InsufficientBalance: {0}")]

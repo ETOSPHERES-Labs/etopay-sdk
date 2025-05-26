@@ -1,9 +1,4 @@
 use std::ops::{Add, Sub};
-#[cfg(not(target_family = "wasm"))]
-use std::time::{Duration, Instant};
-
-#[cfg(target_family = "wasm")]
-use web_time::{Duration, Instant};
 
 use super::error::{Result, WalletError};
 use super::rebased::{
@@ -26,9 +21,18 @@ use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 
 #[cfg(not(target_family = "wasm"))]
-use tokio::time::{interval, sleep, timeout};
+mod platform_time {
+    pub use std::time::{Duration, Instant};
+    pub use tokio::time::{interval, sleep, timeout};
+}
+
 #[cfg(target_family = "wasm")]
-use wasmtimer::tokio::{interval, sleep, timeout};
+mod platform_time {
+    pub use wasmtimer::tokio::{interval, sleep, timeout};
+    pub use web_time::{Duration, Instant};
+}
+
+use platform_time::{Duration, Instant, interval, sleep, timeout};
 
 const WAIT_FOR_LOCAL_EXECUTION_TIMEOUT: Duration = Duration::from_secs(60);
 const WAIT_FOR_LOCAL_EXECUTION_DELAY: Duration = Duration::from_millis(200);
