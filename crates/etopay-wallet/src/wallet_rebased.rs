@@ -307,7 +307,7 @@ impl WalletUser for WalletImplIotaRebased {
             receiver,
             amount,
             network_key: String::from("iota_rebased_testnet"),
-            status: format!("{:?}", status),
+            status,
             explorer_url: None,
         })
     }

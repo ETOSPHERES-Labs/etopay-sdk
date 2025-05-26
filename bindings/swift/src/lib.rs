@@ -236,6 +236,12 @@ pub mod ffi {
         fn invalid_reasons(&self) -> Vec<String>;
     }
 
+    pub enum InclusionState {
+        Pending,
+        Confirmed,
+        Conflicting,
+    }
+
     extern "Rust" {
         type WalletTxInfo;
 
@@ -246,7 +252,7 @@ pub mod ffi {
         fn receiver(&self) -> String;
         fn amount(&self) -> f64;
         fn network_key(&self) -> String;
-        fn status(&self) -> String;
+        fn status(&self) -> InclusionState;
         fn explorer_url(&self) -> String;
     }
 

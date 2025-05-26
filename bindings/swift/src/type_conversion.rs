@@ -242,7 +242,7 @@ impl From<sdk::types::WalletTxInfo> for crate::ffi_functions::WalletTxInfo {
             receiver: value.receiver,
             amount: value.amount,
             network_key: value.network_key,
-            status: value.status,
+            status: value.status.into(),
             explorer_url: value.explorer_url.unwrap_or("".to_string()),
         }
     }
@@ -264,6 +264,13 @@ impl From<sdk::types::networks::ApiNetwork> for crate::ffi_functions::Network {
         }
     }
 }
+convert_enum!(
+    ffi::InclusionState,
+    sdk::types::InclusionState,
+    Pending,
+    Confirmed,
+    Conflicting,
+);
 
 convert_enum!(ffi::Currency, sdk::types::currencies::Currency, Iota, Eth,);
 

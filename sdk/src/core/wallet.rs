@@ -496,8 +496,6 @@ impl Sdk {
         let user = self.get_user().await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
-        let inclusion_state_confirmed = format!("{:?}", InclusionState::Confirmed);
-
         // TODO: we need to support this better for all networks with a unified logic and interface
         let tx_list = match network.protocol {
             crate::types::networks::ApiProtocol::Evm { .. }
@@ -515,7 +513,7 @@ impl Sdk {
                 {
                     // We don't need to query the network for the state of this transaction,
                     // because it has already been synchronized earlier (as indicated by `InclusionState::Confirmed`).
-                    if transaction.status == inclusion_state_confirmed {
+                    if transaction.status == InclusionState::Confirmed {
                         continue;
                     }
 
@@ -1253,7 +1251,7 @@ mod tests {
                 sender: String::new(),
                 amount: 20.0,
                 network_key: "IOTA".to_string(),
-                status: format!("{:?}", InclusionState::Confirmed),
+                status: InclusionState::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1264,7 +1262,7 @@ mod tests {
                 sender: String::new(),
                 amount: 1.0,
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: InclusionState::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1275,7 +1273,7 @@ mod tests {
                 sender: String::new(),
                 amount: 2.0,
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending), // this one
+                status: InclusionState::Pending, // this one
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1286,7 +1284,7 @@ mod tests {
                 sender: String::new(),
                 amount: 3.0,
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: InclusionState::Pending,
                 explorer_url: None,
             },
         ];
@@ -1315,7 +1313,7 @@ mod tests {
                 sender: String::new(),
                 amount: 20.0,
                 network_key: "IOTA".to_string(),
-                status: format!("{:?}", InclusionState::Confirmed),
+                status: InclusionState::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1326,7 +1324,7 @@ mod tests {
                 sender: String::new(),
                 amount: 1.0,
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: InclusionState::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1337,7 +1335,7 @@ mod tests {
                 sender: String::new(),
                 amount: 2.0,
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Confirmed),
+                status: InclusionState::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -1348,7 +1346,7 @@ mod tests {
                 sender: String::new(),
                 amount: 3.0,
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: InclusionState::Pending,
                 explorer_url: None,
             },
         ];
@@ -1380,7 +1378,7 @@ mod tests {
                         sender: String::new(),
                         amount: 2.0,
                         network_key: "ETH".to_string(),
-                        status: format!("{:?}", InclusionState::Confirmed), // Pending -> Confirmed
+                        status: InclusionState::Confirmed, // Pending -> Confirmed
                         explorer_url: None,
                     })
                 });
@@ -1416,7 +1414,7 @@ mod tests {
                     sender: String::new(),
                     amount: 2.0,
                     network_key: "ETH".to_string(),
-                    status: format!("{:?}", InclusionState::Confirmed),
+                    status: InclusionState::Confirmed,
                     explorer_url: None,
                 }]
             }
@@ -1437,7 +1435,7 @@ mod tests {
             sender: String::new(),
             amount: 1.0,
             network_key: "ETH".to_string(),
-            status: format!("{:?}", InclusionState::Confirmed),
+            status: InclusionState::Confirmed,
             explorer_url: None,
         }];
 

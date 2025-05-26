@@ -302,7 +302,7 @@ impl WalletUser for WalletImplEvm {
             receiver: receiver_address.to_string(),
             amount: value_eth_f64,
             network_key: "ETH".to_string(),
-            status: format!("{:?}", status),
+            status,
             explorer_url: None,
         })
     }

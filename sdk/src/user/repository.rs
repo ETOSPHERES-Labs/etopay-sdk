@@ -433,7 +433,7 @@ mod tests {
                 sender: String::new(),
                 amount: 0.5,
                 network_key: ETH_NETWORK_KEY.to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: InclusionState::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
@@ -444,7 +444,7 @@ mod tests {
                 sender: String::new(),
                 amount: 4.0,
                 network_key: ETH_NETWORK_KEY.to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: InclusionState::Pending,
                 explorer_url: None,
             },
         ];

@@ -235,6 +235,22 @@ impl From<sdk::types::GasCostEstimation> for GasCostEstimation {
     }
 }
 
+#[wasm_bindgen]
+#[derive(Clone)]
+pub enum InclusionState {
+    Pending,
+    Confirmed,
+    Conflicting,
+}
+
+convert_enum!(
+    sdk::types::InclusionState,
+    InclusionState,
+    Pending,
+    Confirmed,
+    Conflicting,
+);
+
 #[wasm_bindgen(getter_with_clone, inspectable)]
 #[derive(Clone)]
 pub struct WalletTxInfo {
@@ -253,7 +269,7 @@ pub struct WalletTxInfo {
     /// either SMR or IOTA
     pub network_key: String,
     /// Status of the transfer
-    pub status: String,
+    pub status: InclusionState,
     /// Url of network explorer
     pub explorer_url: Option<String>,
 }
@@ -273,7 +289,7 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
             receiver: value.receiver,
             amount: value.amount,
             network_key: value.network_key,
-            status: value.status,
+            status: value.status.into(),
             explorer_url: value.explorer_url,
         }
     }

@@ -361,7 +361,7 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         sender: String::new(),
         amount: 20.0,
         network_key: "IOTA".to_string(),
-        status: format!("{:?}", InclusionState::Confirmed),
+        status: InclusionState::Confirmed,
         explorer_url: None,
     }
 }

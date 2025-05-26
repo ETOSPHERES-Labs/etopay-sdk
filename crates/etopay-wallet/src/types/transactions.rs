@@ -43,7 +43,7 @@ pub struct WalletTxInfo {
     /// Tx creation date, if available
     pub date: String,
     /// Contains block id
-    pub block_id: Option<String>,
+    pub block_id: Option<String>, // TODO: This must exist (block id & hash?)
     /// transaction id for particular transaction
     pub transaction_id: String,
     /// The sender of the transaction
@@ -51,11 +51,11 @@ pub struct WalletTxInfo {
     /// The receiver of the transaction
     pub receiver: String,
     /// Amount of transfer
-    pub amount: f64,
+    pub amount: f64, // TODO: CryptoAmount
     /// Unique key representing a network
     pub network_key: String,
     /// Status of the transfer
-    pub status: String,
+    pub status: InclusionState,
     /// Url of network IOTA/ETH
     pub explorer_url: Option<String>, // ok
                                       // change based on the network either eth or iota
@@ -95,7 +95,7 @@ pub struct GasCostEstimation {
 }
 
 /// Possible InclusionStates for transactions
-/// TODO: refine this (just copy from iota-sdk for now)
+/// TODO: refine this (just copied from iota-sdk for now)
 #[derive(Clone, Copy, Debug, Eq, Hash, PartialEq, Serialize, Deserialize)]
 pub enum InclusionState {
     Pending,
