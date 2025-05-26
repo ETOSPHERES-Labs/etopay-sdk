@@ -15,8 +15,6 @@ use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoLi
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
-use iota_sdk::crypto::keys::bip39::Mnemonic;
-use iota_sdk::wallet::account::types::InclusionState;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 
