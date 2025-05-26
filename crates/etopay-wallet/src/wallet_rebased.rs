@@ -8,7 +8,8 @@ use super::rebased::{
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::rebased::{
-    GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind, WriteApiClient,
+    CheckpointId, GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind,
+    WriteApiClient,
 };
 use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
 use async_trait::async_trait;
@@ -236,10 +237,15 @@ impl WalletUser for WalletImplIotaRebased {
             .unwrap_or_default(); // default is going to be an empty String here
 
         // For block id we use the checkpoint number which shows when the tx was finalized.
-        let block_number_hash = if let Some(checkpoint) = tx.checkpoint {
-            // TODO: get the checkpoint hash
+        let block_number_hash = if let Some(checkpoint_number) = tx.checkpoint {
+            // get the checkpoint hash
+            let checkpoint = self
+                .client
+                .get_checkpoint(CheckpointId::SequenceNumber(checkpoint_number))
+                .await
+                .map_err(RebasedError::RpcError)?;
 
-            Some((checkpoint, String::new()))
+            Some((checkpoint_number, checkpoint.digest.to_string()))
         } else {
             None
         };

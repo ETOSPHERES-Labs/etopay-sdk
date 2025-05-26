@@ -1833,6 +1833,7 @@ dependencies = [
  "shadow-rs",
  "testing",
  "thiserror 2.0.12",
+ "tiny-bip39",
  "tokio",
  "walkdir",
  "web-sys",
