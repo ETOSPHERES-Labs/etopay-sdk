@@ -592,6 +592,7 @@ mod tests {
         ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(MockWalletManager::new()),
+            mnemonic_derivation_options: Default::default(),
         }
     }
 
@@ -803,6 +804,7 @@ mod tests {
         sdk.active_user = Some(ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(mock_wallet_manager),
+            mnemonic_derivation_options: Default::default(),
         });
 
         // create viviswap contract

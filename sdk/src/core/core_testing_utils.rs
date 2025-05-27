@@ -37,6 +37,7 @@ pub async fn handle_error_test_cases(
             sdk.active_user = Some(crate::types::users::ActiveUser {
                 username: USERNAME.into(),
                 wallet_manager: Box::new(MockWalletManager::new()),
+                mnemonic_derivation_options: Default::default(),
             });
             sdk.access_token = Some(TOKEN.clone());
             sdk.config = None;
@@ -52,6 +53,7 @@ pub async fn handle_error_test_cases(
             sdk.active_user = Some(crate::types::users::ActiveUser {
                 username: USERNAME.into(),
                 wallet_manager: Box::new(MockWalletManager::new()),
+                mnemonic_derivation_options: Default::default(),
             });
             sdk.set_networks(example_api_networks());
             sdk.active_network = None;
@@ -69,6 +71,7 @@ pub async fn handle_error_test_cases(
             sdk.active_user = Some(crate::types::users::ActiveUser {
                 username: USERNAME.into(),
                 wallet_manager: Box::new(MockWalletManager::new()),
+                mnemonic_derivation_options: Default::default(),
             });
 
             sdk.access_token = None;
@@ -93,6 +96,7 @@ pub async fn handle_error_test_cases(
             sdk.active_user = Some(crate::types::users::ActiveUser {
                 username: USERNAME.into(),
                 wallet_manager: Box::new(MockWalletManager::new()),
+                mnemonic_derivation_options: Default::default(),
             });
         }
         crate::Error::UserRepository(crate::user::error::UserKvStorageError::UserNotFound { .. }) => {
@@ -107,6 +111,7 @@ pub async fn handle_error_test_cases(
             sdk.active_user = Some(crate::types::users::ActiveUser {
                 username: USERNAME.into(),
                 wallet_manager: Box::new(MockWalletManager::new()),
+                mnemonic_derivation_options: Default::default(),
             });
         }
         other => panic!("Got unexpected or unhandled result: {:?}", other),

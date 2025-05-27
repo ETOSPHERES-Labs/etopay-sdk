@@ -64,6 +64,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(MockWalletManager::new()),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.access_token = Some(TOKEN.clone());
                 sdk.set_networks(example_api_networks());
@@ -146,6 +147,7 @@ mod tests {
         ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(MockWalletManager::new()),
+            mnemonic_derivation_options: Default::default(),
         }
     }
 }

@@ -210,6 +210,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.set_networks(example_api_networks());
                 sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
@@ -256,6 +257,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(MockWalletManager::new()),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.access_token = Some(TOKEN.clone());
 

@@ -10,7 +10,11 @@ use crate::{
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
-use etopay_wallet::types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
+use etopay_wallet::{
+    MnemonicDerivationOption,
+    types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus},
+};
+
 use log::{debug, info, warn};
 
 impl Sdk {
@@ -581,6 +585,30 @@ impl Sdk {
         let wallet_tx = wallet.get_wallet_tx(tx_id).await?;
         Ok(wallet_tx)
     }
+
+    /// Set wallet mnemonic derivation options
+    ///
+    /// # Arguments
+    ///
+    /// * `account` - The account to use.
+    /// * `index` - The index to use.
+    ///
+    /// # Errors
+    ///
+    /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
+    pub async fn set_wallet_derivation_options(&mut self, account: u32, index: u32) -> Result<()> {
+        let options = MnemonicDerivationOption { account, index };
+
+        info!("Setting wallet mnemonic derivation options: {options:?}");
+
+        let Some(active_user) = &mut self.active_user else {
+            return Err(crate::Error::UserNotInitialized);
+        };
+
+        active_user.mnemonic_derivation_options = options;
+
+        Ok(())
+    }
 }
 
 #[cfg(test)]
@@ -632,6 +660,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -675,6 +704,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -716,6 +746,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -759,6 +790,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -800,6 +832,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -849,6 +882,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
 
                 let new_pin = EncryptionPin::try_from_string("123456").unwrap();
@@ -892,6 +926,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(MockWalletManager::new()),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -933,6 +968,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(MockWalletManager::new()),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -986,6 +1022,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(MockWalletManager::new()),
+                    mnemonic_derivation_options: Default::default(),
                 });
             }
             Err(error) => {
@@ -1034,6 +1071,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.access_token = Some(TOKEN.clone());
                 sdk.set_networks(example_api_networks());
@@ -1109,6 +1147,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.set_networks(example_api_networks());
                 sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
@@ -1160,6 +1199,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.set_networks(example_api_networks());
                 sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
@@ -1211,6 +1251,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.set_networks(example_api_networks());
                 sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
@@ -1388,6 +1429,7 @@ mod tests {
         sdk.active_user = Some(crate::types::users::ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(mock_wallet_manager),
+            mnemonic_derivation_options: Default::default(),
         });
 
         sdk.set_networks(example_api_networks());
@@ -1471,6 +1513,7 @@ mod tests {
         sdk.active_user = Some(crate::types::users::ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(mock_wallet_manager),
+            mnemonic_derivation_options: Default::default(),
         });
 
         sdk.set_networks(example_api_networks());
