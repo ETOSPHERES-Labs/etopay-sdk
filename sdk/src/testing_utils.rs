@@ -345,7 +345,7 @@ pub fn example_crypto_details() -> Option<ViviswapApiContractDetails> {
 
 pub fn example_wallet_borrow() -> MockWalletManager {
     let mut mock_wallet_manager = MockWalletManager::new();
-    mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+    mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
         let mock_wallet_user = MockWalletUser::new();
         Ok(WalletBorrow::from(mock_wallet_user))
     });

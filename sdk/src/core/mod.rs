@@ -154,7 +154,14 @@ impl Sdk {
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
-            .try_get(config, &self.access_token, repo, network, pin)
+            .try_get(
+                config,
+                &self.access_token,
+                repo,
+                network,
+                pin,
+                &active_user.mnemonic_derivation_options,
+            )
             .await?;
         Ok(wallet)
     }

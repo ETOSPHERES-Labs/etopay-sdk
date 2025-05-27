@@ -792,7 +792,7 @@ mod tests {
 
         let mut mock_wallet_manager = MockWalletManager::new();
         mock_wallet_manager.expect_try_get().returning({
-            move |_, _, _, _, _| {
+            move |_, _, _, _, _, _| {
                 let mut mock_wallet = MockWalletUser::new();
                 mock_wallet
                     .expect_get_address()

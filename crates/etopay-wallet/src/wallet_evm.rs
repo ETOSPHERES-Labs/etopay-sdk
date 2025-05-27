@@ -62,7 +62,7 @@ impl WalletImplEvm {
         chain_id: u64,
         decimals: u32,
         coin_type: u32,
-        options: MnemonicDerivationOption,
+        options: &MnemonicDerivationOption,
     ) -> Result<Self> {
         // Ase mnemonic to create a Signer
         let wallet = MnemonicBuilder::<English>::default()
@@ -364,7 +364,7 @@ impl WalletImplEvmErc20 {
         decimals: u32,
         coin_type: u32,
         contract_address: &str,
-        options: MnemonicDerivationOption,
+        options: &MnemonicDerivationOption,
     ) -> Result<Self> {
         Ok(Self {
             inner: WalletImplEvm::new(mnemonic, node_urls, chain_id, decimals, coin_type, options)?,
@@ -539,7 +539,7 @@ mod tests {
             chain_id,
             ETH_DECIMALS,
             ETH_COIN_TYPE,
-            MnemonicDerivationOption::default(),
+            &MnemonicDerivationOption::default(),
         )
         .expect("should initialize wallet");
         (wallet, cleanup)
@@ -558,7 +558,7 @@ mod tests {
             chain_id,
             ETH_DECIMALS,
             ETH_COIN_TYPE,
-            MnemonicDerivationOption::default(),
+            &MnemonicDerivationOption::default(),
         )
         .expect("could not initialize WalletImplEth")
     }

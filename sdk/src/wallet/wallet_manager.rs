@@ -138,6 +138,7 @@ pub trait WalletManager: std::fmt::Debug {
         repo: &mut UserRepoT,
         network: &ApiNetwork,
         pin: &EncryptionPin,
+        options: &MnemonicDerivationOption,
     ) -> Result<WalletBorrow<'a>>;
 }
 
@@ -536,11 +537,9 @@ impl WalletManager for WalletManagerImpl {
         repo: &mut UserRepoT,
         network: &ApiNetwork,
         pin: &EncryptionPin,
+        options: &MnemonicDerivationOption,
     ) -> Result<WalletBorrow<'a>> {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
-
-        // TODO: allow the user to specify this (somehow..)
-        let options = MnemonicDerivationOption::default();
 
         // we have the mnemonic and can now instantiate the WalletImpl
         let bo = match &network.protocol {
@@ -724,6 +723,7 @@ mod tests {
                 &mut repo,
                 &example_api_network(IOTA_NETWORK_KEY.to_string()),
                 pin,
+                &Default::default(),
             )
             .await
             .expect("should succeed to get wallet after password change");
@@ -754,6 +754,7 @@ mod tests {
                 &mut repo,
                 &example_api_network(IOTA_NETWORK_KEY.to_string()),
                 pin,
+                &Default::default(),
             )
             .await
             .expect("should succeed to get wallet");
@@ -978,6 +979,7 @@ mod tests {
                     &mut repo,
                     &example_api_network(IOTA_NETWORK_KEY.to_string()),
                     &pin,
+                    &Default::default(),
                 )
                 .await
                 .unwrap();

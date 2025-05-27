@@ -434,7 +434,14 @@ impl Sdk {
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
-            .try_get(config, &self.access_token, repo, network, pin)
+            .try_get(
+                config,
+                &self.access_token,
+                repo,
+                network,
+                pin,
+                &active_user.mnemonic_derivation_options,
+            )
             .await?;
 
         let address = wallet.get_address().await?;
@@ -1060,7 +1067,7 @@ mod tests {
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
-                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
                     let mut mock_wallet_user = MockWalletUser::new();
                     mock_wallet_user
                         .expect_get_address()
@@ -1135,7 +1142,7 @@ mod tests {
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
-                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
                     let mut mock_wallet_user = MockWalletUser::new();
                     mock_wallet_user
                         .expect_get_balance()
@@ -1188,7 +1195,7 @@ mod tests {
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
-                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
                     let mut mock_wallet_user = MockWalletUser::new();
                     mock_wallet_user
                         .expect_get_wallet_tx()
@@ -1244,7 +1251,7 @@ mod tests {
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
-                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+                mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
                     let mock_wallet_user = MockWalletUser::new();
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
@@ -1404,7 +1411,7 @@ mod tests {
         sdk.repo = Some(Box::new(mock_user_repo));
 
         let mut mock_wallet_manager = MockWalletManager::new();
-        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
             let mut mock_wallet_user = MockWalletUser::new();
             mock_wallet_user
                 .expect_get_wallet_tx()
@@ -1504,7 +1511,7 @@ mod tests {
         sdk.repo = Some(Box::new(mock_user_repo));
 
         let mut mock_wallet_manager = MockWalletManager::new();
-        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _| {
+        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
             let mut mock_wallet_user = MockWalletUser::new();
             mock_wallet_user.expect_get_wallet_tx().never();
             Ok(WalletBorrow::from(mock_wallet_user))

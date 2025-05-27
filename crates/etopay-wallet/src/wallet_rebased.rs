@@ -48,7 +48,7 @@ impl WalletImplIotaRebased {
         coin_type: &str,
         decimals: u32,
         node_url: &[String],
-        options: MnemonicDerivationOption,
+        options: &MnemonicDerivationOption,
     ) -> Result<Self> {
         let mut keystore2 = rebased::InMemKeystore::default();
         keystore2.import_from_mnemonic(
