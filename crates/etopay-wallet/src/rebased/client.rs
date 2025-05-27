@@ -1,3 +1,7 @@
+
+#[cfg(not(target_family = "wasm"))]
+use std::time::Duration;
+
 use reqwest::{
     Client,
     header::{HeaderMap, HeaderValue},
@@ -34,10 +38,7 @@ const CLIENT_SDK_VERSION_HEADER: &str = "client-sdk-version";
 const CLIENT_TARGET_API_VERSION_HEADER: &str = "client-target-api-version";
 
 impl RpcClient {
-    #[cfg(not(target_family = "wasm"))]
     pub async fn new(url: &str) -> Result<Self, RebasedError> {
-        use std::time::Duration;
-
         let client_version = "0.13.0-alpha"; // TODO: how to specify this?
 
         let mut headers = HeaderMap::new();
@@ -49,28 +50,11 @@ impl RpcClient {
         headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
         headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
 
+        #[cfg(not(target_family = "wasm"))]
         let http_builder = Client::builder()
             .default_headers(headers)
             .timeout(Duration::from_secs(10));
-
-        Ok(Self {
-            client: http_builder.build()?,
-            url: url.to_string(),
-        })
-    }
-    #[cfg(target_family = "wasm")]
-    pub async fn new(url: &str) -> Result<Self, RebasedError> {
-        let client_version = "0.13.0-alpha"; // TODO: how to specify this?
-
-        let mut headers = HeaderMap::new();
-        headers.insert(
-            CLIENT_TARGET_API_VERSION_HEADER,
-            // in rust, the client version is the same as the target api version
-            HeaderValue::from_static(client_version),
-        );
-        headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
-        headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
-
+        #[cfg(target_family = "wasm")]
         let http_builder = Client::builder().default_headers(headers);
 
         Ok(Self {

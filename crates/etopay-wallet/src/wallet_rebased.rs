@@ -186,10 +186,6 @@ impl WalletUser for WalletImplIotaRebased {
 
         log::info!("Transaction submitted {}", transaction_block_response.digest);
 
-        // let timeout_ms = WAIT_FOR_LOCAL_EXECUTION_TIMEOUT.as_millis() as u32;
-        // let delay_ms = WAIT_FOR_LOCAL_EXECUTION_DELAY.as_millis() as u32;
-        // let interval_ms = WAIT_FOR_LOCAL_EXECUTION_INTERVAL.as_millis() as u32;
-
         // JSON-RPC ignores WaitForLocalExecution, so simulate it by polling for the
         // transaction.
         let poll_response = timeout(WAIT_FOR_LOCAL_EXECUTION_TIMEOUT, async {

@@ -45,8 +45,13 @@ In case you want to run all the examples after installing the dependencies and b
 2. Run: `make run_wasm_node_examples`. This will execute the `run_all_examples.sh` script on `bindings/wasm/examples`, which runs all the examples.
 
 ### Executing the webapp example
-
 1. Follow step 1 above to make sure you have a `.env` file in the root with a valid access token for either `satoshi`, `archiveme` or `alice` depending on example which you want to run.(access token can be obtained with the `hello.http` API request in `docs/api-requests/hello.http`).
+2. Build
+```
+wasm-pack build --target bundler
+# or faster
+wasm-pack build --target bundler --no-opt
+```
 2. Go into the webapp folder and install the dependencies:
   ```bash
   cd examples/webapp
