@@ -250,8 +250,7 @@ impl WalletUser for WalletImplIotaRebased {
             let checkpoint = self
                 .client
                 .get_checkpoint(CheckpointId::SequenceNumber(checkpoint_number))
-                .await
-                .map_err(RebasedError::RpcError)?;
+                .await?;
 
             Some((checkpoint_number, checkpoint.digest.to_string()))
         } else {
