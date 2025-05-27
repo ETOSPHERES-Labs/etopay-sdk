@@ -52,11 +52,11 @@ wasm-pack build --target bundler
 # or faster
 wasm-pack build --target bundler --no-opt
 ```
-2. Go into the webapp folder and install the dependencies:
+3. Go into the webapp folder and install the dependencies:
   ```bash
   cd examples/webapp
   pnpm install
   ```
-3. Start the development server with `pnpm start`. This will start a server on port `8080`, which you can forward to the host (if vscode does not do this automatically)
+4. Start the development server with `pnpm start`. This will start a server on port `8080`, which you can forward to the host (if vscode does not do this automatically)
    by going to the `PORTS` tab in the vscode terminal and adding port `8080`. Then you can view the webapp at `http://localhost:8080/`. Open the developer console (F12)
    to view the sdk logs. Click the button of the example you want to run.

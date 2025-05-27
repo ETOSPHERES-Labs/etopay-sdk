@@ -234,12 +234,6 @@ impl WalletUser for WalletImplIotaRebased {
                 Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
             )
             .await?;
-        // .map_err(|e| match &e {
-        //     jsonrpsee::core::client::Error::Call(r) if r.code() == ErrorCode::InvalidParams.code() => {
-        //         WalletError::TransactionNotFound
-        //     }
-        //     _ => WalletError::IotaRebased(RebasedError::RpcError(e)),
-        // })?;
 
         // log::info!("Transaction Details:\n{tx:#?}");
 
