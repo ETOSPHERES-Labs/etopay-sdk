@@ -54,8 +54,15 @@ Task {
         let estimate = try await sdk.estimateGas(env.pin, address.toString(), 1, rustVec)
         print("estimate: \(estimate.gas_limit.toString())")
 
+        // Note: cannot reuse the RustVec since Rust takes ownership and deallocates it when its done.
+        // thus we need to create a new one to use for the next call.
+        let rustVec2 = RustVec<UInt8>.init()
+        for byte in message.utf8 {
+            rustVec2.push(value: byte)
+        }
+
         // Send amount
-        let tx_id = try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec)
+        let tx_id = try await sdk.sendAmount(env.pin, address.toString(), 1, rustVec2)
         print("sent amount of 1 on transaction \(tx_id.toString())")
 
         // Get new balance
