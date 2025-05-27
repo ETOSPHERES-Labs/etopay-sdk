@@ -35,7 +35,6 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
 chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
-
 log = { version = "0.4.27", default-features = false }
 reqwest = { workspace = true }
 
@@ -75,7 +74,6 @@ ref-cast = "1"
 serde-name = "0.2"
 indexmap = "2.9"
 bip32 = "0.5"
-tokio = { workspace = true }
 
 # needed to replace fastcrypto
 ed25519-consensus = { version = "2.1", features = [] }
@@ -85,6 +83,8 @@ base64ct = { version = "1.7", features = ["alloc"] }
 bs58 = "0.5"
 web-time = "1.1.0"
 
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+tokio = { workspace = true, features = ["rt-multi-thread", "macros"] }
 
 # needed for iota-rebased impl
 [target.'cfg(target_arch = "wasm32")'.dependencies]

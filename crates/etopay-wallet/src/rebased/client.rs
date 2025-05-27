@@ -1,10 +1,8 @@
-use serde::Deserialize;
-use std::time::Duration;
-
 use reqwest::{
     Client,
     header::{HeaderMap, HeaderValue},
 };
+use serde::Deserialize;
 
 pub struct RpcClient {
     pub client: Client,
@@ -36,7 +34,10 @@ const CLIENT_SDK_VERSION_HEADER: &str = "client-sdk-version";
 const CLIENT_TARGET_API_VERSION_HEADER: &str = "client-target-api-version";
 
 impl RpcClient {
-    pub async fn new(url: &str, request_timeout: Duration) -> Result<Self, RebasedError> {
+    #[cfg(not(target_family = "wasm"))]
+    pub async fn new(url: &str) -> Result<Self, RebasedError> {
+        use std::time::Duration;
+
         let client_version = "0.13.0-alpha"; // TODO: how to specify this?
 
         let mut headers = HeaderMap::new();
@@ -48,12 +49,29 @@ impl RpcClient {
         headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
         headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
 
-        let mut http_builder = Client::builder().default_headers(headers);
+        let http_builder = Client::builder()
+            .default_headers(headers)
+            .timeout(Duration::from_secs(10));
 
-        #[cfg(not(target_family = "wasm"))]
-        {
-            http_builder = http_builder.timeout(request_timeout);
-        }
+        Ok(Self {
+            client: http_builder.build()?,
+            url: url.to_string(),
+        })
+    }
+    #[cfg(target_family = "wasm")]
+    pub async fn new(url: &str) -> Result<Self, RebasedError> {
+        let client_version = "0.13.0-alpha"; // TODO: how to specify this?
+
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            CLIENT_TARGET_API_VERSION_HEADER,
+            // in rust, the client version is the same as the target api version
+            HeaderValue::from_static(client_version),
+        );
+        headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
+        headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
+
+        let http_builder = Client::builder().default_headers(headers);
 
         Ok(Self {
             client: http_builder.build()?,
