@@ -1,5 +1,7 @@
 //! This module contains the conversion of shared types between Swift and Rust
 //! which are declared in the bridge module `pub mod ffi` inside `lib.rs`.
+use core::f64;
+
 use crate::{
     convert_enum, convert_simple_struct,
     ffi::{self},
@@ -236,13 +238,14 @@ impl From<sdk::types::WalletTxInfo> for crate::ffi_functions::WalletTxInfo {
     fn from(value: sdk::types::WalletTxInfo) -> Self {
         crate::ffi_functions::WalletTxInfo {
             date: value.date,
-            block_id: value.block_id.unwrap_or("".to_string()),
-            transaction_id: value.transaction_id,
+            block_number: value.block_number_hash.as_ref().map(|b| b.0),
+            block_hash: value.block_number_hash.map(|b| b.1),
+            transaction_hash: value.transaction_hash,
+            sender: value.sender,
             receiver: value.receiver,
-            incoming: value.incoming,
-            amount: value.amount,
+            amount: value.amount.to_f64_lossy(),
             network_key: value.network_key,
-            status: value.status,
+            status: value.status.into(),
             explorer_url: value.explorer_url.unwrap_or("".to_string()),
         }
     }
@@ -264,6 +267,13 @@ impl From<sdk::types::networks::ApiNetwork> for crate::ffi_functions::Network {
         }
     }
 }
+convert_enum!(
+    ffi::WalletTxStatus,
+    sdk::types::WalletTxStatus,
+    Pending,
+    Confirmed,
+    Conflicting,
+);
 
 convert_enum!(ffi::Currency, sdk::types::currencies::Currency, Iota, Eth,);
 

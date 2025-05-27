@@ -29,7 +29,7 @@ use api_types::api::{
 };
 use etopay_wallet::MockWalletUser;
 use etopay_wallet::types::WalletTxInfo;
-use etopay_wallet::types::{CryptoAmount, InclusionState};
+use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;
@@ -355,13 +355,14 @@ pub fn example_wallet_borrow() -> MockWalletManager {
 pub fn example_wallet_tx_info() -> WalletTxInfo {
     WalletTxInfo {
         date: "some date".to_string(),
-        block_id: None,
-        transaction_id: "some tx id".to_string(),
+        block_number_hash: None,
+        transaction_hash: "some tx id".to_string(),
         receiver: String::new(),
-        incoming: true,
-        amount: 20.0,
+        sender: String::new(),
+        // SAFETY: the value is non-negative
+        amount: unsafe { CryptoAmount::new_unchecked(dec!(20)) },
         network_key: "IOTA".to_string(),
-        status: format!("{:?}", InclusionState::Confirmed),
+        status: WalletTxStatus::Confirmed,
         explorer_url: None,
     }
 }

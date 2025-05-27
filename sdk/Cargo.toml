@@ -102,6 +102,8 @@ mockito = { workspace = true }
 rstest = { workspace = true }
 rstest_reuse = "0.7.0"
 testing = { workspace = true }
+tokio = { workspace = true, features = ["rt-multi-thread"] }
+tiny-bip39 = { version = "2", default-features = false, features = ["rand"] }
 walkdir = { version = "2", default-features = false }
 
 [[test]]

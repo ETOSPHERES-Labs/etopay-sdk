@@ -8,16 +8,16 @@ use super::rebased::{
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::rebased::{
-    GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind, WriteApiClient,
+    CheckpointId, GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind,
+    WriteApiClient,
 };
-use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
 use jsonrpsee::types::ErrorCode;
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
-use rust_decimal::prelude::ToPrimitive;
 
 const WAIT_FOR_LOCAL_EXECUTION_TIMEOUT: Duration = Duration::from_secs(60);
 const WAIT_FOR_LOCAL_EXECUTION_DELAY: Duration = Duration::from_millis(200);
@@ -210,8 +210,8 @@ impl WalletUser for WalletImplIotaRebased {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo> {
-        let digest = tx_id.parse::<rebased::TransactionDigest>()?;
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfo> {
+        let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self
             .client
@@ -227,7 +227,7 @@ impl WalletUser for WalletImplIotaRebased {
                 _ => WalletError::IotaRebased(RebasedError::RpcError(e)),
             })?;
 
-        log::info!("Transaction Details:\n{tx:?}");
+        // log::info!("Transaction Details:\n{tx:#?}");
 
         // The timestamp is in milliseconds but we make it into a human-readable format
         let date = tx
@@ -237,14 +237,25 @@ impl WalletUser for WalletImplIotaRebased {
             .unwrap_or_default(); // default is going to be an empty String here
 
         // For block id we use the checkpoint number which shows when the tx was finalized.
-        let block_id = tx.checkpoint.map(|n| n.to_string());
+        let block_number_hash = if let Some(checkpoint_number) = tx.checkpoint {
+            // get the checkpoint hash
+            let checkpoint = self
+                .client
+                .get_checkpoint(CheckpointId::SequenceNumber(checkpoint_number))
+                .await
+                .map_err(RebasedError::RpcError)?;
+
+            Some((checkpoint_number, checkpoint.digest.to_string()))
+        } else {
+            None
+        };
 
         let status = match tx.effects.map(|effects| match effects {
             IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
         }) {
-            Some(true) => InclusionState::Confirmed,
-            Some(false) => InclusionState::Conflicting,
-            None => InclusionState::Pending,
+            Some(true) => WalletTxStatus::Confirmed,
+            Some(false) => WalletTxStatus::Conflicting,
+            None => WalletTxStatus::Pending,
         };
 
         // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses
@@ -280,10 +291,7 @@ impl WalletUser for WalletImplIotaRebased {
         };
 
         // 2) Turn amount into f64
-        let amount: f64 = convert_u128_to_crypto_amount(raw_amount, self.decimals)?
-            .inner()
-            .to_f64()
-            .unwrap_or(0.0);
+        let amount = convert_u128_to_crypto_amount(raw_amount, self.decimals)?;
 
         let receiver = receiver
             .map(|owner| match owner {
@@ -292,15 +300,22 @@ impl WalletUser for WalletImplIotaRebased {
             })
             .unwrap_or(Ok(String::default()))?;
 
+        let sender = sender
+            .map(|owner| match owner {
+                Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
+                _ => Err(WalletError::WalletFeatureNotImplemented),
+            })
+            .unwrap_or(Ok(String::default()))?;
+
         Ok(WalletTxInfo {
             date,
-            block_id,
-            transaction_id: tx_id.to_string(),
-            incoming: false,
+            block_number_hash,
+            transaction_hash: tx_hash.to_string(),
+            sender,
             receiver,
             amount,
             network_key: String::from("iota_rebased_testnet"),
-            status: format!("{:?}", status),
+            status,
             explorer_url: None,
         })
     }

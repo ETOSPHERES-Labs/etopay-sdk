@@ -401,7 +401,7 @@ mod tests {
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use etopay_wallet::MockWalletUser;
-    use etopay_wallet::types::{InclusionState, WalletTxInfo};
+    use etopay_wallet::types::{WalletTxInfo, WalletTxStatus};
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
@@ -770,13 +770,14 @@ mod tests {
 
         let wallet_transaction = WalletTxInfo {
             date: String::new(),
-            block_id: Some(String::new()),
-            transaction_id: String::from("tx_id"),
+            block_number_hash: Some((0, String::new())),
+            transaction_hash: String::from("tx_id"),
             receiver: String::new(),
-            incoming: false,
-            amount: 5.0,
+            sender: String::new(),
+            // SAFETY: the value is non-negative
+            amount: unsafe { CryptoAmount::new_unchecked(dec!(5)) },
             network_key: ETH_NETWORK_KEY.to_string(),
-            status: format!("{:?}", InclusionState::Pending),
+            status: WalletTxStatus::Pending,
             explorer_url: Some(String::new()),
         };
 

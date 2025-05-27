@@ -235,25 +235,43 @@ impl From<sdk::types::GasCostEstimation> for GasCostEstimation {
     }
 }
 
+#[wasm_bindgen]
+#[derive(Clone)]
+pub enum WalletTxStatus {
+    Pending,
+    Confirmed,
+    Conflicting,
+}
+
+convert_enum!(
+    sdk::types::WalletTxStatus,
+    WalletTxStatus,
+    Pending,
+    Confirmed,
+    Conflicting,
+);
+
 #[wasm_bindgen(getter_with_clone, inspectable)]
 #[derive(Clone)]
 pub struct WalletTxInfo {
     /// Tx creation date, if available
     pub date: String,
-    /// Contains block id
-    pub block_id: Option<String>,
+    /// Contains block number / id
+    pub block_number: Option<u64>,
+    /// Contains block hash
+    pub block_hash: Option<String>,
     /// transaction id for particular transaction
-    pub transaction_id: String,
+    pub transaction_hash: String,
+    /// The sender of the transaction
+    pub sender: String,
     /// The receiver address
     pub receiver: String,
-    /// Describes type of transaction
-    pub incoming: bool,
     /// Amount of transfer
     pub amount: f64,
     /// either SMR or IOTA
     pub network_key: String,
     /// Status of the transfer
-    pub status: String,
+    pub status: WalletTxStatus,
     /// Url of network explorer
     pub explorer_url: Option<String>,
 }
@@ -267,13 +285,14 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
     fn from(value: sdk::types::WalletTxInfo) -> Self {
         Self {
             date: value.date,
-            block_id: value.block_id,
-            transaction_id: value.transaction_id,
+            block_number: value.block_number_hash.as_ref().map(|b| b.0),
+            block_hash: value.block_number_hash.map(|b| b.1),
+            transaction_hash: value.transaction_hash,
+            sender: value.sender,
             receiver: value.receiver,
-            incoming: value.incoming,
-            amount: value.amount,
+            amount: value.amount.to_f64_lossy(),
             network_key: value.network_key,
-            status: value.status,
+            status: value.status.into(),
             explorer_url: value.explorer_url,
         }
     }

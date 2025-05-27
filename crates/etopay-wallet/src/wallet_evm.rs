@@ -1,7 +1,7 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, InclusionState, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -21,6 +21,7 @@ use alloy_provider::fillers::{
 use alloy_provider::{Identity, RootProvider, WalletProvider};
 use async_trait::async_trait;
 use bip39::Mnemonic;
+use chrono::{TimeZone, Utc};
 use log::info;
 use reqwest::Url;
 use rust_decimal::Decimal;
@@ -256,25 +257,40 @@ impl WalletUser for WalletImplEvm {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
-        let transaction_hash = TxHash::from_str(transaction_id)?;
+    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxInfo> {
+        let transaction_hash = TxHash::from_str(transaction_hash)?;
         let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
 
         let Some(tx) = transaction else {
             return Err(WalletError::TransactionNotFound);
         };
 
-        let date = if let Some(block_number) = tx.block_number {
-            let block = self
-                .provider
-                .get_block_by_number(BlockNumberOrTag::Number(block_number))
-                .await?;
-            block.map(|b| b.header.timestamp)
-        } else {
-            None
-        };
+        let sender = tx.inner.signer();
 
-        let my_address = self.get_address().await?;
+        let (status, date, block_number_hash) =
+            if let (Some(block_number), Some(block_hash)) = (tx.block_number, tx.block_hash) {
+                let block = self
+                    .provider
+                    .get_block_by_number(BlockNumberOrTag::Number(block_number))
+                    .await?;
+
+                let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
+                let status = match receipt.map(|r| r.inner.is_success()) {
+                    Some(true) => WalletTxStatus::Confirmed,
+                    Some(false) => WalletTxStatus::Conflicting,
+                    None => WalletTxStatus::Pending,
+                };
+
+                let date = block
+                    .and_then(|b| Utc.timestamp_opt(b.header.timestamp as i64, 0).single())
+                    .map(|dt| dt.to_rfc3339());
+
+                (status, date, Some((block_number, block_hash.to_string())))
+            } else {
+                // status is pending
+
+                (WalletTxStatus::Pending, None, None)
+            };
 
         let Some(receiver_address) = tx.to() else {
             return Err(WalletError::InvalidTransaction(
@@ -282,28 +298,17 @@ impl WalletUser for WalletImplEvm {
             ));
         };
 
-        let is_transaction_incoming = receiver_address.to_string() == my_address;
-
-        let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
-        let status = match receipt.map(|r| r.inner.is_success()) {
-            Some(true) => InclusionState::Confirmed,
-            Some(false) => InclusionState::Conflicting,
-            None => InclusionState::Pending,
-        };
-
-        let value_eth_crypto_amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
-
-        let value_eth_f64: f64 = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+        let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
 
         Ok(WalletTxInfo {
-            date: date.map(|n| n.to_string()).unwrap_or_else(String::new),
-            block_id: tx.block_number.map(|n| n.to_string()),
-            transaction_id: transaction_id.to_string(),
+            date: date.unwrap_or_default(), // if missing: empty string
+            block_number_hash,
+            transaction_hash: transaction_hash.to_string(),
+            sender: sender.to_string(),
             receiver: receiver_address.to_string(),
-            incoming: is_transaction_incoming,
-            amount: value_eth_f64,
+            amount,
             network_key: "ETH".to_string(),
-            status: format!("{:?}", status),
+            status,
             explorer_url: None,
         })
     }
@@ -436,8 +441,7 @@ impl WalletUser for WalletImplEvmErc20 {
 
         let args = Erc20Contract::transferCall::abi_decode(tx.inner.input())?;
 
-        let value_eth_crypto_amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
-        info.amount = value_eth_crypto_amount.inner().try_into()?; // TODO: WalletTxInfo f64 -> Decimal ? maybe
+        info.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
 
         info.receiver = args.to.to_string();
 

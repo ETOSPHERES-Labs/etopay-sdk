@@ -16,7 +16,7 @@
 use crate::ffi::{
     CaseDetailsResponse, File, GasCostEstimation, IdentityOfficialDocumentData, IdentityPersonalDocumentData,
     NewCaseIdResponse, NewViviswapUser, Protocol, PurchaseDetails, TxStatus, ViviswapAddressDetail, ViviswapDeposit,
-    ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal,
+    ViviswapKycStatus, ViviswapPartiallyKycDetails, ViviswapWithdrawal, WalletTxStatus,
 };
 use sdk::core::{Config, Sdk};
 use sdk::types::CryptoAmount;
@@ -1527,13 +1527,14 @@ impl TxInfo {
 
 pub struct WalletTxInfo {
     pub date: String,
-    pub block_id: String,
-    pub transaction_id: String,
+    pub block_number: Option<u64>,
+    pub block_hash: Option<String>,
+    pub transaction_hash: String,
+    pub sender: String,
     pub receiver: String,
-    pub incoming: bool,
     pub amount: f64,
     pub network_key: String,
-    pub status: String,
+    pub status: WalletTxStatus,
     pub explorer_url: String,
 }
 
@@ -1542,20 +1543,23 @@ impl WalletTxInfo {
         self.date.clone()
     }
 
-    pub fn block_id(&self) -> String {
-        self.block_id.clone()
+    pub fn block_number(&self) -> Option<u64> {
+        self.block_number
+    }
+    pub fn block_hash(&self) -> Option<String> {
+        self.block_hash.clone()
     }
 
-    pub fn transaction_id(&self) -> String {
-        self.transaction_id.clone()
+    pub fn transaction_hash(&self) -> String {
+        self.transaction_hash.clone()
+    }
+
+    pub fn sender(&self) -> String {
+        self.sender.clone()
     }
 
     pub fn receiver(&self) -> String {
         self.receiver.clone()
-    }
-
-    pub fn incoming(&self) -> bool {
-        self.incoming
     }
 
     pub fn amount(&self) -> f64 {
@@ -1566,8 +1570,8 @@ impl WalletTxInfo {
         self.network_key.clone()
     }
 
-    pub fn status(&self) -> String {
-        self.status.clone()
+    pub fn status(&self) -> WalletTxStatus {
+        self.status
     }
 
     pub fn explorer_url(&self) -> String {

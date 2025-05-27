@@ -32,5 +32,5 @@ async fn main() {
     wallet_tx_list
         .transactions
         .iter()
-        .for_each(|tx| println!("Wallet transaction id: {:?}", tx.transaction_id));
+        .for_each(|tx| println!("Wallet transaction id: {:?}", tx.transaction_hash));
 }

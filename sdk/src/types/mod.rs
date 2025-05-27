@@ -35,4 +35,5 @@ pub use api_types::api::{
     },
 };
 
-pub use etopay_wallet::types::{CryptoAmount, GasCostEstimation, WalletTxInfo};
+pub use etopay_wallet::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxStatus};
+pub use rust_decimal;

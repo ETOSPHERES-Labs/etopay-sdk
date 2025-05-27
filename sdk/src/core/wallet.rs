@@ -10,7 +10,7 @@ use crate::{
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
-use etopay_wallet::types::{CryptoAmount, InclusionState, WalletTxInfo, WalletTxInfoList};
+use etopay_wallet::types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use log::{debug, info, warn};
 
 impl Sdk {
@@ -496,8 +496,6 @@ impl Sdk {
         let user = self.get_user().await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
-        let inclusion_state_confirmed = format!("{:?}", InclusionState::Confirmed);
-
         // TODO: we need to support this better for all networks with a unified logic and interface
         let tx_list = match network.protocol {
             crate::types::networks::ApiProtocol::Evm { .. }
@@ -514,12 +512,12 @@ impl Sdk {
                     .take(limit)
                 {
                     // We don't need to query the network for the state of this transaction,
-                    // because it has already been synchronized earlier (as indicated by `InclusionState::Confirmed`).
-                    if transaction.status == inclusion_state_confirmed {
+                    // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
+                    if transaction.status == WalletTxStatus::Confirmed {
                         continue;
                     }
 
-                    let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_id).await;
+                    let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_hash).await;
                     match synchronized_transaction {
                         Ok(stx) => *transaction = stx,
                         Err(e) => {
@@ -1247,46 +1245,46 @@ mod tests {
         let mixed_wallet_transactions = vec![
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "some tx id".to_string(),
+                block_number_hash: None,
+                transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 20.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
                 network_key: "IOTA".to_string(),
-                status: format!("{:?}", InclusionState::Confirmed),
+                status: WalletTxStatus::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "1".to_string(),
+                block_number_hash: None,
+                transaction_hash: "1".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 1.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "2".to_string(),
+                block_number_hash: None,
+                transaction_hash: "2".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 2.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending), // this one
+                status: WalletTxStatus::Pending, // this one
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "3".to_string(),
+                block_number_hash: None,
+                transaction_hash: "3".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 3.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
         ];
@@ -1309,46 +1307,46 @@ mod tests {
         let mixed_wallet_transactions_after_synchronization = vec![
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "some tx id".to_string(),
+                block_number_hash: None,
+                transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 20.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
                 network_key: "IOTA".to_string(),
-                status: format!("{:?}", InclusionState::Confirmed),
+                status: WalletTxStatus::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "1".to_string(),
+                block_number_hash: None,
+                transaction_hash: "1".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 1.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "2".to_string(),
+                block_number_hash: None,
+                transaction_hash: "2".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 2.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Confirmed),
+                status: WalletTxStatus::Confirmed,
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: "some date".to_string(),
-                block_id: None,
-                transaction_id: "3".to_string(),
+                block_number_hash: None,
+                transaction_hash: "3".to_string(),
                 receiver: String::new(),
-                incoming: true,
-                amount: 3.0,
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
                 network_key: "ETH".to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
         ];
@@ -1374,13 +1372,13 @@ mod tests {
                 .returning(move |_| {
                     Ok(WalletTxInfo {
                         date: "some date".to_string(),
-                        block_id: None,
-                        transaction_id: "2".to_string(),
+                        block_number_hash: None,
+                        transaction_hash: "2".to_string(),
                         receiver: String::new(),
-                        incoming: true,
-                        amount: 2.0,
+                        sender: String::new(),
+                        amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                         network_key: "ETH".to_string(),
-                        status: format!("{:?}", InclusionState::Confirmed), // Pending -> Confirmed
+                        status: WalletTxStatus::Confirmed, // Pending -> Confirmed
                         explorer_url: None,
                     })
                 });
@@ -1410,13 +1408,13 @@ mod tests {
             WalletTxInfoList {
                 transactions: vec![WalletTxInfo {
                     date: "some date".to_string(),
-                    block_id: None,
-                    transaction_id: "2".to_string(),
+                    block_number_hash: None,
+                    transaction_hash: "2".to_string(),
                     receiver: String::new(),
-                    incoming: true,
-                    amount: 2.0,
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
                     network_key: "ETH".to_string(),
-                    status: format!("{:?}", InclusionState::Confirmed),
+                    status: WalletTxStatus::Confirmed,
                     explorer_url: None,
                 }]
             }
@@ -1431,13 +1429,13 @@ mod tests {
 
         let wallet_transactions = vec![WalletTxInfo {
             date: "some date".to_string(),
-            block_id: None,
-            transaction_id: "1".to_string(),
+            block_number_hash: None,
+            transaction_hash: "1".to_string(),
             receiver: String::new(),
-            incoming: true,
-            amount: 1.0,
+            sender: String::new(),
+            amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
             network_key: "ETH".to_string(),
-            status: format!("{:?}", InclusionState::Confirmed),
+            status: WalletTxStatus::Confirmed,
             explorer_url: None,
         }];
 

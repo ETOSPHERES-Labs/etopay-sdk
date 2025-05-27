@@ -236,17 +236,24 @@ pub mod ffi {
         fn invalid_reasons(&self) -> Vec<String>;
     }
 
+    pub enum WalletTxStatus {
+        Pending,
+        Confirmed,
+        Conflicting,
+    }
+
     extern "Rust" {
         type WalletTxInfo;
 
         fn date(&self) -> String;
-        fn block_id(&self) -> String;
-        fn transaction_id(&self) -> String;
+        fn block_number(&self) -> Option<u64>;
+        fn block_hash(&self) -> Option<String>;
+        fn transaction_hash(&self) -> String;
+        fn sender(&self) -> String;
         fn receiver(&self) -> String;
-        fn incoming(&self) -> bool;
         fn amount(&self) -> f64;
         fn network_key(&self) -> String;
-        fn status(&self) -> String;
+        fn status(&self) -> WalletTxStatus;
         fn explorer_url(&self) -> String;
     }
 

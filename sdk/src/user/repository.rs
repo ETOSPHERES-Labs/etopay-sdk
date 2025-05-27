@@ -140,7 +140,8 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 mod tests {
     use std::vec;
 
-    use etopay_wallet::types::InclusionState;
+    use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
+    use rust_decimal_macros::dec;
 
     use super::*;
     use crate::{
@@ -427,24 +428,26 @@ mod tests {
         let txs = vec![
             WalletTxInfo {
                 date: String::new(),
-                block_id: None,
-                transaction_id: String::from("transaction_id_1"),
+                block_number_hash: None,
+                transaction_hash: String::from("transaction_id_1"),
                 receiver: String::new(),
-                incoming: false,
-                amount: 0.5,
+                sender: String::new(),
+                // SAFETY: the value is non-negative
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(0.5)) },
                 network_key: ETH_NETWORK_KEY.to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
             WalletTxInfo {
                 date: String::new(),
-                block_id: Some(String::from("block_2")),
-                transaction_id: String::from("transaction_id_2"),
+                block_number_hash: Some((1, String::from("block_2"))),
+                transaction_hash: String::from("transaction_id_2"),
                 receiver: String::new(),
-                incoming: true,
-                amount: 4.0,
+                sender: String::new(),
+                // SAFETY: the value is non-negative
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(4.0)) },
                 network_key: ETH_NETWORK_KEY.to_string(),
-                status: format!("{:?}", InclusionState::Pending),
+                status: WalletTxStatus::Pending,
                 explorer_url: None,
             },
         ];

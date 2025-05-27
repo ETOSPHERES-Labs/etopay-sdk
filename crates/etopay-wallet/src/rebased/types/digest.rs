@@ -261,3 +261,107 @@ impl fmt::Debug for ObjectDigest {
         write!(f, "o#{}", self.0)
     }
 }
+
+/// Representation of a Checkpoint's digest
+#[derive(Clone, Copy, Default, PartialEq, Eq, PartialOrd, Ord, Hash, Serialize, Deserialize)]
+pub struct CheckpointDigest(Digest);
+
+impl CheckpointDigest {
+    pub const fn new(digest: [u8; 32]) -> Self {
+        Self(Digest::new(digest))
+    }
+
+    pub fn generate<R: rand::RngCore + rand::CryptoRng>(rng: R) -> Self {
+        Self(Digest::generate(rng))
+    }
+
+    pub fn random() -> Self {
+        Self(Digest::random())
+    }
+
+    pub const fn inner(&self) -> &[u8; 32] {
+        self.0.inner()
+    }
+
+    pub const fn into_inner(self) -> [u8; 32] {
+        self.0.into_inner()
+    }
+
+    pub fn base58_encode(&self) -> String {
+        Base58::encode(self.0)
+    }
+
+    pub fn next_lexicographical(&self) -> Option<Self> {
+        self.0.next_lexicographical().map(Self)
+    }
+}
+
+impl AsRef<[u8]> for CheckpointDigest {
+    fn as_ref(&self) -> &[u8] {
+        self.0.as_ref()
+    }
+}
+
+impl AsRef<[u8; 32]> for CheckpointDigest {
+    fn as_ref(&self) -> &[u8; 32] {
+        self.0.as_ref()
+    }
+}
+
+impl From<CheckpointDigest> for [u8; 32] {
+    fn from(digest: CheckpointDigest) -> Self {
+        digest.into_inner()
+    }
+}
+
+impl From<[u8; 32]> for CheckpointDigest {
+    fn from(digest: [u8; 32]) -> Self {
+        Self::new(digest)
+    }
+}
+
+// impl TryFrom<Vec<u8>> for CheckpointDigest {
+//     type Err = RebasedError;
+//
+//     fn try_from(bytes: Vec<u8>) -> Result<Self, Self::Err> {
+//         Digest::try_from(bytes)?
+//     }
+// }
+
+impl fmt::Display for CheckpointDigest {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::Display::fmt(&self.0, f)
+    }
+}
+
+impl fmt::Debug for CheckpointDigest {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        f.debug_tuple("CheckpointDigest").field(&self.0).finish()
+    }
+}
+
+impl fmt::LowerHex for CheckpointDigest {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::LowerHex::fmt(&self.0, f)
+    }
+}
+
+impl fmt::UpperHex for CheckpointDigest {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        fmt::UpperHex::fmt(&self.0, f)
+    }
+}
+
+impl std::str::FromStr for CheckpointDigest {
+    type Err = RebasedError;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut result = [0; 32];
+        let buffer = Base58::decode(s)?;
+        if buffer.len() != 32 {
+            return Err(RebasedError::InvalidDigestLength);
+        }
+        result.copy_from_slice(&buffer);
+        Ok(CheckpointDigest::new(result))
+    }
+}
