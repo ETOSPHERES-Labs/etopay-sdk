@@ -10,7 +10,7 @@ use crate::wallet::error::{ErrorKind, Result, WalletError};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use async_trait::async_trait;
 use etopay_wallet::bip39::{self, Mnemonic};
-use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
+use etopay_wallet::{MnemonicDerivationOption, WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
 use log::{info, warn};
 use rand::RngCore;
 use secrecy::SecretBox;
@@ -539,6 +539,9 @@ impl WalletManager for WalletManagerImpl {
     ) -> Result<WalletBorrow<'a>> {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
 
+        // TODO: allow the user to specify this (somehow..)
+        let options = MnemonicDerivationOption::default();
+
         // we have the mnemonic and can now instantiate the WalletImpl
         let bo = match &network.protocol {
             ApiProtocol::Evm { chain_id } => {
@@ -548,6 +551,7 @@ impl WalletManager for WalletManagerImpl {
                     *chain_id,
                     network.decimals,
                     network.coin_type,
+                    options,
                 )?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
@@ -562,6 +566,7 @@ impl WalletManager for WalletManagerImpl {
                     network.decimals,
                     network.coin_type,
                     contract_address,
+                    options,
                 )?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
@@ -572,7 +577,8 @@ impl WalletManager for WalletManagerImpl {
             }
             ApiProtocol::IotaRebased { coin_type } => {
                 let wallet =
-                    WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls).await?;
+                    WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls, options)
+                        .await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };
