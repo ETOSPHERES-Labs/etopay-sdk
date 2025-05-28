@@ -39,6 +39,7 @@ async function main() {
     let details = await sdk.getWalletTransaction(PIN, tx_id);
     console.log("transaction details: ", details);
 
+    process.exit(0);
 }
 
 main();

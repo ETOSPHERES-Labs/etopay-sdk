@@ -5,7 +5,12 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/read.rs
 
-use jsonrpsee::proc_macros::rpc;
+use serde_json::json;
+
+use crate::rebased::{
+    RpcClient,
+    client::{RawRpcResponse, RpcResult},
+};
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
 
@@ -13,33 +18,6 @@ use super::{
     super::{CheckpointDigest, CheckpointSequenceNumber, EpochId, TransactionDigest, bigint::BigInt},
     IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions,
 };
-
-/// Provides methods for reading transaction related data such as transaction
-/// blocks, checkpoints, and protocol configuration. The trait further provides
-/// methods for reading the ledger (current objects) as well its history (past
-/// objects).
-#[rpc(client, namespace = "iota")]
-pub trait ReadApi {
-    /// Return the transaction response object.
-    #[rustfmt::skip]
-    #[method(name = "getTransactionBlock")]
-    async fn get_transaction_block(
-        &self,
-        // the digest of the queried transaction
-        digest: TransactionDigest,
-        // options for specifying the content to be returned
-        options: Option<IotaTransactionBlockResponseOptions>,
-    ) -> RpcResult<IotaTransactionBlockResponse>;
-
-    /// Return a checkpoint
-    #[rustfmt::skip]
-    #[method(name = "getCheckpoint")]
-    async fn get_checkpoint(
-        &self,
-        // Checkpoint identifier, can use either checkpoint digest, or checkpoint sequence number as input.
-        id: CheckpointId,
-    ) -> RpcResult<Checkpoint>;
-}
 
 #[serde_as]
 #[derive(Clone, Debug, Serialize, Deserialize, PartialEq, Eq)]
@@ -99,5 +77,67 @@ impl From<CheckpointSequenceNumber> for CheckpointId {
 impl From<CheckpointDigest> for CheckpointId {
     fn from(digest: CheckpointDigest) -> Self {
         Self::Digest(digest)
+    }
+}
+
+/// Provides methods for reading transaction related data such as transaction
+/// blocks, checkpoints, and protocol configuration. The trait further provides
+/// methods for reading the ledger (current objects) as well its history (past
+/// objects).
+pub trait ReadApi {
+    /// Return the transaction response object.
+    async fn get_transaction_block(
+        &self,
+        // the digest of the queried transaction
+        digest: TransactionDigest,
+        // options for specifying the content to be returned
+        options: Option<IotaTransactionBlockResponseOptions>,
+    ) -> RpcResult<IotaTransactionBlockResponse>;
+
+    /// Return a checkpoint
+    async fn get_checkpoint(
+        &self,
+        // Checkpoint identifier, can use either checkpoint digest, or checkpoint sequence number as input.
+        id: CheckpointId,
+    ) -> RpcResult<Checkpoint>;
+}
+
+impl ReadApi for RpcClient {
+    async fn get_transaction_block(
+        &self,
+        // the digest of the queried transaction
+        digest: TransactionDigest,
+        // options for specifying the content to be returned
+        options: Option<IotaTransactionBlockResponseOptions>,
+    ) -> RpcResult<IotaTransactionBlockResponse> {
+        let request_body = json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "iota_getTransactionBlock",
+            "params": [json!(digest.to_string()), json!(options)]
+        });
+
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
+
+        let body: RawRpcResponse<IotaTransactionBlockResponse> = response.json().await?;
+        body.into_result()
+    }
+
+    async fn get_checkpoint(
+        &self,
+        // Checkpoint identifier, can use either checkpoint digest, or checkpoint sequence number as input.
+        id: CheckpointId,
+    ) -> RpcResult<Checkpoint> {
+        let request_body = json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "iota_getCheckpoint",
+            "params": [json!(id)]
+        });
+
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
+
+        let body: RawRpcResponse<Checkpoint> = response.json().await?;
+        body.into_result()
     }
 }
