@@ -507,91 +507,86 @@ impl Sdk {
         let user = self.get_user().await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
-        // TODO: we need to support this better for all networks with a unified logic and interface
-        let tx_list = {
-            // We retrieve the transaction list from the wallet,
-            // then synchronize selected transactions (by fetching their current status from the network),
-            // and finally, save the refreshed list back to the wallet
-            let mut wallet_transactions = user.wallet_transactions;
+        // We retrieve the transaction list from the wallet,
+        // then synchronize selected transactions (by fetching their current status from the network),
+        // and finally, save the refreshed list back to the wallet
+        let mut wallet_transactions = user.wallet_transactions;
 
-            // We call get_wallet_tx_list to merge the responses with any existing transactions
-            // (if there are new ones, we need to get their details and insert into the local list)
-            match wallet.get_wallet_tx_list(start, limit).await {
-                Ok(transaction_hashes) => {
-                    // go through and get the details for any new hashes
+        // We call get_wallet_tx_list to merge the responses with any existing transactions
+        // (if there are new ones, we need to get their details and insert into the local list)
+        match wallet.get_wallet_tx_list(start, limit).await {
+            Ok(transaction_hashes) => {
+                // go through and get the details for any new hashes
 
-                    log::debug!("Digests: {:#?}", transaction_hashes);
-                    for hash in transaction_hashes {
-                        // check if transaction is already in the list (not very efficient but good enough for now)
-                        if wallet_transactions
-                            .iter()
-                            .find(|t| t.transaction_hash == hash)
-                            .is_some()
-                        {
-                            continue;
-                        }
+                log::debug!("Digests: {:#?}", transaction_hashes);
+                for hash in transaction_hashes {
+                    // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
+                    if wallet_transactions
+                        .iter()
+                        .find(|t| t.transaction_hash == hash)
+                        .is_some()
+                    {
+                        continue;
+                    }
 
-                        log::debug!("Getting details for new transaction with hash {hash}");
+                    log::debug!("Getting details for new transaction with hash {hash}");
 
-                        // not included, we should add it!
-                        match wallet.get_wallet_tx(&hash).await {
-                            Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
-                            Ok(details) => {
-                                // TODO: insert into sorted list based on date?
-                                wallet_transactions.push(details);
-                            }
+                    // not included, we should add it!
+                    match wallet.get_wallet_tx(&hash).await {
+                        Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
+                        Ok(details) => {
+                            // TODO: insert into sorted list based on date?
+                            wallet_transactions.push(details);
                         }
                     }
                 }
-                // do nothing if feature is not supported
-                Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => {}
-                Err(e) => return Err(e.into()),
             }
+            // do nothing if feature is not supported
+            Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => {}
+            Err(e) => return Err(e.into()),
+        }
 
-            for transaction in wallet_transactions
-                .iter_mut()
-                .filter(|tx| tx.network_key == network.key)
-                .skip(start)
-                .take(limit)
-            {
-                // We don't need to query the network for the state of this transaction,
-                // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
-                if transaction.status == WalletTxStatus::Confirmed {
-                    continue;
-                }
+        // TODO: should we sort the transactions first?
 
-                let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_hash).await;
-                match synchronized_transaction {
-                    Ok(stx) => *transaction = stx,
-                    Err(e) => {
-                        // On error, return historical (cached) transaction data
-                        log::debug!(
-                            "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
-                            transaction.clone(),
-                            e
-                        );
-                    }
-                }
-            }
-
-            let Some(repo) = &mut self.repo else {
-                return Err(crate::Error::UserRepoNotInitialized);
-            };
-
-            let _ = repo.set_wallet_transactions(&user.username, wallet_transactions.clone());
-
-            WalletTxInfoList {
-                transactions: wallet_transactions,
-            }
-        };
-
-        let tx_list_filtered = tx_list
-            .transactions
-            .into_iter()
+        for transaction in wallet_transactions
+            .iter_mut()
             .filter(|tx| tx.network_key == network.key)
             .skip(start)
             .take(limit)
+        {
+            // We don't need to query the network for the state of this transaction,
+            // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
+            if transaction.status == WalletTxStatus::Confirmed {
+                continue;
+            }
+
+            match wallet.get_wallet_tx(&transaction.transaction_hash).await {
+                Ok(stx) => *transaction = stx,
+                Err(e) => {
+                    // On error, return historical (cached) transaction data
+                    log::debug!(
+                        "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
+                        transaction,
+                        e
+                    );
+                }
+            }
+        }
+
+        let Some(repo) = &mut self.repo else {
+            return Err(crate::Error::UserRepoNotInitialized);
+        };
+
+        let tx_list_filtered = wallet_transactions
+            .iter()
+            .filter(|tx| tx.network_key == network.key)
+            .skip(start)
+            .take(limit)
+            .cloned()
             .collect();
+
+        // store updated transactions in user DB
+        let _ = repo.set_wallet_transactions(&user.username, wallet_transactions);
 
         Ok(WalletTxInfoList {
             transactions: tx_list_filtered,
