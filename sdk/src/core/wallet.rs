@@ -539,11 +539,7 @@ impl Sdk {
                 log::debug!("Digests: {:#?}", transaction_hashes);
                 for hash in transaction_hashes {
                     // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
-                    if wallet_transactions
-                        .iter()
-                        .find(|t| t.transaction_hash == hash)
-                        .is_some()
-                    {
+                    if wallet_transactions.iter().any(|t| t.transaction_hash == hash) {
                         continue;
                     }
 
