@@ -7,10 +7,7 @@ use super::rebased::{
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
-use crate::rebased::{
-    CheckpointId, GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind,
-    WriteApiClient,
-};
+use crate::rebased::{CheckpointId, IotaTransactionBlockEffects, Owner, TransactionKind};
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
