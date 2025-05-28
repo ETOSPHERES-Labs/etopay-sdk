@@ -6,7 +6,7 @@
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/coin.rs
 
 use serde::Deserialize;
-use serde_json::{Value, json};
+use serde_json::json;
 use serde_with::serde_as;
 
 use crate::rebased::RpcClient;
@@ -55,24 +55,16 @@ impl CoinReadApi for RpcClient {
         // maximum number of items per page
         limit: Option<usize>,
     ) -> RpcResult<CoinPage> {
-        let mut params: Vec<Value> = vec![
-            json!(owner.to_string()),
-            json!(coin_type.unwrap_or_else(|| "0x2::iota::IOTA".to_string())),
-        ];
-
-        if let Some(c) = cursor {
-            params.push(json!(c.to_string()));
-        }
-
-        if let Some(l) = limit {
-            params.push(json!(l));
-        }
-
         let request_body = json!({
             "jsonrpc": "2.0",
             "id": 1,
             "method": "iotax_getCoins",
-            "params": params
+            "params": [
+                json!(owner.to_string()),
+                json!(coin_type.unwrap_or_else(|| "0x2::iota::IOTA".to_string())),
+                json!(cursor),
+                json!(limit)
+            ]
         });
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;

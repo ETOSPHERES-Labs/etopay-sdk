@@ -6,7 +6,7 @@
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/write.rs
 
 use serde::{Deserialize, Serialize};
-use serde_json::{Value, json};
+use serde_json::json;
 
 use crate::rebased::RpcClient;
 use crate::rebased::client::{RawRpcResponse, RpcResult};
@@ -59,21 +59,11 @@ impl WriteApi for RpcClient {
         // The request type, derived from `IotaTransactionBlockResponseOptions` if None
         request_type: Option<ExecuteTransactionRequestType>,
     ) -> RpcResult<IotaTransactionBlockResponse> {
-        let mut params: Vec<Value> = vec![json!(tx_bytes), json!(signatures)];
-
-        if let Some(opts) = options {
-            params.push(json!(opts));
-        }
-
-        if let Some(req_type) = request_type {
-            params.push(json!(req_type));
-        }
-
         let request_body = json!({
             "jsonrpc": "2.0",
             "id": 1,
             "method": "iota_executeTransactionBlock",
-            "params": params
+            "params": [json!(tx_bytes), json!(signatures), json!(options), json!(request_type)]
         });
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
