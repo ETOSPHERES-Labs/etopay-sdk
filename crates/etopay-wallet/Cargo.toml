@@ -48,7 +48,7 @@ rand = { version = "0.9", default-features = false, features = [
 zeroize = { version = "1.8", default-features = false, features = ["std"] }
 
 # For EVM impl
-alloy = { version = "1.0.6", default-features = false, features = [
+alloy = { version = "1.0.8", default-features = false, features = [
     "providers",
     "rpc-types",
     "signer-mnemonic",
