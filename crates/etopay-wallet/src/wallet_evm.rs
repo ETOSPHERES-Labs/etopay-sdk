@@ -1,5 +1,6 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
+use crate::MnemonicDerivationOption;
 use crate::error::WalletError;
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use alloy::eips::BlockNumberOrTag;
@@ -55,12 +56,19 @@ pub struct WalletImplEvm {
 impl WalletImplEvm {
     /// Creates a new [`WalletImplEvm`] from the specified [`Mnemonic`].
     #[allow(clippy::result_large_err)]
-    pub fn new(mnemonic: Mnemonic, node_urls: &[String], chain_id: u64, decimals: u32, coin_type: u32) -> Result<Self> {
+    pub fn new(
+        mnemonic: Mnemonic,
+        node_urls: &[String],
+        chain_id: u64,
+        decimals: u32,
+        coin_type: u32,
+        options: &MnemonicDerivationOption,
+    ) -> Result<Self> {
         // Ase mnemonic to create a Signer
         let wallet = MnemonicBuilder::<English>::default()
             .phrase(mnemonic.as_ref().to_string())
             // Child key at derivation path: m/44'/{coin_type}'/{account}'/{change}/{index}.
-            .derivation_path(format!("m/44'/{}'/0'/0/0", coin_type))?
+            .derivation_path(format!("m/44'/{}'/{}'/0/{}", coin_type, options.account, options.index))?
             // // Use this if your mnemonic is encrypted.
             // .password(password)
             .build()?;
@@ -356,9 +364,10 @@ impl WalletImplEvmErc20 {
         decimals: u32,
         coin_type: u32,
         contract_address: &str,
+        options: &MnemonicDerivationOption,
     ) -> Result<Self> {
         Ok(Self {
-            inner: WalletImplEvm::new(mnemonic, node_urls, chain_id, decimals, coin_type)?,
+            inner: WalletImplEvm::new(mnemonic, node_urls, chain_id, decimals, coin_type, options)?,
             contract_address: contract_address.parse()?,
         })
     }
@@ -524,8 +533,15 @@ mod tests {
         let chain_id = 31337;
 
         let mnemonic = Mnemonic::from_phrase(mnemonic_phrase.as_ref(), Language::English).expect("invalid mnemonic");
-        let wallet = WalletImplEvm::new(mnemonic, &node_url, chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
-            .expect("should initialize wallet");
+        let wallet = WalletImplEvm::new(
+            mnemonic,
+            &node_url,
+            chain_id,
+            ETH_DECIMALS,
+            ETH_COIN_TYPE,
+            &MnemonicDerivationOption::default(),
+        )
+        .expect("should initialize wallet");
         (wallet, cleanup)
     }
 
@@ -536,8 +552,15 @@ mod tests {
         chain_id: u64,
     ) -> WalletImplEvm {
         let mnemonic = Mnemonic::from_phrase(mnemonic_phrase.as_ref(), Language::English).expect("invalid mnemonic");
-        WalletImplEvm::new(mnemonic, &[node_url], chain_id, ETH_DECIMALS, ETH_COIN_TYPE)
-            .expect("could not initialize WalletImplEth")
+        WalletImplEvm::new(
+            mnemonic,
+            &[node_url],
+            chain_id,
+            ETH_DECIMALS,
+            ETH_COIN_TYPE,
+            &MnemonicDerivationOption::default(),
+        )
+        .expect("could not initialize WalletImplEth")
     }
 
     #[tokio::test]

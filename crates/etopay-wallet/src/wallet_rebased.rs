@@ -7,6 +7,7 @@ use super::rebased::{
     RebasedError, RpcClient, TransactionData, TransactionExpiration,
 };
 use super::wallet::{TransactionIntent, WalletUser};
+use crate::MnemonicDerivationOption;
 use crate::rebased::{
     CheckpointId, GovernanceReadApiClient, IotaTransactionBlockEffects, Owner, ReadApiClient, TransactionKind,
     WriteApiClient,
@@ -42,9 +43,18 @@ impl std::fmt::Debug for WalletImplIotaRebased {
 
 impl WalletImplIotaRebased {
     /// Creates a new [`WalletImpl`] from the specified [`Config`] and [`Mnemonic`].
-    pub async fn new(mnemonic: Mnemonic, coin_type: &str, decimals: u32, node_url: &[String]) -> Result<Self> {
+    pub async fn new(
+        mnemonic: Mnemonic,
+        coin_type: &str,
+        decimals: u32,
+        node_url: &[String],
+        options: &MnemonicDerivationOption,
+    ) -> Result<Self> {
         let mut keystore2 = rebased::InMemKeystore::default();
-        keystore2.import_from_mnemonic(mnemonic, "m/44'/4218'/0'/0'/0'".parse::<bip32::DerivationPath>()?)?;
+        keystore2.import_from_mnemonic(
+            mnemonic,
+            format!("m/44'/4218'/{}'/0'/{}'", options.account, options.index).parse::<bip32::DerivationPath>()?,
+        )?;
 
         let client = RpcClient::new(&node_url[0]).await?;
 

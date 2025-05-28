@@ -154,7 +154,14 @@ impl Sdk {
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
-            .try_get(config, &self.access_token, repo, network, pin)
+            .try_get(
+                config,
+                &self.access_token,
+                repo,
+                network,
+                pin,
+                &active_user.mnemonic_derivation_options,
+            )
             .await?;
         Ok(wallet)
     }
@@ -210,6 +217,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(mock_wallet_manager),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.set_networks(example_api_networks());
                 sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
@@ -256,6 +264,7 @@ mod tests {
                 sdk.active_user = Some(crate::types::users::ActiveUser {
                     username: USERNAME.into(),
                     wallet_manager: Box::new(MockWalletManager::new()),
+                    mnemonic_derivation_options: Default::default(),
                 });
                 sdk.access_token = Some(TOKEN.clone());
 

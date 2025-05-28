@@ -20,7 +20,13 @@ async function main() {
     await sdk.createNewWallet(PIN);
     console.log("Wallet initialized!");
     let address = await sdk.generateNewAddress(PIN);
-    console.log("Address:", address);
+    console.log("First Address:", address);
+
+    // update the account and index to get another address
+    await sdk.setWalletAccount(0, 1);
+    let address2 = await sdk.generateNewAddress(PIN);
+    console.log("Second Address:", address2);
+
 }
 
 main();

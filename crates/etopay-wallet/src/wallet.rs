@@ -15,6 +15,13 @@ pub struct TransactionIntent {
     pub data: Option<Vec<u8>>,
 }
 
+/// Options that can be given to customize the mnemonic derivation
+#[derive(Debug, Default)]
+pub struct MnemonicDerivationOption {
+    pub account: u32,
+    pub index: u32,
+}
+
 #[cfg_attr(any(test, feature = "mock"), mockall::automock)]
 #[cfg_attr(target_arch = "wasm32", async_trait(?Send))]
 #[cfg_attr(not(target_arch = "wasm32"), async_trait)]

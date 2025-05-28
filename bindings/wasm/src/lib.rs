@@ -549,6 +549,21 @@ impl ETOPaySdk {
             .map_err(|e| format!("{e:#?}"))
     }
 
+    /// Set the account and index used for deriving the private key from the mnemonic. This is used
+    /// to have multiple accounts and addresses with a single mnemonic.
+    ///
+    /// @param {number} account - The account number
+    /// @param {number} index - The index number
+    ///
+    /// @returns {Promise<TxList>} The details of the created purchases
+    #[wasm_bindgen(skip_jsdoc, js_name = "setWalletAccount")]
+    pub async fn set_wallet_account(&self, account: u32, index: u32) -> Result<(), String> {
+        let mut sdk = self.inner.write().await;
+        sdk.set_wallet_derivation_options(account, index)
+            .await
+            .map_err(|e| format!("{e:#?}"))
+    }
+
     /// Gets the current exchange rate for the cryptocurrency to EURO
     ///
     /// @returns {Promise<number>} The exchange rate as a floating point number
