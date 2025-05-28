@@ -9,7 +9,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 
 use crate::rebased::RpcClient;
-use crate::rebased::client::{RpcResponse, RpcResult};
+use crate::rebased::client::{RawRpcResponse, RpcResult};
 
 use super::super::encoding::Base64;
 use super::{DryRunTransactionBlockResponse, IotaTransactionBlockResponse, IotaTransactionBlockResponseOptions};
@@ -78,10 +78,8 @@ impl WriteApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response
-            .json::<RpcResponse<IotaTransactionBlockResponse>>()
-            .await?
-            .result)
+        let body: RawRpcResponse<IotaTransactionBlockResponse> = response.json().await?;
+        body.into_result()
     }
 
     async fn dry_run_transaction_block(&self, tx_bytes: Base64) -> RpcResult<DryRunTransactionBlockResponse> {
@@ -96,9 +94,7 @@ impl WriteApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response
-            .json::<RpcResponse<DryRunTransactionBlockResponse>>()
-            .await?
-            .result)
+        let body: RawRpcResponse<DryRunTransactionBlockResponse> = response.json().await?;
+        body.into_result()
     }
 }

@@ -7,7 +7,7 @@ use serde_json::json;
 
 use crate::rebased::{
     RpcClient,
-    client::{RpcResponse, RpcResult},
+    client::{RawRpcResponse, RpcResult},
 };
 
 use super::super::bigint::BigInt;
@@ -30,6 +30,7 @@ impl GovernanceReadApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response.json::<RpcResponse<BigInt<u64>>>().await?.result)
+        let body: RawRpcResponse<BigInt<u64>> = response.json().await?;
+        body.into_result()
     }
 }

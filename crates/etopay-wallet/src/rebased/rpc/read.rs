@@ -9,7 +9,7 @@ use serde_json::{Value, json};
 
 use crate::rebased::{
     RpcClient,
-    client::{RpcResponse, RpcResult},
+    client::{RawRpcResponse, RpcResult},
 };
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
@@ -125,10 +125,8 @@ impl ReadApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response
-            .json::<RpcResponse<IotaTransactionBlockResponse>>()
-            .await?
-            .result)
+        let body: RawRpcResponse<IotaTransactionBlockResponse> = response.json().await?;
+        body.into_result()
     }
 
     async fn get_checkpoint(
@@ -145,6 +143,7 @@ impl ReadApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response.json::<RpcResponse<Checkpoint>>().await?.result)
+        let body: RawRpcResponse<Checkpoint> = response.json().await?;
+        body.into_result()
     }
 }

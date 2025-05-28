@@ -14,6 +14,31 @@ pub struct RpcClient {
 
 pub type RpcResult<T> = Result<T, RebasedError>;
 
+#[derive(Deserialize, Debug)]
+#[serde(untagged)]
+pub enum RawRpcResponse<T> {
+    Success { result: T },
+    Error { error: RpcError },
+}
+
+#[derive(Deserialize, Debug)]
+pub struct RpcError {
+    pub code: i32,
+    pub message: String,
+}
+
+impl<T> RawRpcResponse<T> {
+    pub fn into_result(self) -> RpcResult<T> {
+        match self {
+            RawRpcResponse::Success { result } => Ok(result),
+            RawRpcResponse::Error { error } => match error.code {
+                -32602 => Err(RebasedError::TransactionNotFound),
+                code => Err(RebasedError::RpcCodeAndMessage(code, error.message)),
+            },
+        }
+    }
+}
+
 impl std::ops::Deref for RpcClient {
     type Target = Client;
 

@@ -10,7 +10,7 @@ use serde_json::{Value, json};
 use serde_with::serde_as;
 
 use crate::rebased::RpcClient;
-use crate::rebased::client::{RpcResponse, RpcResult};
+use crate::rebased::client::{RawRpcResponse, RpcResult};
 
 use super::super::bigint::BigInt;
 use super::super::serde::SequenceNumber as AsSequenceNumber;
@@ -77,7 +77,8 @@ impl CoinReadApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response.json::<RpcResponse<CoinPage>>().await?.result)
+        let body: RawRpcResponse<CoinPage> = response.json().await?;
+        body.into_result()
     }
 
     async fn get_balance(
@@ -99,7 +100,8 @@ impl CoinReadApi for RpcClient {
 
         let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
 
-        Ok(response.json::<RpcResponse<Balance>>().await?.result)
+        let body: RawRpcResponse<Balance> = response.json().await?;
+        body.into_result()
     }
 }
 
