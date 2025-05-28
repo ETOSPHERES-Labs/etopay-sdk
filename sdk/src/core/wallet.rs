@@ -514,11 +514,39 @@ impl Sdk {
             // and finally, save the refreshed list back to the wallet
             let mut wallet_transactions = user.wallet_transactions;
 
-            // TODO: somehow we should call get_wallet_tx_list to merge the responses with any
-            // existing transactions (if there are new ones, we need to get their details and
-            // insert into the local list)
+            // We call get_wallet_tx_list to merge the responses with any existing transactions
+            // (if there are new ones, we need to get their details and insert into the local list)
+            match wallet.get_wallet_tx_list(start, limit).await {
+                Ok(transaction_hashes) => {
+                    // go through and get the details for any new hashes
 
-            let _fetched_list = wallet.get_wallet_tx_list(start, limit).await?;
+                    log::debug!("Digests: {:#?}", transaction_hashes);
+                    for hash in transaction_hashes {
+                        // check if transaction is already in the list (not very efficient but good enough for now)
+                        if wallet_transactions
+                            .iter()
+                            .find(|t| t.transaction_hash == hash)
+                            .is_some()
+                        {
+                            continue;
+                        }
+
+                        log::debug!("Getting details for new transaction with hash {hash}");
+
+                        // not included, we should add it!
+                        match wallet.get_wallet_tx(&hash).await {
+                            Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
+                            Ok(details) => {
+                                // TODO: insert into sorted list based on date?
+                                wallet_transactions.push(details);
+                            }
+                        }
+                    }
+                }
+                // do nothing if feature is not supported
+                Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => {}
+                Err(e) => return Err(e.into()),
+            }
 
             for transaction in wallet_transactions
                 .iter_mut()

@@ -266,13 +266,10 @@ impl WalletUser for WalletImplIotaRebased {
             .map(|t| t.digest)
             .collect();
 
-        log::info!("Digests: {:#?}", transaction_digests);
-
-        // convert into a list, sort by hash to make the list stable (not sorted by time!)
-        // TODO: return the list of hashes and merge it in the outer logic? (tx info can then be
-        // queried using get_wallet_tx below for any new transactions)
-
-        Err(WalletError::WalletFeatureNotImplemented)
+        Ok(transaction_digests
+            .iter()
+            .map(|d| d.to_string())
+            .collect::<Vec<String>>())
     }
 
     async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfo> {
