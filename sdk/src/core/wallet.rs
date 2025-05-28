@@ -503,9 +503,27 @@ impl Sdk {
         info!("Wallet getting list of transactions");
         self.verify_pin(pin).await?;
 
-        let network = self.active_network.clone().ok_or(crate::Error::MissingNetwork)?;
-        let user = self.get_user().await?;
-        let wallet = self.try_get_active_user_wallet(pin).await?;
+        let Some(repo) = &mut self.repo else {
+            return Err(crate::Error::UserRepoNotInitialized);
+        };
+        let Some(active_user) = &mut self.active_user else {
+            return Err(crate::Error::UserNotInitialized);
+        };
+        let network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
+        let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
+        let wallet = active_user
+            .wallet_manager
+            .try_get(
+                config,
+                &self.access_token,
+                repo,
+                network,
+                pin,
+                &active_user.mnemonic_derivation_options,
+            )
+            .await?;
+
+        let user = repo.get(active_user.username.as_str())?;
 
         // We retrieve the transaction list from the wallet,
         // then synchronize selected transactions (by fetching their current status from the network),
@@ -572,10 +590,6 @@ impl Sdk {
                 }
             }
         }
-
-        let Some(repo) = &mut self.repo else {
-            return Err(crate::Error::UserRepoNotInitialized);
-        };
 
         let tx_list_filtered = wallet_transactions
             .iter()
@@ -1292,7 +1306,7 @@ mod tests {
                 sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
             }
             Err(error) => {
-                handle_error_test_cases(error, &mut sdk, 2, 0).await;
+                handle_error_test_cases(error, &mut sdk, 1, 0).await;
             }
         }
 
