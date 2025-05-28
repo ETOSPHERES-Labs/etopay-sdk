@@ -72,9 +72,6 @@ pub enum RebasedError {
     #[error("Base58: {0}")]
     Base58(#[from] bs58::decode::Error),
 
-    #[error("TransactionNotFound")]
-    TransactionNotFound,
-
     #[error("RpcCodeAndMessage: code `{0}`, message: {1}")]
     RpcCodeAndMessage(i32, String),
 }

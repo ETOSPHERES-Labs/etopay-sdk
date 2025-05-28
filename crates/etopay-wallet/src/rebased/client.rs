@@ -31,10 +31,7 @@ impl<T> RawRpcResponse<T> {
     pub fn into_result(self) -> RpcResult<T> {
         match self {
             RawRpcResponse::Success { result } => Ok(result),
-            RawRpcResponse::Error { error } => match error.code {
-                -32602 => Err(RebasedError::TransactionNotFound),
-                code => Err(RebasedError::RpcCodeAndMessage(code, error.message)),
-            },
+            RawRpcResponse::Error { error } => Err(RebasedError::RpcCodeAndMessage(error.code, error.message)),
         }
     }
 }
@@ -53,6 +50,7 @@ pub struct RpcResponse<T> {
 }
 
 use super::RebasedError;
+
 const CLIENT_SDK_TYPE_HEADER: &str = "client-sdk-type";
 /// The version number of the SDK itself. This can be different from the API
 /// version.

@@ -69,8 +69,8 @@ pub enum WalletError {
     SolidityError(#[from] alloy::sol_types::Error),
 
     /// Iota Rebased Error
-    #[error(transparent)]
-    IotaRebased(crate::rebased::RebasedError),
+    #[error("IotaRebased: {0}")]
+    IotaRebased(#[from] crate::rebased::RebasedError),
 
     /// Failed to wait for confirming the transaction status
     #[error("FailToConfirmTransactionStatus: Failed to confirm tx status for {0} within {1} seconds.")]
@@ -80,15 +80,5 @@ pub enum WalletError {
 impl From<rust_decimal::Error> for WalletError {
     fn from(value: rust_decimal::Error) -> Self {
         Self::Decimal(value)
-    }
-}
-
-/// Iota Rebased Error
-impl From<crate::rebased::RebasedError> for WalletError {
-    fn from(err: crate::rebased::RebasedError) -> Self {
-        match err {
-            crate::rebased::RebasedError::TransactionNotFound => WalletError::TransactionNotFound,
-            _ => WalletError::IotaRebased(err),
-        }
     }
 }

@@ -7,7 +7,7 @@ use super::rebased::{
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
-use crate::rebased::{CheckpointId, IotaTransactionBlockEffects, Owner, TransactionKind};
+use crate::rebased::{CheckpointId, ErrorCode, IotaTransactionBlockEffects, Owner, TransactionKind};
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
@@ -230,7 +230,13 @@ impl WalletUser for WalletImplIotaRebased {
                 digest,
                 Some(rebased::IotaTransactionBlockResponseOptions::full_content()),
             )
-            .await?;
+            .await
+            .map_err(|e| match e {
+                RebasedError::RpcCodeAndMessage(code, _) if code == ErrorCode::InvalidParams.code() => {
+                    WalletError::TransactionNotFound
+                }
+                _ => WalletError::IotaRebased(e),
+            })?;
 
         // log::info!("Transaction Details:\n{tx:#?}");
 
