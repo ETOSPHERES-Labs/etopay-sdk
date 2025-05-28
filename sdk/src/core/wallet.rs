@@ -1276,7 +1276,11 @@ mod tests {
 
                 let mut mock_wallet_manager = MockWalletManager::new();
                 mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
-                    let mock_wallet_user = MockWalletUser::new();
+                    let mut mock_wallet_user = MockWalletUser::new();
+                    mock_wallet_user
+                        .expect_get_wallet_tx_list()
+                        .once()
+                        .returning(|_, _| Ok(vec![]));
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
                 sdk.active_user = Some(crate::types::users::ActiveUser {
@@ -1438,6 +1442,10 @@ mod tests {
         mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
             let mut mock_wallet_user = MockWalletUser::new();
             mock_wallet_user
+                .expect_get_wallet_tx_list()
+                .once()
+                .returning(|_, _| Ok(vec![]));
+            mock_wallet_user
                 .expect_get_wallet_tx()
                 .once()
                 .with(eq(String::from("2"))) // WalletTxInfo.transaction_id = 2
@@ -1537,6 +1545,10 @@ mod tests {
         let mut mock_wallet_manager = MockWalletManager::new();
         mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
             let mut mock_wallet_user = MockWalletUser::new();
+            mock_wallet_user
+                .expect_get_wallet_tx_list()
+                .once()
+                .returning(|_, _| Ok(vec![]));
             mock_wallet_user.expect_get_wallet_tx().never();
             Ok(WalletBorrow::from(mock_wallet_user))
         });
