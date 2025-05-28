@@ -592,6 +592,7 @@ mod tests {
         ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(MockWalletManager::new()),
+            mnemonic_derivation_options: Default::default(),
         }
     }
 
@@ -791,7 +792,7 @@ mod tests {
 
         let mut mock_wallet_manager = MockWalletManager::new();
         mock_wallet_manager.expect_try_get().returning({
-            move |_, _, _, _, _| {
+            move |_, _, _, _, _, _| {
                 let mut mock_wallet = MockWalletUser::new();
                 mock_wallet
                     .expect_get_address()
@@ -803,6 +804,7 @@ mod tests {
         sdk.active_user = Some(ActiveUser {
             username: USERNAME.into(),
             wallet_manager: Box::new(mock_wallet_manager),
+            mnemonic_derivation_options: Default::default(),
         });
 
         // create viviswap contract

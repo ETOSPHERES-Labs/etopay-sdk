@@ -10,7 +10,7 @@ use crate::wallet::error::{ErrorKind, Result, WalletError};
 use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use async_trait::async_trait;
 use etopay_wallet::bip39::{self, Mnemonic};
-use etopay_wallet::{WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
+use etopay_wallet::{MnemonicDerivationOption, WalletImplEvm, WalletImplEvmErc20, WalletImplIotaRebased, WalletUser};
 use log::{info, warn};
 use rand::RngCore;
 use secrecy::SecretBox;
@@ -138,6 +138,7 @@ pub trait WalletManager: std::fmt::Debug {
         repo: &mut UserRepoT,
         network: &ApiNetwork,
         pin: &EncryptionPin,
+        options: &MnemonicDerivationOption,
     ) -> Result<WalletBorrow<'a>>;
 }
 
@@ -536,6 +537,7 @@ impl WalletManager for WalletManagerImpl {
         repo: &mut UserRepoT,
         network: &ApiNetwork,
         pin: &EncryptionPin,
+        options: &MnemonicDerivationOption,
     ) -> Result<WalletBorrow<'a>> {
         let (mnemonic, _status) = self.try_resemble_shares(config, access_token, repo, pin).await?;
 
@@ -548,6 +550,7 @@ impl WalletManager for WalletManagerImpl {
                     *chain_id,
                     network.decimals,
                     network.coin_type,
+                    options,
                 )?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
@@ -562,6 +565,7 @@ impl WalletManager for WalletManagerImpl {
                     network.decimals,
                     network.coin_type,
                     contract_address,
+                    options,
                 )?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
@@ -572,7 +576,8 @@ impl WalletManager for WalletManagerImpl {
             }
             ApiProtocol::IotaRebased { coin_type } => {
                 let wallet =
-                    WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls).await?;
+                    WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls, options)
+                        .await?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
         };
@@ -718,6 +723,7 @@ mod tests {
                 &mut repo,
                 &example_api_network(IOTA_NETWORK_KEY.to_string()),
                 pin,
+                &Default::default(),
             )
             .await
             .expect("should succeed to get wallet after password change");
@@ -748,6 +754,7 @@ mod tests {
                 &mut repo,
                 &example_api_network(IOTA_NETWORK_KEY.to_string()),
                 pin,
+                &Default::default(),
             )
             .await
             .expect("should succeed to get wallet");
@@ -972,6 +979,7 @@ mod tests {
                     &mut repo,
                     &example_api_network(IOTA_NETWORK_KEY.to_string()),
                     &pin,
+                    &Default::default(),
                 )
                 .await
                 .unwrap();

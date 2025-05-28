@@ -3,7 +3,7 @@ use crate::{
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
-use etopay_wallet::types::WalletTxInfo;
+use etopay_wallet::{MnemonicDerivationOption, types::WalletTxInfo};
 use serde::{Deserialize, Serialize};
 
 /// Struct for storing a user in the database
@@ -40,6 +40,9 @@ pub struct ActiveUser {
 
     /// The user's wallet manager that can create a WalletUser instance from shares.
     pub wallet_manager: Box<dyn WalletManager + Send + Sync + 'static>,
+
+    /// The currently active [`MnemonicDerivationOption`]
+    pub mnemonic_derivation_options: MnemonicDerivationOption,
 }
 
 impl From<UserEntity> for ActiveUser {
@@ -47,6 +50,7 @@ impl From<UserEntity> for ActiveUser {
         ActiveUser {
             wallet_manager: Box::new(WalletManagerImpl::new(&entity.username)),
             username: entity.username,
+            mnemonic_derivation_options: Default::default(),
         }
     }
 }
