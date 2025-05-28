@@ -552,8 +552,8 @@ impl ETOPaySdk {
     /// Set the account and index used for deriving the private key from the mnemonic. This is used
     /// to have multiple accounts and addresses with a single mnemonic.
     ///
-    /// @param {number} start - The start page
-    /// @param {number} limit - The limit per page
+    /// @param {number} account - The account number
+    /// @param {number} index - The index number
     ///
     /// @returns {Promise<TxList>} The details of the created purchases
     #[wasm_bindgen(skip_jsdoc, js_name = "setWalletAccount")]
