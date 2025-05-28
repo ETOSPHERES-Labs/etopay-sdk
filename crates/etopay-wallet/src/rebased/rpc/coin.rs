@@ -5,15 +5,12 @@
 
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-json-rpc-api/src/coin.rs
 
-// use iota_json_rpc_types::{Balance, CoinPage, IotaCirculatingSupply, IotaCoinMetadata};
-// use iota_open_rpc_macros::open_rpc;
-// use iota_types::{
-//     balance::Supply,
-//     base_types::{IotaAddress, ObjectID},
-// };
-use jsonrpsee::proc_macros::rpc;
 use serde::Deserialize;
+use serde_json::json;
 use serde_with::serde_as;
+
+use crate::rebased::RpcClient;
+use crate::rebased::client::{RawRpcResponse, RpcResult};
 
 use super::super::bigint::BigInt;
 use super::super::serde::SequenceNumber as AsSequenceNumber;
@@ -22,11 +19,8 @@ use super::super::{ObjectID, ObjectRef};
 
 /// Provides access to coin-related data such as coins owned by an address,
 /// balances, or metadata.
-#[rpc(client, namespace = "iotax")]
 pub trait CoinReadApi {
     // /// Return all Coin<`coin_type`> objects owned by an address.
-    #[rustfmt::skip]
-    #[method(name = "getCoins")]
     async fn get_coins(
         &self,
         // the owner's IOTA address
@@ -40,8 +34,6 @@ pub trait CoinReadApi {
     ) -> RpcResult<CoinPage>;
 
     /// Return the total coin balance for one coin type, owned by the address owner.
-    #[rustfmt::skip]
-    #[method(name = "getBalance")]
     async fn get_balance(
         &self,
         // the owner's IOTA address
@@ -49,6 +41,60 @@ pub trait CoinReadApi {
         // optional type names for the coin (e.g., 0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC), default to 0x2::iota::IOTA if not specified.
         coin_type: Option<String>,
     ) -> RpcResult<Balance>;
+}
+
+impl CoinReadApi for RpcClient {
+    async fn get_coins(
+        &self,
+        // the owner's IOTA address
+        owner: IotaAddress,
+        // optional type name for the coin (e.g., 0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC), default to 0x2::iota::IOTA if not specified.
+        coin_type: Option<String>,
+        // optional paging cursor
+        cursor: Option<ObjectID>,
+        // maximum number of items per page
+        limit: Option<usize>,
+    ) -> RpcResult<CoinPage> {
+        let request_body = json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "iotax_getCoins",
+            "params": [
+                json!(owner.to_string()),
+                json!(coin_type.unwrap_or_else(|| "0x2::iota::IOTA".to_string())),
+                json!(cursor),
+                json!(limit)
+            ]
+        });
+
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
+
+        let body: RawRpcResponse<CoinPage> = response.json().await?;
+        body.into_result()
+    }
+
+    async fn get_balance(
+        &self,
+        // the owner's IOTA address
+        owner: IotaAddress,
+        // optional type names for the coin (e.g., 0x168da5bf1f48dafc111b0a488fa454aca95e0b5e::usdc::USDC), default to 0x2::iota::IOTA if not specified.
+        coin_type: Option<String>,
+    ) -> RpcResult<Balance> {
+        let request_body = json!({
+            "jsonrpc": "2.0",
+            "id": 1,
+            "method": "iotax_getBalance",
+            "params": [
+                owner.to_string(),
+                coin_type.unwrap_or_else(|| "0x2::iota::IOTA".to_string())
+            ]
+        });
+
+        let response = self.client.post(self.url.clone()).json(&request_body).send().await?;
+
+        let body: RawRpcResponse<Balance> = response.json().await?;
+        body.into_result()
+    }
 }
 
 /// `next_cursor` points to the last item in the page;

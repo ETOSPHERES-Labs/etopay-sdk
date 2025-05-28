@@ -1,11 +1,39 @@
-#[cfg(not(target_arch = "wasm32"))]
-use jsonrpsee::http_client::HttpClient as Client;
+#[cfg(not(target_family = "wasm"))]
+use std::time::Duration;
 
-#[cfg(target_arch = "wasm32")]
-use jsonrpsee::wasm_client::Client;
+use reqwest::{
+    Client,
+    header::{HeaderMap, HeaderValue},
+};
+use serde::Deserialize;
 
 pub struct RpcClient {
-    client: Client,
+    pub client: Client,
+    pub url: String,
+}
+
+pub type RpcResult<T> = Result<T, RebasedError>;
+
+#[derive(Deserialize, Debug)]
+#[serde(untagged)]
+pub enum RawRpcResponse<T> {
+    Success { result: T },
+    Error { error: RpcError },
+}
+
+#[derive(Deserialize, Debug)]
+pub struct RpcError {
+    pub code: i32,
+    pub message: String,
+}
+
+impl<T> RawRpcResponse<T> {
+    pub fn into_result(self) -> RpcResult<T> {
+        match self {
+            RawRpcResponse::Success { result } => Ok(result),
+            RawRpcResponse::Error { error } => Err(RebasedError::RpcCodeAndMessage(error.code, error.message)),
+        }
+    }
 }
 
 impl std::ops::Deref for RpcClient {
@@ -16,52 +44,44 @@ impl std::ops::Deref for RpcClient {
     }
 }
 
-#[cfg(not(target_arch = "wasm32"))]
-mod non_wasm {
-    use jsonrpsee::http_client::{HeaderMap, HeaderValue, HttpClientBuilder};
-
-    const CLIENT_SDK_TYPE_HEADER: &str = "client-sdk-type";
-    /// The version number of the SDK itself. This can be different from the API
-    /// version.
-    const CLIENT_SDK_VERSION_HEADER: &str = "client-sdk-version";
-    /// The RPC API version that the client is targeting. Different SDK versions may
-    /// target the same API version.
-    const CLIENT_TARGET_API_VERSION_HEADER: &str = "client-target-api-version";
-
-    impl super::RpcClient {
-        pub async fn new(url: &str) -> Result<Self, super::super::RebasedError> {
-            let client_version = "0.13.0-alpha"; // TODO: how to specify this?
-
-            let mut headers = HeaderMap::new();
-            headers.insert(
-                CLIENT_TARGET_API_VERSION_HEADER,
-                // in rust, the client version is the same as the target api version
-                HeaderValue::from_static(client_version),
-            );
-            headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
-            headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
-
-            let http_builder = HttpClientBuilder::default()
-                .max_request_size(2 << 30)
-                .set_headers(headers);
-            // .request_timeout(self.request_timeout);
-
-            Ok(Self {
-                client: http_builder.build(url)?,
-            })
-        }
-    }
+#[derive(Deserialize)]
+pub struct RpcResponse<T> {
+    pub result: T,
 }
 
-#[cfg(target_arch = "wasm32")]
+use super::RebasedError;
+
+const CLIENT_SDK_TYPE_HEADER: &str = "client-sdk-type";
+/// The version number of the SDK itself. This can be different from the API
+/// version.
+const CLIENT_SDK_VERSION_HEADER: &str = "client-sdk-version";
+/// The RPC API version that the client is targeting. Different SDK versions may
+/// target the same API version.
+const CLIENT_TARGET_API_VERSION_HEADER: &str = "client-target-api-version";
+
 impl RpcClient {
-    pub async fn new(url: &str) -> Result<Self, super::RebasedError> {
-        use jsonrpsee::wasm_client::WasmClientBuilder;
-        let http_builder = WasmClientBuilder::default();
-        // .request_timeout(self.request_timeout);
+    pub async fn new(url: &str) -> Result<Self, RebasedError> {
+        let client_version = "0.13.0-alpha"; // TODO: how to specify this?
+
+        let mut headers = HeaderMap::new();
+        headers.insert(
+            CLIENT_TARGET_API_VERSION_HEADER,
+            // in rust, the client version is the same as the target api version
+            HeaderValue::from_static(client_version),
+        );
+        headers.insert(CLIENT_SDK_VERSION_HEADER, HeaderValue::from_static(client_version));
+        headers.insert(CLIENT_SDK_TYPE_HEADER, HeaderValue::from_static("rust"));
+
+        #[cfg(not(target_family = "wasm"))]
+        let http_builder = Client::builder()
+            .default_headers(headers)
+            .timeout(Duration::from_secs(10));
+        #[cfg(target_family = "wasm")]
+        let http_builder = Client::builder().default_headers(headers);
 
         Ok(Self {
-            client: http_builder.build(url).await?,
+            client: http_builder.build()?,
+            url: url.to_string(),
         })
     }
 }

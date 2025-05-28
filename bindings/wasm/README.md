@@ -45,13 +45,18 @@ In case you want to run all the examples after installing the dependencies and b
 2. Run: `make run_wasm_node_examples`. This will execute the `run_all_examples.sh` script on `bindings/wasm/examples`, which runs all the examples.
 
 ### Executing the webapp example
-
 1. Follow step 1 above to make sure you have a `.env` file in the root with a valid access token for either `satoshi`, `archiveme` or `alice` depending on example which you want to run.(access token can be obtained with the `hello.http` API request in `docs/api-requests/hello.http`).
-2. Go into the webapp folder and install the dependencies:
+2. Build
+```
+wasm-pack build --target bundler
+# or faster
+wasm-pack build --target bundler --no-opt
+```
+3. Go into the webapp folder and install the dependencies:
   ```bash
   cd examples/webapp
   pnpm install
   ```
-3. Start the development server with `pnpm start`. This will start a server on port `8080`, which you can forward to the host (if vscode does not do this automatically)
+4. Start the development server with `pnpm start`. This will start a server on port `8080`, which you can forward to the host (if vscode does not do this automatically)
    by going to the `PORTS` tab in the vscode terminal and adding port `8080`. Then you can view the webapp at `http://localhost:8080/`. Open the developer console (F12)
    to view the sdk logs. Click the button of the example you want to run.
