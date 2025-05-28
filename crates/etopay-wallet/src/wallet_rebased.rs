@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::ops::{Add, Sub};
 
 use super::error::{Result, WalletError};
@@ -7,8 +8,11 @@ use super::rebased::{
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
-use crate::rebased::{CheckpointId, ErrorCode, IotaTransactionBlockEffects, Owner, TransactionKind};
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
+use crate::rebased::{
+    CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
+    IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
+};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -217,7 +221,57 @@ impl WalletUser for WalletImplIotaRebased {
         Ok(poll_response.digest.to_string())
     }
 
-    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList> {
+    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<Vec<String>> {
+        // use the indexer api to query for all incoming and outgoing transactions:
+
+        let addr = self.keystore.addresses()[0];
+
+        log::info!("Querying transactions for address: {}", addr);
+
+        let txs_from = self
+            .client
+            .query_transaction_blocks(
+                IotaTransactionBlockResponseQuery {
+                    filter: Some(TransactionFilter::FromAddress(addr)),
+
+                    // includes only the digest
+                    options: Some(IotaTransactionBlockResponseOptions::default()),
+                },
+                None,       // No cursor (start from beginning)
+                Some(25),   // No limit (MAX limit)
+                Some(true), // descending, newest first
+            )
+            .await?;
+
+        let txs_to = self
+            .client
+            .query_transaction_blocks(
+                IotaTransactionBlockResponseQuery {
+                    filter: Some(TransactionFilter::ToAddress(addr)),
+
+                    // includes only the digest
+                    options: Some(IotaTransactionBlockResponseOptions::default()),
+                },
+                None,       // No cursor (start from beginning)
+                Some(25),   // No limit (MAX limit)
+                Some(true), // descending, newest first
+            )
+            .await?;
+
+        // merge them all into a single list, drop duplicates
+        let transaction_digests: HashSet<TransactionDigest> = txs_from
+            .data
+            .into_iter()
+            .chain(txs_to.data.into_iter())
+            .map(|t| t.digest)
+            .collect();
+
+        log::info!("Digests: {:#?}", transaction_digests);
+
+        // convert into a list, sort by hash to make the list stable (not sorted by time!)
+        // TODO: return the list of hashes and merge it in the outer logic? (tx info can then be
+        // queried using get_wallet_tx below for any new transactions)
+
         Err(WalletError::WalletFeatureNotImplemented)
     }
 

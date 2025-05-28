@@ -508,52 +508,53 @@ impl Sdk {
         let wallet = self.try_get_active_user_wallet(pin).await?;
 
         // TODO: we need to support this better for all networks with a unified logic and interface
-        let tx_list = match network.protocol {
-            crate::types::networks::ApiProtocol::Evm { .. }
-            | crate::types::networks::ApiProtocol::IotaRebased { .. } => {
-                // We retrieve the transaction list from the wallet,
-                // then synchronize selected transactions (by fetching their current status from the network),
-                // and finally, save the refreshed list back to the wallet
-                let mut wallet_transactions = user.wallet_transactions;
+        let tx_list = {
+            // We retrieve the transaction list from the wallet,
+            // then synchronize selected transactions (by fetching their current status from the network),
+            // and finally, save the refreshed list back to the wallet
+            let mut wallet_transactions = user.wallet_transactions;
 
-                for transaction in wallet_transactions
-                    .iter_mut()
-                    .filter(|tx| tx.network_key == network.key)
-                    .skip(start)
-                    .take(limit)
-                {
-                    // We don't need to query the network for the state of this transaction,
-                    // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
-                    if transaction.status == WalletTxStatus::Confirmed {
-                        continue;
-                    }
+            // TODO: somehow we should call get_wallet_tx_list to merge the responses with any
+            // existing transactions (if there are new ones, we need to get their details and
+            // insert into the local list)
 
-                    let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_hash).await;
-                    match synchronized_transaction {
-                        Ok(stx) => *transaction = stx,
-                        Err(e) => {
-                            // On error, return historical (cached) transaction data
-                            log::debug!(
-                                "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
-                                transaction.clone(),
-                                e
-                            );
-                        }
-                    }
+            let _fetched_list = wallet.get_wallet_tx_list(start, limit).await?;
+
+            for transaction in wallet_transactions
+                .iter_mut()
+                .filter(|tx| tx.network_key == network.key)
+                .skip(start)
+                .take(limit)
+            {
+                // We don't need to query the network for the state of this transaction,
+                // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
+                if transaction.status == WalletTxStatus::Confirmed {
+                    continue;
                 }
 
-                let Some(repo) = &mut self.repo else {
-                    return Err(crate::Error::UserRepoNotInitialized);
-                };
-
-                let _ = repo.set_wallet_transactions(&user.username, wallet_transactions.clone());
-
-                WalletTxInfoList {
-                    transactions: wallet_transactions,
+                let synchronized_transaction = wallet.get_wallet_tx(&transaction.transaction_hash).await;
+                match synchronized_transaction {
+                    Ok(stx) => *transaction = stx,
+                    Err(e) => {
+                        // On error, return historical (cached) transaction data
+                        log::debug!(
+                            "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
+                            transaction.clone(),
+                            e
+                        );
+                    }
                 }
             }
-            crate::types::networks::ApiProtocol::EvmERC20 { .. } => wallet.get_wallet_tx_list(start, limit).await?,
-            crate::types::networks::ApiProtocol::Stardust {} => wallet.get_wallet_tx_list(start, limit).await?,
+
+            let Some(repo) = &mut self.repo else {
+                return Err(crate::Error::UserRepoNotInitialized);
+            };
+
+            let _ = repo.set_wallet_transactions(&user.username, wallet_transactions.clone());
+
+            WalletTxInfoList {
+                transactions: wallet_transactions,
+            }
         };
 
         let tx_list_filtered = tx_list
