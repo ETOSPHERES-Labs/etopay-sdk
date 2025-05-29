@@ -11,7 +11,7 @@ use crate::{
     wallet::error::{ErrorKind, WalletError},
 };
 use etopay_wallet::{
-    MnemonicDerivationOption,
+    MnemonicDerivationOption, sort_by_date,
     types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus},
 };
 
@@ -539,7 +539,11 @@ impl Sdk {
                 log::debug!("Digests: {:#?}", transaction_hashes);
                 for hash in transaction_hashes {
                     // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
-                    if wallet_transactions.iter().any(|t| t.transaction_hash == hash) {
+                    // check both the transaction hash and the network key, as hash collisions can occur across different blockchain networks
+                    if wallet_transactions
+                        .iter()
+                        .any(|t| t.transaction_hash == hash && t.network_key == network.key)
+                    {
                         continue;
                     }
 
@@ -560,7 +564,8 @@ impl Sdk {
             Err(e) => return Err(e.into()),
         }
 
-        // TODO: should we sort the transactions first?
+        // sort wallet transactions
+        sort_by_date(&mut wallet_transactions);
 
         for transaction in wallet_transactions
             .iter_mut()
@@ -1577,5 +1582,98 @@ mod tests {
 
         // Assert
         assert!(response.is_ok())
+    }
+
+    #[tokio::test]
+    async fn test_get_wallet_tx_list_should_sort_wallet_transactions() {
+        // Arrange
+        let (_srv, config, _cleanup) = set_config().await;
+        let mut sdk = Sdk::new(config).unwrap();
+
+        let tx_3 = WalletTxInfo {
+            date: "2025-05-29T08:37:15.183+00:00".to_string(),
+            block_number_hash: None,
+            transaction_hash: "3".to_string(),
+            receiver: String::new(),
+            sender: String::new(),
+            amount: CryptoAmount::from(1),
+            network_key: "ETH".to_string(),
+            status: WalletTxStatus::Confirmed,
+            explorer_url: None,
+        };
+        let tx_1 = WalletTxInfo {
+            date: "2025-05-29T08:37:13.183+00:00".to_string(),
+            block_number_hash: None,
+            transaction_hash: "1".to_string(),
+            receiver: String::new(),
+            sender: String::new(),
+            amount: CryptoAmount::from(1),
+            network_key: "ETH".to_string(),
+            status: WalletTxStatus::Confirmed,
+            explorer_url: None,
+        };
+
+        let tx_2 = WalletTxInfo {
+            date: "2025-05-29T08:37:14.183+00:00".to_string(),
+            block_number_hash: None,
+            transaction_hash: "2".to_string(),
+            receiver: String::new(),
+            sender: String::new(),
+            amount: CryptoAmount::from(1),
+            network_key: "ETH".to_string(),
+            status: WalletTxStatus::Confirmed,
+            explorer_url: None,
+        };
+
+        let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];
+        let expected = vec![tx_1, tx_2, tx_3];
+
+        let mut mock_user_repo = MockUserRepo::new();
+        mock_user_repo.expect_get().returning(move |_| {
+            Ok(UserEntity {
+                user_id: None,
+                username: USERNAME.to_string(),
+                encrypted_password: Some(ENCRYPTED_WALLET_PASSWORD.clone()),
+                salt: SALT.into(),
+                is_kyc_verified: false,
+                kyc_type: KycType::Undefined,
+                viviswap_state: None,
+                local_share: None,
+                wallet_transactions: wallet_transactions.clone(),
+            })
+        });
+
+        mock_user_repo
+            .expect_set_wallet_transactions()
+            .once()
+            .returning(|_, _| Ok(()));
+
+        sdk.repo = Some(Box::new(mock_user_repo));
+
+        let mut mock_wallet_manager = MockWalletManager::new();
+        mock_wallet_manager.expect_try_get().returning(move |_, _, _, _, _, _| {
+            let mut mock_wallet_user = MockWalletUser::new();
+            mock_wallet_user
+                .expect_get_wallet_tx_list()
+                .once()
+                .returning(|_, _| Ok(vec![]));
+            mock_wallet_user.expect_get_wallet_tx().never();
+            Ok(WalletBorrow::from(mock_wallet_user))
+        });
+
+        sdk.active_user = Some(crate::types::users::ActiveUser {
+            username: USERNAME.into(),
+            wallet_manager: Box::new(mock_wallet_manager),
+            mnemonic_derivation_options: Default::default(),
+        });
+
+        sdk.set_networks(example_api_networks());
+        sdk.set_network(ETH_NETWORK_KEY.to_string()).await.unwrap();
+
+        // Act
+        let response = sdk.get_wallet_tx_list(&PIN, 0, 5).await;
+
+        // Assert
+        assert_eq!(expected, response.unwrap().transactions)
     }
 }
