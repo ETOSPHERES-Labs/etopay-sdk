@@ -21,12 +21,7 @@ async fn main() {
     )
     .await
     .unwrap();
-    // sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
-    //     .await
-    //     .unwrap();
-
-    let custom_mnemonic = "execute best inhale impulse ripple element oval visual language shaft service token venture glove possible tumble erode bless ice feature dynamic poem daring tilt";
-    sdk.create_wallet_from_existing_mnemonic(&user.pin, &custom_mnemonic)
+    sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
         .await
         .unwrap();
 
