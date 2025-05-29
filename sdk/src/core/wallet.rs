@@ -1626,7 +1626,7 @@ mod tests {
         };
 
         let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];
-        let expected = vec![tx_1, tx_2, tx_3];
+        let expected = vec![tx_3, tx_2, tx_1];
 
         let mut mock_user_repo = MockUserRepo::new();
         mock_user_repo.expect_get().returning(move |_| {

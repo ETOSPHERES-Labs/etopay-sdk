@@ -9,7 +9,7 @@ pub fn sort_by_date(transactions: &mut [WalletTxInfo]) {
         let b_date = DateTime::parse_from_rfc3339(&b.date);
 
         match (a_date, b_date) {
-            (Ok(a_dt), Ok(b_dt)) => a_dt.cmp(&b_dt),
+            (Ok(a_dt), Ok(b_dt)) => b_dt.cmp(&a_dt),
             // fallback if parsing fails: put unparsable dates at the end
             (Ok(_), Err(_)) => Ordering::Less,
             (Err(_), Ok(_)) => Ordering::Greater,
@@ -50,11 +50,11 @@ mod tests {
         ];
 
         let expected = vec![
-            mock_transaction("2025-05-29T08:37:12.183+00:00"),
-            mock_transaction("2025-05-29T08:37:13.183+00:00"),
-            mock_transaction("2025-05-29T08:37:14.183+00:00"),
-            mock_transaction("2025-05-29T08:37:15.183+00:00"),
             mock_transaction("2025-05-29T08:37:16.183+00:00"),
+            mock_transaction("2025-05-29T08:37:15.183+00:00"),
+            mock_transaction("2025-05-29T08:37:14.183+00:00"),
+            mock_transaction("2025-05-29T08:37:13.183+00:00"),
+            mock_transaction("2025-05-29T08:37:12.183+00:00"),
         ];
 
         // When
@@ -75,8 +75,8 @@ mod tests {
         ];
 
         let expected = vec![
-            mock_transaction("2025-05-29T08:37:13.183+00:00"),
             mock_transaction("2025-05-29T08:37:14.183+00:00"),
+            mock_transaction("2025-05-29T08:37:13.183+00:00"),
             mock_transaction("2026-05-29"),
             mock_transaction("invalid date"),
         ];
