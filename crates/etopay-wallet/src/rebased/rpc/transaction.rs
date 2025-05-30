@@ -5,7 +5,9 @@
 
 use super::super::bigint::BigInt;
 use super::super::encoding::Base64;
-use super::super::{BalanceChange, CheckpointSequenceNumber, IotaTransactionBlockEffects, TransactionDigest};
+use super::super::{
+    BalanceChange, CheckpointSequenceNumber, IotaTransactionBlock, IotaTransactionBlockEffects, TransactionDigest,
+};
 use super::ExecuteTransactionRequestType;
 use serde::{Deserialize, Serialize};
 use serde_with::serde_as;
@@ -16,8 +18,8 @@ use serde_with::serde_as;
 pub struct IotaTransactionBlockResponse {
     pub digest: TransactionDigest,
     /// Transaction input data
-    // #[serde(skip_serializing_if = "Option::is_none")]
-    // pub transaction: Option<IotaTransactionBlock>,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub transaction: Option<IotaTransactionBlock>,
     /// BCS encoded [SenderSignedData] that includes input object references
     /// returns empty array if `show_raw_transaction` is false
     #[serde_as(as = "Base64")]

@@ -10,7 +10,7 @@ use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
 use crate::rebased::{
     CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
-    IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
+    IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind, TransactionReader,
 };
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxStatus};
 use async_trait::async_trait;
@@ -86,6 +86,29 @@ fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmo
     let Some(mut result_decimal) = Decimal::from_u128(value) else {
         return Err(WalletError::ConversionError(format!(
             "could not convert u128 to Decimal: {value:?}"
+        )));
+    };
+
+    // directly set the decimals
+    result_decimal
+        .set_scale(decimals)
+        .map_err(|e| WalletError::ConversionError(format!("could not set scale to decimals: {e:?}")))?;
+
+    result_decimal.normalize_assign(); // remove trailing zeros
+
+    CryptoAmount::try_from(result_decimal).map_err(|e| {
+        WalletError::ConversionError(format!(
+            "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
+        ))
+    })
+}
+
+/// Convert a [`u64`] to [`CryptoAmount`] while taking the decimals into account.
+#[allow(clippy::result_large_err)]
+fn convert_u64_to_crypto_amount(value: u64, decimals: u32) -> Result<CryptoAmount> {
+    let Some(mut result_decimal) = Decimal::from_u64(value) else {
+        return Err(WalletError::ConversionError(format!(
+            "could not convert u64 to Decimal: {value:?}"
         )));
     };
 
@@ -311,7 +334,9 @@ impl WalletUser for WalletImplIotaRebased {
             None
         };
 
-        let status = match tx.effects.map(|effects| match effects {
+        let tx_reader = TransactionReader::new(&tx);
+
+        let status = match tx.effects.clone().map(|effects| match effects {
             IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
         }) {
             Some(true) => WalletTxStatus::Confirmed,
@@ -351,8 +376,19 @@ impl WalletUser for WalletImplIotaRebased {
             }
         };
 
-        // 2) Turn amount into f64
-        let amount = convert_u128_to_crypto_amount(raw_amount, self.decimals)?;
+        let amount = convert_u64_to_crypto_amount(tx_reader.amount(), self.decimals)?;
+        let gas = tx_reader.gas();
+        let gas_sign = tx_reader.sgn(gas);
+        let gas = convert_u128_to_crypto_amount(gas.unsigned_abs(), self.decimals)?;
+
+        println!(">>>>>>>>>>>>>>>");
+        println!(
+            "tx_hash: {:?}, \tamount: {:?}, \tgas: {:?}, \tgas_sign: {:?}",
+            tx_hash.to_string(),
+            amount,
+            gas,
+            gas_sign
+        );
 
         let receiver = receiver
             .map(|owner| match owner {
