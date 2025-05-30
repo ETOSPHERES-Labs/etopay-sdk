@@ -409,9 +409,11 @@ impl WalletUser for WalletImplIotaRebased {
         let status = tx_formatter.status();
         let date = tx_formatter.date();
 
-        // iota wallet style output
+        // `IOTA wallet style` output:
+        //  Send:    from 0x000   -1000000 to 0x000
+        //  Receive: from 0x888 1234567891 to 0x000
         println!(
-            "{}: from {} {}{} to {}",
+            "{}: \tfrom {} \t{}{} to {}",
             if amount_with_sgn.sgn > 0 {
                 String::from("Receive")
             } else {
