@@ -1,5 +1,5 @@
 use super::error::Result;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo};
 use async_trait::async_trait;
 use std::fmt::Debug;
 
@@ -80,7 +80,7 @@ pub trait WalletUser: Debug {
     /// # Errors
     ///
     /// This function can return an error if it cannot retrieve the list of wallet transactions.
-    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList>;
+    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<Vec<String>>;
 
     /// Get detailed report of a particular transaction in the history
     ///

@@ -1,3 +1,4 @@
+use std::collections::HashSet;
 use std::ops::{Add, Sub};
 
 use super::error::{Result, WalletError};
@@ -7,11 +8,14 @@ use super::rebased::{
 };
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
-use crate::rebased::{CheckpointId, ErrorCode, IotaTransactionBlockEffects, Owner, TransactionKind};
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
+use crate::rebased::{
+    CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
+    IotaTransactionBlockResponseQuery, TransactionDigest, TransactionFilter, TransactionFormatter, TransactionKind,
+    TransactionReader,
+};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo};
 use async_trait::async_trait;
 use bip39::Mnemonic;
-use chrono::{TimeZone, Utc};
 use rust_decimal::Decimal;
 use rust_decimal::prelude::FromPrimitive;
 
@@ -217,8 +221,55 @@ impl WalletUser for WalletImplIotaRebased {
         Ok(poll_response.digest.to_string())
     }
 
-    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<WalletTxInfoList> {
-        Err(WalletError::WalletFeatureNotImplemented)
+    async fn get_wallet_tx_list(&self, start: usize, limit: usize) -> Result<Vec<String>> {
+        // use the indexer api to query for all incoming and outgoing transactions:
+
+        let addr = self.keystore.addresses()[0];
+
+        log::info!("Querying transactions for address: {}", addr);
+
+        let txs_from = self
+            .client
+            .query_transaction_blocks(
+                IotaTransactionBlockResponseQuery {
+                    filter: Some(TransactionFilter::FromAddress(addr)),
+
+                    // includes only the digest
+                    options: Some(IotaTransactionBlockResponseOptions::default()),
+                },
+                None,       // No cursor (start from beginning)
+                Some(25),   // No limit (MAX limit)
+                Some(true), // descending, newest first
+            )
+            .await?;
+
+        let txs_to = self
+            .client
+            .query_transaction_blocks(
+                IotaTransactionBlockResponseQuery {
+                    filter: Some(TransactionFilter::ToAddress(addr)),
+
+                    // includes only the digest
+                    options: Some(IotaTransactionBlockResponseOptions::default()),
+                },
+                None,       // No cursor (start from beginning)
+                Some(25),   // No limit (MAX limit)
+                Some(true), // descending, newest first
+            )
+            .await?;
+
+        // merge them all into a single list, drop duplicates
+        let transaction_digests: HashSet<TransactionDigest> = txs_from
+            .data
+            .into_iter()
+            .chain(txs_to.data.into_iter())
+            .map(|t| t.digest)
+            .collect();
+
+        Ok(transaction_digests
+            .iter()
+            .map(|d| d.to_string())
+            .collect::<Vec<String>>())
     }
 
     async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfo> {
@@ -240,12 +291,12 @@ impl WalletUser for WalletImplIotaRebased {
 
         // log::info!("Transaction Details:\n{tx:#?}");
 
-        // The timestamp is in milliseconds but we make it into a human-readable format
-        let date = tx
-            .timestamp_ms
-            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single())
-            .map(|dt| dt.to_rfc3339())
-            .unwrap_or_default(); // default is going to be an empty String here
+        // // The timestamp is in milliseconds but we make it into a human-readable format
+        // let date = tx
+        //     .timestamp_ms
+        //     .and_then(|n| Utc.timestamp_millis_opt(n as i64).single())
+        //     .map(|dt| dt.to_rfc3339())
+        //     .unwrap_or_default(); // default is going to be an empty String here
 
         // For block id we use the checkpoint number which shows when the tx was finalized.
         let block_number_hash = if let Some(checkpoint_number) = tx.checkpoint {
@@ -260,69 +311,130 @@ impl WalletUser for WalletImplIotaRebased {
             None
         };
 
-        let status = match tx.effects.map(|effects| match effects {
-            IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
-        }) {
-            Some(true) => WalletTxStatus::Confirmed,
-            Some(false) => WalletTxStatus::Conflicting,
-            None => WalletTxStatus::Pending,
-        };
+        // let status = match tx.effects.clone().map(|effects| match effects {
+        //     IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
+        // }) {
+        //     Some(true) => WalletTxStatus::Confirmed,
+        //     Some(false) => WalletTxStatus::Conflicting,
+        //     None => WalletTxStatus::Pending,
+        // };
 
-        // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses
-        let (sender, receiver, raw_amount, raw_fee) = match tx.balance_changes.as_ref() {
-            Some(changes) => {
-                // a) Find the negative change (spent = amount + fee)
-                if let Some(neg) = changes.iter().find(|bc| bc.amount < 0) {
-                    let sender = Some(neg.owner);
-                    // convert to positive u128
-                    let spent = (-neg.amount) as u128;
+        // // 1) Pull out raw u128s for amount and fee, plus sender / receiver addresses
+        // let (sender, receiver, raw_amount, raw_fee) = match tx.balance_changes.as_ref() {
+        //     Some(changes) => {
+        //         // a) Find the negative change (spent = amount + fee)
+        //         if let Some(neg) = changes.iter().find(|bc| bc.amount < 0) {
+        //             let sender = Some(neg.owner);
+        //             // convert to positive u128
+        //             let spent = (-neg.amount) as u128;
 
-                    // b) See if there’s a positive change (external send)
-                    if let Some(pos) = changes.iter().find(|bc| bc.amount > 0) {
-                        let receiver = Some(pos.owner);
-                        let amount = pos.amount as u128;
-                        let fee = spent.saturating_sub(amount);
-                        (sender, receiver, amount, fee)
-                    } else {
-                        // no positive entry → self-send
-                        // amount = 0, fee = everything they “spent”
-                        // sender and receiver is the same
-                        (sender, sender, 0, spent)
-                    }
-                } else {
-                    // no negative entry → malformed or zero-change tx
-                    (None, None, 0, 0)
-                }
-            }
-            None => {
-                // no balance_changes at all
-                (None, None, 0, 0)
-            }
-        };
+        //             // b) See if there’s a positive change (external send)
+        //             if let Some(pos) = changes.iter().find(|bc| bc.amount > 0) {
+        //                 let receiver = Some(pos.owner);
+        //                 let amount = pos.amount as u128;
+        //                 let fee = spent.saturating_sub(amount);
+        //                 (sender, receiver, amount, fee)
+        //             } else {
+        //                 // no positive entry → self-send
+        //                 // amount = 0, fee = everything they “spent”
+        //                 // sender and receiver is the same
+        //                 (sender, sender, 0, spent)
+        //             }
+        //         } else {
+        //             // no negative entry → malformed or zero-change tx
+        //             (None, None, 0, 0)
+        //         }
+        //     }
+        //     None => {
+        //         // no balance_changes at all
+        //         (None, None, 0, 0)
+        //     }
+        // };
 
-        // 2) Turn amount into f64
-        let amount = convert_u128_to_crypto_amount(raw_amount, self.decimals)?;
+        // gas + gas sgn
+        // let gas = tx_reader.gas();
+        // let gas_sgn = tx_reader.sgn(gas);
+        // let gas = convert_u128_to_crypto_amount(gas.unsigned_abs(), self.decimals)?;
 
-        let receiver = receiver
-            .map(|owner| match owner {
-                Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
-                _ => Err(WalletError::WalletFeatureNotImplemented),
-            })
-            .unwrap_or(Ok(String::default()))?;
+        // // amount + amount sgn
+        // let active_address = self.keystore.addresses()[0];
+        // let is_sender = tx_reader.sender() == active_address;
+        // let mut amount = convert_u64_to_crypto_amount(tx_reader.amount(), self.decimals)?;
+        // let mut amount_sgn = if is_sender { 1 } else { -1 };
 
-        let sender = sender
-            .map(|owner| match owner {
-                Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
-                _ => Err(WalletError::WalletFeatureNotImplemented),
-            })
-            .unwrap_or(Ok(String::default()))?;
+        // // only gas
+        // if sender == receiver {
+        //     amount = gas;
+        //     amount_sgn = gas_sgn;
+        // }
+
+        // if is_sender {
+        //     println!("Send | amount: {}*{:?}", amount_sgn, amount);
+        // } else {
+        //     println!("Receive |amount: {}*{:?}", amount_sgn, amount);
+        // }
+
+        // const isSender = txn.transaction?.data.sender === activeAddress;
+        // if receiver == sender then amount = ${gas_sign} gas
+        // println!(">>>>>>>>>>>>>>>");
+        // println!(
+        //     "tx_hash: {:?}, \tamount: {:?}, \tgas: {:?}, \tgas_sgn: {:?}",
+        //     tx_hash.to_string(),
+        //     amount,
+        //     gas,
+        //     gas_sgn
+        // );
+
+        // let receiver = receiver
+        //     .map(|owner| match owner {
+        //         Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
+        //         _ => Err(WalletError::WalletFeatureNotImplemented),
+        //     })
+        //     .unwrap_or(Ok(String::default()))?;
+
+        // let sender = sender
+        //     .map(|owner| match owner {
+        //         Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
+        //         _ => Err(WalletError::WalletFeatureNotImplemented),
+        //     })
+        //     .unwrap_or(Ok(String::default()))?;
+
+        let tx_reader = TransactionReader::new(&tx);
+        let tx_formatter = TransactionFormatter::new(&tx_reader, self.keystore.addresses()[0]);
+
+        let amount_with_sgn = tx_formatter.amount();
+        let amount = convert_u128_to_crypto_amount(amount_with_sgn.amount, self.decimals)?;
+        let receiver = tx_formatter.receiver();
+        let sender = tx_formatter.sender();
+        let status = tx_formatter.status();
+        let date = tx_formatter.date();
+
+        // `IOTA wallet style` output:
+        //  Send:    from 0x000   -1000000 to 0x000
+        //  Receive: from 0x888 1234567891 to 0x000
+        println!(
+            "{}: \tfrom {} \t{}{} to {}",
+            if amount_with_sgn.sgn > 0 {
+                String::from("Receive")
+            } else {
+                String::from("Send")
+            },
+            sender,
+            if amount_with_sgn.sgn > 0 {
+                String::from("")
+            } else {
+                String::from("-")
+            },
+            amount_with_sgn.amount,
+            receiver
+        );
 
         Ok(WalletTxInfo {
             date,
             block_number_hash,
             transaction_hash: tx_hash.to_string(),
-            sender,
-            receiver,
+            sender: sender.to_string(),
+            receiver: receiver.to_string(),
             amount,
             network_key: String::from("iota_rebased_testnet"),
             status,

@@ -6,6 +6,7 @@
 // From https://github.com/iotaledger/iota/blob/develop/crates/iota-types/src/transaction.rs
 
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 use super::super::RebasedError;
 
@@ -13,7 +14,7 @@ use super::super::encoding::Base64;
 use super::super::{Intent, IntentMessage};
 use super::{
     Envelope, GenericSignature, IntentScope, IotaAddress, Message, ObjectRef, ProgrammableTransaction, Signature,
-    SizeOneVec, TransactionDigest, default_hash,
+    SizeOneVec, TransactionDigest, TypeTag, default_hash,
 };
 
 #[derive(Clone, Debug, Eq, PartialEq, Serialize, Deserialize)]
@@ -266,5 +267,104 @@ pub enum TransactionKind {
 impl TransactionData {
     pub fn digest(&self) -> TransactionDigest {
         TransactionDigest::new(default_hash(self))
+    }
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[serde(rename = "TransactionBlock", rename_all = "camelCase")]
+pub struct IotaTransactionBlock {
+    pub data: IotaTransactionBlockData,
+    // pub tx_signatures: Vec<GenericSignature>,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[serde(rename = "TransactionBlockData", rename_all = "camelCase", tag = "messageVersion")]
+pub enum IotaTransactionBlockData {
+    V1(IotaTransactionBlockDataV1),
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq, Eq)]
+#[serde(rename = "TransactionBlockDataV1", rename_all = "camelCase")]
+pub struct IotaTransactionBlockDataV1 {
+    pub transaction: IotaTransactionBlockKind,
+    pub sender: IotaAddress,
+    // pub gas_data: IotaGasData,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+#[serde(rename = "TransactionBlockKind", tag = "kind")]
+pub enum IotaTransactionBlockKind {
+    // /// A system transaction used for initializing the initial state of the
+    // /// chain.
+    // Genesis(IotaGenesisTransaction),
+    // /// A system transaction marking the start of a series of transactions
+    // /// scheduled as part of a checkpoint
+    // ConsensusCommitPrologueV1(IotaConsensusCommitPrologueV1),
+    // /// A series of transactions where the results of one transaction can be
+    // /// used in future transactions
+    ProgrammableTransaction(IotaProgrammableTransactionBlock),
+    // /// A transaction which updates global authenticator state
+    // AuthenticatorStateUpdateV1(IotaAuthenticatorStateUpdateV1),
+    // /// A transaction which updates global randomness state
+    // RandomnessStateUpdate(IotaRandomnessStateUpdate),
+    // /// The transaction which occurs only at the end of the epoch
+    // EndOfEpochTransaction(IotaEndOfEpochTransaction),
+    // .. more transaction types go here
+}
+
+/// A series of commands where the results of one command can be used in future
+/// commands
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq, Eq)]
+pub struct IotaProgrammableTransactionBlock {
+    /// Input objects or primitive values
+    pub inputs: Vec<IotaCallArg>,
+    // #[serde(rename = "transactions")]
+    // /// The transactions to be executed sequentially. A failure in any
+    // /// transaction will result in the failure of the entire programmable
+    // /// transaction block.
+    // pub commands: Vec<IotaCommand>,
+}
+
+#[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[serde(tag = "type", rename_all = "camelCase")]
+pub enum IotaCallArg {
+    // // Needs to become an Object Ref or Object ID, depending on object type
+    // Object(IotaObjectArg),
+    // pure value, bcs encoded
+    Pure(IotaPureValue),
+}
+
+#[derive(Eq, PartialEq, Debug, Clone, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct IotaPureValue {
+    pub value_type: Option<TypeTag>,
+    // value: IotaJsonValue,
+    pub value: serde_json::Value,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+#[serde(tag = "value_type", content = "value", rename_all = "camelCase")]
+pub enum IotaPureDecodedValue {
+    U64(u64),
+    Address(String), // todo: IotaAddress
+}
+
+fn parse_u64_from_value(val: Value) -> Option<u64> {
+    match val {
+        Value::String(s) => s.parse::<u64>().ok(),
+        Value::Number(n) => n.as_u64(),
+        _ => None,
+    }
+}
+
+impl IotaPureValue {
+    pub fn decode(&self) -> Option<IotaPureDecodedValue> {
+        match self.value_type {
+            Some(TypeTag::U64) => parse_u64_from_value(self.value.clone()).map(IotaPureDecodedValue::U64),
+            Some(TypeTag::Address) => serde_json::from_value::<String>(self.value.clone())
+                .ok()
+                .map(IotaPureDecodedValue::Address),
+            _ => None,
+        }
     }
 }

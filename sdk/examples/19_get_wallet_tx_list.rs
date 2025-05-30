@@ -21,7 +21,9 @@ async fn main() {
     )
     .await
     .unwrap();
-    sdk.create_wallet_from_new_mnemonic(&user.pin).await.unwrap();
+    sdk.create_wallet_from_existing_mnemonic(&user.pin, &user.mnemonic)
+        .await
+        .unwrap();
 
     // Fetch networks from backend
     let _ = sdk.get_networks().await.unwrap();
