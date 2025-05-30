@@ -1,16 +1,11 @@
-use super::{IotaAddress, IotaCallArg, IotaPureDecodedValue, IotaTransactionBlockResponse};
+use chrono::{TimeZone, Utc};
 
-// v2
-// 1. amount -> or <- ? transaction.data.transaction.inputs.filter(valueType=u64).sum()
-// 2. -> or <-?
-//   if result.balanceChanges.len() == 1 then we sent to ouselves so ->
-//   if result.balanceChanges.len() > 1 then there were two parties
-//      sender is result.transaction.data.sender (is it our address?)
-//
-// 2 v2 => or we can add extra key "send/receive" and then we dont need to do this <-----------
-// 3. amount sign = -> ? - : +
-// 4. gas
-//   result.balanceChanges().iter().amount.sum()
+use crate::types::WalletTxStatus;
+
+use super::{
+    IotaAddress, IotaCallArg, IotaPureDecodedValue, IotaTransactionBlockEffects, IotaTransactionBlockResponse,
+};
+
 pub struct TransactionReader<'a> {
     tx: &'a IotaTransactionBlockResponse,
 }
@@ -56,15 +51,55 @@ impl<'a> TransactionReader<'a> {
     }
 
     pub fn gas(&self) -> i128 {
-        let Some(changes) = self.tx.balance_changes.clone() else {
+        let Some(changes) = self.tx.balance_changes.as_ref() else {
             return 0; // err
         };
 
-        changes.into_iter().map(|c| c.amount).sum()
+        changes.iter().map(|c| c.amount).sum()
     }
 
-    pub fn sgn(&self, x: i128) -> i8 {
-        if x >= 0 { 1 } else { -1 }
+    pub fn receiver(&self) -> IotaAddress {
+        let Some(changes) = self.tx.balance_changes.as_ref() else {
+            return IotaAddress::default(); // err
+        };
+
+        // balance_changes.len(1) => self to self
+        if changes.len() == 1 {
+            return self.sender();
+        }
+
+        // if len() > 1 ?
+        //      when amount < 0 -> sender
+        //      when amount > 0 -> receiver
+        //      = 0 ???
+        let o = changes.iter().find(|c| c.amount > 0).map(|c| c.owner);
+        let Some(owner) = o else {
+            return IotaAddress::default(); // err
+        };
+
+        match owner {
+            super::Owner::AddressOwner(iota_address) => iota_address,
+            _ => IotaAddress::default(),
+        }
+    }
+
+    pub fn status(&self) -> WalletTxStatus {
+        match self.tx.effects.as_ref().map(|effects| match effects {
+            IotaTransactionBlockEffects::V1(inner) => inner.status.is_ok(),
+        }) {
+            Some(true) => WalletTxStatus::Confirmed,
+            Some(false) => WalletTxStatus::Conflicting,
+            None => WalletTxStatus::Pending,
+        }
+    }
+
+    pub fn date(&self) -> String {
+        // The timestamp is in milliseconds but we make it into a human-readable format
+        self.tx
+            .timestamp_ms
+            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single())
+            .map(|dt| dt.to_rfc3339())
+            .unwrap_or_default() // default is going to be an empty String here
     }
 }
 

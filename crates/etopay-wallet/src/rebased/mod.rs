@@ -15,6 +15,7 @@ mod keystore;
 mod rpc;
 mod serde;
 mod traits;
+mod transaction_formatter;
 mod transaction_reader;
 mod types;
 
@@ -26,4 +27,5 @@ pub use types::*;
 pub use client::RpcClient;
 pub use error::RebasedError;
 pub use keystore::InMemKeystore;
+pub use transaction_formatter::*;
 pub use transaction_reader::*;
