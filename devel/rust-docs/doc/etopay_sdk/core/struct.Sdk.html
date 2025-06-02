@@ -27,7 +27,7 @@
 <p>Returns a <code>Result</code> containing <code>()</code> if successful, or a <a href="../error/enum.Error.html" title="enum etopay_sdk::error::Error"><code>crate::Error</code></a> if an error occurs.</p>
 <h5 id="returns-2"><a class="doc-anchor" href="#returns-2">§</a>Returns</h5>
 <p>Returns <code>Ok(())</code> if the case status is updated successfully.</p>
-</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-2" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#19-402">Source</a><a href="#impl-Sdk-2" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#37-74">Source</a><h4 class="code-header">pub async fn <a href="#method.create_purchase_request" class="fn">create_purchase_request</a>(
+</div></details></div></details><details class="toggle implementors-toggle" open><summary><section id="impl-Sdk-2" class="impl"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#19-387">Source</a><a href="#impl-Sdk-2" class="anchor">§</a><h3 class="code-header">impl <a class="struct" href="struct.Sdk.html" title="struct etopay_sdk::core::Sdk">Sdk</a></h3></section></summary><div class="impl-items"><details class="toggle method-toggle" open><summary><section id="method.create_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#37-74">Source</a><h4 class="code-header">pub async fn <a href="#method.create_purchase_request" class="fn">create_purchase_request</a>(
     &amp;self,
     receiver: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
     amount: <a class="struct" href="../types/struct.CryptoAmount.html" title="struct etopay_sdk::types::CryptoAmount">CryptoAmount</a>,
@@ -59,7 +59,7 @@
 <p>The purchase details.</p>
 <h5 id="errors-4"><a class="doc-anchor" href="#errors-4">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, or if there is an error getting the transaction details.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.confirm_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#127-213">Source</a><h4 class="code-header">pub async fn <a href="#method.confirm_purchase_request" class="fn">confirm_purchase_request</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.confirm_purchase_request" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#127-199">Source</a><h4 class="code-header">pub async fn <a href="#method.confirm_purchase_request" class="fn">confirm_purchase_request</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     purchase_id: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -74,7 +74,7 @@
 <h5 id="errors-5"><a class="doc-anchor" href="#errors-5">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 if there is an error getting the transaction details, or if there is an error committing the transaction.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.send_amount" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#232-291">Source</a><h4 class="code-header">pub async fn <a href="#method.send_amount" class="fn">send_amount</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.send_amount" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#218-276">Source</a><h4 class="code-header">pub async fn <a href="#method.send_amount" class="fn">send_amount</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     address: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -93,7 +93,7 @@ if there is an error getting the transaction details, or if there is an error co
 <h5 id="errors-6"><a class="doc-anchor" href="#errors-6">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 or if there is an error sending the amount.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.estimate_gas" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#310-353">Source</a><h4 class="code-header">pub async fn <a href="#method.estimate_gas" class="fn">estimate_gas</a>(
+</div></details><details class="toggle method-toggle" open><summary><section id="method.estimate_gas" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#295-338">Source</a><h4 class="code-header">pub async fn <a href="#method.estimate_gas" class="fn">estimate_gas</a>(
     &amp;mut self,
     pin: &amp;<a class="struct" href="../types/newtypes/struct.EncryptionPin.html" title="struct etopay_sdk::types::newtypes::EncryptionPin">EncryptionPin</a>,
     address: &amp;<a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.str.html">str</a>,
@@ -112,7 +112,7 @@ or if there is an error sending the amount.</p>
 <h5 id="errors-7"><a class="doc-anchor" href="#errors-7">§</a>Errors</h5>
 <p>Returns an error if the user or wallet is not initialized, if there is an error verifying the PIN,
 or if there is an error estimating the gas.</p>
-</div></details><details class="toggle method-toggle" open><summary><section id="method.get_tx_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#368-401">Source</a><h4 class="code-header">pub async fn <a href="#method.get_tx_list" class="fn">get_tx_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.TxList.html" title="struct etopay_sdk::types::transactions::TxList">TxList</a>&gt;</h4></section></summary><div class="docblock"><p>Get transaction list</p>
+</div></details><details class="toggle method-toggle" open><summary><section id="method.get_tx_list" class="method"><a class="src rightside" href="../../src/etopay_sdk/core/transaction.rs.html#353-386">Source</a><h4 class="code-header">pub async fn <a href="#method.get_tx_list" class="fn">get_tx_list</a>(&amp;self, start: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>, limit: <a class="primitive" href="https://doc.rust-lang.org/1.87.0/std/primitive.u32.html">u32</a>) -&gt; <a class="type" href="../error/type.Result.html" title="type etopay_sdk::error::Result">Result</a>&lt;<a class="struct" href="../types/transactions/struct.TxList.html" title="struct etopay_sdk::types::transactions::TxList">TxList</a>&gt;</h4></section></summary><div class="docblock"><p>Get transaction list</p>
 <h5 id="arguments-6"><a class="doc-anchor" href="#arguments-6">§</a>Arguments</h5>
 <ul>
 <li><code>start</code> - The starting page number.</li>
