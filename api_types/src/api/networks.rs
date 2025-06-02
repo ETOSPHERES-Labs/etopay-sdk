@@ -15,8 +15,6 @@ pub enum ApiProtocol {
         ///contract address
         contract_address: String,
     },
-    /// Represents a Stardust network
-    Stardust {},
     /// Represents an IOTA Rebased network
     IotaRebased {
         /// The IOTA Rebased Coin Type to interact with (eg. `0x2::iota::IOTA`) for the iota mainnet

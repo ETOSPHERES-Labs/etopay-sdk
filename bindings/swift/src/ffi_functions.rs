@@ -1631,7 +1631,6 @@ impl Network {
         match self.protocol {
             ApiProtocol::Evm { .. } => Protocol::Evm,
             ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,
-            ApiProtocol::Stardust {} => Protocol::Stardust,
             ApiProtocol::IotaRebased { .. } => Protocol::IotaRebased,
         }
     }

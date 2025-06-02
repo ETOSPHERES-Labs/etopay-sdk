@@ -32,10 +32,9 @@ If a share, password or pin is missing when trying to combine the shares and int
 
 The wallet uses the concept of _Networks_ to select which blockchain to interact with. The ETOPay SDK currently supports interacting with the following protocols:
 
-- [Stardust](https://wiki.iota.org/learn/protocols/stardust/introduction/)
 - [Ethereum Virtual Machine (EVM)](https://ethereum.org/en/developers/docs/evm/)
 - [ERC-20 Smart Contracts](https://ethereum.org/en/developers/docs/standards/tokens/erc-20/) running on EVM.
-- Upcoming: [IOTA Rebased](https://blog.iota.org/iota-rebased-fast-forward/) using [Move](https://sui.io/move).
+- [IOTA Rebased](https://blog.iota.org/iota-rebased-fast-forward/) using [Move](https://sui.io/move).
 
 Before any interaction with the wallet and a network can be done, a network need to be selected. This is done using the [`set_network`](../SDK%20Reference/SDK%20API%20Reference.md#set-network) method, which takes the network's unique `key` as a parameter. The list of networks can be fetched from the backend using [`get_networks`](../SDK%20Reference/SDK%20API%20Reference.md#get-supported-networks) to for example allow the end user to select which network they want to interact with.
 

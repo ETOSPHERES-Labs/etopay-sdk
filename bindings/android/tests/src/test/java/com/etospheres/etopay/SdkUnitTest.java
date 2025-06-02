@@ -115,7 +115,7 @@ public class SdkUnitTest {
 
     @Test
     public void BBshouldGetNetworks() throws Exception {
-        String body = "{\"networks\":[{\"key\":\"IOTA\",\"is_testnet\": true,\"display_name\":\"IOTA\",\"display_symbol\":\"IOTA\",\"coin_type\":4218,\"block_explorer_url\":\"https://explorer.shimmer.network/testnet/\",\"can_do_purchases\":true,\"decimals\":16,\"node_urls\":[\"https://api.testnet.iotaledger.net\"],\"protocol\":{\"Stardust\":{}}},{\"key\":\"ETH\",\"is_testnet\":true,\"display_name\":\"Eth Sepolia\",\"display_symbol\":\"ETH\",\"coin_type\":60,\"block_explorer_url\":\"https://sepolia.explorer.mode.network\",\"can_do_purchases\":true,\"decimals\":16,\"node_urls\":[\"https://sepolia.mode.network\"],\"protocol\":{\"Evm\":{\"chain_id\":31337}}}]}";
+        String body = "{\"networks\":[{\"key\":\"IOTA\",\"is_testnet\": true,\"display_name\":\"IOTA\",\"display_symbol\":\"IOTA\",\"coin_type\":4218,\"block_explorer_url\":\"https://iotascan.com/testnet\",\"can_do_purchases\":true,\"decimals\":9,\"node_urls\":[\"https://api.testnet.iota.cafe\"],\"protocol\":{\"IotaRebased\":{\"coin_type\":\"0x2::iota::IOTA\"}}},{\"key\":\"ETH\",\"is_testnet\":true,\"display_name\":\"Eth Sepolia\",\"display_symbol\":\"ETH\",\"coin_type\":60,\"block_explorer_url\":\"https://sepolia.explorer.mode.network\",\"can_do_purchases\":true,\"decimals\":16,\"node_urls\":[\"https://sepolia.mode.network\"],\"protocol\":{\"Evm\":{\"chain_id\":31337}}}]}";
 
         wireMockRule.stubFor(get(urlPathEqualTo("/api/config/networks"))
                 .withHeader("Authorization", equalTo(TOKEN_HEADER_VALUE))
@@ -357,7 +357,7 @@ public class SdkUnitTest {
         String mainAddress = "rms1qz8jdgvrerzv35s43pkdkawdr9x4t6xfnhcrt5tlgsyltgpwyx9ks4c5kct";
         double amount = 5.5;
         String status = "Pending";
-        String network = "{\"key\":\"IOTA\",\"is_testnet\":true,\"display_name\":\"IOTA\",\"display_symbol\":\"IOTA\",\"coin_type\":4218,\"block_explorer_url\":\"https://explorer.shimmer.network/testnet/\",\"can_do_purchases\":true,\"decimals\":16,\"node_urls\":[\"https://api.testnet.iotaledger.net\"],\"protocol\":{\"Stardust\":{}}}";
+        String network = "{\"key\":\"IOTA\",\"is_testnet\": true,\"display_name\":\"IOTA\",\"display_symbol\":\"IOTA\",\"coin_type\":4218,\"block_explorer_url\":\"https://iotascan.com/testnet\",\"can_do_purchases\":true,\"decimals\":9,\"node_urls\":[\"https://api.testnet.iota.cafe\"],\"protocol\":{\"IotaRebased\":{\"coin_type\":\"0x2::iota::IOTA\"}}}";
 
         final String body = "{" + System.lineSeparator()
                 + String.format("\"system_address\":\"%s\",", mainAddress) +
