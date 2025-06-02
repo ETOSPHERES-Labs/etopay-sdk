@@ -2,7 +2,7 @@ use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxInfoList, WalletTxStatus};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxStatus};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -261,7 +261,7 @@ impl WalletUser for WalletImplEvm {
     // The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
-    async fn get_wallet_tx_list(&self, _start: usize, _limit: usize) -> Result<WalletTxInfoList> {
+    async fn get_wallet_tx_list(&self, _start: usize, _limit: usize) -> Result<Vec<String>> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
@@ -432,7 +432,7 @@ impl WalletUser for WalletImplEvmErc20 {
     // The network does not provide information about historical transactions
     // (they can be retrieved manually, but this is a time-consuming process),
     // so the handling of this method is implemented at the SDK level.
-    async fn get_wallet_tx_list(&self, _start: usize, _limit: usize) -> Result<WalletTxInfoList> {
+    async fn get_wallet_tx_list(&self, _start: usize, _limit: usize) -> Result<Vec<String>> {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
