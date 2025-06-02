@@ -59,7 +59,7 @@ alloy-provider = { version = "1.0.8", default-features = false, features = [
     "reqwest",
     "reqwest-rustls-tls",
 ] }
-alloy-json-rpc = "1.0.8"
+alloy-json-rpc = "1.0.9"
 alloy-transport = "1.0.8"
 
 
