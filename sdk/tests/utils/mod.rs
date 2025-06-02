@@ -32,15 +32,17 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
     sdk.set_networks(vec![
         ApiNetwork {
             key: String::from("IOTA"),
+            block_explorer_url: String::from("https://iotascan.com/testnet"),
             is_testnet: true,
-            display_name: String::from("IOTA"),
+            display_name: String::from("IOTA Rebased"),
             display_symbol: String::from("IOTA"),
             coin_type: 4218,
-            node_urls: vec![String::from("https://api.testnet.iotaledger.net")],
-            decimals: 16,
+            node_urls: vec![String::from("https://api.testnet.iota.cafe")],
+            decimals: 9,
             can_do_purchases: true,
-            protocol: ApiProtocol::Stardust {},
-            block_explorer_url: String::from("https://explorer.iota.org/iota-testnet/"),
+            protocol: ApiProtocol::IotaRebased {
+                coin_type: "0x2::iota::IOTA".to_string(),
+            },
         },
         ApiNetwork {
             key: String::from("ETH"),

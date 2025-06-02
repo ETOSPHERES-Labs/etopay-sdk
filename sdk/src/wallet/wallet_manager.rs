@@ -569,11 +569,6 @@ impl WalletManager for WalletManagerImpl {
                 )?;
                 Box::new(wallet) as Box<dyn WalletUser + Sync + Send>
             }
-            ApiProtocol::Stardust {} => {
-                return Err(WalletError::WalletImplError(
-                    etopay_wallet::WalletError::WalletFeatureNotImplemented,
-                ));
-            }
             ApiProtocol::IotaRebased { coin_type } => {
                 let wallet =
                     WalletImplIotaRebased::new(mnemonic, coin_type, network.decimals, &network.node_urls, options)

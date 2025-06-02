@@ -83,8 +83,6 @@ pub enum Protocol {
     Evm,
     /// Represents and EVM based ERC20 Smart Contract token
     EvmERC20,
-    /// Represents a Stardust network
-    Stardust,
     /// Iota Rebased network.
     IotaRebased,
 }
@@ -120,7 +118,6 @@ impl From<sdk::types::networks::ApiNetwork> for Network {
             protocol_type: match value.protocol {
                 ApiProtocol::Evm { .. } => Protocol::Evm,
                 ApiProtocol::EvmERC20 { .. } => Protocol::EvmERC20,
-                ApiProtocol::Stardust {} => Protocol::Stardust,
                 ApiProtocol::IotaRebased { .. } => Protocol::IotaRebased,
             },
             protocol_chain_id: match value.protocol {

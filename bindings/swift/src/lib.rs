@@ -260,7 +260,6 @@ pub mod ffi {
     pub enum Protocol {
         Evm,
         EvmERC20,
-        Stardust,
         IotaRebased,
     }
 
