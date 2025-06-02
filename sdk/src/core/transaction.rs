@@ -185,25 +185,11 @@ impl Sdk {
 
         let tx_id = wallet.send_amount(&intent).await?;
 
-        // Store tx details for all networks other than Stardust (which stores transactions internally)
-        // TODO: rework this to always store the transactions
-        if let ApiProtocol::Evm { .. } = tx_details.network.protocol {
-            let tx_id = wallet.send_amount(&intent).await?;
-
-            let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
-            let mut user = repo.get(&active_user.username)?;
-            user.wallet_transactions.push(newly_created_transaction);
-            let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions);
-        }
-
-        if let ApiProtocol::EvmERC20 { .. } = tx_details.network.protocol {
-            let tx_id = wallet.send_amount(&intent).await?;
-
-            let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
-            let mut user = repo.get(&active_user.username)?;
-            user.wallet_transactions.push(newly_created_transaction);
-            let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions);
-        }
+        // Store tx details for the new transaction
+        let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
+        let mut user = repo.get(&active_user.username)?;
+        user.wallet_transactions.push(newly_created_transaction);
+        let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions);
 
         debug!("Transaction id on network: {tx_id}");
 
@@ -548,7 +534,12 @@ mod tests {
 
         match &expected {
             Ok(_) => {
-                let mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 1, KycType::Undefined);
+                let mut mock_user_repo = example_get_user(SwapPaymentDetailKey::Iota, false, 2, KycType::Undefined);
+                mock_user_repo
+                    .expect_set_wallet_transactions()
+                    .once()
+                    .returning(|_, _| Ok(()));
+
                 sdk.repo = Some(Box::new(mock_user_repo));
 
                 let mut mock_wallet_manager = MockWalletManager::new();
@@ -558,6 +549,20 @@ mod tests {
                         .expect_send_amount()
                         .once()
                         .returning(|_| Ok("tx_id".to_string()));
+
+                    mock_wallet_user.expect_get_wallet_tx().once().returning(|_| {
+                        Ok(WalletTxInfo {
+                            date: String::new(),
+                            block_number_hash: None,
+                            transaction_hash: "tx_hash".to_string(),
+                            sender: "sender".to_string(),
+                            receiver: "receiver".to_string(),
+                            amount: CryptoAmount::ZERO,
+                            network_key: "key".to_string(),
+                            status: WalletTxStatus::Pending,
+                            explorer_url: None,
+                        })
+                    });
 
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });

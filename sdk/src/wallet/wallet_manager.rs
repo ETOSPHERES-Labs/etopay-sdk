@@ -1,7 +1,4 @@
-//! This module contains the implementation of the StardustWallet trait and the WalletImpl struct.
-//! The StardustWallet trait defines the methods for creating, migrating, backing up, restoring, and deleting a wallet.
-//! The WalletImpl struct represents an instantiated wallet and holds the necessary state and configuration.
-//!
+//! This module contains the definition and implementation of the WalletManager trait.
 
 use super::share::Share;
 use crate::core::{Config, UserRepoT};
