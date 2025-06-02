@@ -60,7 +60,7 @@ alloy-provider = { version = "1.0.8", default-features = false, features = [
     "reqwest-rustls-tls",
 ] }
 alloy-json-rpc = "1.0.8"
-alloy-transport = "1.0.8"
+alloy-transport = "1.0.9"
 
 
 # needed for custom iota-rebased impl
