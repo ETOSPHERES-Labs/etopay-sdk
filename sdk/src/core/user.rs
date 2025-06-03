@@ -66,6 +66,7 @@ impl Sdk {
             viviswap_state: Option::None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
 
         repo.create(&user)?;

@@ -35,7 +35,7 @@ rust_decimal_macros = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
 thiserror = { workspace = true }
-chrono = { workspace = true, features = ["std", "now", "wasmbind"] }
+chrono = { workspace = true, features = ["std", "now", "wasmbind", "serde"] }
 log = { version = "0.4.27", default-features = false }
 reqwest = { workspace = true }
 

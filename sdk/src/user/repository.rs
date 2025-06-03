@@ -164,6 +164,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         }
     }
 
@@ -291,6 +292,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let result = user_repo.update(&updated_user);
 
@@ -322,6 +324,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let result = user_repo.update(&updated_user);
 
@@ -362,6 +365,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
         user_repo.create(&user).unwrap();
@@ -516,6 +520,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
 
