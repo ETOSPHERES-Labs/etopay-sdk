@@ -456,7 +456,7 @@ The environment configuration to `Development` attaches the SDK to the developme
     --8<-- "bindings/wasm/examples/19-get_wallet_tx_list.ts"
     ```
 
-<!-- ## 20. Send Compliment
+## 20. Send Compliment
 
 === "Rust"
 
@@ -480,7 +480,7 @@ The environment configuration to `Development` attaches the SDK to the developme
 
     ```typescript
     --8<-- "bindings/wasm/examples/20-send_compliment.ts"
-    ``` -->
+    ```
 
 ## 22. Initialize Wallet from Shares
  
