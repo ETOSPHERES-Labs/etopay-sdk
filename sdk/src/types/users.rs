@@ -3,7 +3,10 @@ use crate::{
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
-use etopay_wallet::{MnemonicDerivationOption, types::WalletTxInfo};
+use etopay_wallet::{
+    MnemonicDerivationOption,
+    types::{WalletTxInfo, WalletTxInfoVersioned},
+};
 use serde::{Deserialize, Serialize};
 
 /// Struct for storing a user in the database
@@ -30,6 +33,10 @@ pub struct UserEntity {
 
     /// User wallet transactions
     pub wallet_transactions: Vec<WalletTxInfo>,
+
+    /// User wallet transactions (versioned)
+    #[serde(default)]
+    pub wallet_transactions_versioned: Vec<WalletTxInfoVersioned>,
 }
 
 /// Struct to manage the state of the currently active (initialized) user

@@ -1060,6 +1060,7 @@ mod tests {
                         viviswap_state: Option::None,
                         local_share: None,
                         wallet_transactions: Vec::new(),
+                        wallet_transactions_versioned: Vec::new(),
                     })
                 });
                 mock_user_repo.expect_update().once().returning(|_| Ok(()));
@@ -1392,6 +1393,7 @@ mod tests {
                 viviswap_state: None,
                 local_share: None,
                 wallet_transactions: mixed_wallet_transactions.clone(),
+                wallet_transactions_versioned: Vec::new(),
             })
         });
 
@@ -1547,6 +1549,7 @@ mod tests {
                 viviswap_state: None,
                 local_share: None,
                 wallet_transactions: wallet_transactions.clone(),
+                wallet_transactions_versioned: Vec::new(),
             })
         });
 
@@ -1640,6 +1643,7 @@ mod tests {
                 viviswap_state: None,
                 local_share: None,
                 wallet_transactions: wallet_transactions.clone(),
+                wallet_transactions_versioned: Vec::new(),
             })
         });
 

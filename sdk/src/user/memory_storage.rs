@@ -67,6 +67,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         }
     }
     use testing::CleanUp;
