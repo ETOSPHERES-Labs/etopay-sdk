@@ -149,6 +149,7 @@ pub fn example_get_user(key: SwapPaymentDetailKey, verified: bool, times: usize,
             }),
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         })
     });
     mock_user_repo
