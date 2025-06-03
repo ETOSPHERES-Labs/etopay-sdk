@@ -49,7 +49,7 @@ Task {
         let purchase_type = "CLIK"
 
         let purchase_id = try await sdk.createPurchaseRequest(
-            "satoshi", 3, product_hash, app_data, purchase_type)
+            "satoshi", 0.1, product_hash, app_data, purchase_type)
         print("Purchase Request created: \(purchase_id.toString())")
 
         // Wait 3 min while tx status becomes valid

@@ -10,9 +10,9 @@ examples=(
     "03_create_new_wallet"
     "04_migrate_wallet_from_mnemonic"
     "05_migrate_wallet_from_backup"
-    # "06_generate_new_address"
+    "06_generate_new_address"
     "07_get_balance"
-    # "08_create_purchase_request"
+    "08_create_purchase_request"
     # "09_onboard_user_viviswap"
     "10_verify_pin"
     "11_reset_pin"
@@ -22,7 +22,7 @@ examples=(
     "16_get_tx_list"
     "18_delete_user"
     "19_get_wallet_tx_list"
-    # "20_send_compliment"
+    "20_send_compliment"
 )
 
 # Loop through and run each example

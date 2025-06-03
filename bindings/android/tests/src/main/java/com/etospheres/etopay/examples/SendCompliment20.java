@@ -54,7 +54,7 @@ public class SendCompliment20 {
             String app_data = "java example";
             String purchase_type = "CLIK";
 
-            String purchase_id = sdk.purchaseRequestCreate("satoshi", 1, product_hash, app_data, purchase_type);
+            String purchase_id = sdk.purchaseRequestCreate("satoshi", 0.1, product_hash, app_data, purchase_type);
             System.out.println("purchase request id: " + purchase_id);
 
             CompletableFuture<Void> validFuture = CompletableFuture.runAsync(() -> {
