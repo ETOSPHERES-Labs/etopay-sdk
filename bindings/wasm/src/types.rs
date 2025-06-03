@@ -256,7 +256,7 @@ pub struct WalletTxInfo {
     /// Contains block number / id
     pub block_number: Option<String>,
     /// Contains block hash
-    pub block_hash: Option<String>,
+    pub block_number: Option<u64>,
     /// transaction id for particular transaction
     pub transaction_hash: String,
     /// The sender of the transaction
@@ -282,7 +282,7 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
     fn from(value: sdk::types::WalletTxInfo) -> Self {
         Self {
             date: value.date,
-            block_number: value.block_number_hash.as_ref().map(|b| b.0.to_string()),
+            block_number: value.block_number_hash.as_ref().map(|b| b.0),
             block_hash: value.block_number_hash.map(|b| b.1),
             transaction_hash: value.transaction_hash,
             sender: value.sender,

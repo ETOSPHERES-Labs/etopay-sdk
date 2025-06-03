@@ -20,7 +20,13 @@ async function main() {
     sdk.setNetwork("iota_rebased_testnet");
 
     let transactions = await sdk.getWalletTransactionList(PIN, 0, 10);  // Get the transaction list
-    console.log("Wallet transactions list: " + JSON.stringify(transactions));
+
+    const callback = (_key, value) => typeof value === "bigint" ? value.toString() : value;
+
+    console.log(
+        "Wallet transactions list: " +
+        JSON.stringify(transactions, callback)
+    );
 }
 
 main();
