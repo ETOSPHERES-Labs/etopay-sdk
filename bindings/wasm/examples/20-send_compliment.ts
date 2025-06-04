@@ -44,7 +44,7 @@ async function main() {
     let app_data = "wasm send compliment example";
     let purchase_type = "CLIK";
 
-    let purchase_id = await sdk.createPurchaseRequest("satoshi", 2, product_hash, app_data, purchase_type);
+    let purchase_id = await sdk.createPurchaseRequest("satoshi", 0.1, product_hash, app_data, purchase_type);
     console.log("Purchase Request created: ", purchase_id);
 
     // Wait 3 min while transaction status becomes `Valid`

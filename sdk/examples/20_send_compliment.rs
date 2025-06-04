@@ -52,7 +52,7 @@ async fn main() {
     let app_data = "{\"imageUrl\":\"https://httpbin.org/\",\"imageId\":\"a846ad10-fc69-4b22-b442-5dd740ace361\"}";
     let purchase_type = "CLIK";
 
-    let amount = CryptoAmount::try_from(dec!(2.0)).unwrap();
+    let amount = CryptoAmount::try_from(dec!(0.1)).unwrap();
     let purchase_id = sdk
         .create_purchase_request("alice", amount, product_hash, app_data, purchase_type)
         .await
