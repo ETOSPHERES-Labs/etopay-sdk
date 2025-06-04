@@ -7,7 +7,7 @@ use etopay_sdk::{
     types::newtypes::{AccessToken, EncryptionPin, PlainPassword},
 };
 use std::path::Path;
-use testing::CleanUp;
+use testing::{CleanUp, IOTA_NETWORK_KEY};
 
 /// initialize sdk from an existing [`CleanUp`] object as the storage path.
 pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) -> (Sdk, CleanUp) {
@@ -31,7 +31,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
     // set networks
     sdk.set_networks(vec![
         ApiNetwork {
-            key: String::from("IOTA"),
+            key: IOTA_NETWORK_KEY.to_string(),
             block_explorer_url: String::from("https://iotascan.com/testnet"),
             is_testnet: true,
             display_name: String::from("IOTA Rebased"),
@@ -57,7 +57,7 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
             block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
         },
     ]);
-    sdk.set_network(String::from("IOTA")).await.unwrap();
+    sdk.set_network(IOTA_NETWORK_KEY.to_string()).await.unwrap();
 
     // generate access token
     let access_token = testing::get_access_token(username, &password).await.access_token;
