@@ -1,7 +1,6 @@
 #![allow(clippy::unwrap_used, clippy::expect_used)]
 #![allow(dead_code)]
 
-use api_types::api::networks::{ApiNetwork, ApiProtocol};
 use etopay_sdk::{
     core::{Config, Sdk},
     types::newtypes::{AccessToken, EncryptionPin, PlainPassword},
@@ -28,41 +27,14 @@ pub async fn init_sdk_with_cleanup(username: &str, existing_cleanup: CleanUp) ->
 
     let mut sdk = Sdk::new(config).expect("should not fail to initialize sdk"); // set the backend url if the environment variable is set
 
-    // set networks
-    sdk.set_networks(vec![
-        ApiNetwork {
-            key: String::from("IOTA"),
-            block_explorer_url: String::from("https://iotascan.com/testnet"),
-            is_testnet: true,
-            display_name: String::from("IOTA Rebased"),
-            display_symbol: String::from("IOTA"),
-            coin_type: 4218,
-            node_urls: vec![String::from("https://api.testnet.iota.cafe")],
-            decimals: 9,
-            can_do_purchases: true,
-            protocol: ApiProtocol::IotaRebased {
-                coin_type: "0x2::iota::IOTA".to_string(),
-            },
-        },
-        ApiNetwork {
-            key: String::from("ETH"),
-            is_testnet: true,
-            display_name: String::from("Eth Sepolia"),
-            display_symbol: String::from("ETH"),
-            coin_type: 60,
-            node_urls: vec![String::from("https://sepolia.mode.network")],
-            decimals: 16,
-            can_do_purchases: true,
-            protocol: ApiProtocol::Evm { chain_id: 31337 },
-            block_explorer_url: String::from("https://explorer.shimmer.network/testnet/"),
-        },
-    ]);
-    sdk.set_network(String::from("IOTA")).await.unwrap();
-
     // generate access token
     let access_token = testing::get_access_token(username, &password).await.access_token;
     let access_token = AccessToken::try_from(access_token).unwrap();
     sdk.refresh_access_token(Some(access_token)).await.unwrap();
+
+    // Fetch networks from backend
+    let _ = sdk.get_networks().await.unwrap();
+    sdk.set_network("iota_rebased_testnet".to_string()).await.unwrap();
 
     (sdk, existing_cleanup)
 }
