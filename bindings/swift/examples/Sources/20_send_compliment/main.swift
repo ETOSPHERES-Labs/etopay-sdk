@@ -18,7 +18,7 @@ Task {
         let mnemonic_alice = ProcessInfo.processInfo.environment["MNEMONIC_ALICE"]!
 
         // Initialize SDK
-        let sdk = try await initSdk(username: username_alice, password: env.wallet_password)
+        let sdk = try await initSdk(username: username_alice, password: env.password)
 
         // Create new user
         try await sdk.createNewUser(username_alice)
