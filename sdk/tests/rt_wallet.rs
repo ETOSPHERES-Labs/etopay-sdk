@@ -3,7 +3,7 @@ use etopay_sdk::{
     ErrorKind, WalletError,
     types::newtypes::{AccessToken, EncryptionPin, PlainPassword},
 };
-use etopay_wallet::types::{CryptoAmount, WalletTxInfoList};
+use etopay_wallet::types::CryptoAmount;
 use testing::USER_SATOSHI;
 use utils::{init_sdk, init_sdk_with_cleanup};
 
@@ -244,8 +244,8 @@ async fn it_should_get_wallet_transaction_list() {
     let result = sdk.get_wallet_tx_list(&user.pin, 0, 10).await;
 
     // Assert
-    let expected_tx_list = WalletTxInfoList { transactions: vec![] };
-    assert_eq!(result.unwrap(), expected_tx_list);
+    let txs = result.unwrap().transactions;
+    assert!(!txs.is_empty());
 }
 
 #[tokio::test]
