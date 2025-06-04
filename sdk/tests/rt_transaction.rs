@@ -2,14 +2,10 @@ mod utils;
 use crate::utils::init_sdk;
 
 use api_types::api::transactions::ApiTxStatus;
-use etopay_sdk::{
-    core::{Config, Sdk},
-    types::newtypes::AccessToken,
-};
 use etopay_wallet::types::CryptoAmount;
 use rust_decimal_macros::dec;
-use std::{path::Path, time::Duration};
-use testing::{CleanUp, USER_HANS34, USER_HANS48, USER_SATOSHI};
+use std::time::Duration;
+use testing::{USER_HANS48, USER_SATOSHI};
 use tokio::time;
 
 #[tokio::test]
@@ -80,41 +76,11 @@ async fn it_should_get_tx_list() {
 }
 
 #[tokio::test]
-#[ignore = "There are some blockers around this and IOTA is also changing. We disable this test until we decide what to do"]
 async fn it_should_create_purchase_request_and_confirm_it() {
     // Arrange
-    dotenvy::dotenv().ok(); // only for this test since we load the mnemonic from .env
-    let user: utils::TestUser = (*USER_HANS34).clone().into();
+    let user: utils::TestUser = (*USER_HANS48).clone().into();
 
-    /*
-    TODO: define network with iota mainnet for tests
-    DEPRECATED: configure sdk manually to run only this test on the iota mainnet
-    */
-    let existing_cleanup = CleanUp::default();
-    let password = std::env::var("SATOSHI_PASSWORD").unwrap();
-    let backend_url =
-        std::env::var("RT_API_URL").expect("RT_API_URL should be set with the backend url for the tests to use");
-
-    let config = Config {
-        backend_url: backend_url.parse().expect("RT_API_URL must be a valid URL"),
-        path_prefix: Path::new(&existing_cleanup.path_prefix).into(),
-        auth_provider: "standalone".to_string(),
-        log_level: log::LevelFilter::Debug,
-    };
-
-    let mut sdk = Sdk::new(config).expect("should not fail to initialize sdk"); // set the backend url if the environment variable is set
-
-    // generate access token
-    let access_token = testing::get_access_token(&user.username, &password).await.access_token;
-    let access_token = AccessToken::try_from(access_token).unwrap();
-    sdk.refresh_access_token(Some(access_token)).await.unwrap();
-    let networks = sdk.get_networks().await.unwrap();
-    let iota_network_key = networks.first().unwrap().key.clone();
-    sdk.set_network(iota_network_key).await.unwrap();
-
-    /*
-    rest of the test
-    */
+    let (mut sdk, _cleanup) = init_sdk(&user.username).await;
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
@@ -143,7 +109,7 @@ async fn it_should_create_purchase_request_and_confirm_it() {
     // Wait 3 min while tx status becomes valid
     let result = time::timeout(Duration::from_secs(3 * 60), async {
         loop {
-            time::sleep(Duration::from_secs(5)).await;
+            time::sleep(Duration::from_secs(10)).await;
             let details = sdk.get_purchase_details(&purchase_id).await.unwrap();
             println!("Status: {:?}", details.status);
             match details.status {
@@ -190,11 +156,13 @@ async fn it_should_create_purchase_request_and_confirm_it() {
 }
 
 #[tokio::test]
-#[ignore = "There are some blockers around this and IOTA is also changing. We disable this test until we decide what to do"]
 async fn it_should_create_invalid_purchase_request_and_fail_to_confirm_it() {
     // Arrange
     let user: utils::TestUser = (*USER_HANS48).clone().into();
     let (mut sdk, _cleanup) = init_sdk(&user.username).await;
+
+    // we need a main network for this test to work because in the testnet we do not check KYC
+    sdk.set_network("iota_rebased_mainnet".to_string()).await.unwrap();
 
     sdk.create_new_user(&user.username).await.unwrap();
     sdk.init_user(&user.username).await.unwrap();
@@ -212,7 +180,7 @@ async fn it_should_create_invalid_purchase_request_and_fail_to_confirm_it() {
     let purchase_type = "CLIK";
 
     // Act
-    let amount = CryptoAmount::try_from(dec!(2.0)).unwrap();
+    let amount = CryptoAmount::try_from(dec!(0.1)).unwrap();
     let purchase_id = sdk
         .create_purchase_request(
             "vivi", // vivi is not verified

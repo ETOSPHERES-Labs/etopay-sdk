@@ -116,7 +116,7 @@ impl KeycloakUser {
         match response.status() {
             reqwest::StatusCode::CREATED => Ok(()),
             reqwest::StatusCode::CONFLICT => Err("User already exists".into()),
-            _ => Err("Failed to create user".into()),
+            err => Err(format!("Failed to create user: {:?}", err).into()),
         }
     }
 
