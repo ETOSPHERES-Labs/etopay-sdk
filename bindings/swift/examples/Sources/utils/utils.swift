@@ -128,7 +128,7 @@ func generateAccessToken(username: String, password: String) async throws -> Str
             throw TokenError.accessTokenNotFound
         }
     } catch _ {
-        throw TokenError.parsingError("failed to serialize json data")
+        throw TokenError.parsingError("failed to get access_token from json data: \(jsonData)")
     }
 }
 
