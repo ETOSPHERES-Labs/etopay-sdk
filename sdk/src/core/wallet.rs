@@ -12,7 +12,7 @@ use crate::{
 };
 use etopay_wallet::{
     MnemonicDerivationOption, sort_by_date,
-    types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus},
+    types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxInfoV2, WalletTxInfoVersioned, WalletTxStatus},
 };
 
 use log::{debug, info, warn};
@@ -528,7 +528,7 @@ impl Sdk {
         // We retrieve the transaction list from the wallet,
         // then synchronize selected transactions (by fetching their current status from the network),
         // and finally, save the refreshed list back to the wallet
-        let mut wallet_transactions = user.wallet_transactions;
+        let mut wallet_transactions = user.wallet_transactions_versioned;
 
         // We call get_wallet_tx_list to merge the responses with any existing transactions
         // (if there are new ones, we need to get their details and insert into the local list)
@@ -540,10 +540,15 @@ impl Sdk {
                 for hash in transaction_hashes {
                     // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
                     // check both the transaction hash and the network key, as hash collisions can occur across different blockchain networks
-                    if wallet_transactions
-                        .iter()
-                        .any(|t| t.transaction_hash == hash && t.network_key == network.key)
-                    {
+                    if wallet_transactions.iter().any(|t| match t {
+                        // maybe extract it into fn?
+                        etopay_wallet::types::WalletTxInfoVersioned::V1(v1) => {
+                            v1.transaction_hash == hash && v1.network_key == network.key
+                        }
+                        etopay_wallet::types::WalletTxInfoVersioned::V2(v2) => {
+                            v2.transaction_hash == hash && v2.network_key == network.key
+                        }
+                    }) {
                         continue;
                     }
 
@@ -569,17 +574,32 @@ impl Sdk {
 
         for transaction in wallet_transactions
             .iter_mut()
-            .filter(|tx| tx.network_key == network.key)
+            .filter(|tx| {
+                let network_key = match tx {
+                    etopay_wallet::types::WalletTxInfoVersioned::V1(wallet_tx_info_v1) => {
+                        &wallet_tx_info_v1.network_key
+                    }
+                    etopay_wallet::types::WalletTxInfoVersioned::V2(wallet_tx_info_v2) => {
+                        &wallet_tx_info_v2.network_key
+                    }
+                };
+                *network_key == network.key
+            })
             .skip(start)
             .take(limit)
         {
+            // migrate to latest version
+            let tx_v2 = transaction.clone().into_latest();
+
             // We don't need to query the network for the state of this transaction,
             // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
-            if transaction.status == WalletTxStatus::Confirmed {
+            if tx_v2.status == WalletTxStatus::Confirmed {
+                // make sure that transaction is upgraded to the latest version
+                *transaction = WalletTxInfoVersioned::V2(tx_v2);
                 continue;
             }
 
-            match wallet.get_wallet_tx(&transaction.transaction_hash).await {
+            match wallet.get_wallet_tx(&tx_v2.transaction_hash).await {
                 Ok(stx) => *transaction = stx,
                 Err(e) => {
                     // On error, return historical (cached) transaction data
@@ -594,7 +614,17 @@ impl Sdk {
 
         let tx_list_filtered = wallet_transactions
             .iter()
-            .filter(|tx| tx.network_key == network.key)
+            .filter(|tx| {
+                let network_key = match tx {
+                    etopay_wallet::types::WalletTxInfoVersioned::V1(wallet_tx_info_v1) => {
+                        &wallet_tx_info_v1.network_key
+                    }
+                    etopay_wallet::types::WalletTxInfoVersioned::V2(wallet_tx_info_v2) => {
+                        &wallet_tx_info_v2.network_key
+                    }
+                };
+                *network_key == network.key
+            })
             .skip(start)
             .take(limit)
             .cloned()
@@ -624,7 +654,7 @@ impl Sdk {
     ///
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
     /// * [`WalletError::WalletNotInitialized`] - If there is an error initializing the wallet.
-    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTxInfo> {
+    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTxInfoVersioned> {
         info!("Wallet getting details of particular transactions");
         self.verify_pin(pin).await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
@@ -664,7 +694,7 @@ mod tests {
     use crate::testing_utils::{
         ADDRESS, AUTH_PROVIDER, ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
         MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME, WALLET_PASSWORD, example_api_networks, example_get_user,
-        example_wallet_tx_info, set_config,
+        example_wallet_tx_info_versioned, set_config,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -675,6 +705,7 @@ mod tests {
     };
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use chrono::{TimeZone, Utc};
     use etopay_wallet::MockWalletUser;
     use mockall::predicate::eq;
     use mockito::Matcher;
@@ -1219,12 +1250,12 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(Ok(example_wallet_tx_info()))]
+    #[case::success(Ok(example_wallet_tx_info_versioned()))]
     #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]
     #[tokio::test]
-    async fn test_get_wallet_tx(#[case] expected: Result<WalletTxInfo>) {
+    async fn test_get_wallet_tx(#[case] expected: Result<WalletTxInfoVersioned>) {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
@@ -1240,7 +1271,7 @@ mod tests {
                     mock_wallet_user
                         .expect_get_wallet_tx()
                         .once()
-                        .returning(|_| Ok(example_wallet_tx_info()));
+                        .returning(|_| Ok(example_wallet_tx_info_versioned()));
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
                 sdk.active_user = Some(crate::types::users::ActiveUser {
@@ -1398,8 +1429,8 @@ mod tests {
         });
 
         let mixed_wallet_transactions_after_synchronization = vec![
-            WalletTxInfo {
-                date: "some date".to_string(),
+            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
@@ -1408,9 +1439,10 @@ mod tests {
                 network_key: "IOTA".to_string(),
                 status: WalletTxStatus::Confirmed,
                 explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
+                gas_fee: None,
+            }),
+            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: "1".to_string(),
                 receiver: String::new(),
@@ -1419,9 +1451,10 @@ mod tests {
                 network_key: "ETH".to_string(),
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
+                gas_fee: None,
+            }),
+            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: "2".to_string(),
                 receiver: String::new(),
@@ -1430,9 +1463,10 @@ mod tests {
                 network_key: "ETH".to_string(),
                 status: WalletTxStatus::Confirmed,
                 explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
+                gas_fee: None,
+            }),
+            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: "3".to_string(),
                 receiver: String::new(),
@@ -1441,7 +1475,8 @@ mod tests {
                 network_key: "ETH".to_string(),
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
-            },
+                gas_fee: None,
+            }),
         ];
 
         mock_user_repo
@@ -1467,8 +1502,8 @@ mod tests {
                 .once()
                 .with(eq(String::from("2"))) // WalletTxInfo.transaction_id = 2
                 .returning(move |_| {
-                    Ok(WalletTxInfo {
-                        date: "some date".to_string(),
+                    Ok(WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                        date: Utc::now(),
                         block_number_hash: None,
                         transaction_hash: "2".to_string(),
                         receiver: String::new(),
@@ -1477,7 +1512,8 @@ mod tests {
                         network_key: "ETH".to_string(),
                         status: WalletTxStatus::Confirmed, // Pending -> Confirmed
                         explorer_url: None,
-                    })
+                        gas_fee: None,
+                    }))
                 });
             Ok(WalletBorrow::from(mock_wallet_user))
         });
@@ -1504,8 +1540,8 @@ mod tests {
         assert_eq!(
             response.unwrap(),
             WalletTxInfoList {
-                transactions: vec![WalletTxInfo {
-                    date: "some date".to_string(),
+                transactions: vec![WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                    date: Utc::now(),
                     block_number_hash: None,
                     transaction_hash: "2".to_string(),
                     receiver: String::new(),
@@ -1514,7 +1550,8 @@ mod tests {
                     network_key: "ETH".to_string(),
                     status: WalletTxStatus::Confirmed,
                     explorer_url: None,
-                }]
+                    gas_fee: None
+                })]
             }
         );
     }
@@ -1593,8 +1630,8 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let tx_3 = WalletTxInfo {
-            date: "2025-05-29T08:37:15.183+00:00".to_string(),
+        let tx_3 = WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap(),
             block_number_hash: None,
             transaction_hash: "3".to_string(),
             receiver: String::new(),
@@ -1603,9 +1640,10 @@ mod tests {
             network_key: "ETH".to_string(),
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
-        };
-        let tx_1 = WalletTxInfo {
-            date: "2025-05-29T08:37:13.183+00:00".to_string(),
+            gas_fee: None,
+        });
+        let tx_1 = WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
             block_number_hash: None,
             transaction_hash: "1".to_string(),
             receiver: String::new(),
@@ -1614,10 +1652,11 @@ mod tests {
             network_key: "ETH".to_string(),
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
-        };
+            gas_fee: None,
+        });
 
-        let tx_2 = WalletTxInfo {
-            date: "2025-05-29T08:37:14.183+00:00".to_string(),
+        let tx_2 = WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap(),
             block_number_hash: None,
             transaction_hash: "2".to_string(),
             receiver: String::new(),
@@ -1626,7 +1665,8 @@ mod tests {
             network_key: "ETH".to_string(),
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
-        };
+            gas_fee: None,
+        });
 
         let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];
         let expected = vec![tx_3, tx_2, tx_1];
@@ -1642,8 +1682,8 @@ mod tests {
                 kyc_type: KycType::Undefined,
                 viviswap_state: None,
                 local_share: None,
-                wallet_transactions: wallet_transactions.clone(),
-                wallet_transactions_versioned: Vec::new(),
+                wallet_transactions: Vec::new(),
+                wallet_transactions_versioned: wallet_transactions.clone(),
             })
         });
 
