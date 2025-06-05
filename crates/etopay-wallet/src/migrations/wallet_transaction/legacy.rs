@@ -1,5 +1,5 @@
 use crate::{
-    MigrationStatus, WalletTxInfoVersioned, WithMigrationStatus,
+    MigratableWalletTx, MigrationStatus, WithMigrationStatus,
     types::{WalletTxInfo, WalletTxInfoV1, parse_date_or_default},
 };
 
@@ -19,9 +19,9 @@ impl From<WalletTxInfo> for WalletTxInfoV1 {
     }
 }
 
-pub fn migrate_legacy_transactions_to_v1(txs: Vec<WalletTxInfo>) -> Vec<WalletTxInfoVersioned> {
+pub fn migrate_legacy_transactions_to_v1(txs: Vec<WalletTxInfo>) -> Vec<MigratableWalletTx> {
     txs.into_iter()
-        .map(|tx| WalletTxInfoVersioned::V1(WithMigrationStatus::new(tx.into(), MigrationStatus::Completed)))
+        .map(|tx| MigratableWalletTx::V1(WithMigrationStatus::new(tx.into(), MigrationStatus::Completed)))
         .collect()
 }
 
@@ -52,7 +52,7 @@ mod tests {
         // Then
         assert_eq!(result.len(), 1);
         match &result[0] {
-            WalletTxInfoVersioned::V1(wrapped) => {
+            MigratableWalletTx::V1(wrapped) => {
                 let v1 = &wrapped.data;
                 assert_eq!(v1.transaction_hash, legacy.transaction_hash);
                 assert_eq!(v1.sender, legacy.sender);

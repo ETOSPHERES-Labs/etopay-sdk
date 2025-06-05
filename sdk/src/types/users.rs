@@ -3,10 +3,7 @@ use crate::{
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
-use etopay_wallet::{
-    MnemonicDerivationOption,
-    types::{WalletTxInfo, WalletTxInfoVersioned},
-};
+use etopay_wallet::{MnemonicDerivationOption, WalletTxInfoVersioned, types::WalletTxInfo};
 use serde::{Deserialize, Serialize};
 
 /// Struct for storing a user in the database
@@ -31,7 +28,7 @@ pub struct UserEntity {
     /// The local share from the SSS scheme, stored as a string (same as in the backend)
     pub local_share: Option<String>,
 
-    /// User wallet transactions
+    /// User wallet transactions (deprecated)
     pub wallet_transactions: Vec<WalletTxInfo>,
 
     /// User wallet transactions (versioned)
