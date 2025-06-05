@@ -1144,6 +1144,18 @@ impl ETOPaySdk {
         }
     }
 
+    /// Set the account and index used for deriving the private key from the mnemonic. This is used
+    /// to have multiple accounts and addresses with a single mnemonic.
+    ///
+    /// * `account` - The account number
+    /// * `number` index - The index number
+    pub async fn set_wallet_account(&self, account: u32, index: u32) -> Result<(), String> {
+        let mut sdk = self.inner.write().await;
+        sdk.set_wallet_derivation_options(account, index)
+            .await
+            .map_err(|e| format!("{e:#?}"))
+    }
+
     /// Deletes the user
     ///
     /// # Arguments

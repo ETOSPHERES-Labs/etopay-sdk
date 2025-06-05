@@ -456,6 +456,8 @@ pub mod ffi {
         async fn get_swap_list(&self, start: u32, limit: u32) -> Result<Vec<Order>, String>;
         #[swift_bridge(swift_name = "getTransactionList")]
         async fn get_transaction_list(&self, start: u32, limit: u32) -> Result<Vec<TxInfo>, String>;
+        #[swift_bridge(swift_name = "setWalletAccount")]
+        async fn set_wallet_account(&self, account: u32, index: u32) -> Result<(), String>;
         #[swift_bridge(swift_name = "getWalletTransactionList")]
         async fn get_wallet_transaction_list(
             &self,
