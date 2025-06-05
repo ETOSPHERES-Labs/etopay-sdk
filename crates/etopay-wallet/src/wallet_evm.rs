@@ -1,8 +1,9 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
-use crate::MnemonicDerivationOption;
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxStatus};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
+use crate::wallet_evm::Erc20Contract::transferCall;
+use crate::{MigrationStatus, MnemonicDerivationOption, WalletTxInfoVersioned, WithMigrationStatus};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -265,7 +266,7 @@ impl WalletUser for WalletImplEvm {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxInfo> {
+    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxInfoVersioned> {
         let transaction_hash = TxHash::from_str(transaction_hash)?;
         let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
 
@@ -308,8 +309,8 @@ impl WalletUser for WalletImplEvm {
 
         let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
 
-        Ok(WalletTxInfo {
-            date: date.unwrap_or_default(), // if missing: empty string
+        let tx = WalletTxInfoV2 {
+            date: parse_date_or_default(&date.unwrap_or_default()), // if missing: empty string
             block_number_hash,
             transaction_hash: transaction_hash.to_string(),
             sender: sender.to_string(),
@@ -318,7 +319,13 @@ impl WalletUser for WalletImplEvm {
             network_key: "ETH".to_string(),
             status,
             explorer_url: None,
-        })
+            gas_fee: None, // @@@@ TODO
+        };
+
+        Ok(WalletTxInfoVersioned::V2(WithMigrationStatus::new(
+            tx,
+            MigrationStatus::Completed,
+        )))
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
@@ -436,7 +443,7 @@ impl WalletUser for WalletImplEvmErc20 {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfo> {
+    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfoVersioned> {
         // get the information for the underlying transaction
         let mut info = self.inner.get_wallet_tx(transaction_id).await?;
 
@@ -450,16 +457,79 @@ impl WalletUser for WalletImplEvmErc20 {
 
         let args = Erc20Contract::transferCall::abi_decode(tx.inner.input())?;
 
-        info.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
+        let amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
+        let receiver = args.to.to_string();
 
-        info.receiver = args.to.to_string();
+        // Todo: Erc20 should have it's own impl of get_wallet_tx
+        // now we have to go through the `match`
+        // but get_wallet_tx always returns `latest` version
+        let u = self.tmp_into_latest(info, amount, receiver);
 
-        Ok(info)
+        //info.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
+        // match &mut info {
+        //     WalletTxInfoVersioned::V1(w) => {
+        //         w.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
+        //         w.data.receiver = args.to.to_string();
+        //     }
+        //     WalletTxInfoVersioned::V2(w) => {
+        //         w.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
+        //         w.data.receiver = args.to.to_string();
+        //     }
+        // };
+
+        Ok(WalletTxInfoVersioned::V2(u))
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
         let tx_request = self.prepare_transaction(intent)?;
         self.inner.estimate_transaction_request_gas(tx_request).await
+    }
+}
+
+impl WalletImplEvmErc20 {
+    fn tmp_into_latest(
+        &self,
+        info: WalletTxInfoVersioned,
+        amount: CryptoAmount,
+        receiver: String,
+    ) -> WithMigrationStatus<WalletTxInfoV2> {
+        //let latest = versioned.into_latest();
+        match info.clone() {
+            WalletTxInfoVersioned::V1(_) => {
+                // let mut c = w.clone();
+                // c.data.amount = amount;
+                // c.data.receiver = receiver;
+
+                //let WalletTxInfoVersioned::V1(wrapped);
+                let mut latest = info.into_latest();
+                latest.data.amount = amount;
+                latest.data.receiver = receiver;
+
+                latest
+            }
+            WalletTxInfoVersioned::V2(w) => {
+                let mut c = w.clone();
+                c.data.amount = amount;
+                c.data.receiver = receiver;
+
+                c
+            }
+        }
+    }
+}
+
+impl WalletImplEvmErc20 {
+    fn tmp_into_latest2(
+        &self,
+        info: WithMigrationStatus<WalletTxInfoV2>,
+        amount: CryptoAmount,
+        receiver: String,
+    ) -> WithMigrationStatus<WalletTxInfoV2> {
+        //let latest = versioned.into_latest();
+        let mut u = info.clone();
+        u.data.amount = amount;
+        u.data.receiver = receiver;
+        u
     }
 }
 

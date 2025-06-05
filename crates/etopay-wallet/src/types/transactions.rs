@@ -3,7 +3,10 @@ use api_types::api::{
     transactions::{ApiApplicationMetadata, ApiTxStatus},
 };
 use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
+
+use crate::WalletTxInfoVersioned;
 
 use super::currencies::CryptoAmount;
 
@@ -43,7 +46,7 @@ pub struct TxInfo {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct WalletTxInfoList {
     /// Transactions that happens
-    pub transactions: Vec<WalletTxInfo>,
+    pub transactions: Vec<WalletTxInfoVersioned>,
 }
 
 /// Purchase details
@@ -161,7 +164,7 @@ pub struct WalletTxInfoV2 {
     pub network_key: String,
     pub status: WalletTxStatus,
     pub explorer_url: Option<String>,
-    pub gas: Option<u64>,
+    pub gas_fee: Option<Decimal>,
 }
 
 // /// wallet transaction info

@@ -1,90 +1,166 @@
-use chrono::DateTime;
-use std::cmp::Ordering;
+use crate::WalletTxInfoVersioned;
 
-use crate::types::WalletTxInfo;
+// pub fn sort_by_date(transactions: &mut [WalletTxInfoVersioned]) {
+//     transactions.sort_by(|a, b| {
+//         let a_date = match a {
+//             WalletTxInfoVersioned::V1(wallet_tx_info_v1) => wallet_tx_info_v1.date,
+//             WalletTxInfoVersioned::V2(wallet_tx_info_v2) => wallet_tx_info_v2.date,
+//         };
 
-pub fn sort_by_date(transactions: &mut [WalletTxInfo]) {
+//         let b_date = match b {
+//             WalletTxInfoVersioned::V1(wallet_tx_info_v1) => wallet_tx_info_v1.date,
+//             WalletTxInfoVersioned::V2(wallet_tx_info_v2) => wallet_tx_info_v2.date,
+//         };
+
+//         b_date.cmp(&a_date)
+//     })
+// }
+
+pub fn sort_by_date(transactions: &mut [WalletTxInfoVersioned]) {
     transactions.sort_by(|a, b| {
-        let a_date = DateTime::parse_from_rfc3339(&a.date);
-        let b_date = DateTime::parse_from_rfc3339(&b.date);
+        let a_date = match a {
+            WalletTxInfoVersioned::V1(w) => w.data.date,
+            WalletTxInfoVersioned::V2(w) => w.data.date,
+        };
 
-        match (a_date, b_date) {
-            (Ok(a_dt), Ok(b_dt)) => b_dt.cmp(&a_dt),
-            // fallback if parsing fails: put unparsable dates at the end
-            (Ok(_), Err(_)) => Ordering::Less,
-            (Err(_), Ok(_)) => Ordering::Greater,
-            (Err(_), Err(_)) => Ordering::Equal,
-        }
+        let b_date = match b {
+            WalletTxInfoVersioned::V1(w) => w.data.date,
+            WalletTxInfoVersioned::V2(w) => w.data.date,
+        };
+
+        b_date.cmp(&a_date)
     });
 }
 
+// #[cfg(test)]
+// mod tests {
+//     use chrono::{DateTime, TimeZone, Utc};
+
+//     use crate::types::{CryptoAmount, WalletTxInfoV1, WalletTxInfoV2};
+
+//     use super::sort_by_date;
+
+//     fn mock_transaction_v2(date: DateTime<Utc>) -> WalletTxInfoVersioned {
+//         WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+//             date,
+//             block_number_hash: None,
+//             transaction_hash: String::from("tx_hash"),
+//             sender: "Satoshi".to_string(),
+//             receiver: "Bob".to_string(),
+//             amount: CryptoAmount::from(1),
+//             network_key: String::from("network"),
+//             status: crate::types::WalletTxStatus::Pending,
+//             explorer_url: None,
+//             gas_fee: None,
+//         })
+//     }
+
+//     fn mock_transaction_v1(date: DateTime<Utc>) -> WalletTxInfoVersioned {
+//         WalletTxInfoVersioned::V1(WalletTxInfoV1 {
+//             date,
+//             block_number_hash: None,
+//             transaction_hash: String::from("tx_hash"),
+//             sender: "Satoshi".to_string(),
+//             receiver: "Bob".to_string(),
+//             amount: CryptoAmount::from(1),
+//             network_key: String::from("network"),
+//             status: crate::types::WalletTxStatus::Pending,
+//             explorer_url: None,
+//         })
+//     }
+
+//     #[test]
+//     fn test_should_sort_by_date() {
+//         // Given
+//         let mut transactions = vec![
+//             mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap()),
+//             mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap()),
+//             mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap()),
+//             mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 16).unwrap()),
+//             mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 12).unwrap()),
+//         ];
+
+//         let expected = vec![
+//             mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 16).unwrap()),
+//             mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap()),
+//             mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap()),
+//             mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap()),
+//             mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 12).unwrap()),
+//         ];
+
+//         // When
+//         sort_by_date(&mut transactions);
+
+//         // Then
+//         assert_eq!(expected, transactions);
+//     }
+// }
+
 #[cfg(test)]
 mod tests {
-    use crate::types::{CryptoAmount, WalletTxInfo};
-
     use super::sort_by_date;
+    use crate::{
+        MigrationStatus, WalletTxInfoVersioned, WithMigrationStatus,
+        types::{CryptoAmount, WalletTxInfoV1, WalletTxInfoV2, WalletTxStatus},
+    };
+    use chrono::{DateTime, TimeZone, Utc};
 
-    fn mock_transaction(date: &str) -> WalletTxInfo {
-        WalletTxInfo {
-            date: String::from(date),
+    fn mock_transaction_v2(date: DateTime<Utc>) -> WalletTxInfoVersioned {
+        let v2 = WalletTxInfoV2 {
+            date,
             block_number_hash: None,
             transaction_hash: String::from("tx_hash"),
             sender: "Satoshi".to_string(),
             receiver: "Bob".to_string(),
             amount: CryptoAmount::from(1),
             network_key: String::from("network"),
-            status: crate::types::WalletTxStatus::Pending,
+            status: WalletTxStatus::Pending,
             explorer_url: None,
-        }
+            gas_fee: None,
+        };
+
+        WalletTxInfoVersioned::V2(WithMigrationStatus::new(v2, MigrationStatus::Pending))
+    }
+
+    fn mock_transaction_v1(date: DateTime<Utc>) -> WalletTxInfoVersioned {
+        let v1 = WalletTxInfoV1 {
+            date,
+            block_number_hash: None,
+            transaction_hash: String::from("tx_hash"),
+            sender: "Satoshi".to_string(),
+            receiver: "Bob".to_string(),
+            amount: CryptoAmount::from(1),
+            network_key: String::from("network"),
+            status: WalletTxStatus::Pending,
+            explorer_url: None,
+        };
+
+        WalletTxInfoVersioned::V1(WithMigrationStatus::new(v1, MigrationStatus::Completed))
     }
 
     #[test]
     fn test_should_sort_by_date() {
         // Given
         let mut transactions = vec![
-            mock_transaction("2025-05-29T08:37:15.183+00:00"),
-            mock_transaction("2025-05-29T08:37:14.183+00:00"),
-            mock_transaction("2025-05-29T08:37:13.183+00:00"),
-            mock_transaction("2025-05-29T08:37:16.183+00:00"),
-            mock_transaction("2025-05-29T08:37:12.183+00:00"),
+            mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap()),
+            mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap()),
+            mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap()),
+            mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 16).unwrap()),
+            mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 12).unwrap()),
         ];
 
         let expected = vec![
-            mock_transaction("2025-05-29T08:37:16.183+00:00"),
-            mock_transaction("2025-05-29T08:37:15.183+00:00"),
-            mock_transaction("2025-05-29T08:37:14.183+00:00"),
-            mock_transaction("2025-05-29T08:37:13.183+00:00"),
-            mock_transaction("2025-05-29T08:37:12.183+00:00"),
+            mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 16).unwrap()),
+            mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap()),
+            mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap()),
+            mock_transaction_v1(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap()),
+            mock_transaction_v2(Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 12).unwrap()),
         ];
 
         // When
         sort_by_date(&mut transactions);
 
         // Then
-        assert_eq!(expected, transactions);
-    }
-
-    #[test]
-    fn test_should_put_unparsable_dates_at_the_end() {
-        // Given
-        let mut transactions = vec![
-            mock_transaction("2026-05-29"),
-            mock_transaction("invalid date"),
-            mock_transaction("2025-05-29T08:37:14.183+00:00"),
-            mock_transaction("2025-05-29T08:37:13.183+00:00"),
-        ];
-
-        let expected = vec![
-            mock_transaction("2025-05-29T08:37:14.183+00:00"),
-            mock_transaction("2025-05-29T08:37:13.183+00:00"),
-            mock_transaction("2026-05-29"),
-            mock_transaction("invalid date"),
-        ];
-
-        // When
-        sort_by_date(&mut transactions);
-
-        // Then
-        assert_eq!(expected, transactions);
+        assert_eq!(transactions, expected);
     }
 }

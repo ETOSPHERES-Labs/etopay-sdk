@@ -1,5 +1,8 @@
 use super::error::Result;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo};
+use crate::{
+    WalletTxInfoVersioned,
+    types::{CryptoAmount, GasCostEstimation},
+};
 use async_trait::async_trait;
 use std::fmt::Debug;
 
@@ -95,7 +98,7 @@ pub trait WalletUser: Debug {
     /// # Errors
     ///
     /// This function can return an error if it cannot retrieve the wallet transaction.
-    async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfo>;
+    async fn get_wallet_tx(&self, tx_id: &str) -> Result<WalletTxInfoVersioned>;
 
     /// Estimate gas cost for eip 1559 transaction
     ///

@@ -27,9 +27,10 @@ use api_types::api::{
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
     },
 };
+use chrono::Utc;
 use etopay_wallet::MockWalletUser;
-use etopay_wallet::types::WalletTxInfo;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
+use etopay_wallet::types::{WalletTxInfoV2, WalletTxInfoVersioned};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;
@@ -353,9 +354,9 @@ pub fn example_wallet_borrow() -> MockWalletManager {
     mock_wallet_manager
 }
 
-pub fn example_wallet_tx_info() -> WalletTxInfo {
-    WalletTxInfo {
-        date: "some date".to_string(),
+pub fn example_wallet_tx_info_versioned() -> WalletTxInfoVersioned {
+    WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+        date: Utc::now(),
         block_number_hash: None,
         transaction_hash: "some tx id".to_string(),
         receiver: String::new(),
@@ -365,5 +366,6 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         network_key: "IOTA".to_string(),
         status: WalletTxStatus::Confirmed,
         explorer_url: None,
-    }
+        gas_fee: None,
+    })
 }
