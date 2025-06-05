@@ -1,22 +1,31 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    Migrate, MigrationStatus, WithMigrationStatus,
+    Migrate, MigrationStatus, WalletTx, WithMigrationStatus,
     types::{WalletTxInfoV1, WalletTxInfoV2},
 };
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 #[serde(tag = "version")]
-pub enum WalletTxInfoVersioned {
+pub enum MigratableWalletTx {
     V1(WithMigrationStatus<WalletTxInfoV1>),
     V2(WithMigrationStatus<WalletTxInfoV2>),
 }
 
-impl WalletTxInfoVersioned {
+impl MigratableWalletTx {
     pub fn into_latest(self) -> WithMigrationStatus<WalletTxInfoV2> {
         match self {
-            WalletTxInfoVersioned::V1(v1) => v1.migrate(),
-            WalletTxInfoVersioned::V2(v2) => v2,
+            MigratableWalletTx::V1(v1) => v1.migrate(),
+            MigratableWalletTx::V2(v2) => v2,
+        }
+    }
+}
+
+impl From<MigratableWalletTx> for WalletTx {
+    fn from(value: MigratableWalletTx) -> Self {
+        match value {
+            MigratableWalletTx::V1(v1) => WalletTx::V1(v1.into_inner()),
+            MigratableWalletTx::V2(v2) => WalletTx::V2(v2.into_inner()),
         }
     }
 }
@@ -69,7 +78,7 @@ mod tests {
         };
 
         let wrapped = WithMigrationStatus::new(v1, MigrationStatus::Pending);
-        let versioned = WalletTxInfoVersioned::V1(wrapped);
+        let versioned = MigratableWalletTx::V1(wrapped);
 
         // When
         let latest = versioned.into_latest();

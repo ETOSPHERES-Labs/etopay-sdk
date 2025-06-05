@@ -1,4 +1,4 @@
-use crate::WalletTxInfoVersioned;
+use crate::MigratableWalletTx;
 
 // pub fn sort_by_date(transactions: &mut [WalletTxInfoVersioned]) {
 //     transactions.sort_by(|a, b| {
@@ -16,16 +16,16 @@ use crate::WalletTxInfoVersioned;
 //     })
 // }
 
-pub fn sort_by_date(transactions: &mut [WalletTxInfoVersioned]) {
+pub fn sort_by_date(transactions: &mut [MigratableWalletTx]) {
     transactions.sort_by(|a, b| {
         let a_date = match a {
-            WalletTxInfoVersioned::V1(w) => w.data.date,
-            WalletTxInfoVersioned::V2(w) => w.data.date,
+            MigratableWalletTx::V1(w) => w.data.date,
+            MigratableWalletTx::V2(w) => w.data.date,
         };
 
         let b_date = match b {
-            WalletTxInfoVersioned::V1(w) => w.data.date,
-            WalletTxInfoVersioned::V2(w) => w.data.date,
+            MigratableWalletTx::V1(w) => w.data.date,
+            MigratableWalletTx::V2(w) => w.data.date,
         };
 
         b_date.cmp(&a_date)
@@ -100,12 +100,12 @@ pub fn sort_by_date(transactions: &mut [WalletTxInfoVersioned]) {
 mod tests {
     use super::sort_by_date;
     use crate::{
-        MigrationStatus, WalletTxInfoVersioned, WithMigrationStatus,
+        MigrationStatus, MigratableWalletTx, WithMigrationStatus,
         types::{CryptoAmount, WalletTxInfoV1, WalletTxInfoV2, WalletTxStatus},
     };
     use chrono::{DateTime, TimeZone, Utc};
 
-    fn mock_transaction_v2(date: DateTime<Utc>) -> WalletTxInfoVersioned {
+    fn mock_transaction_v2(date: DateTime<Utc>) -> MigratableWalletTx {
         let v2 = WalletTxInfoV2 {
             date,
             block_number_hash: None,
@@ -119,10 +119,10 @@ mod tests {
             gas_fee: None,
         };
 
-        WalletTxInfoVersioned::V2(WithMigrationStatus::new(v2, MigrationStatus::Pending))
+        MigratableWalletTx::V2(WithMigrationStatus::new(v2, MigrationStatus::Pending))
     }
 
-    fn mock_transaction_v1(date: DateTime<Utc>) -> WalletTxInfoVersioned {
+    fn mock_transaction_v1(date: DateTime<Utc>) -> MigratableWalletTx {
         let v1 = WalletTxInfoV1 {
             date,
             block_number_hash: None,
@@ -135,7 +135,7 @@ mod tests {
             explorer_url: None,
         };
 
-        WalletTxInfoVersioned::V1(WithMigrationStatus::new(v1, MigrationStatus::Completed))
+        MigratableWalletTx::V1(WithMigrationStatus::new(v1, MigrationStatus::Completed))
     }
 
     #[test]

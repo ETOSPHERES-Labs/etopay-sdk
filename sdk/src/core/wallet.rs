@@ -2,17 +2,17 @@
 //! migrating wallets from mnemonic or backup, creating backups, and verifying PINs.
 //!
 //! It also includes various helper functions and imports required for the wallet functionality.
-
 use super::Sdk;
 use crate::{
     backend::dlt::put_user_address,
     error::Result,
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
+    wallet_manager::WalletBorrow,
 };
 use etopay_wallet::{
-    MnemonicDerivationOption, sort_by_date,
-    types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxInfoV2, WalletTxInfoVersioned, WalletTxStatus},
+    MigratableWalletTx, MigrationStatus, MnemonicDerivationOption, WalletTx, WalletTxLatest, sort_by_date,
+    types::{CryptoAmount, WalletTxInfoList, WalletTxStatus},
 };
 
 use log::{debug, info, warn};
@@ -530,111 +530,28 @@ impl Sdk {
         // and finally, save the refreshed list back to the wallet
         let mut wallet_transactions = user.wallet_transactions_versioned;
 
-        // We call get_wallet_tx_list to merge the responses with any existing transactions
-        // (if there are new ones, we need to get their details and insert into the local list)
-        match wallet.get_wallet_tx_list(start, limit).await {
-            Ok(transaction_hashes) => {
-                // go through and get the details for any new hashes
+        let transaction_hashes = self.get_transaction_hashes(wallet, start, limit).await?;
+        let new_hashes = self.filter_new_hashes(transaction_hashes, network.key, wallet_transactions);
+        self.append_new_transactions(wallet, &mut wallet_transactions, new_hashes)
+            .await?;
 
-                log::debug!("Digests: {:#?}", transaction_hashes);
-                for hash in transaction_hashes {
-                    // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
-                    // check both the transaction hash and the network key, as hash collisions can occur across different blockchain networks
-                    if wallet_transactions.iter().any(|t| match t {
-                        // maybe extract it into fn?
-                        etopay_wallet::types::WalletTxInfoVersioned::V1(v1) => {
-                            v1.transaction_hash == hash && v1.network_key == network.key
-                        }
-                        etopay_wallet::types::WalletTxInfoVersioned::V2(v2) => {
-                            v2.transaction_hash == hash && v2.network_key == network.key
-                        }
-                    }) {
-                        continue;
-                    }
-
-                    log::debug!("Getting details for new transaction with hash {hash}");
-
-                    // not included, we should add it!
-                    match wallet.get_wallet_tx(&hash).await {
-                        Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
-                        Ok(details) => {
-                            // TODO: insert into sorted list based on date?
-                            wallet_transactions.push(details);
-                        }
-                    }
-                }
-            }
-            // do nothing if feature is not supported
-            Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => {}
-            Err(e) => return Err(e.into()),
-        }
-
-        // sort wallet transactions
         sort_by_date(&mut wallet_transactions);
 
-        for transaction in wallet_transactions
-            .iter_mut()
-            .filter(|tx| {
-                let network_key = match tx {
-                    etopay_wallet::types::WalletTxInfoVersioned::V1(wallet_tx_info_v1) => {
-                        &wallet_tx_info_v1.network_key
-                    }
-                    etopay_wallet::types::WalletTxInfoVersioned::V2(wallet_tx_info_v2) => {
-                        &wallet_tx_info_v2.network_key
-                    }
-                };
-                *network_key == network.key
-            })
-            .skip(start)
-            .take(limit)
-        {
-            // migrate to latest version
-            let tx_v2 = transaction.clone().into_latest();
-
-            // We don't need to query the network for the state of this transaction,
-            // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
-            if tx_v2.status == WalletTxStatus::Confirmed {
-                // make sure that transaction is upgraded to the latest version
-                *transaction = WalletTxInfoVersioned::V2(tx_v2);
-                continue;
-            }
-
-            match wallet.get_wallet_tx(&tx_v2.transaction_hash).await {
-                Ok(stx) => *transaction = stx,
-                Err(e) => {
-                    // On error, return historical (cached) transaction data
-                    log::debug!(
-                        "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
-                        transaction,
-                        e
-                    );
-                }
-            }
-        }
-
-        let tx_list_filtered = wallet_transactions
-            .iter()
-            .filter(|tx| {
-                let network_key = match tx {
-                    etopay_wallet::types::WalletTxInfoVersioned::V1(wallet_tx_info_v1) => {
-                        &wallet_tx_info_v1.network_key
-                    }
-                    etopay_wallet::types::WalletTxInfoVersioned::V2(wallet_tx_info_v2) => {
-                        &wallet_tx_info_v2.network_key
-                    }
-                };
-                *network_key == network.key
-            })
-            .skip(start)
-            .take(limit)
-            .cloned()
-            .collect();
+        let selected_transactions = self.select_network_transactions(network.key, wallet_transactions, start, limit);
+        let migrated_transactions = self.migrate_transactions(selected_transactions, wallet).await?;
+        let updated_transactions = self.update_pending_transactions(migrated_transactions, wallet).await?;
+        let updated_wallet_transactions =
+            self.update_wallet_transactions(&mut wallet_transactions, updated_transactions);
 
         // store updated transactions in user DB
-        let _ = repo.set_wallet_transactions(&user.username, wallet_transactions);
+        let _ = repo.set_wallet_transactions(&user.username, updated_wallet_transactions);
 
+        let versioned_transactions: Vec<WalletTx> =
+            updated_transactions.into_iter().map(|u| WalletTx::from(u)).collect();
+
+        // return WalletTx - without migration decorator
         Ok(WalletTxInfoList {
-            transactions: tx_list_filtered,
+            transactions: versioned_transactions,
         })
     }
 
@@ -654,7 +571,7 @@ impl Sdk {
     ///
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
     /// * [`WalletError::WalletNotInitialized`] - If there is an error initializing the wallet.
-    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTxInfoVersioned> {
+    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTxLatest> {
         info!("Wallet getting details of particular transactions");
         self.verify_pin(pin).await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
@@ -684,6 +601,161 @@ impl Sdk {
         active_user.mnemonic_derivation_options = options;
 
         Ok(())
+    }
+
+    fn filter_new_hashes(
+        &self,
+        transaction_hashes: Vec<String>,
+        network_key: String,
+        wallet_transactions: Vec<MigratableWalletTx>,
+    ) -> Vec<String> {
+        let mut new_transactions = Vec::new();
+        // go through and get the details for any new hashes
+        log::debug!("Digests: {:#?}", transaction_hashes);
+        for hash in transaction_hashes {
+            // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
+            // check both the transaction hash and the network key, as hash collisions can occur across different blockchain networks
+            if wallet_transactions.iter().any(|t| match t {
+                MigratableWalletTx::V1(v1) => v1.data.transaction_hash == hash && v1.data.network_key == network_key,
+                MigratableWalletTx::V2(v2) => v2.data.transaction_hash == hash && v2.data.network_key == network_key,
+            }) {
+                continue;
+            }
+
+            new_transactions.push(hash)
+        }
+
+        new_transactions
+    }
+
+    fn select_network_transactions(
+        &self,
+        network_key: String,
+        transactions: Vec<MigratableWalletTx>,
+        start: usize,
+        limit: usize,
+    ) -> Vec<MigratableWalletTx> {
+        transactions
+            .iter()
+            .filter(|t| match t {
+                MigratableWalletTx::V1(w) => w.data.network_key == network_key,
+                MigratableWalletTx::V2(w) => w.data.network_key == network_key,
+            })
+            .skip(start)
+            .take(limit)
+            .cloned()
+            .collect()
+    }
+
+    async fn migrate_transactions(
+        &self,
+        transactions: Vec<MigratableWalletTx>,
+        wallet: WalletBorrow<'_>,
+    ) -> Result<Vec<MigratableWalletTx>> {
+        let mut migrated_transactions = Vec::with_capacity(transactions.len());
+        for t in transactions {
+            let latest = t.into_latest();
+
+            if latest.migration_status == MigrationStatus::Completed {
+                migrated_transactions.push(MigratableWalletTx::V2(latest));
+                continue;
+            }
+
+            match wallet.get_wallet_tx(&latest.data.transaction_hash).await {
+                Ok(details) => migrated_transactions.push(MigratableWalletTx::V2(etopay_wallet::WithMigrationStatus {
+                    migration_status: MigrationStatus::Completed,
+                    data: details,
+                })),
+                Err(_) => {
+                    migrated_transactions.push(MigratableWalletTx::V2(latest));
+                }
+            }
+        }
+
+        Ok(migrated_transactions)
+    }
+
+    async fn update_pending_transactions(
+        &self,
+        transactions: Vec<MigratableWalletTx>,
+        wallet: WalletBorrow<'_>,
+    ) -> Result<Vec<MigratableWalletTx>> {
+        let mut updated_transactions = Vec::with_capacity(transactions.len());
+        for t in transactions {
+            let latest = t.into_latest();
+
+            if latest.data.status != WalletTxStatus::Pending {
+                updated_transactions.push(MigratableWalletTx::V2(latest));
+                continue;
+            }
+
+            match wallet.get_wallet_tx(&latest.data.transaction_hash).await {
+                Ok(details) => updated_transactions.push(MigratableWalletTx::V2(etopay_wallet::WithMigrationStatus {
+                    migration_status: MigrationStatus::Completed,
+                    data: details,
+                })),
+                Err(_) => {
+                    updated_transactions.push(MigratableWalletTx::V2(latest));
+                }
+            }
+        }
+
+        Ok(updated_transactions)
+    }
+
+    fn update_wallet_transactions(
+        &self,
+        all_transactions: &mut Vec<MigratableWalletTx>,
+        updated_slice: Vec<MigratableWalletTx>,
+    ) {
+        for updated in updated_slice {
+            let (hash, network_key) = match &updated {
+                MigratableWalletTx::V1(v1) => (&v1.data.transaction_hash, &v1.data.network_key),
+                MigratableWalletTx::V2(v2) => (&v2.data.transaction_hash, &v2.data.network_key),
+            };
+
+            if let Some(existing) = all_transactions.iter_mut().find(|tx| match tx {
+                MigratableWalletTx::V1(v1) => v1.data.transaction_hash == *hash && v1.data.network_key == *network_key,
+                MigratableWalletTx::V2(v2) => v2.data.transaction_hash == *hash && v2.data.network_key == *network_key,
+            }) {
+                *existing = updated;
+            }
+        }
+    }
+
+    async fn append_new_transactions(
+        &self,
+        wallet: WalletBorrow<'_>,
+        wallet_transactions: &mut Vec<MigratableWalletTx>,
+        new_hashes: Vec<String>,
+    ) -> Result<()> {
+        for hash in new_hashes {
+            match wallet.get_wallet_tx(&hash).await {
+                Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
+                Ok(details) => {
+                    wallet_transactions.push(MigratableWalletTx::V2(etopay_wallet::WithMigrationStatus {
+                        migration_status: MigrationStatus::Completed,
+                        data: details,
+                    }));
+                }
+            }
+        }
+
+        Ok(())
+    }
+
+    async fn get_transaction_hashes(
+        &self,
+        wallet: WalletBorrow<'_>,
+        start: usize,
+        limit: usize,
+    ) -> Result<Vec<String>> {
+        match wallet.get_wallet_tx_list(start, limit).await {
+            Ok(transaction_hashes) => Ok(transaction_hashes),
+            // do nothing if feature is not supported
+            Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => Ok(Vec::new()),
+            Err(e) => Err(e.into()),
+        }
     }
 }
 
@@ -1255,7 +1327,7 @@ mod tests {
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]
     #[tokio::test]
-    async fn test_get_wallet_tx(#[case] expected: Result<WalletTxInfoVersioned>) {
+    async fn test_get_wallet_tx(#[case] expected: Result<MigratableWalletTx>) {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
