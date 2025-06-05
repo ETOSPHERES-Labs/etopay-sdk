@@ -3,7 +3,9 @@ use super::wallet::{TransactionIntent, WalletUser};
 use crate::error::WalletError;
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
 use crate::wallet_evm::Erc20Contract::transferCall;
-use crate::{MigrationStatus, MnemonicDerivationOption, WalletTxInfoVersioned, WithMigrationStatus};
+use crate::{
+    MigratableWalletTx, MigrationStatus, MnemonicDerivationOption, WalletTx, WalletTxLatest, WithMigrationStatus,
+};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -266,7 +268,7 @@ impl WalletUser for WalletImplEvm {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxInfoVersioned> {
+    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxLatest> {
         let transaction_hash = TxHash::from_str(transaction_hash)?;
         let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
 
@@ -322,10 +324,7 @@ impl WalletUser for WalletImplEvm {
             gas_fee: None, // @@@@ TODO
         };
 
-        Ok(WalletTxInfoVersioned::V2(WithMigrationStatus::new(
-            tx,
-            MigrationStatus::Completed,
-        )))
+        Ok(tx)
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
@@ -443,7 +442,7 @@ impl WalletUser for WalletImplEvmErc20 {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfoVersioned> {
+    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxLatest> {
         // get the information for the underlying transaction
         let mut info = self.inner.get_wallet_tx(transaction_id).await?;
 
@@ -463,7 +462,19 @@ impl WalletUser for WalletImplEvmErc20 {
         // Todo: Erc20 should have it's own impl of get_wallet_tx
         // now we have to go through the `match`
         // but get_wallet_tx always returns `latest` version
-        let u = self.tmp_into_latest(info, amount, receiver);
+        //let u = self.tmp_into_latest(info, amount, receiver);
+        // match info {
+        //     WalletTx::V1(v1) => todo!(),
+        //     WalletTx::V2(v2) => {
+        //         let mut updated = v2.clone();
+        //         updated.amount = amount;
+        //         updated.receiver = receiver;
+        //         Ok(WalletTx::V2(updated))
+        //     }
+        // }
+        info.amount = amount;
+        info.receiver = receiver;
+        Ok(info)
 
         //info.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
         // match &mut info {
@@ -476,8 +487,6 @@ impl WalletUser for WalletImplEvmErc20 {
         //         w.data.receiver = args.to.to_string();
         //     }
         // };
-
-        Ok(WalletTxInfoVersioned::V2(u))
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
@@ -486,52 +495,23 @@ impl WalletUser for WalletImplEvmErc20 {
     }
 }
 
-impl WalletImplEvmErc20 {
-    fn tmp_into_latest(
-        &self,
-        info: WalletTxInfoVersioned,
-        amount: CryptoAmount,
-        receiver: String,
-    ) -> WithMigrationStatus<WalletTxInfoV2> {
-        //let latest = versioned.into_latest();
-        match info.clone() {
-            WalletTxInfoVersioned::V1(_) => {
-                // let mut c = w.clone();
-                // c.data.amount = amount;
-                // c.data.receiver = receiver;
-
-                //let WalletTxInfoVersioned::V1(wrapped);
-                let mut latest = info.into_latest();
-                latest.data.amount = amount;
-                latest.data.receiver = receiver;
-
-                latest
-            }
-            WalletTxInfoVersioned::V2(w) => {
-                let mut c = w.clone();
-                c.data.amount = amount;
-                c.data.receiver = receiver;
-
-                c
-            }
-        }
-    }
-}
-
-impl WalletImplEvmErc20 {
-    fn tmp_into_latest2(
-        &self,
-        info: WithMigrationStatus<WalletTxInfoV2>,
-        amount: CryptoAmount,
-        receiver: String,
-    ) -> WithMigrationStatus<WalletTxInfoV2> {
-        //let latest = versioned.into_latest();
-        let mut u = info.clone();
-        u.data.amount = amount;
-        u.data.receiver = receiver;
-        u
-    }
-}
+// impl WalletImplEvmErc20 {
+//     fn tmp_into_latest(&self, info: WalletTx, amount: CryptoAmount, receiver: String) -> WalletTx {
+//         match info.clone() {
+//             // it's always v2
+//             WalletTx::V1(v1) => {
+//                 v1.amount = amount;
+//                 v1.receiver = receiver;
+//                 WalletTx::V1(v1)
+//             }
+//             WalletTx::V2(v2) => {
+//                 v2.amount = amount;
+//                 v2.receiver = receiver;
+//                 WalletTx::V2(v2)
+//             }
+//         }
+//     }
+// }
 
 #[cfg(test)]
 mod tests {
