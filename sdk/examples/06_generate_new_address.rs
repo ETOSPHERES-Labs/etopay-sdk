@@ -31,5 +31,9 @@ async fn main() {
 
     // Generate address
     let address = sdk.generate_new_address(&user.pin).await.unwrap();
-    println!("Address: {}", address);
+    println!("Address 1: {}", address);
+
+    sdk.set_wallet_derivation_options(0, 1).await.unwrap();
+    let address2 = sdk.generate_new_address(&user.pin).await.unwrap();
+    println!("Address 2: {}", address2);
 }

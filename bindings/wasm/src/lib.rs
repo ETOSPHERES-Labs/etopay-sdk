@@ -555,7 +555,7 @@ impl ETOPaySdk {
     /// @param {number} account - The account number
     /// @param {number} index - The index number
     ///
-    /// @returns {Promise<TxList>} The details of the created purchases
+    /// @returns {Promise<void>}
     #[wasm_bindgen(skip_jsdoc, js_name = "setWalletAccount")]
     pub async fn set_wallet_account(&self, account: u32, index: u32) -> Result<(), String> {
         let mut sdk = self.inner.write().await;

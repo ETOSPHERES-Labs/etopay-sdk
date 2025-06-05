@@ -35,8 +35,13 @@ Task {
         print("retrieved available networks and set the network for the wallet")
 
         // Generate address
-        let address = try await sdk.generateNewAddress(env.pin)
-        print("generated new receiver address: \(address.toString())")
+        let address1 = try await sdk.generateNewAddress(env.pin)
+        print("First Address: \(address1.toString())")
+
+        try await sdk.setWalletAccount(0, 1)
+
+        let address2 = try await sdk.generateNewAddress(env.pin)
+        print("Second Address: \(address2.toString())")
 
     } catch let error as RustString {
         fatalError("Generate new iota address example failed: \(error.toString())")
