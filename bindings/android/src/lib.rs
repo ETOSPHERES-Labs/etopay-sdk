@@ -1004,6 +1004,21 @@ mod ffi {
         }
     }
 
+    /// Set the account and index used for deriving the private key from the mnemonic. This is used
+    /// to have multiple accounts and addresses with a single mnemonic.
+    ///
+    /// @param account The account number
+    /// @param index The index number
+    #[public_name = "setWalletAccount"]
+    pub fn setWalletAccount(account: i64, index: i64) -> Result<(), String> {
+        let result = runtime().block_on(async move {
+            let mut sdk = get_or_init_sdk().write().await;
+            sdk.set_wallet_derivation_options(account as u32, index as u32).await
+        });
+
+        result.map_err(|e| format!("{e:#?}"))
+    }
+
     /// Gets the current exchange rate for the cryptocurrency to EURO
     ///
     /// @return The exchange rate as a floating point number

@@ -37,7 +37,12 @@ public class GenerateNewAddress06 {
 
             // generate receiver address
             String address = sdk.generateNewAddress(utils.PIN);
-            System.out.println("address: " + address);
+            System.out.println("First Address: " + address);
+
+            // update the account and index to get another address
+            sdk.setWalletAccount(0, 1);
+            String address2 = sdk.generateNewAddress(utils.PIN);
+            System.out.println("Second Address: " + address2);
 
         } catch (Exception e) {
             throw new RuntimeException("Generate new address example failed", e);
