@@ -11,7 +11,7 @@ use crate::{
     wallet_manager::WalletBorrow,
 };
 use etopay_wallet::{
-    MigratableWalletTx, MigrationStatus, MnemonicDerivationOption, WalletTx, WalletTxLatest, sort_by_date,
+    MigratableWalletTx, MigrationStatus, MnemonicDerivationOption, WalletTx, sort_by_date,
     types::{CryptoAmount, WalletTxInfoList, WalletTxStatus},
 };
 
@@ -571,7 +571,7 @@ impl Sdk {
     ///
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
     /// * [`WalletError::WalletNotInitialized`] - If there is an error initializing the wallet.
-    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTxLatest> {
+    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTx> {
         info!("Wallet getting details of particular transactions");
         self.verify_pin(pin).await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
@@ -778,7 +778,8 @@ mod tests {
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use chrono::{TimeZone, Utc};
-    use etopay_wallet::MockWalletUser;
+    use etopay_wallet::types::WalletTxInfoV2;
+    use etopay_wallet::{MockWalletUser, WithMigrationStatus};
     use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;
@@ -1365,7 +1366,7 @@ mod tests {
         // Assert
         match expected {
             Ok(resp) => {
-                assert_eq!(response.unwrap(), resp);
+                assert_eq!(response.unwrap(), WalletTx::from(resp));
             }
             Err(ref expected_err) => {
                 assert_eq!(response.err().unwrap().to_string(), expected_err.to_string());
@@ -1435,53 +1436,69 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        // During the test, we expect the status of WalletTxInfo with transaction_id = 2
+        // During the test, we expect the status of WalletTxInfoV2 with transaction_id = 2
         // to transition from 'Pending' to 'Confirmed' after synchronization
         let mixed_wallet_transactions = vec![
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "some tx id".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
-                network_key: "IOTA".to_string(),
-                status: WalletTxStatus::Confirmed,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "1".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "2".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending, // this one
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "3".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-            },
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "some tx id".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
+                    network_key: "IOTA".to_string(),
+                    status: WalletTxStatus::Confirmed,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
+            }),
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "1".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
+                    network_key: "ETH".to_string(),
+                    status: WalletTxStatus::Pending,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
+            }),
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "2".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
+                    network_key: "ETH".to_string(),
+                    status: WalletTxStatus::Pending, // this one
+                    explorer_url: None,
+                    gas_fee: None,
+                },
+            }),
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "3".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
+                    network_key: "ETH".to_string(),
+                    status: WalletTxStatus::Pending,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
+            }),
         ];
 
         let mut mock_user_repo = MockUserRepo::new();
@@ -1495,59 +1512,71 @@ mod tests {
                 kyc_type: KycType::Undefined,
                 viviswap_state: None,
                 local_share: None,
-                wallet_transactions: mixed_wallet_transactions.clone(),
-                wallet_transactions_versioned: Vec::new(),
+                wallet_transactions: Vec::new(),
+                wallet_transactions_versioned: mixed_wallet_transactions.clone(),
             })
         });
 
         let mixed_wallet_transactions_after_synchronization = vec![
-            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-                date: Utc::now(),
-                block_number_hash: None,
-                transaction_hash: "some tx id".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
-                network_key: "IOTA".to_string(),
-                status: WalletTxStatus::Confirmed,
-                explorer_url: None,
-                gas_fee: None,
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "some tx id".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
+                    network_key: "IOTA".to_string(),
+                    status: WalletTxStatus::Confirmed,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
             }),
-            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-                date: Utc::now(),
-                block_number_hash: None,
-                transaction_hash: "1".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-                gas_fee: None,
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "1".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
+                    network_key: "ETH".to_string(),
+                    status: WalletTxStatus::Pending,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
             }),
-            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-                date: Utc::now(),
-                block_number_hash: None,
-                transaction_hash: "2".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Confirmed,
-                explorer_url: None,
-                gas_fee: None,
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "2".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
+                    network_key: "ETH".to_string(),
+                    status: WalletTxStatus::Confirmed,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
             }),
-            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-                date: Utc::now(),
-                block_number_hash: None,
-                transaction_hash: "3".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-                gas_fee: None,
+            MigratableWalletTx::V2(WithMigrationStatus {
+                migration_status: MigrationStatus::Completed,
+                data: WalletTxInfoV2 {
+                    date: Utc::now(),
+                    block_number_hash: None,
+                    transaction_hash: "3".to_string(),
+                    receiver: String::new(),
+                    sender: String::new(),
+                    amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
+                    network_key: "ETH".to_string(),
+                    status: WalletTxStatus::Pending,
+                    explorer_url: None,
+                    gas_fee: None,
+                },
             }),
         ];
 
@@ -1574,7 +1603,7 @@ mod tests {
                 .once()
                 .with(eq(String::from("2"))) // WalletTxInfo.transaction_id = 2
                 .returning(move |_| {
-                    Ok(WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                    Ok(WalletTxInfoV2 {
                         date: Utc::now(),
                         block_number_hash: None,
                         transaction_hash: "2".to_string(),
@@ -1585,7 +1614,7 @@ mod tests {
                         status: WalletTxStatus::Confirmed, // Pending -> Confirmed
                         explorer_url: None,
                         gas_fee: None,
-                    }))
+                    })
                 });
             Ok(WalletBorrow::from(mock_wallet_user))
         });
@@ -1612,7 +1641,7 @@ mod tests {
         assert_eq!(
             response.unwrap(),
             WalletTxInfoList {
-                transactions: vec![WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+                transactions: vec![WalletTxInfoV2 {
                     date: Utc::now(),
                     block_number_hash: None,
                     transaction_hash: "2".to_string(),
@@ -1623,7 +1652,7 @@ mod tests {
                     status: WalletTxStatus::Confirmed,
                     explorer_url: None,
                     gas_fee: None
-                })]
+                }]
             }
         );
     }
@@ -1634,17 +1663,21 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let wallet_transactions = vec![WalletTxInfo {
-            date: "some date".to_string(),
-            block_number_hash: None,
-            transaction_hash: "1".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-        }];
+        let wallet_transactions = vec![MigratableWalletTx::V2(WithMigrationStatus {
+            migration_status: MigrationStatus::Completed,
+            data: WalletTxInfoV2 {
+                date: Utc::now(),
+                block_number_hash: None,
+                transaction_hash: "1".to_string(),
+                receiver: String::new(),
+                sender: String::new(),
+                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
+                network_key: "ETH".to_string(),
+                status: WalletTxStatus::Confirmed,
+                explorer_url: None,
+                gas_fee: None,
+            },
+        })];
 
         let mut mock_user_repo = MockUserRepo::new();
         mock_user_repo.expect_get().returning(move |_| {
@@ -1657,8 +1690,8 @@ mod tests {
                 kyc_type: KycType::Undefined,
                 viviswap_state: None,
                 local_share: None,
-                wallet_transactions: wallet_transactions.clone(),
-                wallet_transactions_versioned: Vec::new(),
+                wallet_transactions: Vec::new(),
+                wallet_transactions_versioned: wallet_transactions.clone(),
             })
         });
 
@@ -1702,46 +1735,55 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let tx_3 = WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap(),
-            block_number_hash: None,
-            transaction_hash: "3".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
+        let tx_3 = MigratableWalletTx::V2(WithMigrationStatus {
+            migration_status: MigrationStatus::Completed,
+            data: WalletTxInfoV2 {
+                date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap(),
+                block_number_hash: None,
+                transaction_hash: "3".to_string(),
+                receiver: String::new(),
+                sender: String::new(),
+                amount: CryptoAmount::from(1),
+                network_key: "ETH".to_string(),
+                status: WalletTxStatus::Confirmed,
+                explorer_url: None,
+                gas_fee: None,
+            },
         });
-        let tx_1 = WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
-            block_number_hash: None,
-            transaction_hash: "1".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
+        let tx_1 = MigratableWalletTx::V2(WithMigrationStatus {
+            migration_status: MigrationStatus::Completed,
+            data: WalletTxInfoV2 {
+                date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
+                block_number_hash: None,
+                transaction_hash: "1".to_string(),
+                receiver: String::new(),
+                sender: String::new(),
+                amount: CryptoAmount::from(1),
+                network_key: "ETH".to_string(),
+                status: WalletTxStatus::Confirmed,
+                explorer_url: None,
+                gas_fee: None,
+            },
         });
 
-        let tx_2 = WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap(),
-            block_number_hash: None,
-            transaction_hash: "2".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
+        let tx_2 = MigratableWalletTx::V2(WithMigrationStatus {
+            migration_status: MigrationStatus::Completed,
+            data: WalletTxInfoV2 {
+                date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap(),
+                block_number_hash: None,
+                transaction_hash: "2".to_string(),
+                receiver: String::new(),
+                sender: String::new(),
+                amount: CryptoAmount::from(1),
+                network_key: "ETH".to_string(),
+                status: WalletTxStatus::Confirmed,
+                explorer_url: None,
+                gas_fee: None,
+            },
         });
 
         let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];
-        let expected = vec![tx_3, tx_2, tx_1];
+        let expected = vec![WalletTx::from(tx_3), WalletTx::from(tx_2), WalletTx::from(tx_1)];
 
         let mut mock_user_repo = MockUserRepo::new();
         mock_user_repo.expect_get().returning(move |_| {
