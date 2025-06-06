@@ -12,7 +12,7 @@ use crate::rebased::{
     IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
 };
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
-use crate::{MigratableWalletTx, MigrationStatus, MnemonicDerivationOption, WalletTxLatest, WithMigrationStatus};
+use crate::{MnemonicDerivationOption, WalletTx};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -290,7 +290,7 @@ impl WalletUser for WalletImplIotaRebased {
             .collect::<Vec<String>>())
     }
 
-    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxLatest> {
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTx> {
         let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self

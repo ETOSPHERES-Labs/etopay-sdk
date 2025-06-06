@@ -23,9 +23,9 @@ impl MigratableWalletTx {
 
 impl From<MigratableWalletTx> for WalletTx {
     fn from(value: MigratableWalletTx) -> Self {
-        match value {
-            MigratableWalletTx::V1(v1) => WalletTx::V1(v1.into_inner()),
-            MigratableWalletTx::V2(v2) => WalletTx::V2(v2.into_inner()),
+        match value.clone() {
+            MigratableWalletTx::V1(_) => value.into_latest().into_inner(), // or return Error ~ "you should migrate transaction first / or something like that"
+            MigratableWalletTx::V2(v2) => v2.into_inner(),
         }
     }
 }
