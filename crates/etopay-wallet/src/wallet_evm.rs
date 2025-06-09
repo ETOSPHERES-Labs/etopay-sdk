@@ -2,7 +2,7 @@ use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::error::WalletError;
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
-use crate::{MnemonicDerivationOption, WalletTx};
+use crate::{MnemonicDerivationOption, WalletTransaction};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -265,7 +265,7 @@ impl WalletUser for WalletImplEvm {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTx> {
+    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTransaction> {
         let transaction_hash = TxHash::from_str(transaction_hash)?;
         let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
 
@@ -275,7 +275,7 @@ impl WalletUser for WalletImplEvm {
 
         let sender = tx.inner.signer();
 
-        let (status, date, block_number_hash) =
+        let (status, date, block_number_hash, gas_used) =
             if let (Some(block_number), Some(block_hash)) = (tx.block_number, tx.block_hash) {
                 let block = self
                     .provider
@@ -283,6 +283,7 @@ impl WalletUser for WalletImplEvm {
                     .await?;
 
                 let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
+                let gas_used = receipt.clone().map(|r| r.gas_used);
                 let status = match receipt.map(|r| r.inner.is_success()) {
                     Some(true) => WalletTxStatus::Confirmed,
                     Some(false) => WalletTxStatus::Conflicting,
@@ -293,11 +294,11 @@ impl WalletUser for WalletImplEvm {
                     .and_then(|b| Utc.timestamp_opt(b.header.timestamp as i64, 0).single())
                     .map(|dt| dt.to_rfc3339());
 
-                (status, date, Some((block_number, block_hash.to_string())))
+                (status, date, Some((block_number, block_hash.to_string())), gas_used)
             } else {
                 // status is pending
 
-                (WalletTxStatus::Pending, None, None)
+                (WalletTxStatus::Pending, None, None, None)
             };
 
         let Some(receiver_address) = tx.to() else {
@@ -318,7 +319,7 @@ impl WalletUser for WalletImplEvm {
             network_key: "ETH".to_string(),
             status,
             explorer_url: None,
-            gas_fee: None, // @@@@ TODO
+            gas_fee: gas_used.and_then(|g| Some(Decimal::from(g))),
         };
 
         Ok(tx)
@@ -439,7 +440,7 @@ impl WalletUser for WalletImplEvmErc20 {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTx> {
+    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTransaction> {
         // get the information for the underlying transaction
         let mut info = self.inner.get_wallet_tx(transaction_id).await?;
 
@@ -456,34 +457,9 @@ impl WalletUser for WalletImplEvmErc20 {
         let amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
         let receiver = args.to.to_string();
 
-        // Todo: Erc20 should have it's own impl of get_wallet_tx
-        // now we have to go through the `match`
-        // but get_wallet_tx always returns `latest` version
-        //let u = self.tmp_into_latest(info, amount, receiver);
-        // match info {
-        //     WalletTx::V1(v1) => todo!(),
-        //     WalletTx::V2(v2) => {
-        //         let mut updated = v2.clone();
-        //         updated.amount = amount;
-        //         updated.receiver = receiver;
-        //         Ok(WalletTx::V2(updated))
-        //     }
-        // }
         info.amount = amount;
         info.receiver = receiver;
         Ok(info)
-
-        //info.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
-        // match &mut info {
-        //     WalletTxInfoVersioned::V1(w) => {
-        //         w.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
-        //         w.data.receiver = args.to.to_string();
-        //     }
-        //     WalletTxInfoVersioned::V2(w) => {
-        //         w.data.amount = self.inner.convert_alloy_256_to_crypto_amount(args.amount)?;
-        //         w.data.receiver = args.to.to_string();
-        //     }
-        // };
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
@@ -491,24 +467,6 @@ impl WalletUser for WalletImplEvmErc20 {
         self.inner.estimate_transaction_request_gas(tx_request).await
     }
 }
-
-// impl WalletImplEvmErc20 {
-//     fn tmp_into_latest(&self, info: WalletTx, amount: CryptoAmount, receiver: String) -> WalletTx {
-//         match info.clone() {
-//             // it's always v2
-//             WalletTx::V1(v1) => {
-//                 v1.amount = amount;
-//                 v1.receiver = receiver;
-//                 WalletTx::V1(v1)
-//             }
-//             WalletTx::V2(v2) => {
-//                 v2.amount = amount;
-//                 v2.receiver = receiver;
-//                 WalletTx::V2(v2)
-//             }
-//         }
-//     }
-// }
 
 #[cfg(test)]
 mod tests {

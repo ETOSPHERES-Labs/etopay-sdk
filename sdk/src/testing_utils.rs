@@ -28,9 +28,9 @@ use api_types::api::{
     },
 };
 use chrono::Utc;
-use etopay_wallet::MockWalletUser;
+use etopay_wallet::types::WalletTxInfoV2;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
-use etopay_wallet::types::{WalletTxInfoV2, WalletTxInfoVersioned};
+use etopay_wallet::{MockWalletUser, VersionedWalletTransaction};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;
@@ -354,8 +354,8 @@ pub fn example_wallet_borrow() -> MockWalletManager {
     mock_wallet_manager
 }
 
-pub fn example_wallet_tx_info_versioned() -> WalletTxInfoVersioned {
-    WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+pub fn example_versioned_wallet_transaction() -> VersionedWalletTransaction {
+    VersionedWalletTransaction::V2(WalletTxInfoV2 {
         date: Utc::now(),
         block_number_hash: None,
         transaction_hash: "some tx id".to_string(),

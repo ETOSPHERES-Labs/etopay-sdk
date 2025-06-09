@@ -13,7 +13,7 @@ use api_types::api::networks::ApiProtocol;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
 use etopay_wallet::types::CryptoAmount;
 use etopay_wallet::types::GasCostEstimation;
-use etopay_wallet::{TransactionIntent, WithMigrationStatus};
+use etopay_wallet::{TransactionIntent, VersionedWalletTransaction};
 use log::{debug, info};
 
 impl Sdk {
@@ -189,10 +189,7 @@ impl Sdk {
         let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
         let mut user = repo.get(&active_user.username)?;
         user.wallet_transactions_versioned
-            .push(etopay_wallet::MigratableWalletTx::V2(WithMigrationStatus {
-                migration_status: etopay_wallet::MigrationStatus::Completed,
-                data: newly_created_transaction,
-            }));
+            .push(VersionedWalletTransaction::V2(newly_created_transaction));
         let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions_versioned);
 
         debug!("Transaction id on network: {tx_id}");
@@ -273,10 +270,7 @@ impl Sdk {
 
                 let mut wallet_transactions = user.wallet_transactions_versioned;
 
-                wallet_transactions.push(etopay_wallet::MigratableWalletTx::V2(WithMigrationStatus {
-                    migration_status: etopay_wallet::MigrationStatus::Completed,
-                    data: newly_created_transaction,
-                }));
+                wallet_transactions.push(VersionedWalletTransaction::V2(newly_created_transaction));
 
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
@@ -404,7 +398,7 @@ mod tests {
     use crate::testing_utils::{
         AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
-        example_wallet_borrow, example_wallet_tx_info_versioned, set_config,
+        example_versioned_wallet_transaction, example_wallet_borrow, set_config,
     };
     use crate::types::users::KycType;
     use crate::{
@@ -418,8 +412,8 @@ mod tests {
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use chrono::Utc;
-    use etopay_wallet::MockWalletUser;
     use etopay_wallet::types::{WalletTxInfoV2, WalletTxStatus};
+    use etopay_wallet::{MockWalletUser, WalletTransaction};
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
@@ -766,7 +760,7 @@ mod tests {
                     mock_wallet
                         .expect_get_wallet_tx()
                         .once()
-                        .returning(|_| Ok(example_wallet_tx_info_versioned()));
+                        .returning(|_| Ok(WalletTransaction::from(example_versioned_wallet_transaction())));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 
@@ -811,7 +805,7 @@ mod tests {
         sdk.set_networks(example_api_networks());
         sdk.set_network(ETH_NETWORK_KEY.to_string()).await.unwrap();
 
-        let wallet_transaction = WalletTxInfoV2 {
+        let wallet_transaction = VersionedWalletTransaction::V2(WalletTxInfoV2 {
             date: Utc::now(),
             block_number_hash: Some((0, String::new())),
             transaction_hash: String::from("tx_id"),
@@ -823,7 +817,7 @@ mod tests {
             status: WalletTxStatus::Pending,
             explorer_url: Some(String::new()),
             gas_fee: None,
-        };
+        });
 
         let wallet_transactions = vec![wallet_transaction.clone()].to_owned();
 
@@ -849,7 +843,7 @@ mod tests {
             mock_wallet
                 .expect_get_wallet_tx()
                 .times(1)
-                .returning(move |_| Ok(value.clone()));
+                .returning(move |_| Ok(WalletTransaction::from(value.clone())));
 
             Ok(WalletBorrow::from(mock_wallet))
         });
