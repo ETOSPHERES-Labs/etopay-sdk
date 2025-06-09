@@ -319,7 +319,7 @@ impl WalletUser for WalletImplEvm {
             network_key: "ETH".to_string(),
             status,
             explorer_url: None,
-            gas_fee: gas_used.and_then(|g| Some(Decimal::from(g))),
+            gas_fee: gas_used.map(Decimal::from),
         };
 
         Ok(tx)
@@ -399,7 +399,7 @@ impl WalletImplEvmErc20 {
 
         let contract = self.get_contract();
 
-        // create a TransactionReqeust encoding the contract call
+        // create a TransactionRequest encoding the contract call
         Ok(contract.transfer(addr_to, amount_wei_u256).into_transaction_request())
     }
 }
