@@ -12,7 +12,7 @@ use crate::rebased::{
     IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
 };
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
-use crate::{MnemonicDerivationOption, WalletTx};
+use crate::{MnemonicDerivationOption, WalletTransaction};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -290,7 +290,7 @@ impl WalletUser for WalletImplIotaRebased {
             .collect::<Vec<String>>())
     }
 
-    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTx> {
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTransaction> {
         let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self
@@ -403,19 +403,6 @@ impl WalletUser for WalletImplIotaRebased {
         };
 
         Ok(tx)
-
-        // Ok(WalletTxInfoVersioned::V2(WalletTxInfoV2 {
-        //     date: parse_date_or_default(&date),
-        //     block_number_hash,
-        //     transaction_hash: tx_hash.to_string(),
-        //     sender,
-        //     receiver,
-        //     amount,
-        //     network_key: String::from("iota_rebased_testnet"),
-        //     status,
-        //     explorer_url: None,
-        //     gas_fee: Some(gas_fee),
-        // }))
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {

@@ -11,7 +11,7 @@ use crate::{
     },
     user::error::UserKvStorageError,
 };
-use etopay_wallet::types::{WalletTxInfoVersioned, migrate_legacy_transactions_to_v1};
+use etopay_wallet::VersionedWalletTransaction;
 use log::debug;
 
 pub struct UserRepoImpl<I: super::UserKvStorage> {
@@ -23,9 +23,9 @@ impl<I: super::UserKvStorage> UserRepoImpl<I> {
         Self { inner }
     }
 
-    fn migrate(&mut self, user: &UserEntity) -> Result<()> {
-        self.update(user)
-    }
+    // fn migrate(&mut self, user: &UserEntity) -> Result<()> {
+    //     self.update(user)
+    // }
 }
 
 impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
@@ -59,15 +59,15 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 
     fn get(&self, username: &str) -> Result<UserEntity> {
         debug!("Fetching entry in user DB");
-        let mut u = self.inner.get(username)?;
+        let u = self.inner.get(username)?;
 
         // todo: where to put it?
         // migrate unversioned transactions and clear wallet_transactions
-        if !u.wallet_transactions.is_empty() {
-            u.wallet_transactions_versioned = migrate_legacy_transactions_to_v1(u.wallet_transactions);
-            u.wallet_transactions = Vec::new();
-            // self.migrate(&mut u)? ?????
-        }
+        // if !u.wallet_transactions.is_empty() {
+        //     u.wallet_transactions_versioned = migrate_legacy_transactions_to_v1(u.wallet_transactions);
+        //     u.wallet_transactions = Vec::new();
+        //     // self.migrate(&mut u)? ?????
+        // }
 
         Ok(u)
     }
@@ -142,7 +142,7 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
         self.inner.set(username, &user)
     }
 
-    fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<WalletTxInfoVersioned>) -> Result<()> {
+    fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<VersionedWalletTransaction>) -> Result<()> {
         debug!("Setting wallet transactions in user DB: {transaction:#?}");
         let mut user = self.inner.get(username)?;
         user.wallet_transactions_versioned = transaction;
@@ -444,8 +444,8 @@ mod tests {
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
         user_repo.create(&user).unwrap();
 
-        let txs: Vec<WalletTxInfoVersioned> = vec![
-            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+        let txs: Vec<VersionedWalletTransaction> = vec![
+            VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: String::from("transaction_id_1"),
@@ -458,7 +458,7 @@ mod tests {
                 explorer_url: None,
                 gas_fee: None,
             }),
-            WalletTxInfoVersioned::V2(WalletTxInfoV2 {
+            VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: Utc::now(),
                 block_number_hash: Some((1, String::from("block_2"))),
                 transaction_hash: String::from("transaction_id_2"),
