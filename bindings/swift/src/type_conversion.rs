@@ -1,11 +1,12 @@
 //! This module contains the conversion of shared types between Swift and Rust
 //! which are declared in the bridge module `pub mod ffi` inside `lib.rs`.
-use core::f64;
-
 use crate::{
     convert_enum, convert_simple_struct,
     ffi::{self},
 };
+use core::f64;
+use rust_decimal::prelude::ToPrimitive;
+use sdk::types::rust_decimal;
 
 impl From<sdk::types::ApiTxStatus> for ffi::TxStatus {
     fn from(value: sdk::types::ApiTxStatus) -> Self {
@@ -234,10 +235,10 @@ impl From<sdk::types::transactions::TxInfo> for crate::ffi_functions::TxInfo {
     }
 }
 
-impl From<sdk::types::WalletTxInfo> for crate::ffi_functions::WalletTxInfo {
-    fn from(value: sdk::types::WalletTxInfo) -> Self {
+impl From<sdk::types::WalletTransaction> for crate::ffi_functions::WalletTxInfo {
+    fn from(value: sdk::types::WalletTransaction) -> Self {
         crate::ffi_functions::WalletTxInfo {
-            date: value.date,
+            date: value.date.to_string(),
             block_number: value.block_number_hash.as_ref().map(|b| b.0),
             block_hash: value.block_number_hash.map(|b| b.1),
             transaction_hash: value.transaction_hash,
@@ -247,6 +248,7 @@ impl From<sdk::types::WalletTxInfo> for crate::ffi_functions::WalletTxInfo {
             network_key: value.network_key,
             status: value.status.into(),
             explorer_url: value.explorer_url.unwrap_or("".to_string()),
+            gas_fee: value.gas_fee.and_then(|g| g.to_f64()),
         }
     }
 }
