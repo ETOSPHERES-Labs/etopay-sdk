@@ -27,7 +27,6 @@ use api_types::api::{
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
     },
 };
-use chrono::Utc;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
 use etopay_wallet::types::{WalletTxInfoV2, parse_date_or_default};
 use etopay_wallet::{MockWalletUser, VersionedWalletTransaction};
