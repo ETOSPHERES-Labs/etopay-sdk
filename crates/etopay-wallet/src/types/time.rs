@@ -13,17 +13,26 @@ mod tests {
 
     #[test]
     fn test_parse_valid_date() {
-        let valid = "2024-06-01T12:00:00Z";
+        // Given
+        let valid_str = "2024-06-01T12:00:00Z";
+        let expected: DateTime<Utc> = valid_str.parse().unwrap();
 
-        let parsed = parse_date_or_default(valid);
-        assert_eq!(parsed.to_rfc3339(), valid);
+        // When
+        let parsed = parse_date_or_default(valid_str);
+
+        // Then
+        assert_eq!(parsed, expected);
     }
 
     #[test]
     fn test_parse_invalid_date_into_default() {
+        // Given
         let invalid = "not-a-date";
 
+        // When
         let fallback = parse_date_or_default(invalid); // 1970-01-01T00:00:00Z
+
+        // Then
         assert_eq!(fallback, Utc.timestamp_opt(0, 0).unwrap());
     }
 }
