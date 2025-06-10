@@ -22,10 +22,6 @@ impl<I: super::UserKvStorage> UserRepoImpl<I> {
     pub fn new(inner: I) -> Self {
         Self { inner }
     }
-
-    // fn migrate(&mut self, user: &UserEntity) -> Result<()> {
-    //     self.update(user)
-    // }
 }
 
 impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
@@ -60,15 +56,6 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
     fn get(&self, username: &str) -> Result<UserEntity> {
         debug!("Fetching entry in user DB");
         let u = self.inner.get(username)?;
-
-        // todo: where to put it?
-        // migrate unversioned transactions and clear wallet_transactions
-        // if !u.wallet_transactions.is_empty() {
-        //     u.wallet_transactions_versioned = migrate_legacy_transactions_to_v1(u.wallet_transactions);
-        //     u.wallet_transactions = Vec::new();
-        //     // self.migrate(&mut u)? ?????
-        // }
-
         Ok(u)
     }
 
