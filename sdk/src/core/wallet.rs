@@ -1465,12 +1465,13 @@ mod tests {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
+        let mock_date = Utc::now();
 
         // During the test, we expect the status of WalletTxInfoV2 with transaction_id = 2
         // to transition from 'Pending' to 'Confirmed' after synchronization
         let mixed_wallet_transactions = vec![
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
@@ -1482,7 +1483,7 @@ mod tests {
                 gas_fee: None,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "1".to_string(),
                 receiver: String::new(),
@@ -1494,7 +1495,7 @@ mod tests {
                 gas_fee: None,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "2".to_string(),
                 receiver: String::new(),
@@ -1506,7 +1507,7 @@ mod tests {
                 gas_fee: None,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "3".to_string(),
                 receiver: String::new(),
@@ -1537,7 +1538,7 @@ mod tests {
 
         let mixed_wallet_transactions_after_synchronization = vec![
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "some tx id".to_string(),
                 receiver: String::new(),
@@ -1549,7 +1550,7 @@ mod tests {
                 gas_fee: None,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "1".to_string(),
                 receiver: String::new(),
@@ -1561,7 +1562,7 @@ mod tests {
                 gas_fee: None,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "2".to_string(),
                 receiver: String::new(),
@@ -1573,7 +1574,7 @@ mod tests {
                 gas_fee: None,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
-                date: Utc::now(),
+                date: mock_date,
                 block_number_hash: None,
                 transaction_hash: "3".to_string(),
                 receiver: String::new(),
@@ -1610,7 +1611,7 @@ mod tests {
                 .with(eq(String::from("2"))) // WalletTxInfo.transaction_id = 2
                 .returning(move |_| {
                     Ok(WalletTxInfoV2 {
-                        date: Utc::now(),
+                        date: mock_date,
                         block_number_hash: None,
                         transaction_hash: "2".to_string(),
                         receiver: String::new(),
@@ -1648,7 +1649,7 @@ mod tests {
             response.unwrap(),
             WalletTxInfoList {
                 transactions: vec![WalletTxInfoV2 {
-                    date: Utc::now(),
+                    date: mock_date,
                     block_number_hash: None,
                     transaction_hash: "2".to_string(),
                     receiver: String::new(),
