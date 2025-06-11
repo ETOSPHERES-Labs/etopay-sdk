@@ -3,6 +3,15 @@ use etopay_wallet::{VersionedWalletTransaction, WalletTransaction};
 
 use crate::wallet_manager::WalletBorrow;
 
+/// Fetch new transaction hashes and convert them into versioned transactions.
+///
+/// This function retrieves transaction hashes starting from the given index (`start`) up to the specified `limit`,
+/// using the provided network key. If any of the fetched hashes are not present in the provided
+/// `wallet_transactions`, they are converted into `VersionedWalletTransaction` instances and returned.
+///
+/// # Returns
+///
+/// Returns `Ok(Vec<VersionedWalletTransaction>)` containing only the newly discovered transactio
 pub async fn fetch_new_hashes_and_turn_into_versioned_transactions(
     wallet: &WalletBorrow<'_>,
     wallet_transactions: &[VersionedWalletTransaction],

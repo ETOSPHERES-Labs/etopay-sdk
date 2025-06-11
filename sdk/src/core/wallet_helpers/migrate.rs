@@ -3,6 +3,16 @@ use etopay_wallet::VersionedWalletTransaction;
 use crate::error::Result;
 use crate::wallet_manager::WalletBorrow;
 
+/// Migrate outdated transactions to their latest version.
+///
+/// This function checks the provided list of transactions for any that are outdated.
+/// For each outdated transaction, it attempts to fetch the latest version using `wallet.get_wallet_tx`.
+/// If successful, the transaction is updated; otherwise, the original (outdated) transaction is retained.
+///
+/// # Returns
+///
+/// Returns `Ok(Vec<VersionedWalletTransaction>)` containing the same set of transactions as provided,
+/// with entries migrated to the latest version where possible.
 pub async fn migrate_transactions(
     wallet: &WalletBorrow<'_>,
     transactions: &Vec<VersionedWalletTransaction>,
