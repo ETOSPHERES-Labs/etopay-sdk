@@ -1,5 +1,15 @@
 use etopay_wallet::VersionedWalletTransaction;
 
+/// Merge incoming transactions into the current list.
+///
+/// This function compares `incoming_transactions` with `current_transactions`
+/// using `transaction_hash` and `network_key` as identifiers. If a matching transaction
+/// is found in `current_transactions`, it is updated with the new data. If no match is found,
+/// the transaction is added to the list.
+///
+/// # Returns
+///
+/// This function does not return a value. The `current_transactions` vector is modified in place.
 pub fn merge_transactions(
     current_transactions: &mut Vec<VersionedWalletTransaction>,
     incoming_transactions: Vec<VersionedWalletTransaction>,

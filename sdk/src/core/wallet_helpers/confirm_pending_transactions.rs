@@ -2,6 +2,15 @@ use crate::error::Result;
 use crate::wallet_manager::WalletBorrow;
 use etopay_wallet::{VersionedWalletTransaction, types::WalletTxStatus};
 
+/// Confirm the status of a list of versioned wallet transactions.
+///
+/// This function takes a list of versioned wallet transactions and attempts to confirm their status.
+/// It returns the same list of transactions, with updated entries if the confirmation succeeds.
+///
+/// # Returns
+///
+/// Returns `Ok(Vec<VersionedWalletTransaction>)` containing the original transactions,
+/// with updated status where applicable.
 pub async fn confirm_pending_transactions(
     wallet: &WalletBorrow<'_>,
     transactions: &Vec<VersionedWalletTransaction>,
