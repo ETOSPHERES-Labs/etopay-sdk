@@ -6,8 +6,8 @@ use super::Sdk;
 use crate::{
     backend::dlt::put_user_address,
     core::wallet_helpers::{
-        fetch_new_hashes_and_turn_into_versioned_transactions, get_transaction_slice, merge_transactions,
-        migrate_transactions, confirm_pending_transactions,
+        confirm_pending_transactions, fetch_new_hashes_and_turn_into_versioned_transactions, get_transaction_slice,
+        merge_transactions, migrate_transactions,
     },
     error::Result,
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
