@@ -98,7 +98,7 @@ async fn it_should_create_purchase_request_and_confirm_it() {
     let purchase_type = "CLIK";
 
     // Act
-    let amount = CryptoAmount::try_from(dec!(0.05)).unwrap();
+    let amount = CryptoAmount::try_from(dec!(0.1)).unwrap();
     let purchase_id = sdk
         .create_purchase_request("alice", amount, product_hash, app_data, purchase_type)
         .await
