@@ -532,7 +532,7 @@ impl Sdk {
         // Retrieve the transaction list from the wallet,
         // 1) fetch and add new (untracked) transactions from the network,
         // 2) migrate transactions to the latest version if necessary,
-        // 3) update pending transactions with their latest network status,
+        // 3) confirm pending transactions,
         // 4) and save the updated list back to the wallet.
         let mut wallet_transactions = user.wallet_transactions_versioned;
 
@@ -554,11 +554,11 @@ impl Sdk {
         // 2) migrate transactions to the latest version if necessary,
         let migrated_transaction_slice = migrate_transactions(&wallet, &transaction_slice).await?;
 
-        // 3) update pending transactions with their latest network status,
-        let updated_transaction_slice = confirm_pending_transactions(&wallet, &migrated_transaction_slice).await?;
+        // 3) confirm pending transactions
+        let confirmed_transaction_slice = confirm_pending_transactions(&wallet, &migrated_transaction_slice).await?;
 
         // 4) and save the updated list back to the wallet.
-        merge_transactions(&mut wallet_transactions, updated_transaction_slice);
+        merge_transactions(&mut wallet_transactions, confirmed_transaction_slice);
         let _ = repo.set_wallet_transactions(&user.username, wallet_transactions.clone());
 
         // Get updated transaction slice
