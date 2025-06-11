@@ -46,13 +46,18 @@ pub async fn confirm_pending_transactions(
 mod tests {
     use super::confirm_pending_transactions;
     use crate::wallet_manager::WalletBorrow;
-    use chrono::Utc;
+    use chrono::{DateTime, Utc};
     use etopay_wallet::{MockWalletUser, VersionedWalletTransaction, WalletTransaction, types::CryptoAmount};
     use rust_decimal::Decimal;
 
+    fn get_mocked_date() -> DateTime<Utc> {
+        let date = "2024-06-01T12:00:00Z";
+        date.parse().unwrap()
+    }
+
     fn get_pending_transaction() -> VersionedWalletTransaction {
         VersionedWalletTransaction::V2(etopay_wallet::types::WalletTxInfoV2 {
-            date: Utc::now(),
+            date: get_mocked_date(),
             block_number_hash: None,
             transaction_hash: String::from("0x000"),
             sender: String::from("Satoshi"),
@@ -67,7 +72,7 @@ mod tests {
 
     fn get_confirmed_transaction() -> VersionedWalletTransaction {
         VersionedWalletTransaction::V2(etopay_wallet::types::WalletTxInfoV2 {
-            date: Utc::now(),
+            date: get_mocked_date(),
             block_number_hash: None,
             transaction_hash: String::from("0x000"),
             sender: String::from("Satoshi"),
@@ -107,7 +112,7 @@ mod tests {
     async fn confirm_pending_transactions_should_update_and_migrate_if_current_version_is_outdated() {
         // Given
         let pending_outdated_transaction = VersionedWalletTransaction::V1(etopay_wallet::types::WalletTxInfoV1 {
-            date: Utc::now(),
+            date: get_mocked_date(),
             block_number_hash: None,
             transaction_hash: String::from("0x000"),
             sender: String::from("Satoshi"),
