@@ -93,7 +93,7 @@ pub trait WalletUser: Debug {
     ///
     /// # Returns
     ///
-    /// The versioned wallet transaction details.
+    /// The wallet transaction details.
     ///
     /// # Errors
     ///

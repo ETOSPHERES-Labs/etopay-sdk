@@ -1791,6 +1791,7 @@ name = "etopay-sdk"
 version = "0.16.0"
 dependencies = [
  "aes-gcm",
+ "alloy-transport",
  "async-trait",
  "base64 0.22.1",
  "blake2",
