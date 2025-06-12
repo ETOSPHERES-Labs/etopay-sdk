@@ -1,7 +1,7 @@
 use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus};
 use crate::{MnemonicDerivationOption, WalletTransaction};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
@@ -295,9 +295,7 @@ impl WalletUser for WalletImplEvm {
                     None => WalletTxStatus::Pending,
                 };
 
-                let date = block
-                    .and_then(|b| Utc.timestamp_opt(b.header.timestamp as i64, 0).single())
-                    .map(|dt| dt.to_rfc3339());
+                let date = block.and_then(|b| Utc.timestamp_opt(b.header.timestamp as i64, 0).single());
 
                 (status, date, Some((block_number, block_hash.to_string())), gas_used)
             } else {
@@ -316,7 +314,7 @@ impl WalletUser for WalletImplEvm {
         let is_sender = self.is_sender(sender.to_string()).await?;
 
         let tx = WalletTxInfoV2 {
-            date: parse_date_or_default(&date.unwrap_or_default()), // if missing: empty string
+            date: date.unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap()),
             block_number_hash,
             transaction_hash: transaction_hash.to_string(),
             sender: sender.to_string(),

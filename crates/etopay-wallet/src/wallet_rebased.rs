@@ -11,7 +11,7 @@ use crate::rebased::{
     CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
     IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
 };
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus, parse_date_or_default};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus};
 use crate::{MnemonicDerivationOption, WalletTransaction};
 use async_trait::async_trait;
 use bip39::Mnemonic;
@@ -309,12 +309,9 @@ impl WalletUser for WalletImplIotaRebased {
 
         // log::info!("Transaction Details:\n{tx:#?}");
 
-        // The timestamp is in milliseconds but we make it into a human-readable format
         let date = tx
             .timestamp_ms
-            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single())
-            .map(|dt| dt.to_rfc3339())
-            .unwrap_or_default(); // default is going to be an empty String here
+            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single());
 
         // For block id we use the checkpoint number which shows when the tx was finalized.
         let block_number_hash = if let Some(checkpoint_number) = tx.checkpoint {
@@ -392,7 +389,7 @@ impl WalletUser for WalletImplIotaRebased {
         let is_sender = self.is_sender(&sender);
 
         let tx = WalletTxInfoV2 {
-            date: parse_date_or_default(&date),
+            date: date.unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap()),
             block_number_hash,
             transaction_hash: tx_hash.to_string(),
             sender,
