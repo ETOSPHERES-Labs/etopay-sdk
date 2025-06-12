@@ -15,7 +15,7 @@ use crate::wallet_manager::WalletBorrow;
 /// with entries migrated to the latest version where possible.
 pub async fn migrate_transactions(
     wallet: &WalletBorrow<'_>,
-    transactions: &Vec<VersionedWalletTransaction>,
+    transactions: &[VersionedWalletTransaction],
 ) -> Result<Vec<VersionedWalletTransaction>> {
     let mut migrated_transactions = Vec::new();
     for t in transactions {
