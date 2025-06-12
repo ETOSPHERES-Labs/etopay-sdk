@@ -58,6 +58,7 @@ mod tests {
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
             gas_fee,
+            is_sender: true,
         })
     }
 

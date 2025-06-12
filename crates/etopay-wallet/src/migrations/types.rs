@@ -21,6 +21,7 @@ impl From<WalletTransaction> for VersionedWalletTransaction {
             status: value.status,
             explorer_url: value.explorer_url,
             gas_fee: value.gas_fee,
+            is_sender: value.is_sender,
         })
     }
 }
@@ -42,6 +43,7 @@ impl From<VersionedWalletTransaction> for WalletTransaction {
                 status: v1.status,
                 explorer_url: v1.explorer_url,
                 gas_fee: None,
+                is_sender: false,
             },
             VersionedWalletTransaction::V2(v2) => v2,
         }

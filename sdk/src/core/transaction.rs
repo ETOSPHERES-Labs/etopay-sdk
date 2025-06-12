@@ -568,6 +568,7 @@ mod tests {
                             status: WalletTxStatus::Pending,
                             explorer_url: None,
                             gas_fee: None,
+                            is_sender: false,
                         })
                     });
 
@@ -817,6 +818,7 @@ mod tests {
             status: WalletTxStatus::Pending,
             explorer_url: Some(String::new()),
             gas_fee: None,
+            is_sender: false,
         });
 
         let wallet_transactions = vec![wallet_transaction.clone()].to_owned();

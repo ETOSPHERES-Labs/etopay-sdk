@@ -444,6 +444,7 @@ mod tests {
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: Utc::now(),
@@ -457,6 +458,7 @@ mod tests {
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
         ];
 

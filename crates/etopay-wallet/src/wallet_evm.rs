@@ -160,6 +160,11 @@ impl WalletImplEvm {
             gas_limit,
         })
     }
+
+    async fn is_sender(&self, sender: String) -> Result<bool> {
+        let address = self.get_address().await?;
+        Ok(address == sender)
+    }
 }
 
 /// Convert a [`U256`] to [`CryptoAmount`] while taking the decimals into account.
@@ -308,6 +313,7 @@ impl WalletUser for WalletImplEvm {
         };
 
         let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
+        let is_sender = self.is_sender(sender.to_string()).await?;
 
         let tx = WalletTxInfoV2 {
             date: parse_date_or_default(&date.unwrap_or_default()), // if missing: empty string
@@ -320,6 +326,7 @@ impl WalletUser for WalletImplEvm {
             status,
             explorer_url: None,
             gas_fee: gas_used.map(Decimal::from),
+            is_sender,
         };
 
         Ok(tx)

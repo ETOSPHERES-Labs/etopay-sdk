@@ -389,6 +389,8 @@ impl WalletUser for WalletImplIotaRebased {
             })
             .unwrap_or(Ok(String::default()))?;
 
+        let is_sender = self.is_sender(sender.clone());
+
         let tx = WalletTxInfoV2 {
             date: parse_date_or_default(&date),
             block_number_hash,
@@ -400,6 +402,7 @@ impl WalletUser for WalletImplIotaRebased {
             status,
             explorer_url: None,
             gas_fee: Some(gas_fee),
+            is_sender,
         };
 
         Ok(tx)
@@ -446,6 +449,11 @@ impl WalletImplIotaRebased {
                     .sub(gas_summary.storage_rebate)
             }
         }
+    }
+
+    fn is_sender(&self, sender: String) -> bool {
+        let address = self.keystore.addresses()[0].to_string();
+        address == sender
     }
 
     async fn prepare_tx_data(
