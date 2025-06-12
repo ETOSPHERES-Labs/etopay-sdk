@@ -389,7 +389,7 @@ impl WalletUser for WalletImplIotaRebased {
             })
             .unwrap_or(Ok(String::default()))?;
 
-        let is_sender = self.is_sender(sender.clone());
+        let is_sender = self.is_sender(&sender);
 
         let tx = WalletTxInfoV2 {
             date: parse_date_or_default(&date),
@@ -451,7 +451,7 @@ impl WalletImplIotaRebased {
         }
     }
 
-    fn is_sender(&self, sender: String) -> bool {
+    fn is_sender(&self, sender: &str) -> bool {
         let address = self.keystore.addresses()[0].to_string();
         address == sender
     }
