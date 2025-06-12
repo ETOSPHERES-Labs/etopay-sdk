@@ -15,18 +15,16 @@ pub fn merge_transactions(
     incoming_transactions: Vec<VersionedWalletTransaction>,
 ) {
     for tx in incoming_transactions {
-        let (hash, network_key) = match &tx {
-            VersionedWalletTransaction::V1(v1) => (&v1.transaction_hash, &v1.network_key),
-            VersionedWalletTransaction::V2(v2) => (&v2.transaction_hash, &v2.network_key),
-        };
+        let hash = tx.transaction_hash();
+        let network_key = tx.network_key();
 
-        if let Some(existing) = current_transactions.iter_mut().find(|tx| match tx {
-            VersionedWalletTransaction::V1(v1) => v1.transaction_hash == *hash && v1.network_key == *network_key,
-            VersionedWalletTransaction::V2(v2) => v2.transaction_hash == *hash && v2.network_key == *network_key,
-        }) {
+        if let Some(existing) = current_transactions
+            .iter_mut()
+            .find(|existing_tx| existing_tx.transaction_hash() == hash && existing_tx.network_key() == network_key)
+        {
             *existing = tx;
         } else {
-            current_transactions.push(tx)
+            current_transactions.push(tx);
         }
     }
 }

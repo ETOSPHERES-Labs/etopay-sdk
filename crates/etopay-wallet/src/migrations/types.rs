@@ -16,6 +16,20 @@ impl VersionedWalletTransaction {
             VersionedWalletTransaction::V2(w) => w.date,
         }
     }
+
+    pub fn transaction_hash(&self) -> &str {
+        match self {
+            VersionedWalletTransaction::V1(v1) => &v1.transaction_hash,
+            VersionedWalletTransaction::V2(v2) => &v2.transaction_hash,
+        }
+    }
+
+    pub fn network_key(&self) -> &str {
+        match self {
+            VersionedWalletTransaction::V1(v1) => &v1.network_key,
+            VersionedWalletTransaction::V2(v2) => &v2.network_key,
+        }
+    }
 }
 
 impl From<WalletTransaction> for VersionedWalletTransaction {
