@@ -1,19 +1,7 @@
 use crate::VersionedWalletTransaction;
 
 pub fn sort_wallet_transactions_by_date(transactions: &mut [VersionedWalletTransaction]) {
-    transactions.sort_by(|a, b| {
-        let a_date = match a {
-            VersionedWalletTransaction::V1(w) => w.date,
-            VersionedWalletTransaction::V2(w) => w.date,
-        };
-
-        let b_date = match b {
-            VersionedWalletTransaction::V1(w) => w.date,
-            VersionedWalletTransaction::V2(w) => w.date,
-        };
-
-        b_date.cmp(&a_date)
-    });
+    transactions.sort_by_key(|b| std::cmp::Reverse(b.date()));
 }
 
 #[cfg(test)]
