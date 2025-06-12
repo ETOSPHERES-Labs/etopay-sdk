@@ -558,17 +558,14 @@ impl Sdk {
         let confirmed_transaction_slice = confirm_pending_transactions(&wallet, &migrated_transaction_slice).await?;
 
         // 4) and save the updated list back to the wallet.
-        merge_transactions(&mut wallet_transactions, confirmed_transaction_slice);
+        merge_transactions(&mut wallet_transactions, confirmed_transaction_slice.clone());
         let _ = repo.set_wallet_transactions(&user.username, wallet_transactions.clone());
-
-        // Get updated transaction slice
-        let requested_transactions = get_transaction_slice(network_key.clone(), &wallet_transactions, start, limit);
 
         // We want SDK users to interact with a unified transaction type, so the code below
         // converts a selected range of versioned transactions to the latest transaction type
         // defined by the SDK. If any transactions are not already in the latest form, they are
         // temporarily migrated for the purpose of display or SDK consumption.
-        let transactions: Vec<WalletTransaction> = requested_transactions
+        let transactions: Vec<WalletTransaction> = confirmed_transaction_slice
             .into_iter()
             .map(WalletTransaction::from)
             .collect();
