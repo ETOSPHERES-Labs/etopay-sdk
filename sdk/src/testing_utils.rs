@@ -27,8 +27,9 @@ use api_types::api::{
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
     },
 };
+use chrono::{DateTime, Utc};
+use etopay_wallet::types::WalletTxInfoV2;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
-use etopay_wallet::types::{WalletTxInfoV2, parse_date_or_default};
 use etopay_wallet::{MockWalletUser, VersionedWalletTransaction};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
@@ -354,8 +355,10 @@ pub fn example_wallet_borrow() -> MockWalletManager {
 }
 
 pub fn example_versioned_wallet_transaction() -> VersionedWalletTransaction {
-    let date = "2024-06-01T12:00:00Z";
-    let mock_date = parse_date_or_default(date);
+    let mock_date = DateTime::parse_from_rfc3339("2024-06-01T12:00:00Z")
+        .map(|dt| dt.with_timezone(&Utc))
+        .unwrap();
+
     VersionedWalletTransaction::V2(WalletTxInfoV2 {
         date: mock_date,
         block_number_hash: None,
