@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 use crate::types::{WalletTxInfoV1, WalletTxInfoV2};
@@ -6,6 +7,15 @@ use crate::types::{WalletTxInfoV1, WalletTxInfoV2};
 pub enum VersionedWalletTransaction {
     V1(WalletTxInfoV1),
     V2(WalletTxInfoV2),
+}
+
+impl VersionedWalletTransaction {
+    pub fn date(&self) -> DateTime<Utc> {
+        match self {
+            VersionedWalletTransaction::V1(w) => w.date,
+            VersionedWalletTransaction::V2(w) => w.date,
+        }
+    }
 }
 
 impl From<WalletTransaction> for VersionedWalletTransaction {
