@@ -13,7 +13,7 @@ use etopay_wallet::{VersionedWalletTransaction, types::WalletTxStatus};
 /// with updated status where applicable.
 pub async fn confirm_pending_transactions(
     wallet: &WalletBorrow<'_>,
-    transactions: &Vec<VersionedWalletTransaction>,
+    transactions: &[VersionedWalletTransaction],
 ) -> Result<Vec<VersionedWalletTransaction>> {
     let mut result = Vec::with_capacity(transactions.len());
     for t in transactions {
