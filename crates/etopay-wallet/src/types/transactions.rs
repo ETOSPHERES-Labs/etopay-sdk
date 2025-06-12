@@ -133,4 +133,5 @@ pub struct WalletTxInfoV2 {
     pub status: WalletTxStatus,
     pub explorer_url: Option<String>,
     pub gas_fee: Option<Decimal>,
+    pub is_sender: bool,
 }

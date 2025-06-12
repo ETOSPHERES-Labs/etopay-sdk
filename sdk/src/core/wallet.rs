@@ -1317,6 +1317,7 @@ mod tests {
                 status: WalletTxStatus::Confirmed,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: mock_date,
@@ -1329,6 +1330,7 @@ mod tests {
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: mock_date,
@@ -1341,6 +1343,7 @@ mod tests {
                 status: WalletTxStatus::Pending, // this one
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: mock_date,
@@ -1353,6 +1356,7 @@ mod tests {
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
         ];
 
@@ -1384,6 +1388,7 @@ mod tests {
                 status: WalletTxStatus::Confirmed,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: mock_date,
@@ -1396,6 +1401,7 @@ mod tests {
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: mock_date,
@@ -1408,6 +1414,7 @@ mod tests {
                 status: WalletTxStatus::Confirmed,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
             VersionedWalletTransaction::V2(WalletTxInfoV2 {
                 date: mock_date,
@@ -1420,6 +1427,7 @@ mod tests {
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
                 gas_fee: None,
+                is_sender: true,
             }),
         ];
 
@@ -1457,6 +1465,7 @@ mod tests {
                         status: WalletTxStatus::Confirmed, // Pending -> Confirmed
                         explorer_url: None,
                         gas_fee: None,
+                        is_sender: true,
                     })
                 });
             Ok(WalletBorrow::from(mock_wallet_user))
@@ -1495,6 +1504,7 @@ mod tests {
                     status: WalletTxStatus::Confirmed,
                     explorer_url: None,
                     gas_fee: None,
+                    is_sender: true,
                 }]
             }
         );
@@ -1517,6 +1527,7 @@ mod tests {
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
             gas_fee: None,
+            is_sender: true,
         })];
 
         let mut mock_user_repo = MockUserRepo::new();
@@ -1586,6 +1597,7 @@ mod tests {
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
             gas_fee: None,
+            is_sender: true,
         });
         let tx_1 = VersionedWalletTransaction::V2(WalletTxInfoV2 {
             date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
@@ -1598,6 +1610,7 @@ mod tests {
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
             gas_fee: None,
+            is_sender: true,
         });
 
         let tx_2 = VersionedWalletTransaction::V2(WalletTxInfoV2 {
@@ -1611,6 +1624,7 @@ mod tests {
             status: WalletTxStatus::Confirmed,
             explorer_url: None,
             gas_fee: None,
+            is_sender: true,
         });
 
         let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];

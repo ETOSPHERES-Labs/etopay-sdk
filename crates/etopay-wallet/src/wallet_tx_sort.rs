@@ -37,6 +37,7 @@ mod tests {
             status: WalletTxStatus::Pending,
             explorer_url: None,
             gas_fee: None,
+            is_sender: true,
         };
 
         VersionedWalletTransaction::V2(v2)

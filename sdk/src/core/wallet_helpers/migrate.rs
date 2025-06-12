@@ -67,6 +67,7 @@ mod tests {
             status: etopay_wallet::types::WalletTxStatus::Confirmed,
             explorer_url: None,
             gas_fee: Some(Decimal::from(1)),
+            is_sender: true,
         })
     }
 

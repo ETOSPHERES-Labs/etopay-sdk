@@ -368,5 +368,6 @@ pub fn example_versioned_wallet_transaction() -> VersionedWalletTransaction {
         status: WalletTxStatus::Confirmed,
         explorer_url: None,
         gas_fee: None,
+        is_sender: true,
     })
 }
