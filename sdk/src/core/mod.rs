@@ -23,9 +23,6 @@ pub mod exchange;
 /// Share module.
 pub mod share;
 
-/// Wallet helpers
-pub mod wallet_helpers;
-
 /// Testing utils in sdk core
 #[cfg(test)]
 pub(crate) mod core_testing_utils;
