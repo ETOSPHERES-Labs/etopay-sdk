@@ -161,7 +161,7 @@ impl WalletImplEvm {
         })
     }
 
-    async fn is_sender(&self, sender: String) -> Result<bool> {
+    async fn is_sender(&self, sender: &str) -> Result<bool> {
         let address = self.get_address().await?;
         Ok(address == sender)
     }
@@ -311,7 +311,7 @@ impl WalletUser for WalletImplEvm {
         };
 
         let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
-        let is_sender = self.is_sender(sender.to_string()).await?;
+        let is_sender = self.is_sender(&sender.to_string()).await?;
 
         let tx = WalletTxInfoV2 {
             date: date.unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap()),
