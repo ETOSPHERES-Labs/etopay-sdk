@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::types::{WalletTxInfoV1, WalletTxInfoV2};
+use crate::types::{WalletTxInfoV1, WalletTxInfoV2, WalletTxStatus};
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 pub enum VersionedWalletTransaction {
@@ -28,6 +28,13 @@ impl VersionedWalletTransaction {
         match self {
             VersionedWalletTransaction::V1(v1) => &v1.network_key,
             VersionedWalletTransaction::V2(v2) => &v2.network_key,
+        }
+    }
+
+    pub fn status(&self) -> WalletTxStatus {
+        match self {
+            VersionedWalletTransaction::V1(v1) => v1.status,
+            VersionedWalletTransaction::V2(v2) => v2.status,
         }
     }
 }
