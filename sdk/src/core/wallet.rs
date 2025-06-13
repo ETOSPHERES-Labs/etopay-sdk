@@ -509,7 +509,7 @@ impl Sdk {
             return Err(crate::Error::UserNotInitialized);
         };
         let network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
-        let network_key = network.key.to_owned();
+        // let network_key = network.key.to_owned();
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
@@ -532,31 +532,36 @@ impl Sdk {
         // 4) and save the updated list back to the wallet.
         let mut wallet_transactions = user.wallet_transactions_versioned;
 
-        let hashes = match wallet.get_wallet_tx_list(start, limit).await {
-            Ok(hashes) => hashes,
+        // 1) fetch and add new (untracked) transactions from the network
+        let mut transactions: Vec<VersionedWalletTransaction> = match wallet.get_wallet_tx_list(start, limit).await {
+            Ok(transaction_hashes) => {
+                // go through and get the details for any new hashes
+                let mut transactions = Vec::new();
+                log::debug!("Digests: {:#?}", transaction_hashes);
+                for hash in transaction_hashes {
+                    // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
+                    // check both the transaction hash and the network key, as hash collisions can occur across different blockchain networks
+                    if wallet_transactions
+                        .iter()
+                        .any(|t| t.transaction_hash() == hash && t.network_key() == network.key)
+                    {
+                        continue;
+                    }
+
+                    log::debug!("Getting details for new transaction with hash {hash}");
+
+                    // not included, we should add it!
+                    match wallet.get_wallet_tx(&hash).await {
+                        Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
+                        Ok(details) => transactions.push(VersionedWalletTransaction::from(details)),
+                    }
+                }
+                transactions
+            }
+            // do nothing if feature is not supported
             Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => Vec::new(),
             Err(e) => return Err(e.into()),
         };
-
-        let new_hashes: Vec<String> = hashes
-            .into_iter()
-            .filter(|hash| {
-                !wallet_transactions
-                    .iter()
-                    .any(|t| t.transaction_hash() == *hash && t.network_key() == network_key)
-            })
-            .collect();
-
-        let mut new_transactions = Vec::with_capacity(new_hashes.len());
-        for hash in new_hashes {
-            let tx = wallet.get_wallet_tx(&hash).await?;
-            new_transactions.push(tx);
-        }
-
-        let mut transactions: Vec<VersionedWalletTransaction> = new_transactions
-            .into_iter()
-            .map(VersionedWalletTransaction::from)
-            .collect();
 
         // 2) migrate transactions to the latest version if necessary,
         for t in &mut transactions {
