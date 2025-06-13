@@ -11,6 +11,7 @@ pub mod repository;
 
 use crate::{
     share::Share,
+    tx_version::VersionedWalletTransaction,
     types::{
         newtypes::EncryptedPassword,
         users::{KycType, UserEntity},
@@ -18,7 +19,6 @@ use crate::{
     },
 };
 use error::{Result, UserKvStorageError};
-use etopay_wallet::types::WalletTxInfo;
 
 /// Storage abstraction of [`UserEntity`] objects as a simple Key-Value storage
 #[cfg_attr(test, mockall::automock)]
@@ -186,7 +186,7 @@ pub trait UserRepo {
     /// # Errors
     ///
     /// Returns an `Error::KVError` if there is an error retrieving the user from the database.
-    fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<WalletTxInfo>) -> Result<()>;
+    fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<VersionedWalletTransaction>) -> Result<()>;
 
     /// Set the local share for a user.
     ///

@@ -1548,6 +1548,7 @@ pub struct WalletTxInfo {
     pub network_key: String,
     pub status: WalletTxStatus,
     pub explorer_url: String,
+    pub gas_fee: Option<f64>,
 }
 
 impl WalletTxInfo {
@@ -1588,6 +1589,9 @@ impl WalletTxInfo {
 
     pub fn explorer_url(&self) -> String {
         self.explorer_url.clone()
+    }
+    pub fn gas_fee(&self) -> Option<f64> {
+        self.gas_fee
     }
 }
 

@@ -2,6 +2,8 @@ use api_types::api::{
     networks::ApiNetwork,
     transactions::{ApiApplicationMetadata, ApiTxStatus},
 };
+use chrono::{DateTime, Utc};
+use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
 use super::currencies::CryptoAmount;
@@ -37,37 +39,12 @@ pub struct TxInfo {
     /// Exchange rate
     pub course: f64,
 }
-/// wallet transaction info
-#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
-pub struct WalletTxInfo {
-    /// Tx creation date, if available
-    pub date: String,
-    /// Block number / id and hash
-    pub block_number_hash: Option<(u64, String)>,
-    /// transaction hash for particular transaction
-    pub transaction_hash: String,
-    /// The sender of the transaction
-    pub sender: String,
-    /// The receiver of the transaction
-    pub receiver: String,
-    /// Amount of transfer
-    pub amount: CryptoAmount,
-    /// Unique key representing a network
-    pub network_key: String,
-    /// Status of the transfer
-    pub status: WalletTxStatus,
-    /// Url of network IOTA/ETH
-    pub explorer_url: Option<String>, // ok
-                                      // change based on the network either eth or iota
-                                      // base explorer url for IOTA = https://explorer.iota.org/mainnet/block/[block_id]
-                                      // base explorer url for EVM = [node url]
-}
 
 /// List of wallet transactions
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct WalletTxInfoList {
     /// Transactions that happens
-    pub transactions: Vec<WalletTxInfo>,
+    pub transactions: Vec<WalletTxInfoV2>,
 }
 
 /// Purchase details
@@ -101,4 +78,58 @@ pub enum WalletTxStatus {
     Pending,
     Confirmed,
     Conflicting,
+}
+
+/// wallet transaction info
+#[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]
+pub struct WalletTxInfo {
+    /// Tx creation date, if available
+    pub date: String,
+    /// Block number / id and hash
+    pub block_number_hash: Option<(u64, String)>,
+    /// transaction hash for particular transaction
+    pub transaction_hash: String,
+    /// The sender of the transaction
+    pub sender: String,
+    /// The receiver of the transaction
+    pub receiver: String,
+    /// Amount of transfer
+    pub amount: CryptoAmount,
+    /// Unique key representing a network
+    pub network_key: String,
+    /// Status of the transfer
+    pub status: WalletTxStatus,
+    /// Url of network IOTA/ETH
+    pub explorer_url: Option<String>, // ok
+                                      // change based on the network either eth or iota
+                                      // base explorer url for IOTA = https://explorer.iota.org/mainnet/block/[block_id]
+                                      // base explorer url for EVM = [node url]
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct WalletTxInfoV1 {
+    pub date: DateTime<Utc>,
+    pub block_number_hash: Option<(u64, String)>,
+    pub transaction_hash: String,
+    pub sender: String,
+    pub receiver: String,
+    pub amount: CryptoAmount,
+    pub network_key: String,
+    pub status: WalletTxStatus,
+    pub explorer_url: Option<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+pub struct WalletTxInfoV2 {
+    pub date: DateTime<Utc>,
+    pub block_number_hash: Option<(u64, String)>,
+    pub transaction_hash: String,
+    pub sender: String,
+    pub receiver: String,
+    pub amount: CryptoAmount,
+    pub network_key: String,
+    pub status: WalletTxStatus,
+    pub explorer_url: Option<String>,
+    pub gas_fee: Option<Decimal>,
+    pub is_sender: bool,
 }
