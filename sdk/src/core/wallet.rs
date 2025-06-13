@@ -1487,19 +1487,12 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let wallet_transactions = vec![VersionedWalletTransaction::V2(WalletTxInfoV2 {
-            date: Utc::now(),
-            block_number_hash: None,
-            transaction_hash: "1".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
-            is_sender: true,
-        })];
+        let wallet_transactions = vec![VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("1"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc::now(),
+        ))];
 
         let mut mock_user_repo = MockUserRepo::new();
         mock_user_repo.expect_get().returning(move |_| {
@@ -1557,46 +1550,26 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let tx_3 = VersionedWalletTransaction::V2(WalletTxInfoV2 {
-            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap(),
-            block_number_hash: None,
-            transaction_hash: "3".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
-            is_sender: true,
-        });
-        let tx_1 = VersionedWalletTransaction::V2(WalletTxInfoV2 {
-            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
-            block_number_hash: None,
-            transaction_hash: "1".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
-            is_sender: true,
-        });
+        let tx_3 = VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("3"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap(),
+        ));
 
-        let tx_2 = VersionedWalletTransaction::V2(WalletTxInfoV2 {
-            date: Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap(),
-            block_number_hash: None,
-            transaction_hash: "2".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-            gas_fee: None,
-            is_sender: true,
-        });
+        let tx_1 = VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("1"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
+        ));
+
+        let tx_2 = VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("2"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap(),
+        ));
 
         let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];
         let expected = vec![
