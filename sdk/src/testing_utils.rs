@@ -1,5 +1,6 @@
 #![allow(clippy::unwrap_used)]
 
+use crate::tx_version::VersionedWalletTransaction;
 use crate::types::users::{KycType, UserEntity};
 use crate::types::viviswap::{
     ViviswapAddressDetail, ViviswapPartiallyKycDetails, ViviswapState, ViviswapVerificationStatus,
@@ -28,9 +29,9 @@ use api_types::api::{
     },
 };
 use chrono::{DateTime, Utc};
+use etopay_wallet::MockWalletUser;
 use etopay_wallet::types::WalletTxInfoV2;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
-use etopay_wallet::{MockWalletUser, VersionedWalletTransaction};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
 use std::sync::LazyLock;

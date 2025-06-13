@@ -4,6 +4,7 @@ use super::UserRepo;
 use super::error::Result;
 use crate::{
     share::Share,
+    tx_version::VersionedWalletTransaction,
     types::{
         newtypes::EncryptedPassword,
         users::{KycType, UserEntity},
@@ -11,7 +12,6 @@ use crate::{
     },
     user::error::UserKvStorageError,
 };
-use etopay_wallet::VersionedWalletTransaction;
 use log::debug;
 
 pub struct UserRepoImpl<I: super::UserKvStorage> {
@@ -148,6 +148,7 @@ mod tests {
     use super::*;
     use crate::{
         testing_utils::{ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY},
+        tx_version::VersionedWalletTransaction,
         types::{
             newtypes::{EncryptedPassword, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,

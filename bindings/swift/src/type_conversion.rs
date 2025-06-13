@@ -235,8 +235,8 @@ impl From<sdk::types::transactions::TxInfo> for crate::ffi_functions::TxInfo {
     }
 }
 
-impl From<sdk::types::WalletTransaction> for crate::ffi_functions::WalletTxInfo {
-    fn from(value: sdk::types::WalletTransaction) -> Self {
+impl From<sdk::tx_version::WalletTransaction> for crate::ffi_functions::WalletTxInfo {
+    fn from(value: sdk::tx_version::WalletTransaction) -> Self {
         crate::ffi_functions::WalletTxInfo {
             date: value.date.to_string(),
             block_number: value.block_number_hash.as_ref().map(|b| b.0),

@@ -1,15 +1,20 @@
 use chrono::{DateTime, Utc};
+use etopay_wallet::types::{WalletTxInfoV1, WalletTxInfoV2};
 use serde::{Deserialize, Serialize};
 
-use crate::types::{WalletTxInfoV1, WalletTxInfoV2, WalletTxStatus};
+use crate::types::WalletTxStatus;
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// A versioned representation of a wallet transaction.
 pub enum VersionedWalletTransaction {
+    /// Legacy transaction format (version 1).
     V1(WalletTxInfoV1),
+    /// Current transaction format (version 2).
     V2(WalletTxInfoV2),
 }
 
 impl VersionedWalletTransaction {
+    /// Returns the timestamp of the transaction.
     pub fn date(&self) -> DateTime<Utc> {
         match self {
             VersionedWalletTransaction::V1(w) => w.date,
@@ -17,6 +22,7 @@ impl VersionedWalletTransaction {
         }
     }
 
+    /// Returns the transaction hash.
     pub fn transaction_hash(&self) -> &str {
         match self {
             VersionedWalletTransaction::V1(v1) => &v1.transaction_hash,
@@ -24,6 +30,7 @@ impl VersionedWalletTransaction {
         }
     }
 
+    /// Returns the network key associated with the transaction.
     pub fn network_key(&self) -> &str {
         match self {
             VersionedWalletTransaction::V1(v1) => &v1.network_key,
@@ -31,6 +38,7 @@ impl VersionedWalletTransaction {
         }
     }
 
+    /// Returns the current status of the transaction.
     pub fn status(&self) -> WalletTxStatus {
         match self {
             VersionedWalletTransaction::V1(v1) => v1.status,
@@ -57,7 +65,7 @@ impl From<WalletTransaction> for VersionedWalletTransaction {
     }
 }
 
-// Points to the latest version
+/// Points to the latest version
 pub type WalletTransaction = WalletTxInfoV2;
 
 impl From<VersionedWalletTransaction> for WalletTransaction {

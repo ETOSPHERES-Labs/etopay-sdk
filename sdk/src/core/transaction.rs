@@ -3,6 +3,7 @@ use crate::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
 use crate::error::Result;
+use crate::tx_version::VersionedWalletTransaction;
 use crate::types::transactions::PurchaseDetails;
 use crate::types::{
     newtypes::EncryptionPin,
@@ -11,9 +12,9 @@ use crate::types::{
 use crate::wallet::error::WalletError;
 use api_types::api::networks::ApiProtocol;
 use api_types::api::transactions::{ApiApplicationMetadata, ApiTxStatus, PurchaseModel, Reason};
+use etopay_wallet::TransactionIntent;
 use etopay_wallet::types::CryptoAmount;
 use etopay_wallet::types::GasCostEstimation;
-use etopay_wallet::{TransactionIntent, VersionedWalletTransaction};
 use log::{debug, info};
 
 impl Sdk {
@@ -400,6 +401,7 @@ mod tests {
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
         example_versioned_wallet_transaction, example_wallet_borrow, set_config,
     };
+    use crate::tx_version::WalletTransaction;
     use crate::types::users::KycType;
     use crate::{
         core::Sdk,
@@ -412,8 +414,8 @@ mod tests {
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use chrono::Utc;
+    use etopay_wallet::MockWalletUser;
     use etopay_wallet::types::{WalletTxInfoV2, WalletTxStatus};
-    use etopay_wallet::{MockWalletUser, WalletTransaction};
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;

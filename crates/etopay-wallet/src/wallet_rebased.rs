@@ -7,12 +7,12 @@ use super::rebased::{
     ProgrammableTransactionBuilder, ReadApi, RebasedError, RpcClient, TransactionData, TransactionExpiration, WriteApi,
 };
 use super::wallet::{TransactionIntent, WalletUser};
+use crate::MnemonicDerivationOption;
 use crate::rebased::{
     CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
     IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
 };
 use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus};
-use crate::{MnemonicDerivationOption, WalletTransaction};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -290,7 +290,7 @@ impl WalletUser for WalletImplIotaRebased {
             .collect::<Vec<String>>())
     }
 
-    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTransaction> {
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfoV2> {
         let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self
