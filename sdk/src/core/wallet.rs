@@ -6,11 +6,12 @@ use super::Sdk;
 use crate::{
     backend::dlt::put_user_address,
     error::Result,
+    tx_version::{VersionedWalletTransaction, WalletTransaction},
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
 use etopay_wallet::{
-    MnemonicDerivationOption, VersionedWalletTransaction, WalletTransaction,
+    MnemonicDerivationOption,
     types::{CryptoAmount, WalletTxInfoList, WalletTxStatus},
 };
 
@@ -666,8 +667,8 @@ mod tests {
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use chrono::{DateTime, TimeZone, Utc};
+    use etopay_wallet::MockWalletUser;
     use etopay_wallet::types::{WalletTxInfoV2, WalletTxStatus};
-    use etopay_wallet::{MockWalletUser, VersionedWalletTransaction};
     use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;

@@ -6,8 +6,6 @@ use chrono::{DateTime, Utc};
 use rust_decimal::Decimal;
 use serde::{Deserialize, Serialize};
 
-use crate::WalletTransaction;
-
 use super::currencies::CryptoAmount;
 
 /// Transaction list
@@ -46,7 +44,7 @@ pub struct TxInfo {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct WalletTxInfoList {
     /// Transactions that happens
-    pub transactions: Vec<WalletTransaction>,
+    pub transactions: Vec<WalletTxInfoV2>,
 }
 
 /// Purchase details

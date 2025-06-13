@@ -282,8 +282,8 @@ pub struct WalletTxInfoList {
     pub transactions: Vec<WalletTxInfo>,
 }
 
-impl From<sdk::types::WalletTransaction> for WalletTxInfo {
-    fn from(value: sdk::types::WalletTransaction) -> Self {
+impl From<sdk::tx_version::WalletTransaction> for WalletTxInfo {
+    fn from(value: sdk::tx_version::WalletTransaction) -> Self {
         Self {
             date: value.date.to_string(),
             block_number: value.block_number_hash.as_ref().map(|b| b.0),
