@@ -509,7 +509,6 @@ impl Sdk {
             return Err(crate::Error::UserNotInitialized);
         };
         let network = self.active_network.as_ref().ok_or(crate::Error::MissingNetwork)?;
-        // let network_key = network.key.to_owned();
         let config = self.config.as_mut().ok_or(crate::Error::MissingConfig)?;
         let wallet = active_user
             .wallet_manager
@@ -563,17 +562,16 @@ impl Sdk {
             Err(e) => return Err(e.into()),
         };
 
-        // 2) migrate transactions to the latest version if necessary,
         for t in &mut transactions {
+            // 2) migrate transactions to the latest version if necessary
             if let VersionedWalletTransaction::V1(v1) = t {
                 if let Ok(details) = wallet.get_wallet_tx(&v1.transaction_hash).await {
                     *t = VersionedWalletTransaction::from(details);
+                    continue;
                 }
             }
-        }
 
-        // 3) confirm pending transactions
-        for t in &mut transactions {
+            // 3) confirm pending transactions
             let pending_tx_hash = match t {
                 VersionedWalletTransaction::V1(v1) if v1.status == WalletTxStatus::Pending => {
                     Some(&v1.transaction_hash)
