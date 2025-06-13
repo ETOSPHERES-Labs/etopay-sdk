@@ -5,17 +5,13 @@
 use super::Sdk;
 use crate::{
     backend::dlt::put_user_address,
-    core::wallet_helpers::{
-        confirm_pending_transactions, fetch_new_hashes_and_turn_into_versioned_transactions, get_transaction_slice,
-        merge_transactions, migrate_transactions,
-    },
     error::Result,
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
 use etopay_wallet::{
-    MnemonicDerivationOption, WalletTransaction, sort_wallet_transactions_by_date,
-    types::{CryptoAmount, WalletTxInfoList},
+    MnemonicDerivationOption, VersionedWalletTransaction, WalletTransaction,
+    types::{CryptoAmount, WalletTxInfoList, WalletTxStatus},
 };
 
 use log::{debug, info, warn};
@@ -536,41 +532,85 @@ impl Sdk {
         // 4) and save the updated list back to the wallet.
         let mut wallet_transactions = user.wallet_transactions_versioned;
 
-        // 1) fetch and add new (untracked) transactions from the network,
-        let untracked_transactions = fetch_new_hashes_and_turn_into_versioned_transactions(
-            &wallet,
-            &wallet_transactions,
-            network_key.clone(),
-            start,
-            limit,
-        )
-        .await?;
+        let hashes = match wallet.get_wallet_tx_list(start, limit).await {
+            Ok(hashes) => hashes,
+            Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => Vec::new(),
+            Err(e) => return Err(e.into()),
+        };
 
-        merge_transactions(&mut wallet_transactions, untracked_transactions);
-        sort_wallet_transactions_by_date(&mut wallet_transactions);
+        let new_hashes: Vec<String> = hashes
+            .into_iter()
+            .filter(|hash| {
+                !wallet_transactions
+                    .iter()
+                    .any(|t| t.transaction_hash() == *hash && t.network_key() == network_key)
+            })
+            .collect();
 
-        let transaction_slice = get_transaction_slice(network_key.clone(), &wallet_transactions, start, limit);
+        let mut new_transactions = Vec::with_capacity(new_hashes.len());
+        for hash in new_hashes {
+            let tx = wallet.get_wallet_tx(&hash).await?;
+            new_transactions.push(tx);
+        }
+
+        let mut transactions: Vec<VersionedWalletTransaction> = new_transactions
+            .into_iter()
+            .map(VersionedWalletTransaction::from)
+            .collect();
 
         // 2) migrate transactions to the latest version if necessary,
-        let migrated_transaction_slice = migrate_transactions(&wallet, &transaction_slice).await?;
+        for t in &mut transactions {
+            if let VersionedWalletTransaction::V1(v1) = t {
+                if let Ok(details) = wallet.get_wallet_tx(&v1.transaction_hash).await {
+                    *t = VersionedWalletTransaction::from(details);
+                }
+            }
+        }
 
         // 3) confirm pending transactions
-        let confirmed_transaction_slice = confirm_pending_transactions(&wallet, &migrated_transaction_slice).await?;
+        for t in &mut transactions {
+            let pending_tx_hash = match t {
+                VersionedWalletTransaction::V1(v1) if v1.status == WalletTxStatus::Pending => {
+                    Some(&v1.transaction_hash)
+                }
+                VersionedWalletTransaction::V2(v2) if v2.status == WalletTxStatus::Pending => {
+                    Some(&v2.transaction_hash)
+                }
+                _ => None,
+            };
+
+            if let Some(hash) = pending_tx_hash {
+                if let Ok(details) = wallet.get_wallet_tx(hash).await {
+                    *t = VersionedWalletTransaction::V2(details);
+                }
+            }
+        }
 
         // 4) and save the updated list back to the wallet.
-        merge_transactions(&mut wallet_transactions, confirmed_transaction_slice.clone());
-        let _ = repo.set_wallet_transactions(&user.username, wallet_transactions.clone());
+        for tx in transactions.clone() {
+            let hash = tx.transaction_hash();
+            let network_key = tx.network_key();
+
+            if let Some(existing) = wallet_transactions
+                .iter_mut()
+                .find(|existing_tx| existing_tx.transaction_hash() == hash && existing_tx.network_key() == network_key)
+            {
+                *existing = tx;
+            } else {
+                wallet_transactions.push(tx);
+            }
+        }
+
+        wallet_transactions.sort_by_key(|b| std::cmp::Reverse(b.date()));
+        let _ = repo.set_wallet_transactions(&user.username, wallet_transactions);
 
         // We want SDK users to interact with a unified transaction type, so the code below
         // converts a selected range of versioned transactions to the latest transaction type
         // defined by the SDK. If any transactions are not already in the latest form, they are
         // temporarily migrated for the purpose of display or SDK consumption.
-        let transactions: Vec<WalletTransaction> = confirmed_transaction_slice
-            .into_iter()
-            .map(WalletTransaction::from)
-            .collect();
-
-        Ok(WalletTxInfoList { transactions })
+        Ok(WalletTxInfoList {
+            transactions: transactions.into_iter().map(WalletTransaction::from).collect(),
+        })
     }
 
     /// wallet transaction
