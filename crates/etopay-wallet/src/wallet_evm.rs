@@ -288,7 +288,7 @@ impl WalletUser for WalletImplEvm {
                     .await?;
 
                 let receipt = self.provider.get_transaction_receipt(transaction_hash).await?;
-                let gas_used = receipt.clone().map(|r| r.gas_used);
+                let gas_used = receipt.as_ref().map(|r| r.gas_used);
                 let status = match receipt.map(|r| r.inner.is_success()) {
                     Some(true) => WalletTxStatus::Confirmed,
                     Some(false) => WalletTxStatus::Conflicting,
