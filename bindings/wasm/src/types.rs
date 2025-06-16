@@ -1,4 +1,5 @@
 use crate::utils::{convert_enum, convert_simple_struct};
+use etopay_wallet::types::WalletTransaction;
 use sdk::types::{networks::ApiProtocol, rust_decimal};
 use serde::{Deserialize, Serialize};
 use std::f64;
@@ -282,8 +283,8 @@ pub struct WalletTxInfoList {
     pub transactions: Vec<WalletTxInfo>,
 }
 
-impl From<sdk::tx_version::WalletTransaction> for WalletTxInfo {
-    fn from(value: sdk::tx_version::WalletTransaction) -> Self {
+impl From<WalletTransaction> for WalletTxInfo {
+    fn from(value: WalletTransaction) -> Self {
         Self {
             date: value.date.to_string(),
             block_number: value.block_number_hash.as_ref().map(|b| b.0),

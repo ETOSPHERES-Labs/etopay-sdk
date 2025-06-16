@@ -5,6 +5,7 @@ use crate::{
     ffi::{self},
 };
 use core::f64;
+use etopay_wallet::types::WalletTransaction;
 use rust_decimal::prelude::ToPrimitive;
 use sdk::types::rust_decimal;
 
@@ -235,8 +236,8 @@ impl From<sdk::types::transactions::TxInfo> for crate::ffi_functions::TxInfo {
     }
 }
 
-impl From<sdk::tx_version::WalletTransaction> for crate::ffi_functions::WalletTxInfo {
-    fn from(value: sdk::tx_version::WalletTransaction) -> Self {
+impl From<WalletTransaction> for crate::ffi_functions::WalletTxInfo {
+    fn from(value: WalletTransaction) -> Self {
         crate::ffi_functions::WalletTxInfo {
             date: value.date.to_string(),
             block_number: value.block_number_hash.as_ref().map(|b| b.0),

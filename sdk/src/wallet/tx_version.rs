@@ -1,8 +1,35 @@
 use chrono::{DateTime, Utc};
-use etopay_wallet::types::{WalletTxInfoV1, WalletTxInfoV2};
+use etopay_wallet::types::{CryptoAmount, WalletTransaction};
 use serde::{Deserialize, Serialize};
 
 use crate::types::WalletTxStatus;
+
+#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
+/// Legacy format (version 1) of a wallet transaction.
+///
+/// This structure represents the original schema used for wallet transactions
+/// before the introduction of `WalletTransaction` in version 2. It is retained
+/// for backward compatibility and data migration purposes.
+pub struct WalletTxInfoV1 {
+    /// Timestamp of the transaction.
+    pub date: DateTime<Utc>,
+    /// Optional block number and block hash associated with the transaction.
+    pub block_number_hash: Option<(u64, String)>,
+    /// Unique identifier (hash) of the transaction.
+    pub transaction_hash: String,
+    /// Wallet address of the sender.
+    pub sender: String,
+    /// Wallet address of the receiver.
+    pub receiver: String,
+    /// Amount of cryptocurrency transferred.
+    pub amount: CryptoAmount,
+    /// Identifier for the network.
+    pub network_key: String,
+    /// Status of the transaction.
+    pub status: WalletTxStatus,
+    /// Optional link to a blockchain explorer showing the transaction details.
+    pub explorer_url: Option<String>,
+}
 
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
 /// A versioned representation of a wallet transaction.
@@ -10,7 +37,7 @@ pub enum VersionedWalletTransaction {
     /// Legacy transaction format (version 1).
     V1(WalletTxInfoV1),
     /// Current transaction format (version 2).
-    V2(WalletTxInfoV2),
+    V2(WalletTransaction),
 }
 
 impl VersionedWalletTransaction {
@@ -49,7 +76,7 @@ impl VersionedWalletTransaction {
 
 impl From<WalletTransaction> for VersionedWalletTransaction {
     fn from(value: WalletTransaction) -> Self {
-        Self::V2(WalletTxInfoV2 {
+        Self::V2(WalletTransaction {
             date: value.date,
             block_number_hash: value.block_number_hash,
             transaction_hash: value.transaction_hash,
@@ -65,13 +92,10 @@ impl From<WalletTransaction> for VersionedWalletTransaction {
     }
 }
 
-/// Points to the latest version
-pub type WalletTransaction = WalletTxInfoV2;
-
 impl From<VersionedWalletTransaction> for WalletTransaction {
     fn from(value: VersionedWalletTransaction) -> Self {
         match value {
-            VersionedWalletTransaction::V1(v1) => WalletTxInfoV2 {
+            VersionedWalletTransaction::V1(v1) => WalletTransaction {
                 date: v1.date,
                 block_number_hash: v1.block_number_hash,
                 transaction_hash: v1.transaction_hash,

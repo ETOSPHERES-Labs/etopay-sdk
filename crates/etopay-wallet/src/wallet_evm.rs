@@ -2,7 +2,7 @@ use super::error::Result;
 use super::wallet::{TransactionIntent, WalletUser};
 use crate::MnemonicDerivationOption;
 use crate::error::WalletError;
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTransaction, WalletTxStatus};
 use alloy::eips::BlockNumberOrTag;
 use alloy::network::{Ethereum, EthereumWallet, TransactionBuilder};
 use alloy::rpc::types::TransactionRequest;
@@ -270,7 +270,7 @@ impl WalletUser for WalletImplEvm {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTxInfoV2> {
+    async fn get_wallet_tx(&self, transaction_hash: &str) -> Result<WalletTransaction> {
         let transaction_hash = TxHash::from_str(transaction_hash)?;
         let transaction = self.provider.get_transaction_by_hash(transaction_hash).await?;
 
@@ -313,7 +313,7 @@ impl WalletUser for WalletImplEvm {
         let amount = self.convert_alloy_256_to_crypto_amount(tx.value())?;
         let is_sender = self.is_sender(&sender.to_string()).await?;
 
-        let tx = WalletTxInfoV2 {
+        let tx = WalletTransaction {
             date: date.unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap()),
             block_number_hash,
             transaction_hash: transaction_hash.to_string(),
@@ -445,7 +445,7 @@ impl WalletUser for WalletImplEvmErc20 {
         Err(WalletError::WalletFeatureNotImplemented)
     }
 
-    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTxInfoV2> {
+    async fn get_wallet_tx(&self, transaction_id: &str) -> Result<WalletTransaction> {
         // get the information for the underlying transaction
         let mut info = self.inner.get_wallet_tx(transaction_id).await?;
 

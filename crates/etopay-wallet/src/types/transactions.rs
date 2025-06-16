@@ -44,7 +44,7 @@ pub struct TxInfo {
 #[derive(Debug, Serialize, Deserialize, PartialEq, Clone)]
 pub struct WalletTxInfoList {
     /// Transactions that happens
-    pub transactions: Vec<WalletTxInfoV2>,
+    pub transactions: Vec<WalletTransaction>,
 }
 
 /// Purchase details
@@ -106,30 +106,29 @@ pub struct WalletTxInfo {
                                       // base explorer url for EVM = [node url]
 }
 
+/// Current format of a wallet transaction.
 #[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct WalletTxInfoV1 {
+pub struct WalletTransaction {
+    /// Timestamp of the transaction.
     pub date: DateTime<Utc>,
+    /// Optional block number and block hash associated with the transaction.
     pub block_number_hash: Option<(u64, String)>,
+    /// Unique identifier (hash) of the transaction.
     pub transaction_hash: String,
+    /// Wallet address of the sender.
     pub sender: String,
+    /// Wallet address of the receiver.
     pub receiver: String,
+    /// Amount of cryptocurrency transferred.
     pub amount: CryptoAmount,
+    /// Identifier for the network.
     pub network_key: String,
+    /// Status of the transaction.
     pub status: WalletTxStatus,
+    /// Optional link to a blockchain explorer showing the transaction details.
     pub explorer_url: Option<String>,
-}
-
-#[derive(Debug, Clone, Serialize, Deserialize, PartialEq)]
-pub struct WalletTxInfoV2 {
-    pub date: DateTime<Utc>,
-    pub block_number_hash: Option<(u64, String)>,
-    pub transaction_hash: String,
-    pub sender: String,
-    pub receiver: String,
-    pub amount: CryptoAmount,
-    pub network_key: String,
-    pub status: WalletTxStatus,
-    pub explorer_url: Option<String>,
+    /// Optional gas fee paid for the transaction.
     pub gas_fee: Option<Decimal>,
+    /// Indicates whether the current user is the sender of the transaction.
     pub is_sender: bool,
 }

@@ -142,7 +142,7 @@ mod tests {
     use std::vec;
 
     use chrono::Utc;
-    use etopay_wallet::types::{CryptoAmount, WalletTxInfoV2, WalletTxStatus};
+    use etopay_wallet::types::{CryptoAmount, WalletTransaction, WalletTxStatus};
     use rust_decimal_macros::dec;
 
     use super::*;
@@ -433,7 +433,7 @@ mod tests {
         user_repo.create(&user).unwrap();
 
         let txs: Vec<VersionedWalletTransaction> = vec![
-            VersionedWalletTransaction::V2(WalletTxInfoV2 {
+            VersionedWalletTransaction::V2(WalletTransaction {
                 date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: String::from("transaction_id_1"),
@@ -447,7 +447,7 @@ mod tests {
                 gas_fee: None,
                 is_sender: true,
             }),
-            VersionedWalletTransaction::V2(WalletTxInfoV2 {
+            VersionedWalletTransaction::V2(WalletTransaction {
                 date: Utc::now(),
                 block_number_hash: Some((1, String::from("block_2"))),
                 transaction_hash: String::from("transaction_id_2"),

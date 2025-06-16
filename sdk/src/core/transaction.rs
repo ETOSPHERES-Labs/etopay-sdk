@@ -401,7 +401,6 @@ mod tests {
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
         example_versioned_wallet_transaction, example_wallet_borrow, set_config,
     };
-    use crate::tx_version::WalletTransaction;
     use crate::types::users::KycType;
     use crate::{
         core::Sdk,
@@ -415,7 +414,7 @@ mod tests {
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
     use chrono::Utc;
     use etopay_wallet::MockWalletUser;
-    use etopay_wallet::types::{WalletTxInfoV2, WalletTxStatus};
+    use etopay_wallet::types::{WalletTransaction, WalletTxStatus};
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
@@ -559,7 +558,7 @@ mod tests {
                         .returning(|_| Ok("tx_id".to_string()));
 
                     mock_wallet_user.expect_get_wallet_tx().once().returning(|_| {
-                        Ok(WalletTxInfoV2 {
+                        Ok(WalletTransaction {
                             date: Utc::now(),
                             block_number_hash: None,
                             transaction_hash: "tx_hash".to_string(),
@@ -808,7 +807,7 @@ mod tests {
         sdk.set_networks(example_api_networks());
         sdk.set_network(ETH_NETWORK_KEY.to_string()).await.unwrap();
 
-        let wallet_transaction = VersionedWalletTransaction::V2(WalletTxInfoV2 {
+        let wallet_transaction = VersionedWalletTransaction::V2(WalletTransaction {
             date: Utc::now(),
             block_number_hash: Some((0, String::new())),
             transaction_hash: String::from("tx_id"),

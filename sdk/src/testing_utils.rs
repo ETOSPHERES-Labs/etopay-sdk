@@ -30,7 +30,7 @@ use api_types::api::{
 };
 use chrono::{DateTime, Utc};
 use etopay_wallet::MockWalletUser;
-use etopay_wallet::types::WalletTxInfoV2;
+use etopay_wallet::types::WalletTransaction;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
@@ -360,7 +360,7 @@ pub fn example_versioned_wallet_transaction() -> VersionedWalletTransaction {
         .map(|dt| dt.with_timezone(&Utc))
         .unwrap();
 
-    VersionedWalletTransaction::V2(WalletTxInfoV2 {
+    VersionedWalletTransaction::V2(WalletTransaction {
         date: mock_date,
         block_number_hash: None,
         transaction_hash: "some tx id".to_string(),

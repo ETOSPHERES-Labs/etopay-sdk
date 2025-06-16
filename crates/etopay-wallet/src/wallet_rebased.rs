@@ -12,7 +12,7 @@ use crate::rebased::{
     CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
     IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
 };
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfoV2, WalletTxStatus};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTransaction, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -83,22 +83,11 @@ impl WalletImplIotaRebased {
 /// Convert a [`u128`] to [`CryptoAmount`] while taking the decimals into account.
 #[allow(clippy::result_large_err)]
 fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmount> {
-    let Some(mut result_decimal) = Decimal::from_u128(value) else {
-        return Err(WalletError::ConversionError(format!(
-            "could not convert u128 to Decimal: {value:?}"
-        )));
-    };
+    let rust_decimal = convert_u128_to_rust_decimal(value, decimals)?;
 
-    // directly set the decimals
-    result_decimal
-        .set_scale(decimals)
-        .map_err(|e| WalletError::ConversionError(format!("could not set scale to decimals: {e:?}")))?;
-
-    result_decimal.normalize_assign(); // remove trailing zeros
-
-    CryptoAmount::try_from(result_decimal).map_err(|e| {
+    CryptoAmount::try_from(rust_decimal).map_err(|e| {
         WalletError::ConversionError(format!(
-            "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
+            "could not convert decimal {rust_decimal:?} to crypto amount: {e:?}"
         ))
     })
 }
@@ -290,7 +279,7 @@ impl WalletUser for WalletImplIotaRebased {
             .collect::<Vec<String>>())
     }
 
-    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfoV2> {
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTransaction> {
         let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self
@@ -388,7 +377,7 @@ impl WalletUser for WalletImplIotaRebased {
 
         let is_sender = self.is_sender(&sender);
 
-        let tx = WalletTxInfoV2 {
+        let tx = WalletTransaction {
             date: date.unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap()),
             block_number_hash,
             transaction_hash: tx_hash.to_string(),

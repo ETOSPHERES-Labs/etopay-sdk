@@ -62,6 +62,7 @@ getrandom = { version = "0.3", features = ["wasm_js"] }
 
 # depend on the sdk but without default features
 sdk = { package = "etopay-sdk", path = "../../sdk", default-features = false }
+etopay-wallet = { package = "etopay-wallet", path = "../../crates/etopay-wallet" }
 tokio = { workspace = true, features = ["sync"] }
 uuid = { workspace = true, features = ["js"] }
 wasm-bindgen = { version = "0.2", default-features = false }
