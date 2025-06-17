@@ -1,5 +1,6 @@
 use super::newtypes::{EncryptedPassword, EncryptionSalt};
 use crate::{
+    tx_version::VersionedWalletTransaction,
     types::viviswap::ViviswapState,
     wallet_manager::{WalletManager, WalletManagerImpl},
 };
@@ -28,8 +29,12 @@ pub struct UserEntity {
     /// The local share from the SSS scheme, stored as a string (same as in the backend)
     pub local_share: Option<String>,
 
-    /// User wallet transactions
+    /// User wallet transactions (deprecated)
     pub wallet_transactions: Vec<WalletTxInfo>,
+
+    /// User wallet transactions (versioned)
+    #[serde(default)]
+    pub wallet_transactions_versioned: Vec<VersionedWalletTransaction>,
 }
 
 /// Struct to manage the state of the currently active (initialized) user

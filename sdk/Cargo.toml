@@ -92,6 +92,7 @@ shadow-rs = { version = "1.0.1", default-features = false, features = [
 ] }
 
 [dev-dependencies]
+alloy-transport = "1.0.8"
 etopay_wallet = { workspace = true, features = ["mock"] }
 dotenvy = { workspace = true }
 env_logger = "0.11.8"

@@ -4,6 +4,7 @@ use super::UserRepo;
 use super::error::Result;
 use crate::{
     share::Share,
+    tx_version::VersionedWalletTransaction,
     types::{
         newtypes::EncryptedPassword,
         users::{KycType, UserEntity},
@@ -11,7 +12,6 @@ use crate::{
     },
     user::error::UserKvStorageError,
 };
-use etopay_wallet::types::WalletTxInfo;
 use log::debug;
 
 pub struct UserRepoImpl<I: super::UserKvStorage> {
@@ -55,7 +55,8 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 
     fn get(&self, username: &str) -> Result<UserEntity> {
         debug!("Fetching entry in user DB");
-        self.inner.get(username)
+        let u = self.inner.get(username)?;
+        Ok(u)
     }
 
     fn set_wallet_password(&mut self, username: &str, password: EncryptedPassword) -> Result<()> {
@@ -128,10 +129,10 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
         self.inner.set(username, &user)
     }
 
-    fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<WalletTxInfo>) -> Result<()> {
+    fn set_wallet_transactions(&mut self, username: &str, transaction: Vec<VersionedWalletTransaction>) -> Result<()> {
         debug!("Setting wallet transactions in user DB: {transaction:#?}");
         let mut user = self.inner.get(username)?;
-        user.wallet_transactions = transaction;
+        user.wallet_transactions_versioned = transaction;
         self.inner.set(username, &user)
     }
 }
@@ -140,12 +141,14 @@ impl<I: super::UserKvStorage> UserRepo for UserRepoImpl<I> {
 mod tests {
     use std::vec;
 
-    use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
+    use chrono::Utc;
+    use etopay_wallet::types::{CryptoAmount, WalletTransaction, WalletTxStatus};
     use rust_decimal_macros::dec;
 
     use super::*;
     use crate::{
         testing_utils::{ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY},
+        tx_version::VersionedWalletTransaction,
         types::{
             newtypes::{EncryptedPassword, EncryptionPin, EncryptionSalt, PlainPassword},
             users::KycType,
@@ -164,6 +167,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         }
     }
 
@@ -291,6 +295,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let result = user_repo.update(&updated_user);
 
@@ -322,6 +327,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let result = user_repo.update(&updated_user);
 
@@ -362,6 +368,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
         user_repo.create(&user).unwrap();
@@ -425,9 +432,9 @@ mod tests {
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
         user_repo.create(&user).unwrap();
 
-        let txs = vec![
-            WalletTxInfo {
-                date: String::new(),
+        let txs: Vec<VersionedWalletTransaction> = vec![
+            VersionedWalletTransaction::V2(WalletTransaction {
+                date: Utc::now(),
                 block_number_hash: None,
                 transaction_hash: String::from("transaction_id_1"),
                 receiver: String::new(),
@@ -437,9 +444,11 @@ mod tests {
                 network_key: ETH_NETWORK_KEY.to_string(),
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
-            },
-            WalletTxInfo {
-                date: String::new(),
+                gas_fee: None,
+                is_sender: true,
+            }),
+            VersionedWalletTransaction::V2(WalletTransaction {
+                date: Utc::now(),
                 block_number_hash: Some((1, String::from("block_2"))),
                 transaction_hash: String::from("transaction_id_2"),
                 receiver: String::new(),
@@ -449,7 +458,9 @@ mod tests {
                 network_key: ETH_NETWORK_KEY.to_string(),
                 status: WalletTxStatus::Pending,
                 explorer_url: None,
-            },
+                gas_fee: None,
+                is_sender: true,
+            }),
         ];
 
         // Act
@@ -458,14 +469,17 @@ mod tests {
         let retrieved_user = user_repo.get(&username).unwrap();
 
         // Assert
-        assert_eq!(retrieved_user.wallet_transactions.len(), 2);
+        assert_eq!(retrieved_user.wallet_transactions_versioned.len(), 2);
 
         assert_eq!(
-            retrieved_user.wallet_transactions.first().unwrap(),
+            retrieved_user.wallet_transactions_versioned.first().unwrap(),
             txs.first().unwrap()
         );
 
-        assert_eq!(retrieved_user.wallet_transactions.get(1).unwrap(), txs.get(1).unwrap());
+        assert_eq!(
+            retrieved_user.wallet_transactions_versioned.get(1).unwrap(),
+            txs.get(1).unwrap()
+        );
     }
 
     #[test]
@@ -516,6 +530,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
         let mut user_repo = UserRepoImpl::new(MemoryUserStorage::new());
 

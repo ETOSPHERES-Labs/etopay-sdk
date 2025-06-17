@@ -3,6 +3,7 @@ use crate::backend::transactions::{
     commit_transaction, create_new_transaction, get_transaction_details, get_transactions_list,
 };
 use crate::error::Result;
+use crate::tx_version::VersionedWalletTransaction;
 use crate::types::transactions::PurchaseDetails;
 use crate::types::{
     newtypes::EncryptionPin,
@@ -188,8 +189,9 @@ impl Sdk {
         // Store tx details for the new transaction
         let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
         let mut user = repo.get(&active_user.username)?;
-        user.wallet_transactions.push(newly_created_transaction);
-        let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions);
+        user.wallet_transactions_versioned
+            .push(VersionedWalletTransaction::V2(newly_created_transaction));
+        let _ = repo.set_wallet_transactions(&active_user.username, user.wallet_transactions_versioned);
 
         debug!("Transaction id on network: {tx_id}");
 
@@ -264,9 +266,13 @@ impl Sdk {
 
                 // store the created transaction in the repo
                 let newly_created_transaction = wallet.get_wallet_tx(&tx_id).await?;
+
                 let user = repo.get(&active_user.username)?;
-                let mut wallet_transactions = user.wallet_transactions;
-                wallet_transactions.push(newly_created_transaction);
+
+                let mut wallet_transactions = user.wallet_transactions_versioned;
+
+                wallet_transactions.push(VersionedWalletTransaction::V2(newly_created_transaction));
+
                 let _ = repo.set_wallet_transactions(&active_user.username, wallet_transactions);
                 tx_id
             }
@@ -393,7 +399,7 @@ mod tests {
     use crate::testing_utils::{
         AUTH_PROVIDER, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY, PURCHASE_ID, TOKEN, TX_INDEX, USERNAME,
         example_api_network, example_api_networks, example_get_user, example_tx_details, example_tx_metadata,
-        example_wallet_borrow, example_wallet_tx_info, set_config,
+        example_versioned_wallet_transaction, example_wallet_borrow, set_config,
     };
     use crate::types::users::KycType;
     use crate::{
@@ -406,8 +412,9 @@ mod tests {
         ApiTransaction, ApiTransferDetails, CreateTransactionResponse, GetTransactionDetailsResponse,
     };
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use chrono::Utc;
     use etopay_wallet::MockWalletUser;
-    use etopay_wallet::types::{WalletTxInfo, WalletTxStatus};
+    use etopay_wallet::types::{WalletTransaction, WalletTxStatus};
     use mockito::Matcher;
     use rstest::rstest;
     use rust_decimal_macros::dec;
@@ -551,8 +558,8 @@ mod tests {
                         .returning(|_| Ok("tx_id".to_string()));
 
                     mock_wallet_user.expect_get_wallet_tx().once().returning(|_| {
-                        Ok(WalletTxInfo {
-                            date: String::new(),
+                        Ok(WalletTransaction {
+                            date: Utc::now(),
                             block_number_hash: None,
                             transaction_hash: "tx_hash".to_string(),
                             sender: "sender".to_string(),
@@ -561,6 +568,8 @@ mod tests {
                             network_key: "key".to_string(),
                             status: WalletTxStatus::Pending,
                             explorer_url: None,
+                            gas_fee: None,
+                            is_sender: false,
                         })
                     });
 
@@ -753,7 +762,7 @@ mod tests {
                     mock_wallet
                         .expect_get_wallet_tx()
                         .once()
-                        .returning(|_| Ok(example_wallet_tx_info()));
+                        .returning(|_| Ok(WalletTransaction::from(example_versioned_wallet_transaction())));
                     Ok(WalletBorrow::from(mock_wallet))
                 });
 
@@ -798,8 +807,8 @@ mod tests {
         sdk.set_networks(example_api_networks());
         sdk.set_network(ETH_NETWORK_KEY.to_string()).await.unwrap();
 
-        let wallet_transaction = WalletTxInfo {
-            date: String::new(),
+        let wallet_transaction = VersionedWalletTransaction::V2(WalletTransaction {
+            date: Utc::now(),
             block_number_hash: Some((0, String::new())),
             transaction_hash: String::from("tx_id"),
             receiver: String::new(),
@@ -809,7 +818,9 @@ mod tests {
             network_key: ETH_NETWORK_KEY.to_string(),
             status: WalletTxStatus::Pending,
             explorer_url: Some(String::new()),
-        };
+            gas_fee: None,
+            is_sender: false,
+        });
 
         let wallet_transactions = vec![wallet_transaction.clone()].to_owned();
 
@@ -835,7 +846,7 @@ mod tests {
             mock_wallet
                 .expect_get_wallet_tx()
                 .times(1)
-                .returning(move |_| Ok(value.clone()));
+                .returning(move |_| Ok(WalletTransaction::from(value.clone())));
 
             Ok(WalletBorrow::from(mock_wallet))
         });

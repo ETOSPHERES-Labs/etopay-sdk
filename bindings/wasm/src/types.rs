@@ -1,8 +1,11 @@
 use crate::utils::{convert_enum, convert_simple_struct};
-use sdk::types::networks::ApiProtocol;
+use etopay_wallet::types::WalletTransaction;
+use sdk::types::{networks::ApiProtocol, rust_decimal};
 use serde::{Deserialize, Serialize};
+use std::f64;
 use wasm_bindgen::prelude::*;
 
+use rust_decimal::prelude::ToPrimitive;
 #[wasm_bindgen]
 pub enum Level {
     Error,
@@ -271,6 +274,8 @@ pub struct WalletTxInfo {
     pub status: WalletTxStatus,
     /// Url of network explorer
     pub explorer_url: Option<String>,
+    /// Gas fee
+    pub gas_fee: Option<f64>,
 }
 
 #[wasm_bindgen(getter_with_clone, inspectable)]
@@ -278,10 +283,10 @@ pub struct WalletTxInfoList {
     pub transactions: Vec<WalletTxInfo>,
 }
 
-impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
-    fn from(value: sdk::types::WalletTxInfo) -> Self {
+impl From<WalletTransaction> for WalletTxInfo {
+    fn from(value: WalletTransaction) -> Self {
         Self {
-            date: value.date,
+            date: value.date.to_string(),
             block_number: value.block_number_hash.as_ref().map(|b| b.0),
             block_hash: value.block_number_hash.map(|b| b.1),
             transaction_hash: value.transaction_hash,
@@ -291,6 +296,7 @@ impl From<sdk::types::WalletTxInfo> for WalletTxInfo {
             network_key: value.network_key,
             status: value.status.into(),
             explorer_url: value.explorer_url,
+            gas_fee: value.gas_fee.and_then(|g| g.to_f64()),
         }
     }
 }

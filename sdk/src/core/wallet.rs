@@ -2,17 +2,17 @@
 //! migrating wallets from mnemonic or backup, creating backups, and verifying PINs.
 //!
 //! It also includes various helper functions and imports required for the wallet functionality.
-
 use super::Sdk;
 use crate::{
     backend::dlt::put_user_address,
     error::Result,
+    tx_version::VersionedWalletTransaction,
     types::newtypes::{EncryptionPin, EncryptionSalt, PlainPassword},
     wallet::error::{ErrorKind, WalletError},
 };
 use etopay_wallet::{
-    MnemonicDerivationOption, sort_by_date,
-    types::{CryptoAmount, WalletTxInfo, WalletTxInfoList, WalletTxStatus},
+    MnemonicDerivationOption,
+    types::{CryptoAmount, WalletTransaction, WalletTxInfoList, WalletTxStatus},
 };
 
 use log::{debug, info, warn};
@@ -525,24 +525,24 @@ impl Sdk {
 
         let user = repo.get(active_user.username.as_str())?;
 
-        // We retrieve the transaction list from the wallet,
-        // then synchronize selected transactions (by fetching their current status from the network),
-        // and finally, save the refreshed list back to the wallet
-        let mut wallet_transactions = user.wallet_transactions;
+        // Retrieve the transaction list from the wallet,
+        // 1) fetch and add new (untracked) transactions from the network,
+        // 2) migrate transactions to the latest version if necessary,
+        // 3) confirm pending transactions,
+        // 4) and save the updated list back to the wallet.
+        let mut wallet_transactions = user.wallet_transactions_versioned;
 
-        // We call get_wallet_tx_list to merge the responses with any existing transactions
-        // (if there are new ones, we need to get their details and insert into the local list)
+        // 1) fetch and add new (untracked) transactions from the network
         match wallet.get_wallet_tx_list(start, limit).await {
             Ok(transaction_hashes) => {
                 // go through and get the details for any new hashes
-
                 log::debug!("Digests: {:#?}", transaction_hashes);
                 for hash in transaction_hashes {
                     // check if transaction is already in the list (not very efficient to do a linear search, but good enough for now)
                     // check both the transaction hash and the network key, as hash collisions can occur across different blockchain networks
                     if wallet_transactions
                         .iter()
-                        .any(|t| t.transaction_hash == hash && t.network_key == network.key)
+                        .any(|t| t.transaction_hash() == hash && t.network_key() == network.key)
                     {
                         continue;
                     }
@@ -552,59 +552,50 @@ impl Sdk {
                     // not included, we should add it!
                     match wallet.get_wallet_tx(&hash).await {
                         Err(e) => log::warn!("Could not get transaction details for {hash}: {e}"),
-                        Ok(details) => {
-                            // TODO: insert into sorted list based on date?
-                            wallet_transactions.push(details);
-                        }
+                        Ok(details) => wallet_transactions.push(VersionedWalletTransaction::from(details)),
                     }
                 }
             }
             // do nothing if feature is not supported
             Err(etopay_wallet::WalletError::WalletFeatureNotImplemented) => {}
             Err(e) => return Err(e.into()),
-        }
+        };
 
-        // sort wallet transactions
-        sort_by_date(&mut wallet_transactions);
+        wallet_transactions.sort_by_key(|b| std::cmp::Reverse(b.date()));
+        let mut wallet_tx_list = Vec::new();
 
-        for transaction in wallet_transactions
+        for t in wallet_transactions
             .iter_mut()
-            .filter(|tx| tx.network_key == network.key)
+            .filter(|tx| tx.network_key() == network.key)
             .skip(start)
             .take(limit)
         {
-            // We don't need to query the network for the state of this transaction,
-            // because it has already been synchronized earlier (as indicated by `WalletTxStatus::Confirmed`).
-            if transaction.status == WalletTxStatus::Confirmed {
-                continue;
-            }
-
-            match wallet.get_wallet_tx(&transaction.transaction_hash).await {
-                Ok(stx) => *transaction = stx,
-                Err(e) => {
-                    // On error, return historical (cached) transaction data
-                    log::debug!(
-                        "[sync_transactions] could not retrieve data about transaction from the network, transaction: {:?}, error: {:?}",
-                        transaction,
-                        e
-                    );
+            // 2) migrate transactions to the latest version if necessary
+            if let VersionedWalletTransaction::V1(v1) = t {
+                if let Ok(details) = wallet.get_wallet_tx(&v1.transaction_hash).await {
+                    *t = VersionedWalletTransaction::from(details);
+                    wallet_tx_list.push(WalletTransaction::from(t.clone()));
+                    continue;
                 }
             }
+
+            // 3) confirm pending transactions
+            if t.status() == WalletTxStatus::Pending {
+                if let Ok(details) = wallet.get_wallet_tx(t.transaction_hash()).await {
+                    *t = VersionedWalletTransaction::V2(details);
+                    wallet_tx_list.push(WalletTransaction::from(t.clone()));
+                    continue;
+                }
+            }
+
+            wallet_tx_list.push(WalletTransaction::from(t.clone()));
         }
 
-        let tx_list_filtered = wallet_transactions
-            .iter()
-            .filter(|tx| tx.network_key == network.key)
-            .skip(start)
-            .take(limit)
-            .cloned()
-            .collect();
-
-        // store updated transactions in user DB
+        // 4) and save the updated list back to the wallet.
         let _ = repo.set_wallet_transactions(&user.username, wallet_transactions);
 
         Ok(WalletTxInfoList {
-            transactions: tx_list_filtered,
+            transactions: wallet_tx_list,
         })
     }
 
@@ -618,13 +609,13 @@ impl Sdk {
     ///
     /// # Returns
     ///
-    /// Returns `WalletTxInfo` detailed report of particular wallet transaction if the outputs are claimed successfully, otherwise returns an `Error`.
+    /// Returns `WalletTransaction` detailed report of particular wallet transaction if the outputs are claimed successfully, otherwise returns an `Error`.
     ///
     /// # Errors
     ///
     /// * [`crate::Error::UserNotInitialized`] - If there is an error initializing the user.
     /// * [`WalletError::WalletNotInitialized`] - If there is an error initializing the wallet.
-    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTxInfo> {
+    pub async fn get_wallet_tx(&mut self, pin: &EncryptionPin, tx_id: &str) -> Result<WalletTransaction> {
         info!("Wallet getting details of particular transactions");
         self.verify_pin(pin).await?;
         let wallet = self.try_get_active_user_wallet(pin).await?;
@@ -664,7 +655,7 @@ mod tests {
     use crate::testing_utils::{
         ADDRESS, AUTH_PROVIDER, ENCRYPTED_WALLET_PASSWORD, ETH_NETWORK_KEY, HEADER_X_APP_NAME, IOTA_NETWORK_KEY,
         MNEMONIC, PIN, SALT, TOKEN, TX_INDEX, USERNAME, WALLET_PASSWORD, example_api_networks, example_get_user,
-        example_wallet_tx_info, set_config,
+        example_versioned_wallet_transaction, set_config,
     };
     use crate::types::users::UserEntity;
     use crate::{
@@ -675,7 +666,9 @@ mod tests {
     };
     use api_types::api::dlt::SetUserAddressRequest;
     use api_types::api::viviswap::detail::SwapPaymentDetailKey;
+    use chrono::{DateTime, TimeZone, Utc};
     use etopay_wallet::MockWalletUser;
+    use etopay_wallet::types::{WalletTransaction, WalletTxStatus};
     use mockall::predicate::eq;
     use mockito::Matcher;
     use rstest::rstest;
@@ -1060,6 +1053,7 @@ mod tests {
                         viviswap_state: Option::None,
                         local_share: None,
                         wallet_transactions: Vec::new(),
+                        wallet_transactions_versioned: Vec::new(),
                     })
                 });
                 mock_user_repo.expect_update().once().returning(|_| Ok(()));
@@ -1218,12 +1212,12 @@ mod tests {
     }
 
     #[rstest]
-    #[case::success(Ok(example_wallet_tx_info()))]
+    #[case::success(Ok(WalletTransaction::from(example_versioned_wallet_transaction())))]
     #[case::repo_init_error(Err(crate::Error::UserRepoNotInitialized))]
     #[case::user_init_error(Err(crate::Error::UserNotInitialized))]
     #[case::missing_config(Err(crate::Error::MissingConfig))]
     #[tokio::test]
-    async fn test_get_wallet_tx(#[case] expected: Result<WalletTxInfo>) {
+    async fn test_get_wallet_tx(#[case] expected: Result<WalletTransaction>) {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
@@ -1239,7 +1233,7 @@ mod tests {
                     mock_wallet_user
                         .expect_get_wallet_tx()
                         .once()
-                        .returning(|_| Ok(example_wallet_tx_info()));
+                        .returning(|_| Ok(WalletTransaction::from(example_versioned_wallet_transaction())));
                     Ok(WalletBorrow::from(mock_wallet_user))
                 });
                 sdk.active_user = Some(crate::types::users::ActiveUser {
@@ -1325,59 +1319,62 @@ mod tests {
         }
     }
 
+    fn mock_wallet_transaction(
+        hash: String,
+        status: WalletTxStatus,
+        network_key: String,
+        date: DateTime<Utc>,
+    ) -> WalletTransaction {
+        WalletTransaction {
+            date,
+            block_number_hash: None,
+            transaction_hash: hash,
+            receiver: String::new(),
+            sender: String::new(),
+            amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
+            network_key,
+            status,
+            explorer_url: None,
+            gas_fee: None,
+            is_sender: true,
+        }
+    }
+
     #[tokio::test]
     async fn test_get_wallet_tx_list_filters_transactions_correctly() {
         // Arrange
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
+        let mock_date = Utc::now();
 
-        // During the test, we expect the status of WalletTxInfo with transaction_id = 2
+        // During the test, we expect the status of WalletTransaction
+        // where transaction_hash = "2" and network_key = "ETH"
         // to transition from 'Pending' to 'Confirmed' after synchronization
-        let mixed_wallet_transactions = vec![
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "some tx id".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
-                network_key: "IOTA".to_string(),
-                status: WalletTxStatus::Confirmed,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "1".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "2".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending, // this one
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "3".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-            },
+        let wallet_transactions_versioned = vec![
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("some tx id"),
+                WalletTxStatus::Confirmed,
+                String::from("IOTA"),
+                mock_date,
+            )),
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("1"),
+                WalletTxStatus::Pending,
+                String::from("ETH"),
+                mock_date,
+            )),
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("2"),
+                WalletTxStatus::Pending, // this one
+                String::from("ETH"),
+                mock_date,
+            )),
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("3"),
+                WalletTxStatus::Pending,
+                String::from("ETH"),
+                mock_date,
+            )),
         ];
 
         let mut mock_user_repo = MockUserRepo::new();
@@ -1391,64 +1388,42 @@ mod tests {
                 kyc_type: KycType::Undefined,
                 viviswap_state: None,
                 local_share: None,
-                wallet_transactions: mixed_wallet_transactions.clone(),
+                wallet_transactions: Vec::new(),
+                wallet_transactions_versioned: wallet_transactions_versioned.clone(),
             })
         });
 
-        let mixed_wallet_transactions_after_synchronization = vec![
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "some tx id".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(20.0)) },
-                network_key: "IOTA".to_string(),
-                status: WalletTxStatus::Confirmed,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "1".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "2".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Confirmed,
-                explorer_url: None,
-            },
-            WalletTxInfo {
-                date: "some date".to_string(),
-                block_number_hash: None,
-                transaction_hash: "3".to_string(),
-                receiver: String::new(),
-                sender: String::new(),
-                amount: unsafe { CryptoAmount::new_unchecked(dec!(3.0)) },
-                network_key: "ETH".to_string(),
-                status: WalletTxStatus::Pending,
-                explorer_url: None,
-            },
+        let expected = vec![
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("some tx id"),
+                WalletTxStatus::Confirmed,
+                String::from("IOTA"),
+                mock_date,
+            )),
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("1"),
+                WalletTxStatus::Pending,
+                String::from("ETH"),
+                mock_date,
+            )),
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("2"),
+                WalletTxStatus::Confirmed, // this one
+                String::from("ETH"),
+                mock_date,
+            )),
+            VersionedWalletTransaction::from(mock_wallet_transaction(
+                String::from("3"),
+                WalletTxStatus::Pending,
+                String::from("ETH"),
+                mock_date,
+            )),
         ];
 
         mock_user_repo
             .expect_set_wallet_transactions()
             .once()
-            .with(
-                eq(USERNAME.to_string()),
-                eq(mixed_wallet_transactions_after_synchronization.clone()),
-            )
+            .with(eq(USERNAME.to_string()), eq(expected.clone()))
             .returning(|_, _| Ok(()));
 
         sdk.repo = Some(Box::new(mock_user_repo));
@@ -1463,19 +1438,14 @@ mod tests {
             mock_wallet_user
                 .expect_get_wallet_tx()
                 .once()
-                .with(eq(String::from("2"))) // WalletTxInfo.transaction_id = 2
+                .with(eq(String::from("2"))) // WalletTransaction { transaction_hash = "2" }
                 .returning(move |_| {
-                    Ok(WalletTxInfo {
-                        date: "some date".to_string(),
-                        block_number_hash: None,
-                        transaction_hash: "2".to_string(),
-                        receiver: String::new(),
-                        sender: String::new(),
-                        amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
-                        network_key: "ETH".to_string(),
-                        status: WalletTxStatus::Confirmed, // Pending -> Confirmed
-                        explorer_url: None,
-                    })
+                    Ok(mock_wallet_transaction(
+                        String::from("2"),
+                        WalletTxStatus::Confirmed, // Pending -> Confirmed
+                        String::from("ETH"),
+                        mock_date,
+                    ))
                 });
             Ok(WalletBorrow::from(mock_wallet_user))
         });
@@ -1491,28 +1461,23 @@ mod tests {
 
         // Act
 
-        // We request a single WalletTxInfo using get_wallet_tx_list(start = 1, limit = 1)
+        // We request a single WalletTransaction using get_wallet_tx_list(start = 1, limit = 1)
         // We have stored transactions: [1 IOTA, 3 ETH]
         // The network key is ETH, so we search through the 3 ETH transactions
         // We select this one:
-        // [WalletTxInfo{ ... }, -> WalletTxInfo{ transaction_id = 2 }, WalletTxInfo{ ... }]
-        let response = sdk.get_wallet_tx_list(&PIN, 1, 1).await;
+        // [WalletTransaction{ ... }, -> WalletTransaction{ transaction_hash = "2" }, WalletTransaction{ ... }]
+        let response = sdk.get_wallet_tx_list(&PIN, 1, 1).await.unwrap();
 
         // Assert
         assert_eq!(
-            response.unwrap(),
+            response,
             WalletTxInfoList {
-                transactions: vec![WalletTxInfo {
-                    date: "some date".to_string(),
-                    block_number_hash: None,
-                    transaction_hash: "2".to_string(),
-                    receiver: String::new(),
-                    sender: String::new(),
-                    amount: unsafe { CryptoAmount::new_unchecked(dec!(2.0)) },
-                    network_key: "ETH".to_string(),
-                    status: WalletTxStatus::Confirmed,
-                    explorer_url: None,
-                }]
+                transactions: vec![mock_wallet_transaction(
+                    String::from("2"),
+                    WalletTxStatus::Confirmed, // Pending -> Confirmed
+                    String::from("ETH"),
+                    mock_date,
+                )]
             }
         );
     }
@@ -1523,17 +1488,12 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let wallet_transactions = vec![WalletTxInfo {
-            date: "some date".to_string(),
-            block_number_hash: None,
-            transaction_hash: "1".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: unsafe { CryptoAmount::new_unchecked(dec!(1.0)) },
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-        }];
+        let wallet_transactions = vec![VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("1"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc::now(),
+        ))];
 
         let mut mock_user_repo = MockUserRepo::new();
         mock_user_repo.expect_get().returning(move |_| {
@@ -1546,7 +1506,8 @@ mod tests {
                 kyc_type: KycType::Undefined,
                 viviswap_state: None,
                 local_share: None,
-                wallet_transactions: wallet_transactions.clone(),
+                wallet_transactions: Vec::new(),
+                wallet_transactions_versioned: wallet_transactions.clone(),
             })
         });
 
@@ -1590,43 +1551,33 @@ mod tests {
         let (_srv, config, _cleanup) = set_config().await;
         let mut sdk = Sdk::new(config).unwrap();
 
-        let tx_3 = WalletTxInfo {
-            date: "2025-05-29T08:37:15.183+00:00".to_string(),
-            block_number_hash: None,
-            transaction_hash: "3".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-        };
-        let tx_1 = WalletTxInfo {
-            date: "2025-05-29T08:37:13.183+00:00".to_string(),
-            block_number_hash: None,
-            transaction_hash: "1".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-        };
+        let tx_3 = VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("3"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 15).unwrap(),
+        ));
 
-        let tx_2 = WalletTxInfo {
-            date: "2025-05-29T08:37:14.183+00:00".to_string(),
-            block_number_hash: None,
-            transaction_hash: "2".to_string(),
-            receiver: String::new(),
-            sender: String::new(),
-            amount: CryptoAmount::from(1),
-            network_key: "ETH".to_string(),
-            status: WalletTxStatus::Confirmed,
-            explorer_url: None,
-        };
+        let tx_1 = VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("1"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 13).unwrap(),
+        ));
+
+        let tx_2 = VersionedWalletTransaction::from(mock_wallet_transaction(
+            String::from("2"),
+            WalletTxStatus::Confirmed,
+            String::from("ETH"),
+            Utc.with_ymd_and_hms(2025, 5, 29, 8, 37, 14).unwrap(),
+        ));
 
         let wallet_transactions = vec![tx_3.clone(), tx_1.clone(), tx_2.clone()];
-        let expected = vec![tx_3, tx_2, tx_1];
+        let expected = vec![
+            WalletTransaction::from(tx_3),
+            WalletTransaction::from(tx_2),
+            WalletTransaction::from(tx_1),
+        ];
 
         let mut mock_user_repo = MockUserRepo::new();
         mock_user_repo.expect_get().returning(move |_| {
@@ -1639,7 +1590,8 @@ mod tests {
                 kyc_type: KycType::Undefined,
                 viviswap_state: None,
                 local_share: None,
-                wallet_transactions: wallet_transactions.clone(),
+                wallet_transactions: Vec::new(),
+                wallet_transactions_versioned: wallet_transactions.clone(),
             })
         });
 

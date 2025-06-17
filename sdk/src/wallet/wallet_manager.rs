@@ -622,6 +622,7 @@ mod tests {
             viviswap_state: None,
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         })
         .unwrap();
 
@@ -932,6 +933,7 @@ mod tests {
             viviswap_state: None,
             local_share: local_share.map(|s| s.to_string()),
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         };
 
         repo.expect_get().returning(move |_| Ok(user.clone()));

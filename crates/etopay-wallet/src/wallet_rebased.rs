@@ -12,7 +12,7 @@ use crate::rebased::{
     CheckpointId, ErrorCode, IndexerApi, IotaTransactionBlockEffects, IotaTransactionBlockResponseOptions,
     IotaTransactionBlockResponseQuery, Owner, TransactionDigest, TransactionFilter, TransactionKind,
 };
-use crate::types::{CryptoAmount, GasCostEstimation, WalletTxInfo, WalletTxStatus};
+use crate::types::{CryptoAmount, GasCostEstimation, WalletTransaction, WalletTxStatus};
 use async_trait::async_trait;
 use bip39::Mnemonic;
 use chrono::{TimeZone, Utc};
@@ -83,6 +83,17 @@ impl WalletImplIotaRebased {
 /// Convert a [`u128`] to [`CryptoAmount`] while taking the decimals into account.
 #[allow(clippy::result_large_err)]
 fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmount> {
+    let rust_decimal = convert_u128_to_rust_decimal(value, decimals)?;
+
+    CryptoAmount::try_from(rust_decimal).map_err(|e| {
+        WalletError::ConversionError(format!(
+            "could not convert decimal {rust_decimal:?} to crypto amount: {e:?}"
+        ))
+    })
+}
+/// Convert a [`u128`] to [`Decimal`].
+#[allow(clippy::result_large_err)]
+fn convert_u128_to_rust_decimal(value: u128, decimals: u32) -> Result<Decimal> {
     let Some(mut result_decimal) = Decimal::from_u128(value) else {
         return Err(WalletError::ConversionError(format!(
             "could not convert u128 to Decimal: {value:?}"
@@ -96,11 +107,7 @@ fn convert_u128_to_crypto_amount(value: u128, decimals: u32) -> Result<CryptoAmo
 
     result_decimal.normalize_assign(); // remove trailing zeros
 
-    CryptoAmount::try_from(result_decimal).map_err(|e| {
-        WalletError::ConversionError(format!(
-            "could not convert decimal {result_decimal:?} to crypto amount: {e:?}"
-        ))
-    })
+    Ok(result_decimal)
 }
 /// Convert a [`CryptoAmount`] to [`U256`] while taking the decimals into account.
 #[allow(clippy::result_large_err)]
@@ -272,7 +279,7 @@ impl WalletUser for WalletImplIotaRebased {
             .collect::<Vec<String>>())
     }
 
-    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTxInfo> {
+    async fn get_wallet_tx(&self, tx_hash: &str) -> Result<WalletTransaction> {
         let digest = tx_hash.parse::<rebased::TransactionDigest>()?;
 
         let tx = self
@@ -291,12 +298,9 @@ impl WalletUser for WalletImplIotaRebased {
 
         // log::info!("Transaction Details:\n{tx:#?}");
 
-        // The timestamp is in milliseconds but we make it into a human-readable format
         let date = tx
             .timestamp_ms
-            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single())
-            .map(|dt| dt.to_rfc3339())
-            .unwrap_or_default(); // default is going to be an empty String here
+            .and_then(|n| Utc.timestamp_millis_opt(n as i64).single());
 
         // For block id we use the checkpoint number which shows when the tx was finalized.
         let block_number_hash = if let Some(checkpoint_number) = tx.checkpoint {
@@ -354,6 +358,9 @@ impl WalletUser for WalletImplIotaRebased {
         // 2) Turn amount into f64
         let amount = convert_u128_to_crypto_amount(raw_amount, self.decimals)?;
 
+        // 3) Turn gas fee into f64
+        let gas_fee = convert_u128_to_rust_decimal(raw_fee, self.decimals)?;
+
         let receiver = receiver
             .map(|owner| match owner {
                 Owner::AddressOwner(addr) | Owner::ObjectOwner(addr) => Ok(addr.to_string()),
@@ -368,8 +375,10 @@ impl WalletUser for WalletImplIotaRebased {
             })
             .unwrap_or(Ok(String::default()))?;
 
-        Ok(WalletTxInfo {
-            date,
+        let is_sender = self.is_sender(&sender);
+
+        let tx = WalletTransaction {
+            date: date.unwrap_or_else(|| Utc.timestamp_opt(0, 0).unwrap()),
             block_number_hash,
             transaction_hash: tx_hash.to_string(),
             sender,
@@ -378,7 +387,11 @@ impl WalletUser for WalletImplIotaRebased {
             network_key: String::from("iota_rebased_testnet"),
             status,
             explorer_url: None,
-        })
+            gas_fee: Some(gas_fee),
+            is_sender,
+        };
+
+        Ok(tx)
     }
 
     async fn estimate_gas_cost(&self, intent: &TransactionIntent) -> Result<GasCostEstimation> {
@@ -422,6 +435,11 @@ impl WalletImplIotaRebased {
                     .sub(gas_summary.storage_rebate)
             }
         }
+    }
+
+    fn is_sender(&self, sender: &str) -> bool {
+        let address = self.keystore.addresses()[0].to_string();
+        address == sender
     }
 
     async fn prepare_tx_data(

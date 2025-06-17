@@ -1791,6 +1791,7 @@ name = "etopay-sdk"
 version = "0.16.0"
 dependencies = [
  "aes-gcm",
+ "alloy-transport",
  "async-trait",
  "base64 0.22.1",
  "blake2",
@@ -1848,6 +1849,7 @@ name = "etopay-sdk-swift"
 version = "0.16.0"
 dependencies = [
  "etopay-sdk",
+ "etopay-wallet",
  "serde_json",
  "swift-bridge",
  "swift-bridge-build",
@@ -1861,6 +1863,7 @@ dependencies = [
  "console_error_panic_hook",
  "console_log",
  "etopay-sdk",
+ "etopay-wallet",
  "getrandom 0.3.3",
  "log",
  "ring",

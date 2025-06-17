@@ -1,5 +1,6 @@
 #![allow(clippy::unwrap_used)]
 
+use crate::tx_version::VersionedWalletTransaction;
 use crate::types::users::{KycType, UserEntity};
 use crate::types::viviswap::{
     ViviswapAddressDetail, ViviswapPartiallyKycDetails, ViviswapState, ViviswapVerificationStatus,
@@ -27,8 +28,9 @@ use api_types::api::{
         payment::{ViviPaymentMethod, ViviPaymentMethodsResponse},
     },
 };
+use chrono::{DateTime, Utc};
 use etopay_wallet::MockWalletUser;
-use etopay_wallet::types::WalletTxInfo;
+use etopay_wallet::types::WalletTransaction;
 use etopay_wallet::types::{CryptoAmount, WalletTxStatus};
 use mockito::{Server, ServerOpts};
 use rust_decimal_macros::dec;
@@ -149,6 +151,7 @@ pub fn example_get_user(key: SwapPaymentDetailKey, verified: bool, times: usize,
             }),
             local_share: None,
             wallet_transactions: Vec::new(),
+            wallet_transactions_versioned: Vec::new(),
         })
     });
     mock_user_repo
@@ -352,9 +355,13 @@ pub fn example_wallet_borrow() -> MockWalletManager {
     mock_wallet_manager
 }
 
-pub fn example_wallet_tx_info() -> WalletTxInfo {
-    WalletTxInfo {
-        date: "some date".to_string(),
+pub fn example_versioned_wallet_transaction() -> VersionedWalletTransaction {
+    let mock_date = DateTime::parse_from_rfc3339("2024-06-01T12:00:00Z")
+        .map(|dt| dt.with_timezone(&Utc))
+        .unwrap();
+
+    VersionedWalletTransaction::V2(WalletTransaction {
+        date: mock_date,
         block_number_hash: None,
         transaction_hash: "some tx id".to_string(),
         receiver: String::new(),
@@ -364,5 +371,7 @@ pub fn example_wallet_tx_info() -> WalletTxInfo {
         network_key: "IOTA".to_string(),
         status: WalletTxStatus::Confirmed,
         explorer_url: None,
-    }
+        gas_fee: None,
+        is_sender: true,
+    })
 }
