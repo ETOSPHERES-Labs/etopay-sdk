@@ -11,14 +11,14 @@
 <a href=#11 id=11 data-nosnippet>11</a>
 <a href=#12 id=12 data-nosnippet>12</a><span class="kw">use crate</span>::{
 <a href=#13 id=13 data-nosnippet>13</a>    share::Share,
-<a href=#14 id=14 data-nosnippet>14</a>    types::{
-<a href=#15 id=15 data-nosnippet>15</a>        newtypes::EncryptedPassword,
-<a href=#16 id=16 data-nosnippet>16</a>        users::{KycType, UserEntity},
-<a href=#17 id=17 data-nosnippet>17</a>        viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep},
-<a href=#18 id=18 data-nosnippet>18</a>    },
-<a href=#19 id=19 data-nosnippet>19</a>};
-<a href=#20 id=20 data-nosnippet>20</a><span class="kw">use </span>error::{<span class="prelude-ty">Result</span>, UserKvStorageError};
-<a href=#21 id=21 data-nosnippet>21</a><span class="kw">use </span>etopay_wallet::types::WalletTxInfo;
+<a href=#14 id=14 data-nosnippet>14</a>    tx_version::VersionedWalletTransaction,
+<a href=#15 id=15 data-nosnippet>15</a>    types::{
+<a href=#16 id=16 data-nosnippet>16</a>        newtypes::EncryptedPassword,
+<a href=#17 id=17 data-nosnippet>17</a>        users::{KycType, UserEntity},
+<a href=#18 id=18 data-nosnippet>18</a>        viviswap::{ViviswapVerificationStatus, ViviswapVerificationStep},
+<a href=#19 id=19 data-nosnippet>19</a>    },
+<a href=#20 id=20 data-nosnippet>20</a>};
+<a href=#21 id=21 data-nosnippet>21</a><span class="kw">use </span>error::{<span class="prelude-ty">Result</span>, UserKvStorageError};
 <a href=#22 id=22 data-nosnippet>22</a>
 <a href=#23 id=23 data-nosnippet>23</a><span class="doccomment">/// Storage abstraction of [`UserEntity`] objects as a simple Key-Value storage
 <a href=#24 id=24 data-nosnippet>24</a></span><span class="attr">#[cfg_attr(test, mockall::automock)]
@@ -186,7 +186,7 @@
 <a href=#186 id=186 data-nosnippet>186</a>    /// # Errors
 <a href=#187 id=187 data-nosnippet>187</a>    ///
 <a href=#188 id=188 data-nosnippet>188</a>    /// Returns an `Error::KVError` if there is an error retrieving the user from the database.
-<a href=#189 id=189 data-nosnippet>189</a>    </span><span class="kw">fn </span>set_wallet_transactions(<span class="kw-2">&amp;mut </span><span class="self">self</span>, username: <span class="kw-2">&amp;</span>str, transaction: Vec&lt;WalletTxInfo&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt;;
+<a href=#189 id=189 data-nosnippet>189</a>    </span><span class="kw">fn </span>set_wallet_transactions(<span class="kw-2">&amp;mut </span><span class="self">self</span>, username: <span class="kw-2">&amp;</span>str, transaction: Vec&lt;VersionedWalletTransaction&gt;) -&gt; <span class="prelude-ty">Result</span>&lt;()&gt;;
 <a href=#190 id=190 data-nosnippet>190</a>
 <a href=#191 id=191 data-nosnippet>191</a>    <span class="doccomment">/// Set the local share for a user.
 <a href=#192 id=192 data-nosnippet>192</a>    ///
