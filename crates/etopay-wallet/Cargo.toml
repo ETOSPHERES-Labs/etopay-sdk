@@ -65,7 +65,7 @@ alloy-transport = "1.0.8"
 
 
 # needed for custom iota-rebased impl
-serde_with = { version = "3.12", features = ["macros", "hex"] }
+serde_with = { version = "3.13", features = ["macros", "hex"] }
 hex = { version = "0.4" }
 tiny-bip39 = { version = "2", default-features = false }
 slip10_ed25519 = "0.1.3"
