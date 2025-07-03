@@ -1,0 +1,8 @@
+# affects `unwrap_used` and `expect_used` lints
+allow-unwrap-in-tests = true
+allow-expect-in-tests = true
+allow-mixed-uninlined-format-args = true
+
+# Without this we get a linting warning about the `sdk::error::Error` type that is 128 bytes.
+# To avoid it we raise the threshold from 128 (default) to 129 bytes
+large-error-threshold = 129
