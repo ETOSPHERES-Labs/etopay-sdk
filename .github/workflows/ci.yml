@@ -85,7 +85,9 @@ jobs:
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Check for clippy warnings
-        run: cargo clippy --all-targets --all-features --color always -- -D warnings
+        run: |
+          rustup component add clippy
+          cargo clippy --all-targets --all-features --color always -- -D warnings
 
   unit-tests-coverage:
     runs-on: ubuntu-latest
