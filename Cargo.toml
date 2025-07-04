@@ -21,7 +21,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.16.0"
+version = "0.16.1"
 edition = "2024"
 authors = ["Team Lobster 🦞"]
 license = "AGPL-3.0-only"
@@ -51,8 +51,8 @@ expect_used = "deny"
 
 # Specify versions for shared dependencies
 [workspace.dependencies]
-api_types = { package = "etopay-api-types", version = "0.16.0", path = "./api_types" }
-etopay_wallet = { package = "etopay-wallet", version = "0.16.0", path = "./crates/etopay-wallet" }
+api_types = { package = "etopay-api-types", version = "0.16.1", path = "./api_types" }
+etopay_wallet = { package = "etopay-wallet", version = "0.16.1", path = "./crates/etopay-wallet" }
 
 base64 = { version = "0.22", default-features = false }
 chrono = { version = "0.4.41", default-features = false }

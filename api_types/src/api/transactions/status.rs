@@ -17,7 +17,7 @@ pub enum ApiTxStatus {
 
 impl fmt::Display for ApiTxStatus {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:?}", self)
+        write!(f, "{self:?}")
     }
 }
 
