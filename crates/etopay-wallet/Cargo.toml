@@ -73,7 +73,7 @@ bcs = "0.1.6"
 serde_repr = "0.1.20"
 ref-cast = "1"
 serde-name = "0.2"
-indexmap = "2.9"
+indexmap = "2.11"
 bip32 = "0.5"
 
 # needed to replace fastcrypto
