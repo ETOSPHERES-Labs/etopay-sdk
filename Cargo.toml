@@ -65,7 +65,7 @@ reqwest = { version = "0.12.22", default-features = false, features = [
     "rustls-tls",
 ] }
 rstest = { version = "0.25.0", default-features = false }
-rust_decimal = { version = "1.37.1", default-features = false, features = [
+rust_decimal = { version = "1.39.0", default-features = false, features = [
     "serde-str",
 ] }
 once_cell = { version = "^1.21.3", default-features = false }
